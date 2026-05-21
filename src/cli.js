@@ -17,6 +17,7 @@ import {
   statsTargetsCommand,
 } from './targets/commands.js';
 import { buildSubmissionPlan, saveSubmissionPlan } from './planner/plan.js';
+import { runPlan } from './runner/run.js';
 
 const program = new Command();
 
@@ -225,6 +226,32 @@ program
       console.log(`${target.order}. ${target.name} — ${target.mode} — ${target.submit_url}`);
     }
     console.log(`Excluded: ${plan.excluded.length}`);
+  });
+
+program
+  .command('run-plan <plan>')
+  .description('Run a generated submission plan; defaults to dry-run and only executes auto_safe targets')
+  .option('--execute', 'Actually submit targets; without this flag the runner only writes dry-run state')
+  .option('--state <path>', 'Runner state path')
+  .option('--results <path>', 'JSONL results path')
+  .option('--limit <n>', 'Maximum targets to process')
+  .option('--delay <duration>', 'Delay between executed submissions, e.g. 90s or 2m')
+  .option('--retry', 'Retry targets that already reached a terminal state')
+  .option('--allow-auto-candidate', 'Allow executing unverified auto_candidate targets')
+  .option('--assisted', 'Allow assisted targets to run with human-in-the-loop browser sessions')
+  .option('--config <path>', 'Config file path')
+  .option('--product-config <path>', 'Product config path')
+  .option('--engine <engine>', 'Browser engine: bb or playwright')
+  .action(async (plan, opts) => {
+    const summary = await runPlan(plan, opts);
+    console.log(`Plan: ${summary.plan}`);
+    console.log(`Execute: ${summary.execute}`);
+    console.log(`Processed: ${summary.processed}`);
+    console.log(`Submitted: ${summary.submitted}`);
+    console.log(`Skipped: ${summary.skipped}`);
+    console.log(`Failed: ${summary.failed}`);
+    console.log(`State: ${summary.state}`);
+    console.log(`Results: ${summary.results}`);
   });
 
 program
