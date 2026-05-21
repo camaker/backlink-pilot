@@ -43,6 +43,14 @@ describe('generic adapter page validation', () => {
     assert.ok(src.includes('productValueForField'), 'should use shared product value resolver');
     assert.ok(src.includes('filled_unsubmitted'), 'should distinguish filled forms from submitted forms');
   });
+
+  it('generic.js writes submission artifacts for auditability', () => {
+    const src = readFileSync('src/sites/generic.js', 'utf-8');
+    assert.ok(src.includes('capturePageArtifact'), 'should capture page artifacts');
+    assert.ok(src.includes('form-mapping.json'), 'should persist form mapping');
+    assert.ok(src.includes('snapshot.txt'), 'should persist interactive snapshot');
+    assert.ok(src.includes('adapter-result.json'), 'should persist adapter result');
+  });
 });
 
 describe('deprecated adapters are marked', () => {

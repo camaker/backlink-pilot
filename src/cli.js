@@ -20,6 +20,7 @@ import { buildSubmissionPlan, saveSubmissionPlan } from './planner/plan.js';
 import { runPlan } from './runner/run.js';
 import { verifyBacklinkCommand, verifyResultsCommand } from './verification/commands.js';
 import { scoutPlan } from './scout/plan.js';
+import { readinessCommand } from './readiness/commands.js';
 
 const program = new Command();
 
@@ -231,9 +232,21 @@ program
   });
 
 program
+  .command('readiness')
+  .description('Check whether product config is ready for real directory submissions')
+  .option('--config <path>', 'Config file path')
+  .option('--product-config <path>', 'Product config path')
+  .option('--level <level>', 'Readiness level: automation or launch', 'automation')
+  .option('--json', 'Output as JSON')
+  .action(async (opts) => {
+    await readinessCommand(opts);
+  });
+
+program
   .command('run-plan <plan>')
   .description('Run a generated submission plan; defaults to dry-run and only executes auto_safe targets')
   .option('--execute', 'Actually submit targets; without this flag the runner only writes dry-run state')
+  .option('--registry <path>', 'Canonical registry path used to verify target mode and submit URL at execution time')
   .option('--state <path>', 'Runner state path')
   .option('--results <path>', 'JSONL results path')
   .option('--limit <n>', 'Maximum targets to process')
@@ -241,6 +254,8 @@ program
   .option('--retry', 'Retry targets that already reached a terminal state')
   .option('--allow-auto-candidate', 'Allow executing unverified auto_candidate targets')
   .option('--assisted', 'Allow assisted targets to run with human-in-the-loop browser sessions')
+  .option('--readiness-level <level>', 'Product readiness level required for --execute: automation or launch', 'automation')
+  .option('--skip-readiness-check', 'Skip product readiness gate for a controlled test; result is still audited')
   .option('--config <path>', 'Config file path')
   .option('--product-config <path>', 'Product config path')
   .option('--engine <engine>', 'Browser engine: bb or playwright')
@@ -254,6 +269,10 @@ program
     console.log(`Failed: ${summary.failed}`);
     console.log(`State: ${summary.state}`);
     console.log(`Results: ${summary.results}`);
+    console.log(`Artifacts: ${summary.artifacts}`);
+    if (summary.readiness) {
+      console.log(`Readiness: ${summary.readiness.ok ? 'ok' : 'blocked'} (${summary.readiness.level}${summary.readiness.skipped ? ', skipped' : ''})`);
+    }
   });
 
 program

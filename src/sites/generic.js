@@ -1,8 +1,14 @@
 // generic.js — Universal directory submission adapter using bb-browser
 // Works with any directory site by auto-detecting form fields via snapshot
 
+import { join } from 'path';
 import { withBrowser, delay } from '../browser.js';
 import { mapField, productValueForField } from '../scout/field-mapper.js';
+import {
+  ensureDir,
+  writeArtifactJson,
+  writeArtifactText,
+} from '../runner/artifacts.js';
 
 const SUBMIT_PATTERNS = /submit|send|add|post|create|list|suggest|save/i;
 const REQUIRED_MAPPED_FIELDS = new Set(['product.name', 'product.url', 'product.description']);
@@ -49,6 +55,34 @@ function missingRequiredMappedFields(fields) {
   return [...REQUIRED_MAPPED_FIELDS].filter(field => !mapped.has(field));
 }
 
+async function readPageUrl(page) {
+  try {
+    return typeof page.url === 'function' ? page.url() : '';
+  } catch {
+    return '';
+  }
+}
+
+async function capturePageArtifact(page, artifactDir, name, extra = {}) {
+  if (!artifactDir) return;
+  try {
+    ensureDir(artifactDir);
+    const url = await readPageUrl(page);
+    const bodyText = await page.textContent('body').catch(() => '');
+    const html = typeof page.content === 'function'
+      ? await page.content().catch(() => '')
+      : '';
+    if (html) writeArtifactText(join(artifactDir, `${name}.html`), html);
+    writeArtifactText(join(artifactDir, `${name}.txt`), bodyText);
+    writeArtifactJson(join(artifactDir, `${name}.json`), {
+      url,
+      body_text_length: bodyText.length,
+      ...extra,
+    });
+    await page.screenshot(join(artifactDir, `${name}.png`)).catch(() => {});
+  } catch {}
+}
+
 export default {
   name: 'generic',
   url: null,
@@ -58,6 +92,7 @@ export default {
 
   async submit(product, config) {
     const targetUrl = config._genericUrl || config._targetUrl;
+    const artifactDir = config._artifactDir;
     if (!targetUrl) throw new Error('No target URL provided for generic submission');
 
     return withBrowser({ ...config, _engine: 'bb' }, async ({ page }) => {
@@ -65,6 +100,7 @@ export default {
       console.log(`  📄 Opening ${targetUrl}`);
       await page.goto(targetUrl);
       await delay(2000);
+      await capturePageArtifact(page, artifactDir, '01-initial', { target_url: targetUrl });
 
       // 1.5. Validate page — check for dead/login/paid pages
       const pageUrl = typeof page.url === 'function' ? page.url() : '';
@@ -92,6 +128,14 @@ export default {
       const snapshot = await page.snapshot();
       const parsed = parseSnapshot(snapshot);
       const fields = parsed.fields;
+      if (artifactDir) {
+        writeArtifactText(join(artifactDir, 'snapshot.txt'), snapshot);
+        writeArtifactJson(join(artifactDir, 'form-mapping.json'), {
+          fields,
+          submit: parsed.submit,
+          required_mapped_fields: [...REQUIRED_MAPPED_FIELDS],
+        });
+      }
 
       const detected = fields
         .map(field => `${field.mapped_to}=${field.ref}`)
@@ -118,6 +162,18 @@ export default {
         await delay(300);
         filled.add(field.mapped_to);
       }
+      if (artifactDir) {
+        writeArtifactJson(join(artifactDir, 'filled-fields.json'), {
+          filled: [...filled],
+          skipped: fields
+            .filter(field => !filled.has(field.mapped_to))
+            .map(field => ({
+              ref: field.ref,
+              label: field.label,
+              mapped_to: field.mapped_to,
+            })),
+        });
+      }
 
       // 4. Screenshot before submit
       try {
@@ -125,6 +181,14 @@ export default {
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
         await page.screenshot(`${screenshotDir}/generic-${timestamp}.png`);
       } catch {}
+      await capturePageArtifact(page, artifactDir, '02-before-submit', {
+        fields: fields.map(field => ({
+          ref: field.ref,
+          role: field.role,
+          label: field.label,
+          mapped_to: field.mapped_to,
+        })),
+      });
 
       // 5. Submit
       if (parsed.submit) {
@@ -136,13 +200,18 @@ export default {
       }
 
       const currentUrl = page.url();
-      return {
+      await capturePageArtifact(page, artifactDir, '03-after-submit', {
+        submitted: Boolean(parsed.submit),
+      });
+      const result = {
         url: currentUrl,
         body_text: await page.textContent('body').catch(() => ''),
         confirmation: parsed.submit
           ? 'Generic submission completed — verify manually'
           : 'filled_unsubmitted: no submit button found',
       };
+      if (artifactDir) writeArtifactJson(join(artifactDir, 'adapter-result.json'), result);
+      return result;
     });
   },
 };

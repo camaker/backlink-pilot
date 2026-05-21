@@ -14,15 +14,40 @@ product:
     - developer-tools
     - productivity
   pricing: free  # free | freemium | paid
+  pricing_url: "https://mycoolapp.com/pricing"
+  privacy_url: "https://mycoolapp.com/privacy"
+  terms_url: "https://mycoolapp.com/terms"
 
   # Optional fields (used by some sites)
-  logo_url: ""
+  logo_url: "https://mycoolapp.com/logo.png"
+  logo_svg_url: "https://mycoolapp.com/logo.svg"
+  square_logo_url: "https://mycoolapp.com/icon-1024.png"
+  favicon_url: "https://mycoolapp.com/favicon.ico"
+  demo_video_url: "https://mycoolapp.com/demo"
   github_url: ""
   twitter: ""
   features:
     - "Feature 1"
     - "Feature 2"
     - "Feature 3"
+  screenshot_urls:
+    - "https://mycoolapp.com/screenshots/1.png"
+    - "https://mycoolapp.com/screenshots/2.png"
+    - "https://mycoolapp.com/screenshots/3.png"
+    - "https://mycoolapp.com/screenshots/4.png"
+    - "https://mycoolapp.com/screenshots/5.png"
+  destination_pages:
+    alternatives:
+      - "https://mycoolapp.com/alternatives/example-competitor"
+      - "https://mycoolapp.com/alternatives/example-competitor-2"
+      - "https://mycoolapp.com/alternatives/example-competitor-3"
+    use_cases:
+      - "https://mycoolapp.com/use-cases/example-use-case"
+      - "https://mycoolapp.com/use-cases/example-use-case-2"
+      - "https://mycoolapp.com/use-cases/example-use-case-3"
+  schema:
+    faq: true
+    product: true
 
 # Credentials for sites that require login
 # ⚠️ Keep this file private! It's gitignored by default.

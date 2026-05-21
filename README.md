@@ -6,11 +6,11 @@
   <img src="docs/overview.svg" alt="Backlink Pilot v2.1 Overview" width="100%"/>
 </p>
 
-**One config, one command. Automated backlink submission for indie products.**
+**One config, one command. Safe, audited backlink submission for indie products.**
 
 > Built by an AI Agent ([OpenClaw](https://openclaw.ai)) during real-world link building — battle-tested on 30+ sites.
 
-**259 target sites** in [`targets.yaml`](targets.yaml) — 226 auto-submittable with bb-browser.
+The project now uses a canonical target registry in [`resources/targets.canonical.yaml`](resources/targets.canonical.yaml). Static `auto: yes` is treated as `auto_candidate`; a target only becomes executable after scout evidence upgrades it to `auto_safe`.
 
 ---
 
@@ -43,9 +43,14 @@ npm install -g bb-browser
 # 3. Auto-generate local config from your product homepage
 node src/cli.js init --url https://your-product.com
 
-# 4. Submit
-node src/cli.js submit futuretools --engine bb
-node src/cli.js submit https://any-site.com --engine bb
+# 4. Check readiness before real submissions
+node src/cli.js readiness --level automation
+
+# 5. Scout, plan, dry-run, then execute only verified auto_safe targets
+node src/cli.js plan --registry resources/targets.canonical.yaml --free-only --allow-unknown-pricing --mode runnable --limit 10 --output runs/batch-001/plan.json
+node src/cli.js scout-plan runs/batch-001/plan.json --limit 10 --delay 10s --update-registry --registry resources/targets.canonical.yaml
+node src/cli.js run-plan runs/batch-001/plan.json --limit 10 --delay 0ms
+node src/cli.js run-plan runs/batch-001/plan.json --execute --delay 90s --config config.yaml --registry resources/targets.canonical.yaml
 ```
 
 You can also skip pre-generating config and pass product details directly. The CLI will create the gitignored local `config.yaml` automatically:
@@ -59,7 +64,7 @@ node src/cli.js submit https://any-site.com/submit \
   --engine bb
 ```
 
-When `bb` is selected, the CLI tries to start the `bb-browser` daemon automatically.
+When `bb` is selected, the CLI tries to start the `bb-browser` daemon automatically. Real `run-plan --execute` writes per-target evidence under `runs/.../artifacts/`, which is gitignored.
 
 ---
 
@@ -77,7 +82,11 @@ When `bb` is selected, the CLI tries to start the `bb-browser` daemon automatica
 ```bash
 node src/cli.js submit <site-or-url>     # Submit to directory
 node src/cli.js init --url <product-url> # Auto-generate local product config
+node src/cli.js readiness                # Validate product readiness before real submissions
 node src/cli.js scout <url> --deep       # Discover form fields
+node src/cli.js scout-plan <plan>        # Scout a generated plan and update target safety
+node src/cli.js run-plan <plan>          # Dry-run or execute verified auto_safe targets
+node src/cli.js verify-results <jsonl>   # Verify backlinks from run results
 node src/cli.js awesome <repo>           # Generate awesome-list Issue
 node src/cli.js indexnow <url>           # Ping search engines
 node src/cli.js status                   # Check submission history
@@ -94,13 +103,15 @@ node src/batch-submit.js --limit N       # Batch blog comments
 ### Best channels by ROI
 
 1. **GitHub awesome-lists** — highest ROI, permanent, $0, 5 min each
-2. **Free directory sites** — 259 targets in `targets.yaml`, most auto-submittable
+2. **Free directory sites** — only execute targets verified as `auto_safe`
 3. **Blog comments** — Website field backlinks, batch-automated
 
 ### Submission pace
 
+- Scout first, dry-run second, execute third
 - 1-3 min between sites, 5-10 per day
 - **Never submit the same product to the same site twice**
+- Do not bypass login, CAPTCHA, payment, or human review. Those targets are `assisted` or `manual_strategic`.
 
 ### Sites to avoid
 

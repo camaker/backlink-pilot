@@ -4,6 +4,17 @@ import { parse } from 'yaml';
 import { submit } from '../submit.js';
 import { loadConfig } from '../config.js';
 import { classifySubmissionResult } from '../scout/classifier.js';
+import { DEFAULT_REGISTRY_FILE, loadRegistry } from '../targets/registry.js';
+import { normalizeUrl } from '../targets/normalize.js';
+import {
+  assertProductReadiness,
+  validateProductReadiness,
+} from '../readiness/product.js';
+import {
+  ensureDir,
+  targetArtifactDir,
+  writeArtifactJson,
+} from './artifacts.js';
 import {
   defaultStatePath,
   isTerminalStatus,
@@ -44,6 +55,53 @@ function appendJsonl(path, entry) {
   writeFileSync(path, `${JSON.stringify(entry)}\n`, { flag: 'a', encoding: 'utf-8' });
 }
 
+function defaultArtifactsDir(planPath) {
+  return join(dirname(planPath), 'artifacts');
+}
+
+function registryTargetMap(plan, opts = {}) {
+  const registryPath = opts.registry || plan.registry || DEFAULT_REGISTRY_FILE;
+  const registry = loadRegistry(registryPath);
+  const targets = new Map();
+  for (const target of registry.targets || []) {
+    targets.set(target.id, target);
+  }
+  return { registryPath, targets };
+}
+
+function sameNormalizedUrl(a, b) {
+  const left = normalizeUrl(a);
+  const right = normalizeUrl(b);
+  if (!left || !right) return String(a || '') === String(b || '');
+  return left.dedupeKey === right.dedupeKey;
+}
+
+function validateTargetAgainstRegistry(target, registryEntry, opts = {}) {
+  if (!registryEntry) {
+    return { ok: false, reason: 'target_missing_from_registry' };
+  }
+
+  const registryMode = registryEntry.submission?.mode || '';
+  const registryUrl = registryEntry.submit_url || '';
+  if (!sameNormalizedUrl(target.submit_url, registryUrl)) {
+    return {
+      ok: false,
+      reason: 'target_submit_url_changed_in_registry',
+      registry_submit_url: registryUrl,
+    };
+  }
+
+  if (registryMode !== target.mode) {
+    return {
+      ok: false,
+      reason: `target_mode_changed_in_registry:${target.mode || 'unknown'}->${registryMode || 'unknown'}`,
+      registry_mode: registryMode,
+    };
+  }
+
+  return canExecuteTarget({ ...target, mode: registryMode }, opts);
+}
+
 function canExecuteTarget(target, opts = {}) {
   if (SAFE_EXECUTION_MODES.has(target.mode)) return { ok: true, reason: '' };
   if (target.mode === 'auto_candidate' && opts.allowAutoCandidate) {
@@ -64,29 +122,53 @@ export async function runPlan(planPath, opts = {}) {
   const plan = readPlan(planPath);
   const statePath = opts.state || defaultStatePath(planPath);
   const resultsPath = opts.results || join(dirname(planPath), 'results.jsonl');
+  const artifactsDir = opts.artifacts || defaultArtifactsDir(planPath);
   const state = loadRunnerState(statePath, plan);
   const execute = Boolean(opts.execute);
   const delayMs = parseMs(opts.delay, 60000);
   const limit = Number.parseInt(opts.limit || plan.targets?.length || 0, 10);
   const max = Number.isFinite(limit) && limit > 0 ? limit : plan.targets.length;
+  const registry = registryTargetMap(plan, opts);
+  const submitFn = opts.submitFn || submit;
   const config = execute
-    ? await loadConfig({
+    ? opts.configObject || await loadConfig({
       ...opts,
       configPath: opts.config || opts.productConfig,
       requireProduct: true,
     })
     : null;
+  if (config && opts.engine) config._engine = opts.engine;
+
+  let readiness = null;
+  if (execute && config) {
+    readiness = opts.skipReadinessCheck
+      ? validateProductReadiness(config, { level: opts.readinessLevel || 'automation' })
+      : assertProductReadiness(config, { level: opts.readinessLevel || 'automation' });
+  }
 
   const summary = {
     plan: planPath,
     execute,
     state: statePath,
     results: resultsPath,
+    artifacts: artifactsDir,
+    registry: registry.registryPath,
+    readiness: readiness
+      ? { ok: readiness.ok, level: readiness.level, skipped: Boolean(opts.skipReadinessCheck) }
+      : null,
     processed: 0,
     skipped: 0,
     submitted: 0,
     failed: 0,
   };
+
+  if (execute) {
+    ensureDir(artifactsDir);
+    writeArtifactJson(join(artifactsDir, 'run-readiness.json'), {
+      readiness_skipped: Boolean(opts.skipReadinessCheck),
+      report: readiness,
+    });
+  }
 
   for (const target of (plan.targets || []).slice(0, max)) {
     const item = state.items.find(entry => entry.id === target.id);
@@ -95,7 +177,8 @@ export async function runPlan(planPath, opts = {}) {
       continue;
     }
 
-    const executable = canExecuteTarget(target, opts);
+    const registryEntry = registry.targets.get(target.id);
+    const executable = validateTargetAgainstRegistry(target, registryEntry, opts);
     if (!executable.ok) {
       markItem(state, target.id, { status: 'skipped', last_error: executable.reason });
       saveRunnerState(statePath, state);
@@ -103,6 +186,8 @@ export async function runPlan(planPath, opts = {}) {
         target_id: target.id,
         status: 'skipped',
         reason: executable.reason,
+        registry_mode: executable.registry_mode,
+        registry_submit_url: executable.registry_submit_url,
         at: new Date().toISOString(),
       });
       summary.skipped++;
@@ -117,6 +202,8 @@ export async function runPlan(planPath, opts = {}) {
         status: 'dry_run_ready',
         submit_url: target.submit_url,
         mode: target.mode,
+        registry_mode: registryEntry?.submission?.mode || '',
+        registry: registry.registryPath,
         at: new Date().toISOString(),
       });
       summary.processed++;
@@ -127,14 +214,26 @@ export async function runPlan(planPath, opts = {}) {
     saveRunnerState(statePath, state);
 
     try {
-      const submission = await submit(target.submit_url, {
+      const targetArtifacts = targetArtifactDir(artifactsDir, target);
+      ensureDir(targetArtifacts);
+      writeArtifactJson(join(targetArtifacts, 'target.json'), {
+        plan_target: target,
+        registry_target: registryEntry || null,
+      });
+      const submission = await submitFn(target.submit_url, {
         ...opts,
         config,
+        target,
+        artifactDir: targetArtifacts,
       });
       const classified = submission?.status
         ? { status: submission.status, reasons: submission.reasons || [] }
         : classifySubmissionResult({ confirmation: 'submitted' });
       markItem(state, target.id, { status: classified.status });
+      writeArtifactJson(join(targetArtifacts, 'submission-result.json'), {
+        submission,
+        classified,
+      });
       appendJsonl(resultsPath, {
         target_id: target.id,
         status: classified.status,
@@ -142,6 +241,7 @@ export async function runPlan(planPath, opts = {}) {
         confirmation: submission?.confirmation || '',
         listing_url: submission?.url || '',
         error: submission?.error || '',
+        artifact_dir: targetArtifacts,
         at: new Date().toISOString(),
       });
       if (classified.status === 'failed') summary.failed++;

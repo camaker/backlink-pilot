@@ -6,11 +6,11 @@
   <img src="docs/overview.zh.svg" alt="Backlink Pilot v2.1 概览" width="100%"/>
 </p>
 
-**一条命令提交外链的自动化工具。** 配置一次产品信息，自动提交到目录站、awesome-list、搜索引擎。
+**安全、可审计的一条命令外链提交工具。** 配置一次产品信息，先侦察、再计划、再 dry-run，最后只提交已验证安全的目录站。
 
 > 由 AI Agent ([OpenClaw](https://openclaw.ai)) 在真实外链建设中构建，30+ 站点实战验证。
 
-[`targets.yaml`](targets.yaml) 收录 **259 个目标站点**，其中 226 个可用 bb-browser 自动提交。
+当前使用 [`resources/targets.canonical.yaml`](resources/targets.canonical.yaml) 作为规范化目标库。旧数据里的 `auto: yes` 只会被视为 `auto_candidate`；只有经过 scout 证据确认的目标才会升级为 `auto_safe` 并允许自动执行。
 
 ---
 
@@ -43,9 +43,14 @@ npm install -g bb-browser
 # 3. 自动生成本地配置
 node src/cli.js init --url https://your-product.com
 
-# 4. 开始提交
-node src/cli.js submit futuretools --engine bb
-node src/cli.js submit https://any-site.com --engine bb
+# 4. 真实提交前先做产品资料准入检查
+node src/cli.js readiness --level automation
+
+# 5. 侦察、生成计划、dry-run，最后只执行 auto_safe
+node src/cli.js plan --registry resources/targets.canonical.yaml --free-only --allow-unknown-pricing --mode runnable --limit 10 --output runs/batch-001/plan.json
+node src/cli.js scout-plan runs/batch-001/plan.json --limit 10 --delay 10s --update-registry --registry resources/targets.canonical.yaml
+node src/cli.js run-plan runs/batch-001/plan.json --limit 10 --delay 0ms
+node src/cli.js run-plan runs/batch-001/plan.json --execute --delay 90s --config config.yaml --registry resources/targets.canonical.yaml
 ```
 
 也可以完全不预先生成配置，直接在命令里传产品信息；工具会自动生成被 `.gitignore` 忽略的本地 `config.yaml`：
@@ -59,7 +64,7 @@ node src/cli.js submit https://any-site.com/submit \
   --engine bb
 ```
 
-`bb-browser` 会在需要时自动启动 daemon；通常不需要手动执行 `bb-browser daemon start`。
+`bb-browser` 会在需要时自动启动 daemon；通常不需要手动执行 `bb-browser daemon start`。真实执行会把每个目标的截图、HTML、字段映射、结果 JSON 写到 `runs/.../artifacts/`，该目录默认不会提交到 git。
 
 ---
 
@@ -78,7 +83,11 @@ node src/cli.js submit https://any-site.com/submit \
 node src/cli.js submit <站点名或URL>     # 提交到目录站
 node src/cli.js campaign <产品官网>      # 自动选择外链目标并提交
 node src/cli.js init --url <产品官网>    # 自动生成本地产品配置
+node src/cli.js readiness                # 检查产品资料是否满足真实提交准入
 node src/cli.js scout <URL> --deep       # 侦察站点表单
+node src/cli.js scout-plan <计划文件>    # 批量侦察计划里的目标并更新安全等级
+node src/cli.js run-plan <计划文件>      # dry-run 或执行 auto_safe 目标
+node src/cli.js verify-results <JSONL>   # 从执行结果里验证外链是否上线
 node src/cli.js awesome <仓库名>          # 生成 awesome-list Issue
 node src/cli.js indexnow <URL>           # 通知搜索引擎
 node src/cli.js status                   # 查看提交记录
@@ -95,13 +104,15 @@ node src/batch-submit.js --limit N       # 批量博客评论
 ### 最佳渠道（按 ROI 排序）
 
 1. **GitHub awesome-lists** — 最高 ROI，永久收录，$0，每个 5 分钟
-2. **免费目录站** — `targets.yaml` 收录 259 个，大部分可自动提交
+2. **免费目录站** — 只自动执行已经验证为 `auto_safe` 的目标
 3. **博客评论** — Website 字段留链接，批量自动化
 
 ### 提交节奏
 
+- 先 scout，再 dry-run，最后 execute
 - 不同站点间隔 1-3 分钟，每天 5-10 个
 - **同一产品不要重复提交到同一站点**
+- 不绕过登录、CAPTCHA、付费或人工审核；这些目标只能走 `assisted` 或 `manual_strategic`
 
 ### 避坑清单
 
