@@ -21,6 +21,13 @@ import { runPlan } from './runner/run.js';
 import { verifyBacklinkCommand, verifyResultsCommand } from './verification/commands.js';
 import { scoutPlan } from './scout/plan.js';
 import { readinessCommand } from './readiness/commands.js';
+import {
+  authClearCommand,
+  authListCommand,
+  authLoginCommand,
+  authStatusCommand,
+} from './auth/commands.js';
+import { configWithAuthProfile } from './auth/session.js';
 
 const program = new Command();
 
@@ -91,6 +98,8 @@ addConfigOptions(program
   .option('--deep', 'Follow links to find hidden submit pages')
   .option('--screenshot <path>', 'Save screenshot of submit page')
   .option('--target-id <id>', 'Target ID when persisting or updating the canonical registry')
+  .option('--auth-profile <name>', 'Saved manual auth profile to use while scouting')
+  .option('--auth-dir <path>', 'Auth profile directory')
   .option('--persist', 'Persist structured scout result to resources/scout-results')
   .option('--scout-dir <path>', 'Directory for persisted scout results')
   .option('--output <path>', 'Write structured scout result to a specific JSON file')
@@ -100,8 +109,9 @@ addConfigOptions(program
   .option('--json', 'Print full structured scout result as JSON')
 )
   .action(async (url, opts) => {
-    const config = await loadConfig({ ...opts, requireProduct: false });
+    let config = await loadConfig({ ...opts, requireProduct: false });
     if (opts.engine) config._engine = opts.engine;
+    if (opts.authProfile) config = configWithAuthProfile(config, opts.authProfile, opts);
     await scout(url, { ...opts, config });
   });
 
@@ -145,6 +155,51 @@ program
   .option('--json', 'Output as JSON')
   .action(async (opts) => {
     await showStatus(opts);
+  });
+
+const auth = program
+  .command('auth')
+  .description('Manage manual browser login sessions for assisted submissions');
+
+auth
+  .command('login')
+  .description('Open a browser for manual login, then save Playwright storage state')
+  .requiredOption('--url <url>', 'Login URL to open')
+  .option('--profile <name>', 'Auth profile name', 'default')
+  .option('--auth-dir <path>', 'Auth directory')
+  .option('--timeout <ms>', 'Navigation timeout in milliseconds')
+  .option('--json', 'Output as JSON')
+  .action(async (opts) => {
+    await authLoginCommand(opts);
+  });
+
+auth
+  .command('status')
+  .description('Show whether an auth profile exists')
+  .option('--profile <name>', 'Auth profile name', 'default')
+  .option('--auth-dir <path>', 'Auth directory')
+  .option('--json', 'Output as JSON')
+  .action((opts) => {
+    authStatusCommand(opts);
+  });
+
+auth
+  .command('list')
+  .description('List saved auth profiles')
+  .option('--auth-dir <path>', 'Auth directory')
+  .option('--json', 'Output as JSON')
+  .action((opts) => {
+    authListCommand(opts);
+  });
+
+auth
+  .command('clear')
+  .description('Delete a saved auth profile')
+  .option('--profile <name>', 'Auth profile name', 'default')
+  .option('--auth-dir <path>', 'Auth directory')
+  .option('--json', 'Output as JSON')
+  .action((opts) => {
+    authClearCommand(opts);
   });
 
 const targets = program
@@ -254,6 +309,8 @@ program
   .option('--retry', 'Retry targets that already reached a terminal state')
   .option('--allow-auto-candidate', 'Allow executing unverified auto_candidate targets')
   .option('--assisted', 'Allow assisted targets to run with human-in-the-loop browser sessions')
+  .option('--auth-profile <name>', 'Saved manual auth profile required for assisted targets')
+  .option('--auth-dir <path>', 'Auth profile directory')
   .option('--readiness-level <level>', 'Product readiness level required for --execute: automation or launch', 'automation')
   .option('--skip-readiness-check', 'Skip product readiness gate for a controlled test; result is still audited')
   .option('--config <path>', 'Config file path')
@@ -289,6 +346,8 @@ program
   .option('--update-registry', 'Update canonical registry with scout classifications')
   .option('--registry <path>', 'Canonical registry path for --update-registry')
   .option('--scout-dir <path>', 'Directory for persisted scout results')
+  .option('--auth-profile <name>', 'Saved manual auth profile to use while scouting')
+  .option('--auth-dir <path>', 'Auth profile directory')
   .option('--config <path>', 'Config file path')
   .option('--product-config <path>', 'Product config path')
   .option('--engine <engine>', 'Browser engine: bb or playwright')

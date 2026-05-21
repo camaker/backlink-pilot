@@ -2,6 +2,7 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   mergeFieldCandidates,
+  requiredScoutMappingForAuth,
   scoutMappedFields,
   selectorForScoutField,
 } from '../src/sites/generic.js';
@@ -74,5 +75,34 @@ describe('generic scout mapping reuse', () => {
     assert.deepEqual(url.candidates.map(candidate => candidate.source), ['scout', 'snapshot']);
     assert.equal(name.ref, '@2');
     assert.equal(name.candidates.length, 1);
+  });
+
+  it('requires persisted scout selectors for authenticated generic submissions', () => {
+    const config = { _authStatePath: 'playwright/.auth/demo.storage-state.json' };
+    assert.throws(
+      () => requiredScoutMappingForAuth(config, [], 'button[type="submit"]'),
+      /requires persisted scout field mappings/
+    );
+    assert.throws(
+      () => requiredScoutMappingForAuth(
+        config,
+        [{ mapped_to: 'product.name', candidates: [{ source: 'snapshot', ref: '@1' }] }],
+        'button[type="submit"]'
+      ),
+      /requires scout-backed selectors/
+    );
+    assert.throws(
+      () => requiredScoutMappingForAuth(
+        config,
+        [{ mapped_to: 'product.name', candidates: [{ source: 'scout', selector: 'input[name="name"]' }] }],
+        '@9'
+      ),
+      /requires a persisted scout submit button selector/
+    );
+    assert.doesNotThrow(() => requiredScoutMappingForAuth(
+      config,
+      [{ mapped_to: 'product.name', candidates: [{ source: 'scout', selector: 'input[name="name"]' }] }],
+      'button[type="submit"]'
+    ));
   });
 });

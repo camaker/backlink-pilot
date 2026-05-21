@@ -68,6 +68,42 @@ node src/cli.js submit https://any-site.com/submit \
 
 ---
 
+## Assisted 登录会话
+
+有些目录站必须先正常登录账号，提交表单才会出现。Backlink Pilot 把这类目标归为 `assisted`：支持复用人工登录后的浏览器会话，但不绕过登录、OAuth、2FA、CAPTCHA、Cloudflare、付费墙或人工审核。
+
+```bash
+# 1. 打开可见 Playwright 浏览器，手动完成登录
+node src/cli.js auth login --profile saashub --url https://www.saashub.com/login
+
+# 2. 确认会话已经保存
+node src/cli.js auth status --profile saashub
+
+# 3. 使用登录态 scout 真实提交表单，并把选择器写回规范化目标库
+node src/cli.js scout https://www.saashub.com/product/new \
+  --auth-profile saashub \
+  --engine playwright \
+  --target-id saashub \
+  --deep \
+  --persist \
+  --update-registry \
+  --registry resources/targets.canonical.yaml
+
+# 4. 产品准入通过且 scout 映射存在后，才执行 assisted 目标
+node src/cli.js run-plan runs/batch-001/plan.json \
+  --execute \
+  --assisted \
+  --auth-profile saashub \
+  --engine playwright \
+  --delay 90s \
+  --config config.yaml \
+  --registry resources/targets.canonical.yaml
+```
+
+登录会话保存为 Playwright `storageState`，位置在 `playwright/.auth/`，该目录已被 `.gitignore` 忽略。带登录态的通用提交必须有已持久化的 scout 字段选择器和提交按钮选择器；缺失时会直接失败，不会现场猜表单或盲点提交。
+
+---
+
 ## 引擎对比
 
 | 引擎 | 安装 | 优点 | 缺点 |
@@ -84,6 +120,7 @@ node src/cli.js submit <站点名或URL>     # 提交到目录站
 node src/cli.js campaign <产品官网>      # 自动选择外链目标并提交
 node src/cli.js init --url <产品官网>    # 自动生成本地产品配置
 node src/cli.js readiness                # 检查产品资料是否满足真实提交准入
+node src/cli.js auth login --url <URL>   # 为 assisted 目标保存人工登录会话
 node src/cli.js scout <URL> --deep       # 侦察站点表单
 node src/cli.js scout-plan <计划文件>    # 批量侦察计划里的目标并更新安全等级
 node src/cli.js run-plan <计划文件>      # dry-run 或执行 auto_safe 目标

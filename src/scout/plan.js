@@ -10,6 +10,7 @@ import {
   saveRunnerState,
 } from '../runner/queue.js';
 import { scout } from './discover.js';
+import { configWithAuthProfile } from '../auth/session.js';
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -65,6 +66,10 @@ export async function scoutPlan(planPath, opts = {}) {
 
   if (opts.engine) config._engine = opts.engine;
 
+  const executionConfig = opts.authProfile
+    ? configWithAuthProfile(config, opts.authProfile, opts)
+    : config;
+
   const summary = {
     plan: planPath,
     state: statePath,
@@ -92,7 +97,7 @@ export async function scoutPlan(planPath, opts = {}) {
     try {
       const result = await scoutFn(target.submit_url, {
         ...opts,
-        config,
+        config: executionConfig,
         targetId: target.id,
         persist: opts.persist !== false,
         updateRegistry: Boolean(opts.updateRegistry),

@@ -145,6 +145,15 @@ async function readPageUrl(page) {
   }
 }
 
+async function takeScreenshot(page, path) {
+  if (!path) return;
+  try {
+    await page.screenshot(path);
+  } catch {
+    await page.screenshot({ path }).catch(() => {});
+  }
+}
+
 async function capturePageArtifact(page, artifactDir, name, extra = {}) {
   if (!artifactDir) return;
   try {
@@ -161,8 +170,31 @@ async function capturePageArtifact(page, artifactDir, name, extra = {}) {
       body_text_length: bodyText.length,
       ...extra,
     });
-    await page.screenshot(join(artifactDir, `${name}.png`)).catch(() => {});
+    await takeScreenshot(page, join(artifactDir, `${name}.png`));
   } catch {}
+}
+
+export function isAuthenticatedRun(config = {}) {
+  return Boolean(config._authStatePath);
+}
+
+export function requiredScoutMappingForAuth(config, fields, submitHandle) {
+  if (!isAuthenticatedRun(config)) return;
+
+  if (!fields.length) {
+    throw new Error('Authenticated generic submission requires persisted scout field mappings.');
+  }
+
+  const nonScout = fields.filter(field =>
+    (field.candidates || [field]).every(candidate => candidate.source !== 'scout')
+  );
+  if (nonScout.length) {
+    throw new Error('Authenticated generic submission requires scout-backed selectors for every mapped field.');
+  }
+
+  if (!submitHandle || submitHandle.startsWith('@')) {
+    throw new Error('Authenticated generic submission requires a persisted scout submit button selector.');
+  }
 }
 
 export default {
@@ -178,7 +210,9 @@ export default {
     const registryTarget = config._registryTarget || {};
     if (!targetUrl) throw new Error('No target URL provided for generic submission');
 
-    return withBrowser({ ...config, _engine: 'bb' }, async ({ page }) => {
+    const engine = isAuthenticatedRun(config) ? 'playwright' : 'bb';
+
+    return withBrowser({ ...config, _engine: engine }, async ({ page }) => {
       // 1. Navigate to submission page
       console.log(`  📄 Opening ${targetUrl}`);
       await page.goto(targetUrl);
@@ -208,15 +242,19 @@ export default {
 
       // 2. Take interactive snapshot
       console.log('  🔍 Scanning form fields...');
-      const snapshot = await page.snapshot();
-      const parsed = parseSnapshot(snapshot);
       const scoutFields = scoutMappedFields(registryTarget);
+      const snapshot = isAuthenticatedRun(config) ? '' : await page.snapshot();
+      const parsed = snapshot ? parseSnapshot(snapshot) : { fields: [], submit: null };
       const fields = mergeFieldCandidates(scoutFields, parsed.fields.map(field => ({ ...field, source: 'snapshot' })));
       const submitHandle = parsed.submit || scoutSubmitButton(registryTarget);
+      requiredScoutMappingForAuth(config, fields, submitHandle);
       if (artifactDir) {
-        writeArtifactText(join(artifactDir, 'snapshot.txt'), snapshot);
+        if (snapshot) writeArtifactText(join(artifactDir, 'snapshot.txt'), snapshot);
         writeArtifactJson(join(artifactDir, 'form-mapping.json'), {
-          mapping_source: scoutFields.length ? 'scout_plus_snapshot' : 'snapshot',
+          mapping_source: isAuthenticatedRun(config)
+            ? 'scout_authenticated'
+            : scoutFields.length ? 'scout_plus_snapshot' : 'snapshot',
+          authenticated: isAuthenticatedRun(config),
           scout_fields: scoutFields,
           snapshot_fields: parsed.fields,
           fields,
@@ -285,7 +323,7 @@ export default {
       try {
         const screenshotDir = config.browser?.screenshot_dir || './screenshots';
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-        await page.screenshot(`${screenshotDir}/generic-${timestamp}.png`);
+        await takeScreenshot(page, `${screenshotDir}/generic-${timestamp}.png`);
       } catch {}
       await capturePageArtifact(page, artifactDir, '02-before-submit', {
         fields: fields.map(field => ({

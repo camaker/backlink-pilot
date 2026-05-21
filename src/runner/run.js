@@ -15,6 +15,7 @@ import {
   targetArtifactDir,
   writeArtifactJson,
 } from './artifacts.js';
+import { authProfileStatus, configWithAuthProfile } from '../auth/session.js';
 import {
   defaultStatePath,
   isTerminalStatus,
@@ -108,7 +109,25 @@ function canExecuteTarget(target, opts = {}) {
     return { ok: true, reason: 'auto_candidate_allowed_explicitly' };
   }
   if (target.mode === 'assisted' && opts.assisted) {
-    return { ok: true, reason: 'assisted_allowed_explicitly' };
+    if (opts.engine && opts.engine !== 'playwright') {
+      return {
+        ok: false,
+        reason: `assisted_auth_requires_playwright:${opts.engine}`,
+      };
+    }
+    const status = authProfileStatus(opts.authProfile || target.id || 'default', opts);
+    if (!status.exists) {
+      return {
+        ok: false,
+        reason: `assisted_auth_profile_missing:${status.profile}`,
+      };
+    }
+    return {
+      ok: true,
+      reason: 'assisted_allowed_explicitly',
+      auth_profile: status.profile,
+      auth_state_path: status.path,
+    };
   }
   return {
     ok: false,
@@ -219,10 +238,14 @@ export async function runPlan(planPath, opts = {}) {
       writeArtifactJson(join(targetArtifacts, 'target.json'), {
         plan_target: target,
         registry_target: registryEntry || null,
+        execution_gate: executable,
       });
+      const executionConfig = executable.auth_state_path
+        ? configWithAuthProfile(config, executable.auth_profile, opts)
+        : config;
       const submission = await submitFn(target.submit_url, {
         ...opts,
-        config,
+        config: executionConfig,
         target,
         registryTarget: registryEntry,
         artifactDir: targetArtifacts,

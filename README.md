@@ -68,6 +68,42 @@ When `bb` is selected, the CLI tries to start the `bb-browser` daemon automatica
 
 ---
 
+## Assisted Login Sessions
+
+Some directories require a normal account login before the submit form is visible. Backlink Pilot supports these as `assisted` targets, but it does not bypass login, OAuth, 2FA, CAPTCHA, Cloudflare, payment, or moderator review.
+
+```bash
+# 1. Open a visible Playwright browser and complete login manually
+node src/cli.js auth login --profile saashub --url https://www.saashub.com/login
+
+# 2. Confirm the saved session exists
+node src/cli.js auth status --profile saashub
+
+# 3. Scout the logged-in submit form and persist selectors into the registry
+node src/cli.js scout https://www.saashub.com/product/new \
+  --auth-profile saashub \
+  --engine playwright \
+  --target-id saashub \
+  --deep \
+  --persist \
+  --update-registry \
+  --registry resources/targets.canonical.yaml
+
+# 4. Execute assisted targets only after readiness passes and scout mappings exist
+node src/cli.js run-plan runs/batch-001/plan.json \
+  --execute \
+  --assisted \
+  --auth-profile saashub \
+  --engine playwright \
+  --delay 90s \
+  --config config.yaml \
+  --registry resources/targets.canonical.yaml
+```
+
+Saved sessions are Playwright `storageState` files under `playwright/.auth/`, which is gitignored. Authenticated generic submissions require persisted scout selectors and a persisted submit button selector; if those are missing, execution fails closed instead of guessing.
+
+---
+
 ## Engine Comparison
 
 | Engine | Setup | Pros | Cons |
@@ -83,6 +119,7 @@ When `bb` is selected, the CLI tries to start the `bb-browser` daemon automatica
 node src/cli.js submit <site-or-url>     # Submit to directory
 node src/cli.js init --url <product-url> # Auto-generate local product config
 node src/cli.js readiness                # Validate product readiness before real submissions
+node src/cli.js auth login --url <url>   # Save a manual login session for assisted targets
 node src/cli.js scout <url> --deep       # Discover form fields
 node src/cli.js scout-plan <plan>        # Scout a generated plan and update target safety
 node src/cli.js run-plan <plan>          # Dry-run or execute verified auto_safe targets

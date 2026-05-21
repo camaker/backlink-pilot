@@ -32,4 +32,8 @@ describe('.gitignore coverage', () => {
   it('ignores screenshots/', () => {
     assert.ok(gitignore.includes('screenshots/'));
   });
+
+  it('ignores saved browser auth state', () => {
+    assert.ok(gitignore.includes('playwright/.auth/'));
+  });
 });

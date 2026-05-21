@@ -1,6 +1,7 @@
 // browser.js — Dual-engine browser wrapper
 // Supports rebrowser-playwright (default) and bb-browser
 
+import { existsSync } from 'fs';
 import { chromium } from 'rebrowser-playwright';
 
 function resolveEngine(config) {
@@ -11,6 +12,7 @@ function resolveEngine(config) {
 
 export async function launchBrowser(config = {}) {
   const browserOpts = config.browser || {};
+  const storageState = config._authStatePath || browserOpts.storage_state || browserOpts.storageState;
 
   const browser = await chromium.launch({
     headless: browserOpts.headless !== false,
@@ -21,12 +23,21 @@ export async function launchBrowser(config = {}) {
     ],
   });
 
-  const context = await browser.newContext({
+  const contextOptions = {
     userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
     viewport: { width: 1440, height: 900 },
     locale: 'en-US',
     timezoneId: 'America/New_York',
-  });
+  };
+
+  if (typeof storageState === 'string') {
+    if (!existsSync(storageState)) throw new Error(`Auth storage state not found: ${storageState}`);
+    contextOptions.storageState = storageState;
+  } else if (storageState) {
+    contextOptions.storageState = storageState;
+  }
+
+  const context = await browser.newContext(contextOptions);
 
   const page = await context.newPage();
 

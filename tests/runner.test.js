@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { runPlan } from '../src/runner/run.js';
@@ -22,6 +22,7 @@ function writeRegistry(path, targets) {
       id: target.id,
       submit_url: target.submit_url,
       submission: { mode: target.mode },
+      forms: target.forms || [],
     })),
   }, null, 2));
 }
@@ -222,6 +223,121 @@ describe('plan runner dry-run safety', () => {
       assert.match(calls[0].opts.artifactDir, /001-safe$/);
       assert.ok(existsSync(lines[0].artifact_dir));
       assert.ok(existsSync(join(lines[0].artifact_dir, 'submission-result.json')));
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('requires a saved auth profile for assisted execution', async () => {
+    const dir = tempDir();
+    try {
+      const plan = join(dir, 'plan.json');
+      const results = join(dir, 'results.jsonl');
+      const registry = join(dir, 'registry.json');
+      writeRegistry(registry, [
+        { id: 'needs-login', submit_url: 'https://login.example/submit', mode: 'assisted' },
+      ]);
+      writeFileSync(plan, JSON.stringify({
+        created_at: 'plan-1',
+        registry,
+        targets: [
+          { id: 'needs-login', submit_url: 'https://login.example/submit', mode: 'assisted' },
+        ],
+      }, null, 2));
+
+      const summary = await runPlan(plan, {
+        assisted: true,
+        authDir: join(dir, 'auth'),
+        delay: '0ms',
+        results,
+      });
+      const lines = readFileSync(results, 'utf-8').trim().split('\n').map(JSON.parse);
+
+      assert.equal(summary.skipped, 1);
+      assert.match(lines[0].reason, /^assisted_auth_profile_missing:/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('injects storage state when assisted execution has a saved auth profile', async () => {
+    const dir = tempDir();
+    try {
+      const plan = join(dir, 'plan.json');
+      const results = join(dir, 'results.jsonl');
+      const registry = join(dir, 'registry.json');
+      const authDir = join(dir, 'auth');
+      const authState = join(authDir, 'needs-login.storage-state.json');
+      writeRegistry(registry, [
+        { id: 'needs-login', submit_url: 'https://login.example/submit', mode: 'assisted' },
+      ]);
+      writeFileSync(plan, JSON.stringify({
+        created_at: 'plan-1',
+        registry,
+        targets: [
+          { order: 1, id: 'needs-login', submit_url: 'https://login.example/submit', mode: 'assisted' },
+        ],
+      }, null, 2));
+      mkdirSync(authDir, { recursive: true });
+      writeFileSync(authState, JSON.stringify({ cookies: [], origins: [] }));
+
+      const calls = [];
+      const summary = await runPlan(plan, {
+        assisted: true,
+        execute: true,
+        skipReadinessCheck: true,
+        authDir,
+        delay: '0ms',
+        results,
+        configObject: readyConfig(),
+        submitFn: async (site, opts) => {
+          calls.push({ site, opts });
+          return { status: 'pending_review', url: 'https://login.example/listing/demo' };
+        },
+      });
+
+      assert.equal(summary.submitted, 1);
+      assert.equal(calls[0].opts.config._engine, 'playwright');
+      assert.equal(calls[0].opts.config.browser.engine, 'playwright');
+      assert.equal(calls[0].opts.config._authProfile, 'needs-login');
+      assert.equal(calls[0].opts.config._authStatePath, authState);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('rejects assisted auth execution with non-Playwright engines', async () => {
+    const dir = tempDir();
+    try {
+      const plan = join(dir, 'plan.json');
+      const results = join(dir, 'results.jsonl');
+      const registry = join(dir, 'registry.json');
+      const authDir = join(dir, 'auth');
+      const authState = join(authDir, 'needs-login.storage-state.json');
+      writeRegistry(registry, [
+        { id: 'needs-login', submit_url: 'https://login.example/submit', mode: 'assisted' },
+      ]);
+      writeFileSync(plan, JSON.stringify({
+        created_at: 'plan-1',
+        registry,
+        targets: [
+          { id: 'needs-login', submit_url: 'https://login.example/submit', mode: 'assisted' },
+        ],
+      }, null, 2));
+      mkdirSync(authDir, { recursive: true });
+      writeFileSync(authState, JSON.stringify({ cookies: [], origins: [] }));
+
+      const summary = await runPlan(plan, {
+        assisted: true,
+        authDir,
+        engine: 'bb',
+        delay: '0ms',
+        results,
+      });
+      const lines = readFileSync(results, 'utf-8').trim().split('\n').map(JSON.parse);
+
+      assert.equal(summary.skipped, 1);
+      assert.equal(lines[0].reason, 'assisted_auth_requires_playwright:bb');
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
