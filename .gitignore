@@ -6,6 +6,9 @@ config.yml
 backlink-pilot.yaml
 .env
 screenshots/
+runs/
+playwright/.auth/
+*.trace.zip
 *.log
 .DS_Store
 logs/

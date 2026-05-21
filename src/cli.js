@@ -10,6 +10,13 @@ import { pingIndexNow } from './indexnow.js';
 import { showStatus } from './tracker.js';
 import { forceUpdate } from './bb-update.js';
 import { runCampaign } from './campaign.js';
+import {
+  importTargetsCommand,
+  listTargetsCommand,
+  normalizeTargetsCommand,
+  statsTargetsCommand,
+} from './targets/commands.js';
+import { buildSubmissionPlan, saveSubmissionPlan } from './planner/plan.js';
 
 const program = new Command();
 
@@ -126,6 +133,90 @@ program
   .option('--json', 'Output as JSON')
   .action(async (opts) => {
     await showStatus(opts);
+  });
+
+const targets = program
+  .command('targets')
+  .description('Manage the canonical backlink target registry');
+
+targets
+  .command('import <file>')
+  .description('Import targets from YAML, JSON, or CSV into the canonical registry')
+  .option('--registry <path>', 'Canonical registry path')
+  .option('--source <name>', 'Source label to attach to imported targets')
+  .option('--type <type>', 'Default target type when source rows do not provide one')
+  .option('--lang <lang>', 'Default language when source rows do not provide one')
+  .option('--group <group>', 'Default group when source rows do not provide one')
+  .action(async (file, opts) => {
+    await importTargetsCommand(file, opts);
+  });
+
+targets
+  .command('list')
+  .description('List targets from the canonical registry')
+  .option('--registry <path>', 'Canonical registry path')
+  .option('--free', 'Only list free targets')
+  .option('--paid', 'Only list paid targets')
+  .option('--mode <mode>', 'Filter by submission mode')
+  .option('--risk <risk>', 'Filter by risk level')
+  .option('--lang <lang>', 'Filter by language')
+  .option('--source <name>', 'Filter by source')
+  .option('--runnable', 'Only list runnable candidates: auto_safe, auto_candidate, assisted')
+  .option('--limit <n>', 'Maximum rows to print')
+  .option('--json', 'Output full rows as JSON')
+  .action(async (opts) => {
+    await listTargetsCommand(opts);
+  });
+
+targets
+  .command('normalize')
+  .description('Re-normalize, reclassify, and deduplicate the canonical registry')
+  .option('--registry <path>', 'Canonical registry path')
+  .action(async (opts) => {
+    await normalizeTargetsCommand(opts);
+  });
+
+targets
+  .command('stats')
+  .description('Show canonical registry statistics')
+  .option('--registry <path>', 'Canonical registry path')
+  .option('--json', 'Output as JSON')
+  .action(async (opts) => {
+    await statsTargetsCommand(opts);
+  });
+
+program
+  .command('plan')
+  .description('Build a safe submission plan from the canonical target registry')
+  .option('--registry <path>', 'Canonical registry path')
+  .option('--product-config <path>', 'Product config path to include in the plan')
+  .option('--free-only', 'Only include free targets')
+  .option('--allow-unknown-pricing', 'With --free-only, also include targets where pricing has not been verified')
+  .option('--mode <mode>', 'Submission mode to include; use runnable for auto_safe/auto_candidate/assisted')
+  .option('--lang <lang>', 'Filter by target language')
+  .option('--source <name>', 'Filter by source')
+  .option('--limit <n>', 'Maximum target count', '30')
+  .option('--include-risk', 'Allow high-risk targets in the plan')
+  .option('--output <path>', 'Write plan to JSON/YAML file')
+  .option('--json', 'Print JSON to stdout')
+  .action(async (opts) => {
+    const plan = buildSubmissionPlan(opts);
+    if (opts.output) {
+      saveSubmissionPlan(plan, opts.output);
+      console.log(`Plan written: ${opts.output}`);
+      console.log(`Targets queued: ${plan.targets.length}`);
+      console.log(`Excluded: ${plan.excluded.length}`);
+      return;
+    }
+    if (opts.json) {
+      console.log(JSON.stringify(plan, null, 2));
+      return;
+    }
+    console.log(`Targets queued: ${plan.targets.length}`);
+    for (const target of plan.targets) {
+      console.log(`${target.order}. ${target.name} — ${target.mode} — ${target.submit_url}`);
+    }
+    console.log(`Excluded: ${plan.excluded.length}`);
   });
 
 program
