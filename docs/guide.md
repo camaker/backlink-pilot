@@ -45,9 +45,9 @@ Just tell Claude what you want in natural language:
 ```
 
 Claude will:
-1. Check if `config.yaml` exists → if not, ask you 5 questions → generate it
+1. Generate local config from your product URL/details
 2. Check if `bb-browser` is installed → guide you to install if missing
-3. Start Chrome → begin submitting one by one
+3. Auto-start `bb-browser` daemon → begin submitting one by one
 4. Report results after each submission
 
 **That's it. No docs to read, no commands to memorize.**
@@ -101,32 +101,22 @@ bb-browser uses your real Chrome — bypasses all anti-bot detection, Cloudflare
 
 bb-browser 用真实 Chrome，绕过所有反爬检测。
 
-### 3. Configure
+### 3. Auto-configure
 
 ```bash
-cp config.example.yaml config.yaml
+node src/cli.js init --url https://your-product.com
 ```
 
-Edit `config.yaml`:
+Or pass product details directly on the first submission; the CLI creates the gitignored local config automatically:
 
-```yaml
-product:
-  name: "Your Product Name"              # 产品名
-  url: "https://your-product.com"        # 产品 URL
-  description: "One-line description"     # 一句话描述（<160字符）
-  long_description: |                     # 详细描述（2-3句）
-    Your product helps [audience] do [thing].
-    It features [key features].
-  email: "hello@your-product.com"        # 联系邮箱
-  categories: [developer-tools]           # 分类
-  pricing: free                           # free | freemium | paid
-
-browser:
-  engine: bb                              # 推荐用 bb
-
-utm:
-  enabled: true                           # false = 不加 UTM 参数
-  base_url: "https://your-product.com"
+```bash
+node src/cli.js submit futuretools \
+  --product-url https://your-product.com \
+  --product-name "Your Product Name" \
+  --product-description "One-line description" \
+  --product-email hello@your-product.com \
+  --dry-run \
+  --engine bb
 ```
 
 ### 4. Start Chrome

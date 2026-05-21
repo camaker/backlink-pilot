@@ -30,7 +30,7 @@ Detailed tutorial: [docs/tutorial.md](docs/tutorial.md) | Full guide: [docs/guid
 
 ---
 
-## Manual Quick Start
+## Quick Start
 
 ```bash
 # 1. Clone & install
@@ -40,14 +40,26 @@ cd backlink-pilot && npm install
 # 2. Install bb-browser (recommended)
 npm install -g bb-browser
 
-# 3. Configure
-cp config.example.yaml config.yaml
-# Edit config.yaml with your product info
+# 3. Auto-generate local config from your product homepage
+node src/cli.js init --url https://your-product.com
 
 # 4. Submit
 node src/cli.js submit futuretools --engine bb
 node src/cli.js submit https://any-site.com --engine bb
 ```
+
+You can also skip pre-generating config and pass product details directly. The CLI will create the gitignored local `config.yaml` automatically:
+
+```bash
+node src/cli.js submit https://any-site.com/submit \
+  --product-url https://your-product.com \
+  --product-name "Your Product" \
+  --product-description "Short product description" \
+  --product-email hello@your-product.com \
+  --engine bb
+```
+
+When `bb` is selected, the CLI tries to start the `bb-browser` daemon automatically.
 
 ---
 
@@ -64,6 +76,7 @@ node src/cli.js submit https://any-site.com --engine bb
 
 ```bash
 node src/cli.js submit <site-or-url>     # Submit to directory
+node src/cli.js init --url <product-url> # Auto-generate local product config
 node src/cli.js scout <url> --deep       # Discover form fields
 node src/cli.js awesome <repo>           # Generate awesome-list Issue
 node src/cli.js indexnow <url>           # Ping search engines

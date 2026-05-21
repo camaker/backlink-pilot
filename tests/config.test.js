@@ -1,6 +1,64 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { utmUrl } from '../src/config.js';
+import { buildConfig, inferProduct, productOptionsFromInput, utmUrl } from '../src/config.js';
+
+describe('product config automation', () => {
+  it('reads product details from CLI-style options', () => {
+    const product = productOptionsFromInput({
+      productName: 'Test App',
+      productUrl: 'https://test.example',
+      productCategories: 'ai, productivity',
+      productFeatures: 'fast, private',
+    });
+
+    assert.equal(product.name, 'Test App');
+    assert.equal(product.url, 'https://test.example');
+    assert.deepEqual(product.categories, ['ai', 'productivity']);
+    assert.deepEqual(product.features, ['fast', 'private']);
+  });
+
+  it('infers missing product fields from URL without manual YAML editing', async () => {
+    const originalFetch = globalThis.fetch;
+    globalThis.fetch = async () => {
+      throw new Error('offline');
+    };
+
+    let product;
+    try {
+      product = await inferProduct({
+        productUrl: 'https://example.com',
+        productDescription: 'A useful product.',
+      });
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+
+    assert.equal(product.url, 'https://example.com');
+    assert.equal(product.name, 'Example');
+    assert.equal(product.email, 'hello@example.com');
+    assert.equal(product.description, 'A useful product.');
+  });
+
+  it('builds a runnable default config from inferred product details', () => {
+    const config = buildConfig({
+      name: 'Test App',
+      url: 'https://test.example',
+      description: 'A useful product.',
+      long_description: 'A useful product.',
+      email: 'hello@test.example',
+      categories: ['ai'],
+      pricing: 'free',
+      logo_url: '',
+      github_url: '',
+      twitter: '',
+      features: [],
+    });
+
+    assert.equal(config.product.name, 'Test App');
+    assert.equal(config.browser.engine, 'bb');
+    assert.equal(config.utm.base_url, 'https://test.example');
+  });
+});
 
 describe('utmUrl', () => {
   it('appends UTM params by default', () => {

@@ -35,6 +35,14 @@ function bb(...args) {
   }
 }
 
+function tryBb(...args) {
+  try {
+    return bb(...args);
+  } catch {
+    return null;
+  }
+}
+
 function escapeJs(str) {
   return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n');
 }
@@ -44,9 +52,32 @@ function escapeJs(str) {
  */
 export function isBbAvailable() {
   try {
-    execFileSync('which', ['bb-browser'], { encoding: 'utf-8' });
+    execFileSync('bb-browser', ['--version'], { encoding: 'utf-8', timeout: 10000 });
     return true;
   } catch { return false; }
+}
+
+export function ensureBbRunning() {
+  if (!isBbAvailable()) return false;
+  if (tryBb('tab', 'list') !== null) return true; // health check uses bb('tab', 'list')
+
+  try {
+    execFileSync('bb-browser', ['daemon', 'start'], {
+      encoding: 'utf-8',
+      timeout: _bbTimeout,
+    });
+  } catch {
+    try {
+      execFileSync('bb-browser', ['open', 'about:blank'], {
+        encoding: 'utf-8',
+        timeout: _bbTimeout,
+      });
+    } catch {
+      return false;
+    }
+  }
+
+  return tryBb('tab', 'list') !== null;
 }
 
 /**
@@ -63,23 +94,11 @@ export class BbPage {
 
     // Verify Chrome is reachable — use 'tab list' instead of 'status'
     // because 'status' can return "running" even when commands timeout
-    try {
-      bb('tab', 'list');
-    } catch (e) {
-      const msg = e.message || '';
-      if (msg.includes('超时') || msg.includes('timeout') || msg.includes('Timeout')) {
-        throw new Error(
-          `bb-browser Chrome is not responding (commands timeout).\n` +
-          `  Try restarting Chrome:\n` +
-          `    1. Kill the managed Chrome: kill $(cat ~/.bb-browser/browser/cdp-port 2>/dev/null && lsof -ti :19825)\n` +
-          `    2. Relaunch: bb-browser open about:blank\n` +
-          `    3. Retry your command.`
-        );
-      }
+    if (!ensureBbRunning()) {
       throw new Error(
-        `bb-browser Chrome is not running.\n` +
-        `  Start it with: bb-browser open about:blank\n` +
-        `  Then retry your command.`
+        `bb-browser Chrome is not running and could not be auto-started.\n` +
+        `  Try manually: bb-browser daemon start\n` +
+        `  Or: bb-browser open about:blank`
       );
     }
   }

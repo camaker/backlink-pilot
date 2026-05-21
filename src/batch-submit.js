@@ -5,6 +5,9 @@
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { createSession, delay, humanType } from './browser.js';
+import { resolve } from 'path';
+import { fileURLToPath } from 'url';
+import { loadConfig, utmUrl } from './config.js';
 
 const TIMEOUT_MS = 30000;
 const MIN_DELAY = 15000;  // 15-45s between submissions
@@ -49,6 +52,20 @@ function pickRandom(arr) {
 }
 
 // Load resources — supports both flat array and { profiles, blog_comments } format
+function productToSite(product) {
+  return {
+    name: product.name,
+    url: product.utm_url || product.url,
+    email: product.email,
+  };
+}
+
+function loadLegacySites() {
+  if (!existsSync('resources/sites.json')) return [];
+  const sites = JSON.parse(readFileSync('resources/sites.json', 'utf-8'));
+  return sites.sites || [];
+}
+
 function loadResources() {
   if (!existsSync('resources/backlink-resources.json')) {
     console.error('❌ resources/backlink-resources.json not found.');
@@ -56,14 +73,8 @@ function loadResources() {
     console.error('   cp resources/backlink-resources.example.json resources/backlink-resources.json');
     process.exit(1);
   }
-  if (!existsSync('resources/sites.json')) {
-    console.error('❌ resources/sites.json not found.');
-    console.error('   Create it with your product info. See resources/ for format.');
-    process.exit(1);
-  }
 
   const raw = JSON.parse(readFileSync('resources/backlink-resources.json', 'utf-8'));
-  const sites = JSON.parse(readFileSync('resources/sites.json', 'utf-8'));
 
   let allResources;
   if (Array.isArray(raw)) {
@@ -75,7 +86,7 @@ function loadResources() {
     ];
   }
 
-  return { resources: allResources, sites: sites.sites };
+  return { resources: allResources };
 }
 
 // Priority: blog_comment with url_field > blog_comment without > profile
@@ -331,12 +342,18 @@ async function processResource(resource, site, page, log) {
 // --- Main ---
 async function batchSubmit(opts = {}) {
   const limit = opts.limit || 10;
-  const siteIndex = opts.siteIndex ?? Math.floor(Math.random() * 3); // random site if not specified
+  const siteIndex = opts.siteIndex ?? 0;
   const dryRun = opts.dryRun || false;
 
   console.log('🚀 Batch Backlink Submission v2\n');
 
-  const { resources, sites } = loadResources();
+  const { resources } = loadResources();
+  const config = await loadConfig(opts);
+  if (opts.engine) config._engine = opts.engine;
+  const sites = [
+    productToSite({ ...config.product, utm_url: utmUrl(config, 'blog-comment') }),
+    ...loadLegacySites(),
+  ];
   const log = loadLog();
   const globalHistory = loadGlobalHistory();
 
@@ -375,9 +392,7 @@ async function batchSubmit(opts = {}) {
   const toProcess = actionable.slice(0, limit);
 
   // Resolve engine from CLI args
-  const sessionConfig = { browser: { headless: true } };
-  if (opts.engine) sessionConfig._engine = opts.engine;
-  const { page, close } = await createSession(sessionConfig);
+  const { page, close } = await createSession(config);
 
   try {
     for (let i = 0; i < toProcess.length; i++) {
@@ -416,8 +431,12 @@ async function batchSubmit(opts = {}) {
   console.log(`  📁 Log: ${getLogPath()}\n`);
 }
 
+function isMainModule() {
+  return process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1]);
+}
+
 // CLI
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (isMainModule()) {
   const args = process.argv.slice(2);
   const opts = {};
 
@@ -425,6 +444,16 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     if (args[i] === '--limit' || args[i] === '-l') { opts.limit = parseInt(args[++i], 10); }
     else if (args[i] === '--site' || args[i] === '-s') { opts.siteIndex = parseInt(args[++i], 10); }
     else if (args[i] === '--engine') { opts.engine = args[++i]; }
+    else if (args[i] === '--config') { opts.config = args[++i]; }
+    else if (args[i] === '--product-url') { opts.productUrl = args[++i]; }
+    else if (args[i] === '--product-name') { opts.productName = args[++i]; }
+    else if (args[i] === '--product-description') { opts.productDescription = args[++i]; }
+    else if (args[i] === '--product-long-description') { opts.productLongDescription = args[++i]; }
+    else if (args[i] === '--product-email') { opts.productEmail = args[++i]; }
+    else if (args[i] === '--product-categories') { opts.productCategories = args[++i]; }
+    else if (args[i] === '--product-features') { opts.productFeatures = args[++i]; }
+    else if (args[i] === '--product-pricing') { opts.productPricing = args[++i]; }
+    else if (args[i] === '--no-write-config') { opts.writeConfig = false; }
     else if (args[i] === '--dry-run') { opts.dryRun = true; }
   }
 

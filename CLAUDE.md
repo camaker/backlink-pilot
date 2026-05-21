@@ -20,26 +20,34 @@ If bb-browser is missing, install it:
 npm install -g bb-browser
 ```
 
-### Step 2: Create config.yaml
-Ask the user these questions (and ONLY these — keep it simple):
-1. Product name? (e.g. "Metric Converter")
-2. Product URL? (e.g. "https://metric-converter.net")
-3. One-line description? (under 160 chars)
-4. Longer description? (2-3 sentences about features and audience)
-5. Contact email?
+### Step 2: Auto-generate product config
+Do not ask the user to manually edit YAML. Prefer one command:
 
-Then generate `config.yaml` from `config.example.yaml` with their answers. Set `browser.engine: bb`.
-
-### Step 3: Start Chrome
 ```bash
-bb-browser open about:blank
+node src/cli.js init --url https://metric-converter.net
 ```
-If this times out or errors, guide user to:
+
+If the user gives product details in chat, pass them as flags:
+
 ```bash
-# Kill any stuck Chrome
-pkill -f "bb-browser" || true
-# Retry
-bb-browser open about:blank
+node src/cli.js submit futuretools \
+  --product-url https://metric-converter.net \
+  --product-name "Metric Converter" \
+  --product-description "Fast metric and unit conversion." \
+  --product-email hello@metric-converter.net \
+  --dry-run \
+  --engine bb
+```
+
+The CLI writes gitignored `config.yaml` automatically unless `--no-write-config` is used.
+
+### Step 3: Browser automation
+`bb-browser` daemon is started automatically when `--engine bb` is used. If auto-start fails, check:
+
+```bash
+bb-browser --version
+bb-browser status
+bb-browser daemon start
 ```
 
 ### Step 4: Submit
@@ -52,6 +60,8 @@ node src/cli.js submit futuretools --engine bb
 
 | Command | What it does |
 |---------|-------------|
+| `node src/cli.js init --url <product-url>` | Auto-generate local product config |
+| `node src/cli.js campaign <product-url>` | Submit product to selected backlink targets |
 | `node src/cli.js submit <site>` | Submit to a known site adapter |
 | `node src/cli.js submit <url>` | Generic submission to any directory URL |
 | `node src/cli.js scout <url> --deep` | Discover form fields on a new site |
@@ -105,7 +115,8 @@ node src/cli.js submit https://some-directory.com/submit --engine bb
 
 | User says | You do |
 |-----------|--------|
-| "帮我提交外链" / "submit backlinks" | Check config.yaml exists → ask what sites → run submit |
+| "给 https://example.com 这个网站提交外链" / "submit backlinks for https://example.com" | Treat URL as product URL → run `node src/cli.js campaign https://example.com --limit 3 --engine bb` |
+| "帮我提交外链" / "submit backlinks" | Get product URL/details if needed → run `campaign <product-url>` |
 | "提交到所有免费站" / "submit to all free sites" | Filter targets.yaml for `auto: yes`, exclude `status: dead/paid`, submit one by one with pacing |
 | "这个站能提交吗" / "can I submit to this site?" | Run `scout <url> --deep` to check |
 | "提交情况" / "status" | Run `node src/cli.js status` |
@@ -135,7 +146,7 @@ utm:
 ## File Layout
 
 ```
-config.yaml              ← User's product config (gitignored)
+config.yaml              ← Auto-generated product config (gitignored)
 config.example.yaml      ← Template
 targets.yaml             ← 259 target sites with status
 submissions.yaml         ← Submission history (auto-generated)

@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { existsSync, renameSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 
 describe('batch-submit resource loading', () => {
   it('resources/backlink-resources.example.json exists', () => {
@@ -21,12 +21,13 @@ describe('batch-submit resource loading', () => {
     assert.equal(typeof entry.has_captcha, 'boolean');
   });
 
-  it('batchSubmit exits with error when resources missing', async () => {
-    // We test the guard logic directly rather than running the full function
-    // to avoid side effects
+  it('batchSubmit no longer requires manually maintained resources/sites.json', async () => {
     const resourcePath = 'resources/backlink-resources.json';
-    const sitesPath = 'resources/sites.json';
     assert.ok(existsSync(resourcePath) || true, 'guard should check existence');
-    assert.ok(existsSync(sitesPath), 'sites.json should exist');
+
+    const src = readFileSync('src/batch-submit.js', 'utf-8');
+    assert.ok(src.includes('loadConfig(opts)'), 'batchSubmit should load product config automatically');
+    assert.ok(src.includes('loadLegacySites'), 'legacy sites.json should be optional fallback only');
+    assert.ok(!src.includes('resources/sites.json not found'), 'sites.json should not be required');
   });
 });

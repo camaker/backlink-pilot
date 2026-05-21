@@ -30,7 +30,7 @@ Claude 自动读取 `CLAUDE.md`，引导你配置产品信息、安装 bb-browse
 
 ---
 
-## 手动快速开始
+## 快速开始
 
 ```bash
 # 1. 克隆安装
@@ -40,14 +40,26 @@ cd backlink-pilot && npm install
 # 2. 安装 bb-browser（推荐）
 npm install -g bb-browser
 
-# 3. 配置产品信息
-cp config.example.yaml config.yaml
-# 编辑 config.yaml，填入产品名、网址、描述
+# 3. 自动生成本地配置
+node src/cli.js init --url https://your-product.com
 
 # 4. 开始提交
 node src/cli.js submit futuretools --engine bb
 node src/cli.js submit https://any-site.com --engine bb
 ```
+
+也可以完全不预先生成配置，直接在命令里传产品信息；工具会自动生成被 `.gitignore` 忽略的本地 `config.yaml`：
+
+```bash
+node src/cli.js submit https://any-site.com/submit \
+  --product-url https://your-product.com \
+  --product-name "Your Product" \
+  --product-description "Short product description" \
+  --product-email hello@your-product.com \
+  --engine bb
+```
+
+`bb-browser` 会在需要时自动启动 daemon；通常不需要手动执行 `bb-browser daemon start`。
 
 ---
 
@@ -64,6 +76,8 @@ node src/cli.js submit https://any-site.com --engine bb
 
 ```bash
 node src/cli.js submit <站点名或URL>     # 提交到目录站
+node src/cli.js campaign <产品官网>      # 自动选择外链目标并提交
+node src/cli.js init --url <产品官网>    # 自动生成本地产品配置
 node src/cli.js scout <URL> --deep       # 侦察站点表单
 node src/cli.js awesome <仓库名>          # 生成 awesome-list Issue
 node src/cli.js indexnow <URL>           # 通知搜索引擎
