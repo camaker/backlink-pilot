@@ -1,4 +1,5 @@
 import { verifyBacklink } from './backlink.js';
+import { verifyResults } from './results.js';
 
 export async function verifyBacklinkCommand(listingUrl, opts = {}) {
   if (!opts.productUrl) {
@@ -24,4 +25,21 @@ export async function verifyBacklinkCommand(listingUrl, opts = {}) {
   }
   if (result.error) console.log(`Error: ${result.error}`);
   return result;
+}
+
+export async function verifyResultsCommand(resultsPath, opts = {}) {
+  const summary = await verifyResults(resultsPath, opts);
+  if (opts.json) {
+    console.log(JSON.stringify(summary, null, 2));
+    return summary;
+  }
+
+  console.log(`Results: ${summary.results}`);
+  console.log(`Output: ${summary.output}`);
+  console.log(`Checked: ${summary.checked}`);
+  console.log(`Verified: ${summary.verified}`);
+  console.log(`Not found: ${summary.not_found}`);
+  console.log(`Skipped: ${summary.skipped}`);
+  console.log(`Failed: ${summary.failed}`);
+  return summary;
 }

@@ -18,7 +18,7 @@ import {
 } from './targets/commands.js';
 import { buildSubmissionPlan, saveSubmissionPlan } from './planner/plan.js';
 import { runPlan } from './runner/run.js';
-import { verifyBacklinkCommand } from './verification/commands.js';
+import { verifyBacklinkCommand, verifyResultsCommand } from './verification/commands.js';
 import { scoutPlan } from './scout/plan.js';
 
 const program = new Command();
@@ -292,6 +292,18 @@ program
   .option('--json', 'Output as JSON')
   .action(async (listingUrl, opts) => {
     await verifyBacklinkCommand(listingUrl, opts);
+  });
+
+program
+  .command('verify-results <results>')
+  .description('Verify backlinks from a run-plan results.jsonl file')
+  .requiredOption('--product-url <url>', 'Product URL expected on listing pages')
+  .option('--output <path>', 'Verification JSONL output path')
+  .option('--limit <n>', 'Maximum result rows to verify')
+  .option('--timeout <ms>', 'Fetch timeout in milliseconds')
+  .option('--json', 'Output summary as JSON')
+  .action(async (results, opts) => {
+    await verifyResultsCommand(results, opts);
   });
 
 program
