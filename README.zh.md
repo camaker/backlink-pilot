@@ -134,6 +134,20 @@ node src/batch-submit.js --limit N       # 批量博客评论
 
 ---
 
+## 验证闭环
+
+`run-plan --execute` 会同时记录浏览器最终 URL 和提取到的 listing 候选。只有高置信候选会写入 `listing_url`；低置信候选只保留在 `listing_url_candidates` 里，供人工复核。
+
+```bash
+node src/cli.js verify-results runs/batch-001/results.jsonl \
+  --product-url https://your-product.com \
+  --output runs/batch-001/verification-results.jsonl
+```
+
+如果目标站只返回 thank-you 页、submit 页、checkout 页、login 页或低置信普通 URL，验证会以 `missing_listing_url` 或 `no_high_confidence_listing_url` 跳过，不会假装外链已经存在。
+
+---
+
 ## 外链策略
 
 **为什么要做外链？** Google 排名逻辑 = 别的网站链接到你 = 投票。票越多、来源越权威，排名越高。

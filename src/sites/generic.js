@@ -174,6 +174,24 @@ async function capturePageArtifact(page, artifactDir, name, extra = {}) {
   } catch {}
 }
 
+async function extractPageLinks(page) {
+  try {
+    const handles = await page.locator('a').all();
+    const links = [];
+    for (const handle of handles) {
+      const href = await handle.getAttribute('href').catch(() => '');
+      if (!href) continue;
+      links.push({
+        href,
+        anchor_text: (await handle.textContent().catch(() => '') || '').replace(/\s+/g, ' ').trim(),
+      });
+    }
+    return links;
+  } catch {
+    return [];
+  }
+}
+
 export function isAuthenticatedRun(config = {}) {
   return Boolean(config._authStatePath);
 }
@@ -345,12 +363,19 @@ export default {
       }
 
       const currentUrl = page.url();
+      const finalBodyText = await page.textContent('body').catch(() => '');
+      const finalHtml = typeof page.content === 'function'
+        ? await page.content().catch(() => '')
+        : '';
+      const finalLinks = await extractPageLinks(page);
       await capturePageArtifact(page, artifactDir, '03-after-submit', {
         submitted: Boolean(submitHandle),
       });
       const result = {
         url: currentUrl,
-        body_text: await page.textContent('body').catch(() => ''),
+        body_text: finalBodyText,
+        html: finalHtml,
+        links: finalLinks,
         confirmation: submitHandle
           ? 'Generic submission completed — verify manually'
           : 'filled_unsubmitted: no submit button found',

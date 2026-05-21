@@ -133,6 +133,20 @@ node src/batch-submit.js --limit N       # Batch blog comments
 
 ---
 
+## Verification Loop
+
+`run-plan --execute` records both the browser's final URL and extracted listing candidates. Only high-confidence listing candidates are written to `listing_url`; lower-confidence candidates stay in `listing_url_candidates` for manual review.
+
+```bash
+node src/cli.js verify-results runs/batch-001/results.jsonl \
+  --product-url https://your-product.com \
+  --output runs/batch-001/verification-results.jsonl
+```
+
+If a target only returns a thank-you page, submit page, checkout page, login page, or a generic low-confidence URL, verification skips it with `missing_listing_url` or `no_high_confidence_listing_url` instead of pretending a backlink exists.
+
+---
+
 ## Strategy
 
 **Why backlinks?** Google ranking = other sites linking to you = votes. More quality votes = higher ranking.

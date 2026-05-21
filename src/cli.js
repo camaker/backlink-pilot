@@ -379,6 +379,7 @@ program
   .option('--output <path>', 'Verification JSONL output path')
   .option('--limit <n>', 'Maximum result rows to verify')
   .option('--timeout <ms>', 'Fetch timeout in milliseconds')
+  .option('--min-listing-confidence <n>', 'Minimum extracted listing URL confidence to verify', '0.75')
   .option('--json', 'Output summary as JSON')
   .action(async (results, opts) => {
     await verifyResultsCommand(results, opts);

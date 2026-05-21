@@ -2,6 +2,8 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { verifyBacklink } from './backlink.js';
 
+const DEFAULT_MIN_LISTING_CONFIDENCE = 0.75;
+
 function ensureParent(path) {
   mkdirSync(dirname(path), { recursive: true });
 }
@@ -29,6 +31,7 @@ export async function verifyResults(resultsPath, opts = {}) {
   const limit = Number.parseInt(opts.limit || rows.length, 10);
   const max = Number.isFinite(limit) && limit > 0 ? limit : rows.length;
   const verifyFn = opts.verifyFn || verifyBacklink;
+  const minConfidence = Number(opts.minListingConfidence || DEFAULT_MIN_LISTING_CONFIDENCE);
   const summary = {
     results: resultsPath,
     output,
@@ -40,12 +43,16 @@ export async function verifyResults(resultsPath, opts = {}) {
   };
 
   for (const row of rows.slice(0, max)) {
-    const listingUrl = row.listing_url || row.url || '';
+    const candidates = Array.isArray(row.listing_url_candidates) ? row.listing_url_candidates : [];
+    const candidate = candidates.find(item => Number(item.confidence || 0) >= minConfidence);
+    const listingUrl = row.listing_url || candidate?.url || '';
     if (!listingUrl) {
       appendJsonl(output, {
         target_id: row.target_id,
         status: 'skipped',
-        reason: 'missing_listing_url',
+        reason: candidates.length ? 'no_high_confidence_listing_url' : 'missing_listing_url',
+        listing_url_candidates: candidates,
+        min_listing_confidence: minConfidence,
         at: new Date().toISOString(),
       });
       summary.skipped++;
@@ -56,6 +63,8 @@ export async function verifyResults(resultsPath, opts = {}) {
     appendJsonl(output, {
       target_id: row.target_id,
       submission_status: row.status,
+      listing_url_source: row.listing_url ? 'result_listing_url' : candidate?.source || '',
+      listing_url_confidence: row.listing_url ? row.listing_url_confidence || 1 : candidate?.confidence || 0,
       ...result,
     });
 

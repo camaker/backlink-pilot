@@ -10,6 +10,7 @@ import {
   assertProductReadiness,
   validateProductReadiness,
 } from '../readiness/product.js';
+import { extractListingCandidates } from '../verification/listing.js';
 import {
   ensureDir,
   targetArtifactDir,
@@ -253,17 +254,28 @@ export async function runPlan(planPath, opts = {}) {
       const classified = submission?.status
         ? { status: submission.status, reasons: submission.reasons || [] }
         : classifySubmissionResult({ confirmation: 'submitted' });
+      const listingExtraction = extractListingCandidates(submission, {
+        submitUrl: target.submit_url,
+        target,
+        registryTarget: registryEntry,
+        product: executionConfig.product,
+      });
       markItem(state, target.id, { status: classified.status });
       writeArtifactJson(join(targetArtifacts, 'submission-result.json'), {
         submission,
         classified,
+        listing_extraction: listingExtraction,
       });
       appendJsonl(resultsPath, {
         target_id: target.id,
         status: classified.status,
         submit_url: target.submit_url,
         confirmation: submission?.confirmation || '',
-        listing_url: submission?.url || '',
+        final_url: submission?.url || '',
+        listing_url: listingExtraction.best?.url || '',
+        listing_url_confidence: listingExtraction.best?.confidence || 0,
+        listing_url_source: listingExtraction.best?.source || '',
+        listing_url_candidates: listingExtraction.candidates,
         error: submission?.error || '',
         artifact_dir: targetArtifacts,
         at: new Date().toISOString(),

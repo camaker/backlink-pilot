@@ -223,6 +223,51 @@ describe('plan runner dry-run safety', () => {
       assert.match(calls[0].opts.artifactDir, /001-safe$/);
       assert.ok(existsSync(lines[0].artifact_dir));
       assert.ok(existsSync(join(lines[0].artifact_dir, 'submission-result.json')));
+      assert.equal(lines[0].final_url, 'https://safe.example/listing/demo');
+      assert.equal(lines[0].listing_url, 'https://safe.example/listing/demo');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('extracts high-confidence listing URLs from submission evidence', async () => {
+    const dir = tempDir();
+    try {
+      const plan = join(dir, 'plan.json');
+      const results = join(dir, 'results.jsonl');
+      const registry = join(dir, 'registry.json');
+      writeRegistry(registry, [
+        { id: 'safe', submit_url: 'https://safe.example/submit', mode: 'auto_safe' },
+      ]);
+      writeFileSync(plan, JSON.stringify({
+        created_at: 'plan-1',
+        registry,
+        targets: [
+          { order: 1, id: 'safe', submit_url: 'https://safe.example/submit', mode: 'auto_safe' },
+        ],
+      }, null, 2));
+
+      await runPlan(plan, {
+        execute: true,
+        delay: '0ms',
+        results,
+        configObject: readyConfig(),
+        submitFn: async () => ({
+          status: 'pending_review',
+          url: 'https://safe.example/thank-you',
+          raw: {
+            url: 'https://safe.example/thank-you',
+            html: '<a href="/tools/demo-app">View listing</a>',
+          },
+        }),
+      });
+      const lines = readFileSync(results, 'utf-8').trim().split('\n').map(JSON.parse);
+
+      assert.equal(lines[0].final_url, 'https://safe.example/thank-you');
+      assert.equal(lines[0].listing_url, 'https://safe.example/tools/demo-app');
+      assert.equal(lines[0].listing_url_source, 'page_link');
+      assert.ok(lines[0].listing_url_confidence >= 0.75);
+      assert.ok(lines[0].listing_url_candidates.length >= 1);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

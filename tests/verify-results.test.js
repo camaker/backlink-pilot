@@ -46,6 +46,58 @@ describe('verifyResults', () => {
     }
   });
 
+  it('uses high-confidence candidates and skips low-confidence candidates', async () => {
+    const dir = tempDir();
+    try {
+      const results = join(dir, 'results.jsonl');
+      const output = join(dir, 'verification.jsonl');
+      writeFileSync(results, [
+        JSON.stringify({
+          target_id: 'candidate',
+          status: 'pending_review',
+          listing_url_candidates: [
+            { url: 'https://dir.example/tools/demo-app', confidence: 0.82, source: 'page_link' },
+          ],
+        }),
+        JSON.stringify({
+          target_id: 'low',
+          status: 'pending_review',
+          listing_url_candidates: [
+            { url: 'https://dir.example/blog/random', confidence: 0.54, source: 'page_link' },
+          ],
+        }),
+        '',
+      ].join('\n'));
+
+      const checked = [];
+      const summary = await verifyResults(results, {
+        productUrl: 'https://product.example',
+        output,
+        verifyFn: async (listingUrl, productUrl) => {
+          checked.push(listingUrl);
+          return {
+            listing_url: listingUrl,
+            product_url: productUrl,
+            http_status: 200,
+            backlink_found: false,
+            status: 'backlink_not_found',
+          };
+        },
+      });
+      const lines = readFileSync(output, 'utf-8').trim().split('\n').map(JSON.parse);
+
+      assert.deepEqual(checked, ['https://dir.example/tools/demo-app']);
+      assert.equal(summary.checked, 1);
+      assert.equal(summary.skipped, 1);
+      assert.equal(lines[0].listing_url_source, 'page_link');
+      assert.equal(lines[0].listing_url_confidence, 0.82);
+      assert.equal(lines[1].reason, 'no_high_confidence_listing_url');
+      assert.equal(lines[1].listing_url_candidates.length, 1);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
   it('requires product URL', async () => {
     const dir = tempDir();
     try {
