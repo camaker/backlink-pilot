@@ -69,3 +69,32 @@ export function mapFormFields(forms = []) {
     })),
   }));
 }
+
+export function productValueForField(product = {}, mappedField = '') {
+  switch (mappedField) {
+    case 'product.name':
+      return product.name || '';
+    case 'product.url':
+      return product.utm_url || product.url || '';
+    case 'product.email':
+      return product.email || '';
+    case 'product.description':
+      return product.long_description || product.description || '';
+    case 'product.category':
+      return Array.isArray(product.categories) ? product.categories[0] || '' : product.category || '';
+    case 'product.tags':
+      return Array.isArray(product.features)
+        ? product.features.join(', ')
+        : Array.isArray(product.tags)
+          ? product.tags.join(', ')
+          : product.tags || '';
+    case 'product.pricing':
+      return product.pricing || '';
+    case 'product.logo':
+      return product.logo_url || '';
+    case 'product.video_url':
+      return product.video_url || '';
+    default:
+      return '';
+  }
+}

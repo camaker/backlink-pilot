@@ -5,6 +5,7 @@ import { join } from 'path';
 import { tmpdir } from 'os';
 import { parse } from 'yaml';
 import { mapField, mapFormFields } from '../src/scout/field-mapper.js';
+import { productValueForField } from '../src/scout/field-mapper.js';
 import {
   applyScoutResultToTarget,
   saveScoutResult,
@@ -37,6 +38,26 @@ describe('scout field mapper', () => {
 
     assert.equal(forms[0].fields[0].mapped_to, 'product.name');
     assert.equal(forms[0].fields[1].mapped_to, 'product.tags');
+  });
+
+  it('resolves product values for mapped fields', () => {
+    const product = {
+      name: 'Demo',
+      url: 'https://demo.example',
+      utm_url: 'https://demo.example?utm_source=x',
+      email: 'hello@demo.example',
+      long_description: 'Long description',
+      categories: ['AI'],
+      features: ['fast', 'private'],
+      pricing: 'free',
+    };
+
+    assert.equal(productValueForField(product, 'product.name'), 'Demo');
+    assert.equal(productValueForField(product, 'product.url'), 'https://demo.example?utm_source=x');
+    assert.equal(productValueForField(product, 'product.description'), 'Long description');
+    assert.equal(productValueForField(product, 'product.category'), 'AI');
+    assert.equal(productValueForField(product, 'product.tags'), 'fast, private');
+    assert.equal(productValueForField(product, 'product.pricing'), 'free');
   });
 });
 

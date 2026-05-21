@@ -2,23 +2,18 @@
 // Works with any directory site by auto-detecting form fields via snapshot
 
 import { withBrowser, delay } from '../browser.js';
-
-// Field detection patterns (reused from batch-submit.js proven selectors)
-const FIELD_PATTERNS = {
-  name: /name|title|product|app.?name|tool.?name/i,
-  url: /url|website|link|homepage|site/i,
-  email: /email|mail|e-mail/i,
-  description: /desc|description|about|summary|detail|intro/i,
-};
+import { mapField, productValueForField } from '../scout/field-mapper.js';
 
 const SUBMIT_PATTERNS = /submit|send|add|post|create|list|suggest|save/i;
+const REQUIRED_MAPPED_FIELDS = new Set(['product.name', 'product.url', 'product.description']);
 
 /**
  * Parse bb-browser snapshot output to find interactive elements
  * Snapshot format: lines like "@3 [textbox] Name ..." or "@7 [button] Submit"
  */
 function parseSnapshot(snapshot) {
-  const fields = { name: null, url: null, email: null, description: null, submit: null };
+  const fields = [];
+  let submit = null;
   const lines = snapshot.split('\n');
 
   for (const line of lines) {
@@ -30,19 +25,28 @@ function parseSnapshot(snapshot) {
 
     // Match input/textarea fields
     if (role === 'textbox' || role === 'combobox') {
-      if (!fields.name && FIELD_PATTERNS.name.test(labelLower)) fields.name = ref;
-      else if (!fields.url && FIELD_PATTERNS.url.test(labelLower)) fields.url = ref;
-      else if (!fields.email && FIELD_PATTERNS.email.test(labelLower)) fields.email = ref;
-      else if (!fields.description && FIELD_PATTERNS.description.test(labelLower)) fields.description = ref;
+      const mappedTo = mapField({ label });
+      if (mappedTo) {
+        fields.push({ ref, role, label, mapped_to: mappedTo });
+      }
     }
 
     // Match submit button
     if ((role === 'button' || role === 'link') && SUBMIT_PATTERNS.test(labelLower)) {
-      if (!fields.submit) fields.submit = ref;
+      if (!submit) submit = ref;
     }
   }
 
-  return fields;
+  return { fields, submit };
+}
+
+function mappedFieldSet(fields) {
+  return new Set(fields.map(field => field.mapped_to));
+}
+
+function missingRequiredMappedFields(fields) {
+  const mapped = mappedFieldSet(fields);
+  return [...REQUIRED_MAPPED_FIELDS].filter(field => !mapped.has(field));
 }
 
 export default {
@@ -86,43 +90,33 @@ export default {
       // 2. Take interactive snapshot
       console.log('  🔍 Scanning form fields...');
       const snapshot = await page.snapshot();
-      const fields = parseSnapshot(snapshot);
+      const parsed = parseSnapshot(snapshot);
+      const fields = parsed.fields;
 
-      const detected = Object.entries(fields)
-        .filter(([, v]) => v)
-        .map(([k, v]) => `${k}=${v}`)
+      const detected = fields
+        .map(field => `${field.mapped_to}=${field.ref}`)
         .join(', ');
       console.log(`  📋 Detected: ${detected || 'none'}`);
 
-      if (!fields.name && !fields.url && !fields.description) {
+      if (!fields.length) {
         throw new Error('No recognizable form fields found. Use scout first.');
       }
 
+      const missing = missingRequiredMappedFields(fields);
+      if (missing.length) {
+        throw new Error(`Required submission fields not detected: ${missing.join(', ')}. Use scout first.`);
+      }
+
       // 3. Fill detected fields
-      if (fields.name) {
-        console.log(`  ✏️  Filling name: ${product.name}`);
-        await page.fill(fields.name, product.name);
+      const filled = new Set();
+      for (const field of fields) {
+        if (filled.has(field.mapped_to)) continue;
+        const value = productValueForField(product, field.mapped_to);
+        if (!value) continue;
+        console.log(`  ✏️  Filling ${field.mapped_to}`);
+        await page.fill(field.ref, value);
         await delay(300);
-      }
-
-      if (fields.url) {
-        const url = product.utm_url || product.url;
-        console.log(`  ✏️  Filling URL: ${url}`);
-        await page.fill(fields.url, url);
-        await delay(300);
-      }
-
-      if (fields.email) {
-        console.log(`  ✏️  Filling email: ${product.email}`);
-        await page.fill(fields.email, product.email);
-        await delay(300);
-      }
-
-      if (fields.description) {
-        const desc = product.long_description || product.description;
-        console.log(`  ✏️  Filling description`);
-        await page.fill(fields.description, desc);
-        await delay(300);
+        filled.add(field.mapped_to);
       }
 
       // 4. Screenshot before submit
@@ -133,9 +127,9 @@ export default {
       } catch {}
 
       // 5. Submit
-      if (fields.submit) {
-        console.log(`  🚀 Clicking submit (${fields.submit})`);
-        await page.click(fields.submit);
+      if (parsed.submit) {
+        console.log(`  🚀 Clicking submit (${parsed.submit})`);
+        await page.click(parsed.submit);
         await delay(3000);
       } else {
         console.log('  ⚠️  No submit button found — form filled but not submitted');
@@ -144,9 +138,10 @@ export default {
       const currentUrl = page.url();
       return {
         url: currentUrl,
-        confirmation: fields.submit
+        body_text: await page.textContent('body').catch(() => ''),
+        confirmation: parsed.submit
           ? 'Generic submission completed — verify manually'
-          : 'Form filled but no submit button found',
+          : 'filled_unsubmitted: no submit button found',
       };
     });
   },

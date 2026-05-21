@@ -27,6 +27,22 @@ describe('generic adapter page validation', () => {
     assert.ok(src.includes('login'), 'should detect login redirects');
     assert.ok(src.includes('payment'), 'should detect payment pages');
   });
+
+  it('generic.js requires mapped required fields before submitting', () => {
+    const src = readFileSync('src/sites/generic.js', 'utf-8');
+    assert.ok(src.includes('REQUIRED_MAPPED_FIELDS'), 'should define required mapped fields');
+    assert.ok(src.includes('product.name'), 'should require product name');
+    assert.ok(src.includes('product.url'), 'should require product URL');
+    assert.ok(src.includes('product.description'), 'should require product description');
+    assert.ok(src.includes('Required submission fields not detected'), 'should fail closed on missing fields');
+  });
+
+  it('generic.js uses shared scout field mapping', () => {
+    const src = readFileSync('src/sites/generic.js', 'utf-8');
+    assert.ok(src.includes('mapField'), 'should use shared field mapper');
+    assert.ok(src.includes('productValueForField'), 'should use shared product value resolver');
+    assert.ok(src.includes('filled_unsubmitted'), 'should distinguish filled forms from submitted forms');
+  });
 });
 
 describe('deprecated adapters are marked', () => {
