@@ -86,6 +86,14 @@ addConfigOptions(program
   .description('Discover submit pages and form fields on a site')
   .option('--deep', 'Follow links to find hidden submit pages')
   .option('--screenshot <path>', 'Save screenshot of submit page')
+  .option('--target-id <id>', 'Target ID when persisting or updating the canonical registry')
+  .option('--persist', 'Persist structured scout result to resources/scout-results')
+  .option('--scout-dir <path>', 'Directory for persisted scout results')
+  .option('--output <path>', 'Write structured scout result to a specific JSON file')
+  .option('--update-registry', 'Update canonical registry with the scout classification')
+  .option('--registry <path>', 'Canonical registry path for --update-registry')
+  .option('--summary', 'Print a YAML scout summary')
+  .option('--json', 'Print full structured scout result as JSON')
 )
   .action(async (url, opts) => {
     const config = await loadConfig({ ...opts, requireProduct: false });

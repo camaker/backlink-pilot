@@ -16,6 +16,7 @@ tmp_*
 test_*
 resources/sites.json
 resources/backlink-resources.json
+resources/scout-results/
 bak/
 .claude-local.md
 docs/.vitepress/dist/
