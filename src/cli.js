@@ -19,6 +19,7 @@ import {
 import { buildSubmissionPlan, saveSubmissionPlan } from './planner/plan.js';
 import { runPlan } from './runner/run.js';
 import { verifyBacklinkCommand } from './verification/commands.js';
+import { scoutPlan } from './scout/plan.js';
 
 const program = new Command();
 
@@ -251,6 +252,34 @@ program
     console.log(`Submitted: ${summary.submitted}`);
     console.log(`Skipped: ${summary.skipped}`);
     console.log(`Failed: ${summary.failed}`);
+    console.log(`State: ${summary.state}`);
+    console.log(`Results: ${summary.results}`);
+  });
+
+program
+  .command('scout-plan <plan>')
+  .description('Scout every target in a generated plan and optionally update the canonical registry')
+  .option('--state <path>', 'Scout state path')
+  .option('--results <path>', 'JSONL scout results path')
+  .option('--limit <n>', 'Maximum targets to scout')
+  .option('--delay <duration>', 'Delay between scouts, e.g. 10s or 1m')
+  .option('--retry', 'Retry targets already marked terminal in the scout state')
+  .option('--mode <mode>', 'Only scout targets with this plan mode')
+  .option('--no-deep', 'Do not follow submit/add links found on the page')
+  .option('--no-persist', 'Do not persist per-target scout JSON files')
+  .option('--update-registry', 'Update canonical registry with scout classifications')
+  .option('--registry <path>', 'Canonical registry path for --update-registry')
+  .option('--scout-dir <path>', 'Directory for persisted scout results')
+  .option('--config <path>', 'Config file path')
+  .option('--product-config <path>', 'Product config path')
+  .option('--engine <engine>', 'Browser engine: bb or playwright')
+  .action(async (plan, opts) => {
+    const summary = await scoutPlan(plan, opts);
+    console.log(`Plan: ${summary.plan}`);
+    console.log(`Processed: ${summary.processed}`);
+    console.log(`Skipped: ${summary.skipped}`);
+    console.log(`Failed: ${summary.failed}`);
+    console.log(`By mode: ${JSON.stringify(summary.by_mode)}`);
     console.log(`State: ${summary.state}`);
     console.log(`Results: ${summary.results}`);
   });

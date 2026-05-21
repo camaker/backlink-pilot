@@ -1,0 +1,92 @@
+import { describe, it } from 'node:test';
+import assert from 'node:assert/strict';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'fs';
+import { join } from 'path';
+import { tmpdir } from 'os';
+import { scoutPlan } from '../src/scout/plan.js';
+
+function tempDir() {
+  return mkdtempSync(join(tmpdir(), 'backlink-pilot-scout-plan-'));
+}
+
+describe('scoutPlan', () => {
+  it('scouts plan targets with a durable state and JSONL results', async () => {
+    const dir = tempDir();
+    try {
+      const plan = join(dir, 'plan.json');
+      const state = join(dir, 'scout-state.json');
+      const results = join(dir, 'scout-results.jsonl');
+      writeFileSync(plan, JSON.stringify({
+        created_at: 'plan-1',
+        targets: [
+          { id: 'a', submit_url: 'https://a.example/submit', mode: 'auto_candidate' },
+          { id: 'b', submit_url: 'https://b.example/submit', mode: 'assisted' },
+        ],
+      }));
+
+      const summary = await scoutPlan(plan, {
+        state,
+        results,
+        delay: '0ms',
+        configObject: { browser: { engine: 'playwright' } },
+        scoutFn: async (url, opts) => ({
+          target_id: opts.targetId,
+          submit_url: url,
+          classification: {
+            mode: opts.targetId === 'a' ? 'auto_safe' : 'assisted',
+            status: opts.targetId === 'a' ? 'mapped' : 'auth_required',
+            reasons: ['test'],
+          },
+        }),
+      });
+
+      const parsedState = JSON.parse(readFileSync(state, 'utf-8'));
+      const lines = readFileSync(results, 'utf-8').trim().split('\n').map(JSON.parse);
+
+      assert.equal(summary.processed, 2);
+      assert.deepEqual(summary.by_mode, { auto_safe: 1, assisted: 1 });
+      assert.equal(parsedState.items.find(item => item.id === 'a').status, 'scouted');
+      assert.equal(parsedState.items.find(item => item.id === 'a').classification_mode, 'auto_safe');
+      assert.equal(lines.length, 2);
+      assert.equal(lines[0].classification.mode, 'auto_safe');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('filters by plan mode and records scout failures', async () => {
+    const dir = tempDir();
+    try {
+      const plan = join(dir, 'plan.json');
+      const state = join(dir, 'scout-state.json');
+      const results = join(dir, 'scout-results.jsonl');
+      writeFileSync(plan, JSON.stringify({
+        created_at: 'plan-1',
+        targets: [
+          { id: 'a', submit_url: 'https://a.example/submit', mode: 'auto_candidate' },
+          { id: 'b', submit_url: 'https://b.example/submit', mode: 'assisted' },
+        ],
+      }));
+
+      const summary = await scoutPlan(plan, {
+        state,
+        results,
+        mode: 'auto_candidate',
+        delay: '0ms',
+        configObject: { browser: { engine: 'playwright' } },
+        scoutFn: async () => {
+          throw new Error('browser unavailable');
+        },
+      });
+
+      const lines = readFileSync(results, 'utf-8').trim().split('\n').map(JSON.parse);
+      assert.equal(summary.processed, 0);
+      assert.equal(summary.failed, 1);
+      assert.equal(lines.length, 1);
+      assert.equal(lines[0].target_id, 'a');
+      assert.equal(lines[0].status, 'scout_failed');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
