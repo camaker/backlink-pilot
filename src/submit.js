@@ -43,6 +43,8 @@ export async function submit(site, opts) {
   // Pass target URL for generic adapter
   if (adapter._targetUrl) config._targetUrl = adapter._targetUrl;
   if (opts.artifactDir) config._artifactDir = opts.artifactDir;
+  if (opts.target) config._planTarget = opts.target;
+  if (opts.registryTarget) config._registryTarget = opts.registryTarget;
 
   const product = {
     ...config.product,

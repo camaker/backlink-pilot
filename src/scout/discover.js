@@ -47,9 +47,43 @@ async function readField(input) {
     id,
     placeholder,
     aria_label: ariaLabel,
+    selector: selectorForField({ tag, type, name, id, placeholder, aria_label: ariaLabel }),
     label: '',
     required,
   };
+}
+
+async function readButton(button) {
+  const tag = await button.evaluate(el => el.tagName.toLowerCase()).catch(() => 'button');
+  const type = await button.getAttribute('type').catch(() => '') || '';
+  const name = await button.getAttribute('name').catch(() => '') || '';
+  const id = await button.getAttribute('id').catch(() => '') || '';
+  const text = await button.textContent().catch(() => '') || '';
+  const value = await button.getAttribute('value').catch(() => '') || '';
+  const selector = selectorForField({ tag, type, name, id });
+  return {
+    tag,
+    type,
+    name,
+    id,
+    text: text.trim() || value,
+    value,
+    selector,
+  };
+}
+
+function cssString(value) {
+  return String(value || '').replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+}
+
+export function selectorForField(field = {}) {
+  const tag = field.tag || 'input';
+  if (field.id) return `${tag}[id="${cssString(field.id)}"]`;
+  if (field.name) return `${tag}[name="${cssString(field.name)}"]`;
+  if (field.placeholder) return `${tag}[placeholder="${cssString(field.placeholder)}"]`;
+  if (field.aria_label) return `${tag}[aria-label="${cssString(field.aria_label)}"]`;
+  if (field.type) return `${tag}[type="${cssString(field.type)}"]`;
+  return tag;
 }
 
 async function inspectForms(page) {
@@ -68,11 +102,9 @@ async function inspectForms(page) {
 
     const submitButtons = [];
     for (const button of buttons) {
-      const type = await button.getAttribute('type').catch(() => '') || '';
-      const text = await button.textContent().catch(() => '') || '';
-      const value = await button.getAttribute('value').catch(() => '') || '';
-      if (/submit|send|add|post|create|list|suggest|save|提交|发送|添加/i.test(`${type} ${text} ${value}`)) {
-        submitButtons.push({ type, text: text.trim() || value });
+      const inspected = await readButton(button);
+      if (/submit|send|add|post|create|list|suggest|save|提交|发送|添加/i.test(`${inspected.type} ${inspected.text} ${inspected.value}`)) {
+        submitButtons.push(inspected);
       }
     }
 

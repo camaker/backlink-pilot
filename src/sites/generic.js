@@ -12,6 +12,7 @@ import {
 
 const SUBMIT_PATTERNS = /submit|send|add|post|create|list|suggest|save/i;
 const REQUIRED_MAPPED_FIELDS = new Set(['product.name', 'product.url', 'product.description']);
+const SELECTOR_SPECIALS = /["\\]/g;
 
 /**
  * Parse bb-browser snapshot output to find interactive elements
@@ -55,6 +56,87 @@ function missingRequiredMappedFields(fields) {
   return [...REQUIRED_MAPPED_FIELDS].filter(field => !mapped.has(field));
 }
 
+function cssString(value) {
+  return String(value || '').replace(SELECTOR_SPECIALS, '\\$&');
+}
+
+export function selectorForScoutField(field = {}) {
+  if (field.selector) return field.selector;
+  const tag = field.tag || (field.type === 'textarea' ? 'textarea' : 'input');
+  if (field.id) return `${tag}[id="${cssString(field.id)}"]`;
+  if (field.name) return `${tag}[name="${cssString(field.name)}"]`;
+  if (field.placeholder) return `${tag}[placeholder="${cssString(field.placeholder)}"]`;
+  if (field.aria_label) return `${tag}[aria-label="${cssString(field.aria_label)}"]`;
+  if (field.type) return `${tag}[type="${cssString(field.type)}"]`;
+  return '';
+}
+
+export function scoutMappedFields(target = {}) {
+  return (target.forms || [])
+    .flatMap(form => form.fields || [])
+    .filter(field => field.mapped_to)
+    .map(field => ({
+      source: 'scout',
+      selector: selectorForScoutField(field),
+      label: field.label || field.name || field.placeholder || field.aria_label || field.id || field.type || '',
+      mapped_to: field.mapped_to,
+      required: Boolean(field.required),
+    }))
+    .filter(field => field.selector);
+}
+
+export function mergeFieldCandidates(...groups) {
+  const byMapped = new Map();
+  for (const field of groups.flat()) {
+    if (!field?.mapped_to) continue;
+    const existing = byMapped.get(field.mapped_to);
+    if (!existing) {
+      byMapped.set(field.mapped_to, field);
+      continue;
+    }
+    const candidates = [
+      ...(existing.candidates || [existing]),
+      ...(field.candidates || [field]),
+    ];
+    byMapped.set(field.mapped_to, { ...existing, candidates });
+  }
+  return [...byMapped.values()].map(field => ({
+    ...field,
+    candidates: field.candidates || [field],
+  }));
+}
+
+function hasSubmitButtonFromScout(target = {}) {
+  return (target.forms || []).some(form =>
+    Array.isArray(form.submit_buttons) && form.submit_buttons.length > 0
+  );
+}
+
+function scoutSubmitButton(target = {}) {
+  for (const form of target.forms || []) {
+    for (const button of form.submit_buttons || []) {
+      if (button.selector) return button.selector;
+    }
+  }
+  return '';
+}
+
+async function fillCandidate(page, field, value) {
+  const candidates = field.candidates || [field];
+  const errors = [];
+  for (const candidate of candidates) {
+    const handle = candidate.selector || candidate.ref;
+    if (!handle) continue;
+    try {
+      await page.fill(handle, value);
+      return { ok: true, handle, source: candidate.source || 'unknown' };
+    } catch (error) {
+      errors.push(`${handle}: ${error.message}`);
+    }
+  }
+  return { ok: false, errors };
+}
+
 async function readPageUrl(page) {
   try {
     return typeof page.url === 'function' ? page.url() : '';
@@ -93,6 +175,7 @@ export default {
   async submit(product, config) {
     const targetUrl = config._genericUrl || config._targetUrl;
     const artifactDir = config._artifactDir;
+    const registryTarget = config._registryTarget || {};
     if (!targetUrl) throw new Error('No target URL provided for generic submission');
 
     return withBrowser({ ...config, _engine: 'bb' }, async ({ page }) => {
@@ -127,18 +210,26 @@ export default {
       console.log('  🔍 Scanning form fields...');
       const snapshot = await page.snapshot();
       const parsed = parseSnapshot(snapshot);
-      const fields = parsed.fields;
+      const scoutFields = scoutMappedFields(registryTarget);
+      const fields = mergeFieldCandidates(scoutFields, parsed.fields.map(field => ({ ...field, source: 'snapshot' })));
+      const submitHandle = parsed.submit || scoutSubmitButton(registryTarget);
       if (artifactDir) {
         writeArtifactText(join(artifactDir, 'snapshot.txt'), snapshot);
         writeArtifactJson(join(artifactDir, 'form-mapping.json'), {
+          mapping_source: scoutFields.length ? 'scout_plus_snapshot' : 'snapshot',
+          scout_fields: scoutFields,
+          snapshot_fields: parsed.fields,
           fields,
-          submit: parsed.submit,
+          submit: submitHandle,
+          snapshot_submit: parsed.submit,
+          scout_submit: scoutSubmitButton(registryTarget),
+          scout_submit_button_detected: hasSubmitButtonFromScout(registryTarget),
           required_mapped_fields: [...REQUIRED_MAPPED_FIELDS],
         });
       }
 
       const detected = fields
-        .map(field => `${field.mapped_to}=${field.ref}`)
+        .map(field => `${field.mapped_to}=${field.selector || field.ref || field.candidates?.map(c => c.selector || c.ref).join('|')}`)
         .join(', ');
       console.log(`  📋 Detected: ${detected || 'none'}`);
 
@@ -153,22 +244,37 @@ export default {
 
       // 3. Fill detected fields
       const filled = new Set();
+      const fillResults = [];
       for (const field of fields) {
         if (filled.has(field.mapped_to)) continue;
         const value = productValueForField(product, field.mapped_to);
         if (!value) continue;
         console.log(`  ✏️  Filling ${field.mapped_to}`);
-        await page.fill(field.ref, value);
+        const result = await fillCandidate(page, field, value);
+        fillResults.push({
+          mapped_to: field.mapped_to,
+          ok: result.ok,
+          handle: result.handle || '',
+          source: result.source || '',
+          errors: result.errors || [],
+        });
+        if (!result.ok) continue;
         await delay(300);
         filled.add(field.mapped_to);
+      }
+      const missingFilledRequired = [...REQUIRED_MAPPED_FIELDS].filter(field => !filled.has(field));
+      if (missingFilledRequired.length) {
+        throw new Error(`Required submission fields could not be filled: ${missingFilledRequired.join(', ')}.`);
       }
       if (artifactDir) {
         writeArtifactJson(join(artifactDir, 'filled-fields.json'), {
           filled: [...filled],
+          fill_results: fillResults,
           skipped: fields
             .filter(field => !filled.has(field.mapped_to))
             .map(field => ({
               ref: field.ref,
+              selector: field.selector,
               label: field.label,
               mapped_to: field.mapped_to,
             })),
@@ -184,6 +290,7 @@ export default {
       await capturePageArtifact(page, artifactDir, '02-before-submit', {
         fields: fields.map(field => ({
           ref: field.ref,
+          selector: field.selector,
           role: field.role,
           label: field.label,
           mapped_to: field.mapped_to,
@@ -191,9 +298,9 @@ export default {
       });
 
       // 5. Submit
-      if (parsed.submit) {
-        console.log(`  🚀 Clicking submit (${parsed.submit})`);
-        await page.click(parsed.submit);
+      if (submitHandle) {
+        console.log(`  🚀 Clicking submit (${submitHandle})`);
+        await page.click(submitHandle);
         await delay(3000);
       } else {
         console.log('  ⚠️  No submit button found — form filled but not submitted');
@@ -201,12 +308,12 @@ export default {
 
       const currentUrl = page.url();
       await capturePageArtifact(page, artifactDir, '03-after-submit', {
-        submitted: Boolean(parsed.submit),
+        submitted: Boolean(submitHandle),
       });
       const result = {
         url: currentUrl,
         body_text: await page.textContent('body').catch(() => ''),
-        confirmation: parsed.submit
+        confirmation: submitHandle
           ? 'Generic submission completed — verify manually'
           : 'filled_unsubmitted: no submit button found',
       };

@@ -51,6 +51,14 @@ describe('generic adapter page validation', () => {
     assert.ok(src.includes('snapshot.txt'), 'should persist interactive snapshot');
     assert.ok(src.includes('adapter-result.json'), 'should persist adapter result');
   });
+
+  it('generic.js reuses scout mappings before snapshot fallbacks', () => {
+    const src = readFileSync('src/sites/generic.js', 'utf-8');
+    assert.ok(src.includes('scoutMappedFields'), 'should read persisted scout mappings');
+    assert.ok(src.includes('mergeFieldCandidates'), 'should merge scout and snapshot candidates');
+    assert.ok(src.includes('scoutSubmitButton'), 'should reuse persisted submit button selectors');
+    assert.ok(src.includes('Required submission fields could not be filled'), 'should fail closed when fill attempts fail');
+  });
 });
 
 describe('deprecated adapters are marked', () => {

@@ -1,0 +1,78 @@
+import { describe, it } from 'node:test';
+import assert from 'node:assert/strict';
+import {
+  mergeFieldCandidates,
+  scoutMappedFields,
+  selectorForScoutField,
+} from '../src/sites/generic.js';
+import { selectorForField } from '../src/scout/discover.js';
+
+describe('scout selector generation', () => {
+  it('builds stable selectors from discovered field attributes', () => {
+    assert.equal(
+      selectorForField({ tag: 'input', name: 'tool[name]' }),
+      'input[name="tool[name]"]'
+    );
+    assert.equal(
+      selectorForField({ tag: 'textarea', id: 'description' }),
+      'textarea[id="description"]'
+    );
+    assert.equal(
+      selectorForField({ tag: 'input', placeholder: 'Website URL' }),
+      'input[placeholder="Website URL"]'
+    );
+    assert.equal(
+      selectorForField({ tag: 'button', type: 'submit' }),
+      'button[type="submit"]'
+    );
+  });
+});
+
+describe('generic scout mapping reuse', () => {
+  it('converts registry scout forms into fillable generic field candidates', () => {
+    const fields = scoutMappedFields({
+      forms: [
+        {
+          fields: [
+            { tag: 'input', name: 'name', mapped_to: 'product.name', required: true },
+            { tag: 'input', selector: 'input[data-url]', mapped_to: 'product.url' },
+            { tag: 'input', name: 'ignored' },
+          ],
+        },
+      ],
+    });
+
+    assert.deepEqual(fields.map(field => field.mapped_to), ['product.name', 'product.url']);
+    assert.equal(fields[0].selector, 'input[name="name"]');
+    assert.equal(fields[0].source, 'scout');
+    assert.equal(fields[1].selector, 'input[data-url]');
+  });
+
+  it('uses existing selectors and derives missing ones', () => {
+    assert.equal(
+      selectorForScoutField({ selector: 'textarea.description' }),
+      'textarea.description'
+    );
+    assert.equal(
+      selectorForScoutField({ tag: 'input', aria_label: 'Contact Email' }),
+      'input[aria-label="Contact Email"]'
+    );
+  });
+
+  it('prioritizes scout candidates while retaining snapshot fallbacks', () => {
+    const merged = mergeFieldCandidates(
+      [{ mapped_to: 'product.url', selector: 'input[name="url"]', source: 'scout' }],
+      [{ mapped_to: 'product.url', ref: '@7', source: 'snapshot' }],
+      [{ mapped_to: 'product.name', ref: '@2', source: 'snapshot' }]
+    );
+
+    const url = merged.find(field => field.mapped_to === 'product.url');
+    const name = merged.find(field => field.mapped_to === 'product.name');
+
+    assert.equal(url.selector, 'input[name="url"]');
+    assert.equal(url.candidates.length, 2);
+    assert.deepEqual(url.candidates.map(candidate => candidate.source), ['scout', 'snapshot']);
+    assert.equal(name.ref, '@2');
+    assert.equal(name.candidates.length, 1);
+  });
+});

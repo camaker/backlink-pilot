@@ -218,6 +218,7 @@ describe('plan runner dry-run safety', () => {
 
       assert.equal(summary.submitted, 1);
       assert.equal(calls[0].site, 'https://safe.example/submit');
+      assert.equal(calls[0].opts.registryTarget.id, 'safe');
       assert.match(calls[0].opts.artifactDir, /001-safe$/);
       assert.ok(existsSync(lines[0].artifact_dir));
       assert.ok(existsSync(join(lines[0].artifact_dir, 'submission-result.json')));

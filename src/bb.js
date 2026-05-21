@@ -129,10 +129,11 @@ export class BbPage {
     if (selectorOrRef.startsWith('@')) {
       bb('fill', selectorOrRef, value);
     } else {
-      // CSS selector — find element via eval, then use ref from snapshot
-      const ref = await this._resolveRef(selectorOrRef);
-      if (ref) bb('fill', ref, value);
-      else throw new Error(`Element not found: ${selectorOrRef}`);
+      // CSS selector — fill directly via DOM events for scout-persisted selectors.
+      const exists = bb('eval',
+        `!!document.querySelector('${escapeJs(selectorOrRef)}')`);
+      if (exists !== 'true') throw new Error(`Element not found: ${selectorOrRef}`);
+      await this.evalFill(selectorOrRef, value);
     }
   }
 
@@ -197,19 +198,6 @@ export class BbPage {
   }
 
   // --- Internal helpers ---
-
-  async _resolveRef(selector) {
-    // Take snapshot and find matching element ref
-    const snap = await this.snapshot();
-    // Try direct eval to check existence first
-    const exists = bb('eval',
-      `!!document.querySelector('${escapeJs(selector)}')`);
-    if (exists !== 'true') return null;
-
-    // Use eval to click/fill by selector directly
-    // bb-browser supports CSS selectors via eval workaround
-    return null; // fall through to eval-based approach
-  }
 
   async _queryHasText(selector) {
     // Parse "button:has-text("Submit")" → tag=button, text=Submit

@@ -224,6 +224,7 @@ export async function runPlan(planPath, opts = {}) {
         ...opts,
         config,
         target,
+        registryTarget: registryEntry,
         artifactDir: targetArtifacts,
       });
       const classified = submission?.status
