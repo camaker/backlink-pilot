@@ -127,19 +127,25 @@ export async function runPlan(planPath, opts = {}) {
     saveRunnerState(statePath, state);
 
     try {
-      await submit(target.submit_url, {
+      const submission = await submit(target.submit_url, {
         ...opts,
         config,
       });
-      const classified = classifySubmissionResult({ confirmation: 'submitted' });
+      const classified = submission?.status
+        ? { status: submission.status, reasons: submission.reasons || [] }
+        : classifySubmissionResult({ confirmation: 'submitted' });
       markItem(state, target.id, { status: classified.status });
       appendJsonl(resultsPath, {
         target_id: target.id,
         status: classified.status,
         submit_url: target.submit_url,
+        confirmation: submission?.confirmation || '',
+        listing_url: submission?.url || '',
+        error: submission?.error || '',
         at: new Date().toISOString(),
       });
-      summary.submitted++;
+      if (classified.status === 'failed') summary.failed++;
+      else summary.submitted++;
     } catch (error) {
       markItem(state, target.id, { status: 'failed', last_error: error.message });
       appendJsonl(resultsPath, {

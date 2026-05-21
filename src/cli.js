@@ -18,6 +18,7 @@ import {
 } from './targets/commands.js';
 import { buildSubmissionPlan, saveSubmissionPlan } from './planner/plan.js';
 import { runPlan } from './runner/run.js';
+import { verifyBacklinkCommand } from './verification/commands.js';
 
 const program = new Command();
 
@@ -252,6 +253,16 @@ program
     console.log(`Failed: ${summary.failed}`);
     console.log(`State: ${summary.state}`);
     console.log(`Results: ${summary.results}`);
+  });
+
+program
+  .command('verify-backlink <listingUrl>')
+  .description('Verify whether a live listing page links back to the product URL')
+  .requiredOption('--product-url <url>', 'Product URL expected on the listing page')
+  .option('--timeout <ms>', 'Fetch timeout in milliseconds')
+  .option('--json', 'Output as JSON')
+  .action(async (listingUrl, opts) => {
+    await verifyBacklinkCommand(listingUrl, opts);
   });
 
 program

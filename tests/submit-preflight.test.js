@@ -9,6 +9,14 @@ describe('submit.js pre-flight check', () => {
     assert.ok(src.includes('404'), 'should check for 404');
     assert.ok(src.includes('500'), 'should check for 500');
   });
+
+  it('submit.js returns structured statuses for callers', () => {
+    const src = readFileSync('src/submit.js', 'utf-8');
+    assert.ok(src.includes("status: 'dry_run'"), 'should return dry_run status');
+    assert.ok(src.includes("status: 'failed'"), 'should return failed status');
+    assert.ok(src.includes('classifySubmissionResult'), 'should classify adapter results');
+    assert.ok(src.includes('return {'), 'should return structured result objects');
+  });
 });
 
 describe('generic adapter page validation', () => {

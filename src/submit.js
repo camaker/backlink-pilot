@@ -3,6 +3,7 @@
 import { readdirSync } from 'fs';
 import { utmUrl } from './config.js';
 import { recordSubmission } from './tracker.js';
+import { classifySubmissionResult } from './scout/classifier.js';
 
 // Dynamic import of site adapters
 async function loadAdapter(site) {
@@ -50,7 +51,7 @@ export async function submit(site, opts) {
   console.log(`\n🚀 Submitting "${product.name}" to ${site}`);
   if (opts.dryRun) {
     console.log('  [DRY RUN] Would submit:', JSON.stringify(product, null, 2));
-    return;
+    return { status: 'dry_run', site, product };
   }
 
   // Pre-flight HTTP check — catch dead sites before launching browser
@@ -67,12 +68,12 @@ export async function submit(site, opts) {
           console.error(`❌ ${checkUrl} returned 404 — submit page no longer exists.`);
           console.log('   Try visiting the site root to find the new submit URL.');
           recordSubmission(site, 'failed', { error: '404 — submit page gone' });
-          return;
+          return { status: 'failed', site, error: '404 — submit page gone' };
         }
         if (res.status >= 500) {
           console.error(`❌ ${checkUrl} returned ${res.status} — site appears down.`);
           recordSubmission(site, 'failed', { error: `HTTP ${res.status}` });
-          return;
+          return { status: 'failed', site, error: `HTTP ${res.status}` };
         }
       }
     } catch {}
@@ -80,14 +81,28 @@ export async function submit(site, opts) {
 
   try {
     const result = await adapter.submit(product, config);
-    recordSubmission(site, 'submitted', {
+    const classified = classifySubmissionResult({
+      confirmation: result?.confirmation,
+      final_url: result?.url,
+      body_text: result?.body_text,
+    });
+    recordSubmission(site, classified.status, {
       url: result?.url,
       confirmation: result?.confirmation,
     });
-    console.log(`✅ Submitted to ${site}!`);
+    console.log(`✅ Submitted to ${site}! Status: ${classified.status}`);
     if (result?.confirmation) console.log(`  Confirmation: ${result.confirmation}`);
+    return {
+      status: classified.status,
+      site,
+      url: result?.url,
+      confirmation: result?.confirmation,
+      reasons: classified.reasons,
+      raw: result,
+    };
   } catch (e) {
     recordSubmission(site, 'failed', { error: e.message });
     console.error(`❌ Failed: ${e.message}`);
+    return { status: 'failed', site, error: e.message };
   }
 }
