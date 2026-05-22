@@ -8,6 +8,7 @@ import { mapField, mapFormFields } from '../src/scout/field-mapper.js';
 import { productValueForField } from '../src/scout/field-mapper.js';
 import {
   applyScoutResultToTarget,
+  resolveScoutClassification,
   saveScoutResult,
   scoutResultPath,
   updateRegistryWithScoutResult,
@@ -86,7 +87,16 @@ describe('scout persistence', () => {
       final_url: 'https://example.com/submit',
       reachable: true,
       signals: { login_required: false, oauth_available: false, captcha: false },
-      forms: [{ fields: [], submit_buttons: [] }],
+      forms: [
+        {
+          fields: [
+            { required: true, mapped_to: 'product.name' },
+            { required: true, mapped_to: 'product.url' },
+            { required: true, mapped_to: 'product.description' },
+          ],
+          submit_buttons: [{ text: 'Submit' }],
+        },
+      ],
       classification: {
         mode: 'auto_safe',
         status: 'mapped',
@@ -98,6 +108,73 @@ describe('scout persistence', () => {
     assert.equal(updated.technical.captcha, 'none');
     assert.equal(updated.submission.mode, 'auto_safe');
     assert.equal(updated.submission.status, 'mapped');
+  });
+
+  it('recomputes scout classification before applying registry updates', () => {
+    const target = {
+      id: 'example',
+      submit_url: 'https://example.com/submit',
+      technical: { auth: 'unknown', captcha: 'unknown', reachable: 'unknown' },
+      submission: { mode: 'needs_scout', status: 'new' },
+    };
+
+    const updated = applyScoutResultToTarget(target, {
+      checked_at: '2026-05-21T00:00:00.000Z',
+      final_url: 'https://example.com/submit',
+      reachable: true,
+      signals: { login_required: false, oauth_available: false, captcha: true },
+      forms: [
+        {
+          fields: [
+            { required: true, mapped_to: 'product.name' },
+            { required: true, mapped_to: 'product.url' },
+            { required: true, mapped_to: 'product.description' },
+          ],
+          submit_buttons: [{ text: 'Submit' }],
+        },
+      ],
+      classification: {
+        mode: 'auto_safe',
+        status: 'mapped',
+        reasons: ['provided_untrusted'],
+      },
+    });
+
+    assert.equal(updated.submission.mode, 'assisted');
+    assert.equal(updated.submission.status, 'captcha_required');
+    assert.equal(updated.technical.captcha, 'required');
+    assert.equal(updated.source_meta.scout_classification_mismatch, true);
+    assert.equal(updated.source_meta.scout_classification_provided.mode, 'auto_safe');
+    assert.equal(updated.source_meta.scout_classification_computed.mode, 'assisted');
+    assert.match(updated.submission.reason, /classification_mismatch:auto_safe->assisted/);
+  });
+
+  it('allows a provided scout classification to be more conservative than computed evidence', () => {
+    const resolved = resolveScoutClassification({
+      reachable: true,
+      http_status: 200,
+      signals: { login_required: false, oauth_available: false, captcha: false },
+      forms: [
+        {
+          fields: [
+            { required: true, mapped_to: 'product.name' },
+            { required: true, mapped_to: 'product.url' },
+            { required: true, mapped_to: 'product.description' },
+          ],
+          submit_buttons: [{ text: 'Submit' }],
+        },
+      ],
+      classification: {
+        mode: 'assisted',
+        status: 'manual_review_requested',
+        reasons: ['reviewer_kept_manual'],
+      },
+    });
+
+    assert.equal(resolved.classification.mode, 'assisted');
+    assert.equal(resolved.source, 'provided_conservative');
+    assert.equal(resolved.mismatch, true);
+    assert.match(resolved.classification.reasons.join('; '), /classification_mismatch:assisted->auto_safe/);
   });
 
   it('updates a persisted registry by target id', () => {
@@ -124,7 +201,16 @@ targets:
         final_url: 'https://example.com/submit',
         reachable: true,
         signals: { login_required: false, oauth_available: false, captcha: false },
-        forms: [],
+        forms: [
+          {
+            fields: [
+              { required: true, mapped_to: 'product.name' },
+              { required: true, mapped_to: 'product.url' },
+              { required: true, mapped_to: 'product.description' },
+            ],
+            submit_buttons: [{ text: 'Submit' }],
+          },
+        ],
         classification: { mode: 'auto_safe', status: 'mapped', reasons: ['ok'] },
       }, { registry });
 
