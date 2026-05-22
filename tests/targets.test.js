@@ -1357,9 +1357,34 @@ targets:
       const suggestions = buildCoverageReviewSuggestions(batch, evidence);
 
       assert.notEqual(suggestions.rows[0].suggested_review_decision, 'reject_paid');
-      assert.equal(suggestions.rows[0].suggested_review_decision, 'reject_auth_required');
+      assert.equal(suggestions.rows[0].suggested_review_decision, 'reject_not_submit');
       assert.equal(suggestions.rows[0].suggestion_confidence, 'high');
       assert.equal(suggestions.rows[0].suggested_pricing, '');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('prioritizes non-submit same-domain root URLs over broad auth or pricing signals', () => {
+    const dir = tempDir();
+    try {
+      const batch = join(dir, 'coverage-review-batch.csv');
+      const evidence = join(dir, 'coverage-review-evidence.csv');
+      writeFileSync(batch, [
+        'batch_id,batch_order,priority,priority_score,review_row,review_decision,review_decision_options,review_action,review_instruction,review_notes,reviewed_by,submission_url_override,canonical_name,pricing,lang,classification,candidate_import_recommendation,url,domain,occurrence_count,source_files,source_locations,registry_target_ids,registry_submit_urls',
+        'p0-001,1,P0,300,10,,approved_domain_variant | reject_duplicate | reject_not_submit | reject_paid | reject_auth_required,verify_distinct_submit_url_for_existing_domain,verify same-domain variant,,,,Directory Root,unknown,unknown,domain_in_registry_only,review_submit_url,https://root.example/,root.example,1,coverage.csv,coverage.csv:2,root-existing,https://root.example/submit',
+      ].join('\n'));
+      writeFileSync(evidence, [
+        'batch_id,batch_order,review_row,review_action,url,domain,http_status,fetch_ok,final_url,final_domain,domain_changed,content_type,title,form_count,input_count,submit_button_signal,submit_path_signal,directory_signal,auth_signal,oauth_signal,captcha_signal,cloudflare_signal,payment_signal,duplicate_registry_url,suggested_decision,evidence_notes,fetch_error,checked_at',
+        'p0-001,1,10,verify_distinct_submit_url_for_existing_domain,https://root.example/,root.example,200,yes,https://root.example/,root.example,no,text/html,Root Directory,3,5,yes,no,yes,yes,no,no,no,yes,no,reject_paid,login and payment text found,,2026-05-22T00:00:00.000Z',
+      ].join('\n'));
+
+      const suggestions = buildCoverageReviewSuggestions(batch, evidence);
+
+      assert.equal(suggestions.rows[0].suggested_review_decision, 'reject_not_submit');
+      assert.equal(suggestions.rows[0].suggestion_confidence, 'high');
+      assert.equal(suggestions.rows[0].reviewer_action, 'reject_unless_manual_review_finds_a_distinct_submit_endpoint_at_this_exact_url');
+      assert.match(suggestions.rows[0].suggestion_basis, /does not contain an explicit submission path/);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

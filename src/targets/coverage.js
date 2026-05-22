@@ -1118,6 +1118,23 @@ function suggestionSummary(rows) {
   });
 }
 
+function hasExplicitSubmissionPath(value) {
+  try {
+    const normalized = normalizeUrl(value);
+    if (!normalized) return false;
+    const path = new URL(normalized.url).pathname.toLowerCase();
+    return /(?:^|\/)(submit|submission|submissions|add|add[-_/]?(tool|product|site|startup|app)|submit[-_/]?a[-_/]?(tool|startup|product)|new[-_/]?product|project\/new|products\/new|submissions\/new|vendors\/new|company\/create|claim|showcase)(?:\/|$|\.)/.test(path);
+  } catch {
+    return false;
+  }
+}
+
+function isSameDomainNonSubmitCandidate(row, evidence) {
+  if (String(row.classification || '') !== 'domain_in_registry_only') return false;
+  const candidateUrl = rowImportUrl(row) || row.url || evidence?.url || '';
+  return !hasExplicitSubmissionPath(candidateUrl);
+}
+
 function conservativeSuggestion(row, evidence) {
   if (!evidence) {
     return {
@@ -1163,6 +1180,19 @@ function conservativeSuggestion(row, evidence) {
       suggestion_confidence: 'high',
       possible_approval_decision: '',
       reviewer_action: 'reject_unless_manual_review_finds_a_current_submit_url',
+      suggested_pricing: '',
+      basis,
+    };
+  }
+
+  if (isSameDomainNonSubmitCandidate(row, evidence)) {
+    basis.push('same-domain candidate URL does not contain an explicit submission path');
+    basis.push('existing registry submit URL should remain canonical unless manual review finds a distinct submit endpoint at this exact URL');
+    return {
+      suggested_review_decision: 'reject_not_submit',
+      suggestion_confidence: 'high',
+      possible_approval_decision: '',
+      reviewer_action: 'reject_unless_manual_review_finds_a_distinct_submit_endpoint_at_this_exact_url',
       suggested_pricing: '',
       basis,
     };
