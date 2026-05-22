@@ -15,6 +15,7 @@ import {
   registryStats,
 } from '../src/targets/registry.js';
 import { buildSubmissionPlan } from '../src/planner/plan.js';
+import { buildScoutQueuePlan } from '../src/planner/plan.js';
 
 function tempDir() {
   return mkdtempSync(join(tmpdir(), 'backlink-pilot-targets-'));
@@ -317,6 +318,101 @@ targets:
 
       assert.equal(strictPlan.targets.length, 0);
       assert.deepEqual(candidatePlan.targets.map(target => target.id), ['unknown-price']);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe('scout queue plan', () => {
+  it('queues only unscouted scoutable targets with pricing filters', () => {
+    const dir = tempDir();
+    try {
+      const registry = join(dir, 'registry.yaml');
+      writeFileSync(registry, `
+version: 1
+targets:
+  - id: candidate
+    name: Candidate
+    domain: candidate.example
+    submit_url: https://candidate.example/submit
+    pricing: unknown
+    submission:
+      mode: auto_candidate
+    technical:
+      last_scouted_at: null
+    quality:
+      risk: unknown
+  - id: scouted
+    name: Scouted
+    domain: scouted.example
+    submit_url: https://scouted.example/submit
+    pricing: free
+    submission:
+      mode: needs_scout
+    technical:
+      last_scouted_at: 2026-05-22T00:00:00.000Z
+    quality:
+      risk: unknown
+  - id: paid
+    name: Paid
+    domain: paid.example
+    submit_url: https://paid.example/submit
+    pricing: paid
+    submission:
+      mode: needs_scout
+    technical:
+      last_scouted_at: null
+    quality:
+      risk: unknown
+`);
+
+      const strict = buildScoutQueuePlan({ registry, freeOnly: true, limit: 10 });
+      const unknownAllowed = buildScoutQueuePlan({
+        registry,
+        freeOnly: true,
+        allowUnknownPricing: true,
+        limit: 10,
+      });
+
+      assert.deepEqual(strict.targets.map(target => target.id), []);
+      assert.deepEqual(unknownAllowed.targets.map(target => target.id), ['candidate']);
+      assert.equal(unknownAllowed.constraints.purpose, 'scout_queue');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('supports explicit scout queue modes', () => {
+    const dir = tempDir();
+    try {
+      const registry = join(dir, 'registry.yaml');
+      writeFileSync(registry, `
+version: 1
+targets:
+  - id: needs
+    submit_url: https://needs.example/submit
+    pricing: free
+    submission:
+      mode: needs_scout
+    technical:
+      last_scouted_at: null
+    quality:
+      risk: unknown
+  - id: candidate
+    submit_url: https://candidate.example/submit
+    pricing: free
+    submission:
+      mode: auto_candidate
+    technical:
+      last_scouted_at: null
+    quality:
+      risk: unknown
+`);
+
+      const plan = buildScoutQueuePlan({ registry, modes: 'needs_scout', limit: 10 });
+
+      assert.deepEqual(plan.targets.map(target => target.id), ['needs']);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

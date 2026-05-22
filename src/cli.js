@@ -19,6 +19,7 @@ import {
   statsTargetsCommand,
 } from './targets/commands.js';
 import { buildSubmissionPlan, saveSubmissionPlan } from './planner/plan.js';
+import { scoutQueueCommand } from './planner/commands.js';
 import { pipelineCommand } from './pipeline/commands.js';
 import { runPlan } from './runner/run.js';
 import { verifyBacklinkCommand, verifyResultsCommand } from './verification/commands.js';
@@ -311,6 +312,24 @@ program
       console.log(`${target.order}. ${target.name} — ${target.mode} — ${target.submit_url}`);
     }
     console.log(`Excluded: ${plan.excluded.length}`);
+  });
+
+program
+  .command('scout-queue')
+  .description('Build a plan of unscouted targets that should be scouted before automation')
+  .option('--registry <path>', 'Canonical registry path')
+  .option('--product-config <path>', 'Product config path to include in the plan')
+  .option('--modes <items>', 'Comma-separated modes to scout', 'auto_candidate,needs_scout')
+  .option('--free-only', 'Only include free targets')
+  .option('--allow-unknown-pricing', 'With --free-only, also include targets where pricing has not been verified')
+  .option('--lang <lang>', 'Filter by target language')
+  .option('--source <name>', 'Filter by source')
+  .option('--limit <n>', 'Maximum target count', '30')
+  .option('--include-risk', 'Allow high-risk targets in the scout queue')
+  .option('--output <path>', 'Write scout queue plan to JSON/YAML file')
+  .option('--json', 'Print JSON to stdout')
+  .action(async (opts) => {
+    await scoutQueueCommand(opts);
   });
 
 program

@@ -89,6 +89,58 @@ export function buildSubmissionPlan(opts = {}) {
   };
 }
 
+export function buildScoutQueuePlan(opts = {}) {
+  const registry = loadRegistry(opts.registry || DEFAULT_REGISTRY_FILE);
+  const limit = parseLimit(opts.limit, 30);
+  const modes = new Set(String(opts.modes || 'auto_candidate,needs_scout')
+    .split(',')
+    .map(item => item.trim())
+    .filter(Boolean));
+
+  const candidates = registry.targets
+    .filter(target => modes.has(target.submission?.mode || ''))
+    .filter(target => !target.technical?.last_scouted_at)
+    .filter(target => {
+      if (!opts.freeOnly) return true;
+      if (target.pricing === 'free') return true;
+      return Boolean(opts.allowUnknownPricing) && target.pricing === 'unknown';
+    })
+    .filter(target => !opts.lang || target.lang === opts.lang)
+    .filter(target => !opts.source || (Array.isArray(target.source) ? target.source : [target.source]).includes(opts.source))
+    .filter(target => opts.includeRisk || target.quality?.risk !== 'high')
+    .slice(0, limit);
+
+  return {
+    version: 1,
+    created_at: nowIso(),
+    registry: opts.registry || DEFAULT_REGISTRY_FILE,
+    product: loadProductIdentity(opts.productConfig),
+    constraints: {
+      purpose: 'scout_queue',
+      modes: [...modes],
+      free_only: Boolean(opts.freeOnly),
+      allow_unknown_pricing: Boolean(opts.allowUnknownPricing),
+      limit,
+      lang: opts.lang || '',
+      source: opts.source || '',
+      include_risk: Boolean(opts.includeRisk),
+    },
+    targets: candidates.map((target, index) => ({
+      order: index + 1,
+      id: target.id,
+      name: target.name,
+      domain: target.domain,
+      submit_url: target.submit_url,
+      mode: target.submission?.mode,
+      reason: target.submission?.reason,
+      pricing: target.pricing,
+      risk: target.quality?.risk,
+      status: 'queued',
+    })),
+    excluded: [],
+  };
+}
+
 export function saveSubmissionPlan(plan, path) {
   mkdirSync(dirname(path), { recursive: true });
   const body = path.endsWith('.json')
