@@ -17,8 +17,10 @@ import {
   coverageReviewQueueCsv,
   coverageReviewCsv,
   importCoverageReview,
+  promoteCoverageReviewBatch,
   validateCoverageReviewBatch,
   validateCoverageReview,
+  writeCoverageReviewPromotionReport,
   writeCoverageReviewBatch,
   writeCoverageReviewQueue,
   writeCoverageCandidatesCsv,
@@ -1177,6 +1179,51 @@ targets:
       ]);
       assert.equal(result.queue_validation.ok, false);
       assert.equal(existsSync(output), false);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('promotes edited coverage review batches through validation and import dry-run', () => {
+    const dir = tempDir();
+    try {
+      const registry = join(dir, 'registry.yaml');
+      const review = join(dir, 'coverage-review.csv');
+      const batch = join(dir, 'coverage-review-batch.csv');
+      const output = join(dir, 'coverage-review.updated.csv');
+      const report = join(dir, 'promotion-report.json');
+      writeFileSync(registry, 'version: 1\ntargets: []\n');
+      writeFileSync(review, [
+        'review_decision,review_instruction,review_notes,reviewed_by,canonical_name,submission_url_override,pricing,lang,classification,candidate_import_recommendation,url,domain,source_files,source_locations,registry_target_ids,registry_submit_urls,occurrence_count',
+        ',verify submit form,,,Submit Example,,unknown,unknown,missing_domain,review_submit_url,https://submit.example/submit,submit.example,coverage-candidates.csv,coverage-candidates.csv:2,,,2',
+      ].join('\n'));
+      writeFileSync(batch, [
+        'batch_id,batch_order,priority,priority_score,review_row,review_decision,review_decision_options,review_action,review_instruction,review_notes,reviewed_by,submission_url_override,canonical_name,pricing,lang,classification,candidate_import_recommendation,url,domain,occurrence_count,source_files,source_locations,registry_target_ids,registry_submit_urls',
+        'p0-001,1,P0,187,2,approved,approved | reject_not_submit,verify_submit_form_then_approve_or_reject,verify submit form,verified public form,qa,,Submit Example,free,en,missing_domain,review_submit_url,https://submit.example/submit,submit.example,2,coverage-candidates.csv,coverage-candidates.csv:2,,',
+      ].join('\n'));
+
+      const dryRun = promoteCoverageReviewBatch(registry, review, batch, {
+        output,
+        dryRun: true,
+      });
+      const result = promoteCoverageReviewBatch(registry, review, batch, { output });
+      writeCoverageReviewPromotionReport(result, report);
+      const [updated] = parseCsv(readFileSync(output, 'utf-8'));
+      const reportJson = JSON.parse(readFileSync(report, 'utf-8'));
+
+      assert.equal(dryRun.ok, true);
+      assert.equal(dryRun.wrote_output, false);
+      assert.equal(result.ok, true);
+      assert.equal(result.status, 'ready');
+      assert.equal(result.wrote_output, true);
+      assert.equal(result.apply.applied_rows, 1);
+      assert.equal(result.updated_review_validation.ok, true);
+      assert.equal(result.import_dry_run.blocked_import, false);
+      assert.equal(result.import_dry_run.would_import, 1);
+      assert.equal(updated.review_decision, 'approved');
+      assert.equal(updated.reviewed_by, 'qa');
+      assert.equal(updated.pricing, 'free');
+      assert.equal(reportJson.mode_policy, result.mode_policy);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

@@ -1053,9 +1053,8 @@ function targetFromReviewRow(row, normalized, opts = {}) {
   };
 }
 
-export function importCoverageReview(registryPath, reviewPath, opts = {}) {
+function importCoverageReviewRows(registryPath, reviewLabel, rows, opts = {}) {
   const registry = loadRegistry(registryPath);
-  const rows = parseCsv(readFileSync(reviewPath, 'utf-8'));
   const validation = validateCoverageReviewRows(rows, opts);
   const validationBlockersByLine = new Map();
   for (const blocker of validation.blockers) {
@@ -1113,7 +1112,7 @@ export function importCoverageReview(registryPath, reviewPath, opts = {}) {
 
   return {
     path: registryPath,
-    review: reviewPath,
+    review: reviewLabel,
     dry_run: Boolean(opts.dryRun),
     blocked_import: blockedImport,
     rows: rows.length,
@@ -1138,6 +1137,11 @@ export function importCoverageReview(registryPath, reviewPath, opts = {}) {
     skipped_rows: skipped,
     blocked_rows: blocked,
   };
+}
+
+export function importCoverageReview(registryPath, reviewPath, opts = {}) {
+  const rows = parseCsv(readFileSync(reviewPath, 'utf-8'));
+  return importCoverageReviewRows(registryPath, reviewPath, rows, opts);
 }
 
 function reviewQueuePriority(row) {
@@ -1417,9 +1421,7 @@ function coverageReviewRowsCsv(rows) {
   ].join('\n') + '\n';
 }
 
-export function applyCoverageReviewQueue(reviewPath, queuePath, opts = {}) {
-  const reviewRows = parseCsv(readFileSync(reviewPath, 'utf-8'));
-  const queueRows = parseCsv(readFileSync(queuePath, 'utf-8'));
+function applyCoverageReviewQueueRows(reviewRows, queueRows, opts = {}) {
   const queueValidation = validateCoverageReviewBatchRows(queueRows, {
     requireReviewer: opts.requireReviewer !== false,
     requireReviewNotes: opts.requireReviewNotes !== false,
@@ -1518,16 +1520,8 @@ export function applyCoverageReviewQueue(reviewPath, queuePath, opts = {}) {
 
   const validationBlocked = !queueValidation.ok;
   const blockedApply = blocked.length > 0 && (validationBlocked || !opts.allowPartial);
-  const output = opts.output || (opts.inPlace ? reviewPath : '');
-  if (!opts.dryRun && output && !blockedApply) {
-    ensureParent(output);
-    writeFileSync(output, coverageReviewRowsCsv(updatedRows), 'utf-8');
-  }
 
   return {
-    review: reviewPath,
-    queue: queuePath,
-    output,
     dry_run: Boolean(opts.dryRun),
     in_place: Boolean(opts.inPlace),
     allow_partial: Boolean(opts.allowPartial),
@@ -1540,8 +1534,103 @@ export function applyCoverageReviewQueue(reviewPath, queuePath, opts = {}) {
     blocked_rows: blocked.length,
     editable_fields: REVIEW_QUEUE_EDITABLE_FIELDS,
     queue_validation: queueValidation,
+    updated_rows: updatedRows,
     applied,
     skipped,
     blocked,
   };
+}
+
+export function applyCoverageReviewQueue(reviewPath, queuePath, opts = {}) {
+  const reviewRows = parseCsv(readFileSync(reviewPath, 'utf-8'));
+  const queueRows = parseCsv(readFileSync(queuePath, 'utf-8'));
+  const output = opts.output || (opts.inPlace ? reviewPath : '');
+  const result = applyCoverageReviewQueueRows(reviewRows, queueRows, opts);
+  if (!opts.dryRun && output && !result.blocked_apply) {
+    ensureParent(output);
+    writeFileSync(output, coverageReviewRowsCsv(result.updated_rows), 'utf-8');
+  }
+  const { updated_rows, ...publicResult } = result;
+
+  return {
+    review: reviewPath,
+    queue: queuePath,
+    output,
+    ...publicResult,
+  };
+}
+
+export function promoteCoverageReviewBatch(registryPath, reviewPath, batchPath, opts = {}) {
+  const reviewRows = parseCsv(readFileSync(reviewPath, 'utf-8'));
+  const batchRows = parseCsv(readFileSync(batchPath, 'utf-8'));
+  const output = opts.output || '';
+  const apply = applyCoverageReviewQueueRows(reviewRows, batchRows, {
+    dryRun: Boolean(opts.dryRun),
+    allowPartial: Boolean(opts.allowPartial),
+    requireReviewer: opts.requireReviewer !== false,
+    requireReviewNotes: opts.requireReviewNotes !== false,
+  });
+
+  let status = 'ready';
+  let updatedReviewValidation = null;
+  let importDryRun = null;
+  let ok = !apply.blocked_apply;
+
+  if (!ok) {
+    status = apply.validation_blocked ? 'blocked_batch_validation' : 'blocked_apply';
+  } else {
+    updatedReviewValidation = validateCoverageReviewRows(apply.updated_rows, {
+      requireReviewer: opts.requireReviewer !== false,
+      requireReviewNotes: opts.requireReviewNotes !== false,
+    });
+    ok = updatedReviewValidation.ok;
+    if (!ok) {
+      status = 'blocked_updated_review_validation';
+    } else {
+      importDryRun = importCoverageReviewRows(
+        registryPath,
+        output || reviewPath,
+        apply.updated_rows,
+        {
+          source: opts.source || 'coverage-review',
+          group: opts.group || 'coverage-review',
+          lang: opts.lang,
+          dryRun: true,
+          allowPartial: Boolean(opts.allowPartial),
+          requireReviewer: opts.requireReviewer !== false,
+          requireReviewNotes: opts.requireReviewNotes !== false,
+        }
+      );
+      ok = !importDryRun.blocked_import;
+      if (!ok) status = 'blocked_import_dry_run';
+    }
+  }
+
+  const wroteOutput = Boolean(ok && output && !opts.dryRun);
+  if (wroteOutput) {
+    ensureParent(output);
+    writeFileSync(output, coverageReviewRowsCsv(apply.updated_rows), 'utf-8');
+  }
+
+  const { updated_rows, ...applySummary } = apply;
+  return {
+    generated_at: nowIso(),
+    ok,
+    status,
+    registry: registryPath,
+    review: reviewPath,
+    batch: batchPath,
+    output,
+    dry_run: Boolean(opts.dryRun),
+    wrote_output: wroteOutput,
+    mode_policy: 'promotion_validates_batch_applies_review_validates_updated_review_and_runs_import_dry_run',
+    apply: applySummary,
+    updated_review_validation: updatedReviewValidation,
+    import_dry_run: importDryRun,
+  };
+}
+
+export function writeCoverageReviewPromotionReport(result, path) {
+  ensureParent(path);
+  writeFileSync(path, JSON.stringify(result, null, 2) + '\n', 'utf-8');
 }

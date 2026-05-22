@@ -21,6 +21,7 @@ import {
   importCoverageReviewCommand,
   listTargetsCommand,
   normalizeTargetsCommand,
+  promoteCoverageReviewBatchCommand,
   statsTargetsCommand,
   validateCoverageReviewBatchCommand,
   validateCoverageReviewCommand,
@@ -377,6 +378,25 @@ targets
   .option('--json', 'Output as JSON')
   .action(async (review, queue, opts) => {
     await applyCoverageReviewQueueCommand(review, queue, opts);
+  });
+
+targets
+  .command('promote-coverage-review-batch <review> <batch>')
+  .description('Safely promote an edited coverage review batch into an updated review CSV after validation and import dry-run')
+  .option('--registry <path>', 'Canonical registry path')
+  .option('--output <path>', 'Write the validated updated review CSV to a new path')
+  .option('--report <path>', 'Write a JSON promotion report')
+  .option('--dry-run', 'Validate and summarize without writing the output review CSV')
+  .option('--allow-partial', 'Allow partial apply for identity blockers; validation blockers still stop promotion')
+  .option('--source <name>', 'Source label for import dry-run', 'coverage-review')
+  .option('--group <name>', 'Group label for import dry-run', 'coverage-review')
+  .option('--lang <lang>', 'Default language for import dry-run')
+  .option('--no-require-reviewer', 'Do not require reviewed_by on approved rows')
+  .option('--no-require-review-notes', 'Do not require review_notes on approved rows')
+  .option('--limit-findings <n>', 'Maximum blocker rows to print', '20')
+  .option('--json', 'Output as JSON')
+  .action(async (review, batch, opts) => {
+    await promoteCoverageReviewBatchCommand(review, batch, opts);
   });
 
 program

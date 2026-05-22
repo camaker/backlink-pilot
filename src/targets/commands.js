@@ -14,10 +14,12 @@ import {
   buildCoverageReport,
   buildCoverageReviewQueue,
   importCoverageReview,
+  promoteCoverageReviewBatch,
   validateCoverageReviewBatch,
   validateCoverageReview,
   writeCoverageCandidatesCsv,
   writeCoverageReviewBatch,
+  writeCoverageReviewPromotionReport,
   writeCoverageReport,
   writeCoverageReviewQueue,
   writeCoverageReviewCsv,
@@ -362,6 +364,68 @@ export async function applyCoverageReviewQueueCommand(reviewPath, queuePath, opt
     console.log('Apply blocked: queue rows failed identity checks. Fix the queue file or pass --allow-partial for a controlled partial apply.');
     for (const row of result.blocked.slice(0, 10)) {
       console.log(`- queue line ${row.line}: ${row.reason} review_row=${row.review_row}`);
+    }
+    process.exitCode = 1;
+  }
+
+  return result;
+}
+
+export async function promoteCoverageReviewBatchCommand(reviewPath, batchPath, opts = {}) {
+  const result = promoteCoverageReviewBatch(
+    opts.registry || DEFAULT_REGISTRY_FILE,
+    reviewPath,
+    batchPath,
+    {
+      output: opts.output,
+      dryRun: Boolean(opts.dryRun),
+      allowPartial: Boolean(opts.allowPartial),
+      source: opts.source || 'coverage-review',
+      group: opts.group || 'coverage-review',
+      lang: opts.lang,
+      requireReviewer: opts.requireReviewer !== false,
+      requireReviewNotes: opts.requireReviewNotes !== false,
+    }
+  );
+
+  if (opts.report) {
+    writeCoverageReviewPromotionReport(result, opts.report);
+  }
+
+  if (opts.json) {
+    console.log(JSON.stringify(result, null, 2));
+    if (!result.ok) process.exitCode = 1;
+    return result;
+  }
+
+  console.log(`Review: ${result.review}`);
+  console.log(`Batch: ${result.batch}`);
+  console.log(`Registry: ${result.registry}`);
+  console.log(`Status: ${result.status}`);
+  console.log(`OK: ${result.ok}`);
+  console.log(`Dry run: ${result.dry_run}`);
+  console.log(`Applied rows: ${result.apply.applied_rows}`);
+  console.log(`Skipped rows: ${result.apply.skipped_rows}`);
+  console.log(`Blocked rows: ${result.apply.blocked_rows}`);
+  if (result.updated_review_validation) {
+    console.log(`Updated review blockers: ${result.updated_review_validation.blockers_count}`);
+    console.log(`Updated review warnings: ${result.updated_review_validation.warnings_count}`);
+  }
+  if (result.import_dry_run) {
+    console.log(`Import dry-run approved rows: ${result.import_dry_run.approved_rows}`);
+    console.log(`Import dry-run would import: ${result.import_dry_run.would_import}`);
+    console.log(`Import dry-run blocked rows: ${result.import_dry_run.blocked}`);
+  }
+  if (result.output) console.log(`Output review CSV: ${result.output}`);
+  console.log(`Wrote output: ${result.wrote_output}`);
+  if (opts.report) console.log(`Promotion report: ${opts.report}`);
+
+  if (!result.ok) {
+    const findings = result.apply.blocked.length
+      ? result.apply.blocked
+      : result.updated_review_validation?.blockers || result.import_dry_run?.blocked_rows || [];
+    for (const row of findings.slice(0, Number.parseInt(opts.limitFindings || 20, 10))) {
+      console.log(`BLOCKER\tline:${row.line}\t${row.reason || row.code}\t${row.url || ''}`);
     }
     process.exitCode = 1;
   }
