@@ -91,6 +91,7 @@ describe('pipeline runner', () => {
         execute: true,
         verify: true,
         updateRegistry: true,
+        skipTargetAudit: true,
         productUrl: 'https://demoapp.io',
         buildPlanFn: () => ({
           version: 1,

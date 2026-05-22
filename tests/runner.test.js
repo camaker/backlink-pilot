@@ -210,6 +210,7 @@ describe('plan runner dry-run safety', () => {
         delay: '0ms',
         results,
         configObject: readyConfig(),
+        skipTargetAudit: true,
         submitFn: async (site, opts) => {
           calls.push({ site, opts });
           return { status: 'pending_review', url: 'https://safe.example/listing/demo' };
@@ -218,6 +219,7 @@ describe('plan runner dry-run safety', () => {
       const lines = readFileSync(results, 'utf-8').trim().split('\n').map(JSON.parse);
 
       assert.equal(summary.submitted, 1);
+      assert.equal(summary.target_audit.skipped, true);
       assert.equal(calls[0].site, 'https://safe.example/submit');
       assert.equal(calls[0].opts.registryTarget.id, 'safe');
       assert.match(calls[0].opts.artifactDir, /001-safe$/);
@@ -252,6 +254,7 @@ describe('plan runner dry-run safety', () => {
         delay: '0ms',
         results,
         configObject: readyConfig(),
+        skipTargetAudit: true,
         submitFn: async () => ({
           status: 'pending_review',
           url: 'https://safe.example/thank-you',
@@ -331,6 +334,7 @@ describe('plan runner dry-run safety', () => {
         assisted: true,
         execute: true,
         skipReadinessCheck: true,
+        skipTargetAudit: true,
         authDir,
         delay: '0ms',
         results,
@@ -418,6 +422,95 @@ describe('plan runner dry-run safety', () => {
       assert.equal(existsSync(state), true);
       assert.equal(existsSync(results), true);
       assert.equal(readFileSync(results, 'utf-8'), '');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('blocks real execution when target audit finds unsafe auto_safe evidence', async () => {
+    const dir = tempDir();
+    try {
+      const plan = join(dir, 'plan.json');
+      const registry = join(dir, 'registry.json');
+      writeRegistry(registry, [
+        { id: 'unsafe', submit_url: 'https://unsafe.example/submit', mode: 'auto_safe' },
+      ]);
+      writeFileSync(plan, JSON.stringify({
+        created_at: 'plan-1',
+        registry,
+        targets: [
+          { id: 'unsafe', submit_url: 'https://unsafe.example/submit', mode: 'auto_safe' },
+        ],
+      }, null, 2));
+
+      await assert.rejects(
+        () => runPlan(plan, {
+          execute: true,
+          delay: '0ms',
+          configObject: readyConfig(),
+        }),
+        /Target audit failed/
+      );
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('passes target audit for evidenced auto_safe targets and writes the audit artifact', async () => {
+    const dir = tempDir();
+    try {
+      const plan = join(dir, 'plan.json');
+      const artifacts = join(dir, 'artifacts');
+      const registry = join(dir, 'registry.json');
+      writeFileSync(registry, JSON.stringify({
+        version: 1,
+        targets: [
+          {
+            id: 'safe',
+            submit_url: 'https://safe.example/submit',
+            pricing: 'free',
+            quality: { risk: 'low' },
+            technical: {
+              last_scouted_at: '2026-05-22T00:00:00.000Z',
+              auth: 'none',
+              captcha: 'none',
+              reachable: 'yes',
+            },
+            forms: [
+              {
+                fields: [
+                  { mapped_to: 'product.name', selector: 'input[name="name"]', required: true },
+                  { mapped_to: 'product.url', selector: 'input[name="url"]', required: true },
+                  { mapped_to: 'product.description', selector: 'textarea[name="description"]', required: true },
+                ],
+                submit_buttons: [{ selector: 'button[type="submit"]' }],
+              },
+            ],
+            submission: { mode: 'auto_safe', status: 'mapped' },
+          },
+        ],
+      }, null, 2));
+      writeFileSync(plan, JSON.stringify({
+        created_at: 'plan-1',
+        registry,
+        targets: [
+          { order: 1, id: 'safe', submit_url: 'https://safe.example/submit', mode: 'auto_safe' },
+        ],
+      }, null, 2));
+
+      const summary = await runPlan(plan, {
+        execute: true,
+        delay: '0ms',
+        artifacts,
+        configObject: readyConfig(),
+        submitFn: async () => ({ status: 'pending_review', url: 'https://safe.example/tools/demo' }),
+      });
+      const auditArtifact = JSON.parse(readFileSync(join(artifacts, 'run-target-audit.json'), 'utf-8'));
+
+      assert.equal(summary.submitted, 1);
+      assert.equal(summary.target_audit.ok, true);
+      assert.equal(summary.target_audit.skipped, false);
+      assert.equal(auditArtifact.report.ok, true);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

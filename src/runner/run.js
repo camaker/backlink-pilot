@@ -5,6 +5,7 @@ import { submit } from '../submit.js';
 import { loadConfig } from '../config.js';
 import { classifySubmissionResult } from '../scout/classifier.js';
 import { DEFAULT_REGISTRY_FILE, loadRegistry } from '../targets/registry.js';
+import { auditTargets } from '../targets/audit.js';
 import { normalizeUrl } from '../targets/normalize.js';
 import {
   assertProductReadiness,
@@ -74,6 +75,23 @@ function registryTargetMap(plan, opts = {}) {
     targets.set(target.id, target);
   }
   return { registryPath, targets };
+}
+
+function auditSummary(report = {}, skipped = false) {
+  const normalized = report || {};
+  return {
+    ok: skipped ? true : Boolean(normalized.ok),
+    skipped,
+    blockers: normalized.summary?.blockers || 0,
+    warnings: normalized.summary?.warnings || 0,
+    by_code: normalized.summary?.by_code || {},
+  };
+}
+
+function executionAuditTargets(planTargets = [], registryTargets = new Map()) {
+  return planTargets
+    .map(target => registryTargets.get(target.id))
+    .filter(Boolean);
 }
 
 function sameNormalizedUrl(a, b) {
@@ -153,6 +171,7 @@ export async function runPlan(planPath, opts = {}) {
   const delayMs = parseMs(opts.delay, 60000);
   const limit = Number.parseInt(opts.limit || plan.targets?.length || 0, 10);
   const max = Number.isFinite(limit) && limit > 0 ? limit : plan.targets.length;
+  const plannedTargets = (plan.targets || []).slice(0, max);
   const registry = registryTargetMap(plan, opts);
   const submitFn = opts.submitFn || submit;
   const config = execute
@@ -171,6 +190,16 @@ export async function runPlan(planPath, opts = {}) {
       : assertProductReadiness(config, { level: opts.readinessLevel || 'automation' });
   }
 
+  let targetAudit = null;
+  if (execute && !opts.skipTargetAudit) {
+    targetAudit = auditTargets(executionAuditTargets(plannedTargets, registry.targets));
+    if (!targetAudit.ok) {
+      const error = new Error(`Target audit failed with ${targetAudit.summary.blockers} blocker(s). Run "targets audit" for details or use --skip-target-audit only for controlled tests.`);
+      error.report = targetAudit;
+      throw error;
+    }
+  }
+
   const summary = {
     plan: planPath,
     execute,
@@ -180,6 +209,9 @@ export async function runPlan(planPath, opts = {}) {
     registry: registry.registryPath,
     readiness: readiness
       ? { ok: readiness.ok, level: readiness.level, skipped: Boolean(opts.skipReadinessCheck) }
+      : null,
+    target_audit: execute
+      ? auditSummary(targetAudit, Boolean(opts.skipTargetAudit))
       : null,
     processed: 0,
     skipped: 0,
@@ -193,12 +225,16 @@ export async function runPlan(planPath, opts = {}) {
       readiness_skipped: Boolean(opts.skipReadinessCheck),
       report: readiness,
     });
+    writeArtifactJson(join(artifactsDir, 'run-target-audit.json'), {
+      target_audit_skipped: Boolean(opts.skipTargetAudit),
+      report: targetAudit,
+    });
   }
 
   saveRunnerState(statePath, state);
   ensureJsonlFile(resultsPath);
 
-  for (const target of (plan.targets || []).slice(0, max)) {
+  for (const target of plannedTargets) {
     const item = state.items.find(entry => entry.id === target.id);
     if (item && isTerminalStatus(item.status) && !opts.retry) {
       summary.skipped++;
