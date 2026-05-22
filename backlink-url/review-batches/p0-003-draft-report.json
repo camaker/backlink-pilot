@@ -1,0 +1,236 @@
+{
+  "generated_at": "2026-05-22T06:58:15.261Z",
+  "batch": "backlink-url/review-batches/p0-003.csv",
+  "suggestions": "backlink-url/review-batches/p0-003-suggestions.csv",
+  "batch_id": "p0-003",
+  "mode_policy": "drafts_rejections_only_no_approvals_no_registry_changes",
+  "min_confidence": "high",
+  "reviewed_by": "read_only_evidence",
+  "enabled_rejection_decisions": [
+    "reject_auth_required",
+    "reject_duplicate",
+    "reject_not_submit",
+    "reject_paid"
+  ],
+  "batch_rows": 25,
+  "suggestion_rows": 25,
+  "drafted_rows": 13,
+  "skipped_rows": 12,
+  "blocked_rows": 0,
+  "priority_counts": {
+    "P0": 25
+  },
+  "action_counts": {
+    "verify_distinct_submit_url_for_existing_domain": 13,
+    "verify_submit_form_then_approve_or_reject": 12
+  },
+  "drafted": [
+    {
+      "line": 7,
+      "review_row": "281",
+      "url": "https://github.com/niciral/bb-browser",
+      "domain": "github.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:281"
+    },
+    {
+      "line": 8,
+      "review_row": "282",
+      "url": "https://github.com/niciral/bb-browser)%E3%80%81[rebrowser-playwright](https:/github.com/nickthecoder/rebrowser-playwright)%E3%80%82",
+      "domain": "github.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:282"
+    },
+    {
+      "line": 9,
+      "review_row": "283",
+      "url": "https://github.com/nickthecoder/rebrowser-playwright",
+      "domain": "github.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:283"
+    },
+    {
+      "line": 10,
+      "review_row": "284",
+      "url": "https://github.com/s87343472/backlink-pilot",
+      "domain": "github.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:284"
+    },
+    {
+      "line": 11,
+      "review_row": "285",
+      "url": "https://github.com/s87343472/backlink-pilot.git",
+      "domain": "github.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:285"
+    },
+    {
+      "line": 12,
+      "review_row": "462",
+      "url": "https://www.saashub.com/login",
+      "domain": "saashub.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:462"
+    },
+    {
+      "line": 13,
+      "review_row": "463",
+      "url": "https://www.saashub.com/new",
+      "domain": "saashub.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:463"
+    },
+    {
+      "line": 14,
+      "review_row": "544",
+      "url": "https://www.uneed.best/login",
+      "domain": "uneed.best",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:544"
+    },
+    {
+      "line": 15,
+      "review_row": "62",
+      "url": "https://agenthunter.com/submit",
+      "domain": "agenthunter.com",
+      "suggested_review_decision": "reject_paid",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:62"
+    },
+    {
+      "line": 20,
+      "review_row": "67",
+      "url": "https://aiagentslist.com/submit",
+      "domain": "aiagentslist.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:67"
+    },
+    {
+      "line": 22,
+      "review_row": "69",
+      "url": "https://aiagentstore.ai/submit",
+      "domain": "aiagentstore.ai",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:69"
+    },
+    {
+      "line": 23,
+      "review_row": "70",
+      "url": "https://aichief.com/submit",
+      "domain": "aichief.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:70"
+    },
+    {
+      "line": 25,
+      "review_row": "76",
+      "url": "https://aistage.net/submit",
+      "domain": "aistage.net",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:76"
+    }
+  ],
+  "skipped": [
+    {
+      "line": 2,
+      "review_row": "75",
+      "url": "https://aiscout.net/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 3,
+      "review_row": "79",
+      "url": "https://aitoolsdirectory.com/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 4,
+      "review_row": "208",
+      "url": "https://devhunt.org/submit",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 5,
+      "review_row": "472",
+      "url": "https://www.sideprojectors.com/project/new",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 6,
+      "review_row": "497",
+      "url": "https://stackshare.io/new-product",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 16,
+      "review_row": "63",
+      "url": "https://ai.xyz/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 17,
+      "review_row": "64",
+      "url": "https://aiagents.live/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 18,
+      "review_row": "65",
+      "url": "https://aiagentsbase.com/submit",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 19,
+      "review_row": "66",
+      "url": "https://aiagentsdirectory.com/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 21,
+      "review_row": "68",
+      "url": "https://aiagentsmarketplace.com/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 24,
+      "review_row": "72",
+      "url": "https://aimatchpro.ai/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 26,
+      "review_row": "78",
+      "url": "https://aitools.love/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    }
+  ],
+  "blocked": []
+}
