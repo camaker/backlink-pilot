@@ -22,6 +22,7 @@ import {
   listTargetsCommand,
   normalizeTargetsCommand,
   statsTargetsCommand,
+  validateCoverageReviewBatchCommand,
   validateCoverageReviewCommand,
 } from './targets/commands.js';
 import { buildSubmissionPlan, saveSubmissionPlan } from './planner/plan.js';
@@ -352,6 +353,18 @@ targets
   .option('--json', 'Output as JSON')
   .action(async (queue, opts) => {
     await coverageReviewBatchCommand(queue, opts);
+  });
+
+targets
+  .command('validate-coverage-review-batch <batch>')
+  .description('Validate an editable coverage review batch before applying it to the source review CSV')
+  .option('--no-require-reviewer', 'Do not require reviewed_by on approved rows')
+  .option('--no-require-review-notes', 'Do not require review_notes on approved rows')
+  .option('--limit-findings <n>', 'Maximum blockers and warnings to print', '20')
+  .option('--fail-on-blockers', 'Exit non-zero when blockers are found')
+  .option('--json', 'Output as JSON')
+  .action(async (batch, opts) => {
+    await validateCoverageReviewBatchCommand(batch, opts);
   });
 
 targets

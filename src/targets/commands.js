@@ -14,6 +14,7 @@ import {
   buildCoverageReport,
   buildCoverageReviewQueue,
   importCoverageReview,
+  validateCoverageReviewBatch,
   validateCoverageReview,
   writeCoverageCandidatesCsv,
   writeCoverageReviewBatch,
@@ -219,6 +220,37 @@ export async function validateCoverageReviewCommand(reviewPath, opts = {}) {
   }
 
   console.log(`Review: ${result.review}`);
+  console.log(`Rows: ${result.rows}`);
+  console.log(`Approved rows: ${result.approved}`);
+  console.log(`Rejected rows: ${result.rejected}`);
+  console.log(`Unreviewed rows: ${result.unreviewed}`);
+  console.log(`Unknown decisions: ${result.unknown_decision}`);
+  console.log(`Blockers: ${result.blockers_count}`);
+  console.log(`Warnings: ${result.warnings_count}`);
+  for (const item of result.blockers.slice(0, Number.parseInt(opts.limitFindings || 20, 10))) {
+    console.log(`BLOCKER\tline:${item.line}\t${item.code}\t${item.url}`);
+  }
+  for (const item of result.warnings.slice(0, Number.parseInt(opts.limitFindings || 20, 10))) {
+    console.log(`WARNING\tline:${item.line}\t${item.code}\t${item.url}`);
+  }
+  if (!result.ok && opts.failOnBlockers) process.exitCode = 1;
+
+  return result;
+}
+
+export async function validateCoverageReviewBatchCommand(batchPath, opts = {}) {
+  const result = validateCoverageReviewBatch(batchPath, {
+    requireReviewer: opts.requireReviewer !== false,
+    requireReviewNotes: opts.requireReviewNotes !== false,
+  });
+
+  if (opts.json) {
+    console.log(JSON.stringify(result, null, 2));
+    if (!result.ok && opts.failOnBlockers) process.exitCode = 1;
+    return result;
+  }
+
+  console.log(`Batch: ${result.batch}`);
   console.log(`Rows: ${result.rows}`);
   console.log(`Approved rows: ${result.approved}`);
   console.log(`Rejected rows: ${result.rejected}`);

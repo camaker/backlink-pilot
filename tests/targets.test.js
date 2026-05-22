@@ -17,6 +17,7 @@ import {
   coverageReviewQueueCsv,
   coverageReviewCsv,
   importCoverageReview,
+  validateCoverageReviewBatch,
   validateCoverageReview,
   writeCoverageReviewBatch,
   writeCoverageReviewQueue,
@@ -903,6 +904,106 @@ targets:
       assert.match(readFileSync(output, 'utf-8'), /test-p0/);
       assert.match(readFileSync(markdown, 'utf-8'), /approved_domain_variant/);
       assert.doesNotMatch(readFileSync(output, 'utf-8'), /manual.example/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('validates focused coverage review batches before apply', () => {
+    const dir = tempDir();
+    try {
+      const batch = join(dir, 'coverage-review-batch.csv');
+      writeFileSync(batch, [
+        [
+          'batch_id',
+          'batch_order',
+          'priority',
+          'priority_score',
+          'review_row',
+          'review_decision',
+          'review_decision_options',
+          'review_action',
+          'review_instruction',
+          'review_notes',
+          'reviewed_by',
+          'submission_url_override',
+          'canonical_name',
+          'pricing',
+          'lang',
+          'classification',
+          'candidate_import_recommendation',
+          'url',
+          'domain',
+          'occurrence_count',
+          'source_files',
+          'source_locations',
+          'registry_target_ids',
+          'registry_submit_urls',
+        ].join(','),
+        [
+          'p0-001',
+          '1',
+          'P0',
+          '300',
+          '10',
+          'approved',
+          'approved_domain_variant | reject_duplicate | reject_not_submit',
+          'verify_distinct_submit_url_for_existing_domain',
+          'use approved_domain_variant only',
+          'verified distinct endpoint',
+          'qa',
+          '',
+          'Same Domain',
+          'free',
+          'en',
+          'domain_in_registry_only',
+          'review_submit_url',
+          'https://same.example/add',
+          'same.example',
+          '1',
+          'coverage.csv',
+          'coverage.csv:2',
+          'same-existing',
+          'https://same.example/submit',
+        ].join(','),
+        [
+          'p0-001',
+          '2',
+          'P0',
+          '300',
+          '10',
+          'approved_domain_variant',
+          'approved_domain_variant | reject_duplicate | reject_not_submit',
+          'verify_distinct_submit_url_for_existing_domain',
+          'use approved_domain_variant only',
+          'verified distinct endpoint',
+          'qa',
+          '',
+          'Same Domain Duplicate',
+          'free',
+          'en',
+          'domain_in_registry_only',
+          'review_submit_url',
+          'https://same.example/add-two',
+          'same.example',
+          '1',
+          'coverage.csv',
+          'coverage.csv:3',
+          'same-existing',
+          'https://same.example/submit',
+        ].join(','),
+      ].join('\n'));
+
+      const validation = validateCoverageReviewBatch(batch);
+
+      assert.equal(validation.ok, false);
+      assert.equal(validation.rows, 2);
+      assert.equal(validation.approved, 2);
+      assert.deepEqual(validation.blockers.map(item => item.code), [
+        'domain_variant_needs_explicit_approval',
+        'batch_decision_not_allowed',
+        'batch_duplicate_review_row',
+      ]);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

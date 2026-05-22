@@ -905,6 +905,78 @@ export function validateCoverageReview(reviewPath, opts = {}) {
   };
 }
 
+function allowedBatchDecisions(row) {
+  return String(row.review_decision_options || '')
+    .split('|')
+    .map(item => item.trim().toLowerCase())
+    .filter(Boolean);
+}
+
+export function validateCoverageReviewBatch(batchPath, opts = {}) {
+  const rows = parseCsv(readFileSync(batchPath, 'utf-8'));
+  const base = validateCoverageReviewRows(rows, opts);
+  const blockers = [...base.blockers];
+  const warnings = [...base.warnings];
+  const seenReviewRows = new Set();
+
+  rows.forEach((row, index) => {
+    const line = index + 2;
+    const reviewLine = lineNumberFromReviewRow(row);
+    if (!reviewLine) {
+      blockers.push(reviewFinding(
+        row,
+        line,
+        'blocker',
+        'batch_missing_or_invalid_review_row',
+        'Batch row must retain a valid review_row value from the source review CSV.'
+      ));
+    } else if (seenReviewRows.has(reviewLine)) {
+      blockers.push(reviewFinding(
+        row,
+        line,
+        'blocker',
+        'batch_duplicate_review_row',
+        'Batch contains the same review_row more than once.'
+      ));
+    } else {
+      seenReviewRows.add(reviewLine);
+    }
+
+    const decision = reviewDecision(row);
+    if (!decision || isRejectedDecision(decision)) return;
+    const allowed = allowedBatchDecisions(row);
+    if (!allowed.length) {
+      blockers.push(reviewFinding(
+        row,
+        line,
+        'blocker',
+        'batch_missing_decision_options',
+        'Approved batch rows must retain review_decision_options from the queue.'
+      ));
+      return;
+    }
+    if (!allowed.includes(decision)) {
+      blockers.push(reviewFinding(
+        row,
+        line,
+        'blocker',
+        'batch_decision_not_allowed',
+        'Review decision is not one of the decision options allowed for this queue row.'
+      ));
+    }
+  });
+
+  return {
+    batch: batchPath,
+    ...base,
+    ok: blockers.length === 0,
+    blockers_count: blockers.length,
+    warnings_count: warnings.length,
+    blockers,
+    warnings,
+  };
+}
+
 function forceNonExecutableImportMode(target) {
   if (['manual_strategic', 'skip'].includes(target.submission?.mode)) return target;
   return {
