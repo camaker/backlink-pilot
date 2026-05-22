@@ -912,8 +912,7 @@ function allowedBatchDecisions(row) {
     .filter(Boolean);
 }
 
-export function validateCoverageReviewBatch(batchPath, opts = {}) {
-  const rows = parseCsv(readFileSync(batchPath, 'utf-8'));
+function validateCoverageReviewBatchRows(rows, opts = {}) {
   const base = validateCoverageReviewRows(rows, opts);
   const blockers = [...base.blockers];
   const warnings = [...base.warnings];
@@ -967,13 +966,20 @@ export function validateCoverageReviewBatch(batchPath, opts = {}) {
   });
 
   return {
-    batch: batchPath,
     ...base,
     ok: blockers.length === 0,
     blockers_count: blockers.length,
     warnings_count: warnings.length,
     blockers,
     warnings,
+  };
+}
+
+export function validateCoverageReviewBatch(batchPath, opts = {}) {
+  const rows = parseCsv(readFileSync(batchPath, 'utf-8'));
+  return {
+    batch: batchPath,
+    ...validateCoverageReviewBatchRows(rows, opts),
   };
 }
 
@@ -1414,13 +1420,26 @@ function coverageReviewRowsCsv(rows) {
 export function applyCoverageReviewQueue(reviewPath, queuePath, opts = {}) {
   const reviewRows = parseCsv(readFileSync(reviewPath, 'utf-8'));
   const queueRows = parseCsv(readFileSync(queuePath, 'utf-8'));
+  const queueValidation = validateCoverageReviewBatchRows(queueRows, {
+    requireReviewer: opts.requireReviewer !== false,
+    requireReviewNotes: opts.requireReviewNotes !== false,
+  });
   const updatedRows = reviewRows.map(row => ({ ...row }));
   const applied = [];
   const skipped = [];
-  const blocked = [];
+  const blocked = queueValidation.blockers.map(item => ({
+    line: item.line,
+    review_row: lineNumberFromReviewRow({
+      review_row: queueRows[item.line - 2]?.review_row,
+    }) || queueRows[item.line - 2]?.review_row || '',
+    reason: item.code,
+    url: item.url,
+    domain: item.domain,
+    message: item.message,
+  }));
   const seenReviewRows = new Set();
 
-  queueRows.forEach((row, index) => {
+  if (queueValidation.ok) queueRows.forEach((row, index) => {
     const line = index + 2;
     const reviewLine = lineNumberFromReviewRow(row);
     if (!reviewLine) {
@@ -1497,7 +1516,8 @@ export function applyCoverageReviewQueue(reviewPath, queuePath, opts = {}) {
     }
   });
 
-  const blockedApply = blocked.length > 0 && !opts.allowPartial;
+  const validationBlocked = !queueValidation.ok;
+  const blockedApply = blocked.length > 0 && (validationBlocked || !opts.allowPartial);
   const output = opts.output || (opts.inPlace ? reviewPath : '');
   if (!opts.dryRun && output && !blockedApply) {
     ensureParent(output);
@@ -1511,6 +1531,7 @@ export function applyCoverageReviewQueue(reviewPath, queuePath, opts = {}) {
     dry_run: Boolean(opts.dryRun),
     in_place: Boolean(opts.inPlace),
     allow_partial: Boolean(opts.allowPartial),
+    validation_blocked: validationBlocked,
     blocked_apply: blockedApply,
     review_rows: reviewRows.length,
     queue_rows: queueRows.length,
@@ -1518,6 +1539,7 @@ export function applyCoverageReviewQueue(reviewPath, queuePath, opts = {}) {
     skipped_rows: skipped.length,
     blocked_rows: blocked.length,
     editable_fields: REVIEW_QUEUE_EDITABLE_FIELDS,
+    queue_validation: queueValidation,
     applied,
     skipped,
     blocked,

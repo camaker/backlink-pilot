@@ -1140,9 +1140,42 @@ targets:
       const result = applyCoverageReviewQueue(review, queue, { output });
 
       assert.equal(result.blocked_apply, true);
+      assert.equal(result.validation_blocked, false);
+      assert.equal(result.queue_validation.ok, true);
       assert.equal(result.applied_rows, 0);
       assert.equal(result.blocked_rows, 1);
       assert.equal(result.blocked[0].reason, 'review_row_identity_mismatch');
+      assert.equal(existsSync(output), false);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('blocks review queue application when batch validation fails', () => {
+    const dir = tempDir();
+    try {
+      const review = join(dir, 'coverage-review.csv');
+      const queue = join(dir, 'coverage-review-queue.csv');
+      const output = join(dir, 'updated-review.csv');
+      writeFileSync(review, [
+        'review_decision,review_instruction,review_notes,reviewed_by,canonical_name,submission_url_override,pricing,lang,classification,candidate_import_recommendation,url,domain,source_files,source_locations,registry_target_ids,registry_submit_urls,occurrence_count',
+        ',verify same-domain variant,,,,,unknown,unknown,domain_in_registry_only,review_submit_url,https://same.example/add,same.example,coverage-candidates.csv,coverage-candidates.csv:2,same-existing,https://same.example/submit,2',
+      ].join('\n'));
+      writeFileSync(queue, [
+        'batch_id,batch_order,priority,priority_score,review_row,review_decision,review_decision_options,review_action,review_instruction,review_notes,reviewed_by,submission_url_override,canonical_name,pricing,lang,classification,candidate_import_recommendation,url,domain,occurrence_count,source_files,source_locations,registry_target_ids,registry_submit_urls',
+        'p0-001,1,P0,187,2,approved,approved_domain_variant | reject_duplicate | reject_not_submit,verify_distinct_submit_url_for_existing_domain,verify same-domain variant,verified,qa,,Same Example,free,en,domain_in_registry_only,review_submit_url,https://same.example/add,same.example,2,coverage-candidates.csv,coverage-candidates.csv:2,same-existing,https://same.example/submit',
+      ].join('\n'));
+
+      const result = applyCoverageReviewQueue(review, queue, { output });
+
+      assert.equal(result.blocked_apply, true);
+      assert.equal(result.applied_rows, 0);
+      assert.equal(result.blocked_rows, 2);
+      assert.deepEqual(result.blocked.map(row => row.reason), [
+        'domain_variant_needs_explicit_approval',
+        'batch_decision_not_allowed',
+      ]);
+      assert.equal(result.queue_validation.ok, false);
       assert.equal(existsSync(output), false);
     } finally {
       rmSync(dir, { recursive: true, force: true });
