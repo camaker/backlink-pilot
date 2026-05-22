@@ -15,6 +15,7 @@ import {
   auditTargetsCommand,
   coverageTargetsCommand,
   dedupeTargetIdsCommand,
+  importCoverageReviewCommand,
   listTargetsCommand,
   normalizeTargetsCommand,
   statsTargetsCommand,
@@ -289,9 +290,25 @@ targets
   .option('--registry <path>', 'Canonical registry path')
   .option('--output <path>', 'Write full coverage report JSON')
   .option('--candidates <path>', 'Write review candidate CSV')
+  .option('--review <path>', 'Write human review CSV for approved-only importing')
+  .option('--include-exact', 'Include already-covered exact matches in the review CSV')
   .option('--json', 'Output full report as JSON')
   .action(async (dir, opts) => {
     await coverageTargetsCommand(dir, opts);
+  });
+
+targets
+  .command('import-coverage-review <file>')
+  .description('Import approved coverage review rows as non-executable needs_scout targets')
+  .option('--registry <path>', 'Canonical registry path')
+  .option('--source <name>', 'Source label for imported targets', 'coverage-review')
+  .option('--group <group>', 'Group label for imported targets', 'coverage-review')
+  .option('--lang <lang>', 'Default language for imported targets')
+  .option('--dry-run', 'Validate and summarize without writing the registry')
+  .option('--allow-partial', 'Import safe approved rows even if some approved rows are blocked')
+  .option('--json', 'Output as JSON')
+  .action(async (file, opts) => {
+    await importCoverageReviewCommand(file, opts);
   });
 
 program

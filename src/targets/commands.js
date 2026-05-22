@@ -10,8 +10,10 @@ import {
 import { auditRegistry, formatAuditReport } from './audit.js';
 import {
   buildCoverageReport,
+  importCoverageReview,
   writeCoverageCandidatesCsv,
   writeCoverageReport,
+  writeCoverageReviewCsv,
 } from './coverage.js';
 
 function printStats(stats) {
@@ -126,6 +128,12 @@ export async function coverageTargetsCommand(inputDir, opts = {}) {
     writeCoverageCandidatesCsv(report, opts.candidates);
   }
 
+  if (opts.review) {
+    writeCoverageReviewCsv(report, opts.review, {
+      includeExact: Boolean(opts.includeExact),
+    });
+  }
+
   if (opts.json) {
     console.log(JSON.stringify(report, null, 2));
     return report;
@@ -143,6 +151,51 @@ export async function coverageTargetsCommand(inputDir, opts = {}) {
   console.log(`Candidate recommendations: ${JSON.stringify(report.recommendations.counts)}`);
   if (opts.output) console.log(`Coverage report: ${opts.output}`);
   if (opts.candidates) console.log(`Candidate CSV: ${opts.candidates}`);
+  if (opts.review) console.log(`Review CSV: ${opts.review}`);
 
   return report;
+}
+
+export async function importCoverageReviewCommand(reviewPath, opts = {}) {
+  const result = importCoverageReview(
+    opts.registry || DEFAULT_REGISTRY_FILE,
+    reviewPath,
+    {
+      source: opts.source || 'coverage-review',
+      group: opts.group || 'coverage-review',
+      lang: opts.lang,
+      dryRun: Boolean(opts.dryRun),
+      allowPartial: Boolean(opts.allowPartial),
+    }
+  );
+
+  if (opts.json) {
+    console.log(JSON.stringify(result, null, 2));
+    if (result.blocked_import) process.exitCode = 1;
+    return result;
+  }
+
+  console.log(`Review: ${result.review}`);
+  console.log(`Registry: ${result.path}`);
+  console.log(`Dry run: ${result.dry_run}`);
+  console.log(`Rows: ${result.rows}`);
+  console.log(`Approved rows: ${result.approved_rows}`);
+  console.log(`Imported: ${result.imported}`);
+  console.log(`Would import: ${result.would_import}`);
+  console.log(`Duplicates merged: ${result.duplicates}`);
+  console.log(`Skipped rows: ${result.skipped}`);
+  console.log(`Blocked rows: ${result.blocked}`);
+  console.log(`Registry total: ${result.registry_total}`);
+  console.log(`Resulting total: ${result.resulting_total}`);
+  console.log(`Mode policy: ${result.mode_policy}`);
+
+  if (result.blocked_import) {
+    console.log('Import blocked: approved rows failed safety checks. Fix the review file or pass --allow-partial for a controlled partial import.');
+    for (const row of result.blocked_rows.slice(0, 10)) {
+      console.log(`- line ${row.line}: ${row.reason} ${row.url}`);
+    }
+    process.exitCode = 1;
+  }
+
+  return result;
 }

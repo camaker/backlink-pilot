@@ -9,8 +9,11 @@ import { auditTargets, formatAuditReport } from '../src/targets/audit.js';
 import {
   buildCoverageReport,
   coverageCandidatesCsv,
+  coverageReviewCsv,
+  importCoverageReview,
   writeCoverageCandidatesCsv,
   writeCoverageReport,
+  writeCoverageReviewCsv,
 } from '../src/targets/coverage.js';
 import {
   dedupeRegistryIds,
@@ -413,6 +416,203 @@ targets:
       assert.match(csv, /https:\/\/quote.example\/submit\?name=a%2Cb/);
       assert.equal(JSON.parse(readFileSync(output, 'utf-8')).summary.unique_urls_in_input, 1);
       assert.match(readFileSync(candidates, 'utf-8'), /quote.example/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('writes a review CSV that excludes exact matches by default', () => {
+    const dir = tempDir();
+    try {
+      const inputDir = join(dir, 'backlink-url');
+      const registry = join(dir, 'registry.yaml');
+      const review = join(dir, 'out', 'coverage-review.csv');
+      writeFileSync(registry, `
+version: 1
+targets:
+  - id: exact
+    domain: exact.example
+    submit_url: https://exact.example/submit
+    normalized_key: exact.example/submit
+`);
+      mkdirp(inputDir);
+      writeFileSync(join(inputDir, 'targets.csv'), `"submission_link"
+"https://exact.example/submit"
+"https://missing.example/submit"
+`);
+
+      const report = buildCoverageReport(inputDir, { registry });
+      const csv = coverageReviewCsv(report);
+      writeCoverageReviewCsv(report, review);
+
+      assert.match(csv, /review_decision,review_instruction/);
+      assert.doesNotMatch(csv, /exact.example/);
+      assert.match(readFileSync(review, 'utf-8'), /missing.example/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('imports only approved coverage review rows as non-executable scout targets', () => {
+    const dir = tempDir();
+    try {
+      const registry = join(dir, 'registry.yaml');
+      const review = join(dir, 'coverage-review.csv');
+      writeFileSync(registry, 'version: 1\ntargets: []\n');
+      writeFileSync(review, [
+        [
+          'review_decision',
+          'canonical_name',
+          'pricing',
+          'classification',
+          'candidate_import_recommendation',
+          'url',
+          'domain',
+          'source_files',
+          'source_locations',
+          'occurrence_count',
+        ].join(','),
+        [
+          'approved',
+          'Approved Directory',
+          'unknown',
+          'missing_domain',
+          'review_submit_url',
+          'https://approved.example/submit',
+          'approved.example',
+          'coverage.csv',
+          'coverage.csv:2',
+          '1',
+        ].join(','),
+        [
+          '',
+          'Not Reviewed',
+          'unknown',
+          'missing_domain',
+          'review_submit_url',
+          'https://not-reviewed.example/submit',
+          'not-reviewed.example',
+          'coverage.csv',
+          'coverage.csv:3',
+          '1',
+        ].join(','),
+      ].join('\n'));
+
+      const result = importCoverageReview(registry, review, { source: 'coverage-test' });
+      const loaded = loadRegistry(registry);
+
+      assert.equal(result.imported, 1);
+      assert.equal(result.registry_total, 0);
+      assert.equal(result.resulting_total, 1);
+      assert.equal(result.skipped, 1);
+      assert.equal(result.blocked, 0);
+      assert.equal(loaded.targets.length, 1);
+      assert.equal(loaded.targets[0].name, 'Approved Directory');
+      assert.equal(loaded.targets[0].submission.mode, 'needs_scout');
+      assert.equal(loaded.targets[0].submission.reason, 'coverage_review_approved_needs_scout');
+      assert.equal(loaded.targets[0].source_meta.coverage_review_decision, 'approved');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('blocks approved source pages and ambiguous same-domain variants by default', () => {
+    const dir = tempDir();
+    try {
+      const registry = join(dir, 'registry.yaml');
+      const review = join(dir, 'coverage-review.csv');
+      writeFileSync(registry, `
+version: 1
+targets:
+  - id: existing
+    domain: same.example
+    submit_url: https://same.example/submit-tool
+    normalized_key: same.example/submit-tool
+`);
+      writeFileSync(review, [
+        [
+          'review_decision',
+          'canonical_name',
+          'pricing',
+          'classification',
+          'candidate_import_recommendation',
+          'url',
+          'domain',
+          'source_files',
+          'source_locations',
+          'occurrence_count',
+        ].join(','),
+        [
+          'approved',
+          'Source Page',
+          'unknown',
+          'missing_domain',
+          'skip_source_page',
+          'https://91wink.com/source',
+          '91wink.com',
+          'coverage.json',
+          'coverage.json:source',
+          '1',
+        ].join(','),
+        [
+          'approved',
+          'Same Domain',
+          'unknown',
+          'domain_in_registry_only',
+          'review_submit_url',
+          'https://same.example/add',
+          'same.example',
+          'coverage.csv',
+          'coverage.csv:2',
+          '1',
+        ].join(','),
+      ].join('\n'));
+
+      const result = importCoverageReview(registry, review);
+      const loaded = loadRegistry(registry);
+
+      assert.equal(result.blocked_import, true);
+      assert.equal(result.imported, 0);
+      assert.equal(result.registry_total, 1);
+      assert.equal(result.resulting_total, 1);
+      assert.deepEqual(result.blocked_rows.map(row => row.reason), [
+        'source_page_not_importable',
+        'domain_variant_needs_explicit_approval',
+      ]);
+      assert.equal(loaded.targets.length, 1);
+      assert.equal(loaded.targets[0].id, 'existing');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('allows explicitly approved same-domain variants but keeps them non-executable', () => {
+    const dir = tempDir();
+    try {
+      const registry = join(dir, 'registry.yaml');
+      const review = join(dir, 'coverage-review.csv');
+      writeFileSync(registry, `
+version: 1
+targets:
+  - id: existing
+    domain: same.example
+    submit_url: https://same.example/submit-tool
+    normalized_key: same.example/submit-tool
+`);
+      writeFileSync(review, [
+        'review_decision,canonical_name,pricing,classification,candidate_import_recommendation,url,domain,source_files,source_locations,occurrence_count',
+        'approved_domain_variant,Same Domain Add,unknown,domain_in_registry_only,review_submit_url,https://same.example/add,same.example,coverage.csv,coverage.csv:2,1',
+      ].join('\n'));
+
+      const result = importCoverageReview(registry, review);
+      const loaded = loadRegistry(registry);
+
+      assert.equal(result.imported, 1);
+      assert.equal(result.duplicates, 0);
+      assert.equal(loaded.targets.length, 2);
+      const imported = loaded.targets.find(target => target.submit_url === 'https://same.example/add');
+      assert.equal(imported.submission.mode, 'needs_scout');
+      assert.equal(imported.quality.risk, 'unknown');
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

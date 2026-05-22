@@ -7,13 +7,19 @@ import {
   writeFileSync,
 } from 'fs';
 import { dirname, extname, join, relative } from 'path';
-import { loadRegistry } from './registry.js';
-import { normalizeUrl } from './normalize.js';
+import {
+  canonicalTargetFromRow,
+  loadRegistry,
+  mergeTargets,
+  saveRegistry,
+} from './registry.js';
+import { normalizePricing, normalizeUrl } from './normalize.js';
 import { parseCsv } from './importers/csv.js';
 
 const DEFAULT_IGNORED_FILENAMES = new Set([
   'coverage-report.json',
   'coverage-candidates.csv',
+  'coverage-review.csv',
   'coverage-summary.md',
 ]);
 
@@ -40,6 +46,10 @@ const BARE_DOMAIN_FIELDS = new Set([
 ]);
 
 const URL_PATTERN = /https?:\/\/[^\s<>"'`)\]}]+/gi;
+const APPROVED_DECISIONS = new Set(['approved', 'approve', 'yes', 'y', 'true', '1']);
+const DOMAIN_VARIANT_APPROVALS = new Set(['approved_domain_variant', 'approve_domain_variant']);
+const DOMAIN_CHANGE_APPROVALS = new Set(['approved_domain_change', 'approve_domain_change']);
+const REJECTED_DECISION_PATTERN = /^(reject|rejected|skip|skipped|already|duplicate)/;
 
 function normalizePath(value) {
   return String(value || '').replace(/\\/g, '/');
@@ -463,4 +473,275 @@ export function coverageCandidatesCsv(report) {
 export function writeCoverageCandidatesCsv(report, path) {
   ensureParent(path);
   writeFileSync(path, coverageCandidatesCsv(report), 'utf-8');
+}
+
+function defaultReviewDecision(item) {
+  if (item.candidate_import_recommendation === 'skip_source_page') return 'reject_source_page';
+  if (item.candidate_import_recommendation === 'already_in_registry') return 'already_in_registry';
+  return '';
+}
+
+function reviewInstruction(item) {
+  if (item.classification === 'exact_in_registry') return 'do_not_import';
+  if (item.candidate_import_recommendation === 'skip_source_page') return 'do_not_import_source_page';
+  if (item.classification === 'domain_in_registry_only') return 'use_approved_domain_variant_only_if_this_is_a_distinct_valid_submit_url';
+  if (item.candidate_import_recommendation === 'review_submit_url') return 'verify_submit_form_before_approval';
+  return 'verify_directory_fit_before_approval';
+}
+
+function coverageReviewRows(report, opts = {}) {
+  const includeExact = Boolean(opts.includeExact);
+  return report.items
+    .filter(item => includeExact || item.classification !== 'exact_in_registry')
+    .map(item => ({
+      review_decision: defaultReviewDecision(item),
+      review_instruction: reviewInstruction(item),
+      review_notes: '',
+      reviewed_by: '',
+      canonical_name: item.domain,
+      submission_url_override: '',
+      pricing: 'unknown',
+      lang: 'unknown',
+      classification: item.classification,
+      candidate_import_recommendation: item.candidate_import_recommendation,
+      url: item.url,
+      domain: item.domain,
+      source_files: item.source_files,
+      source_locations: item.source_locations,
+      registry_target_ids: item.registry_target_ids,
+      registry_submit_urls: item.registry_submit_urls,
+      occurrence_count: item.occurrence_count,
+    }));
+}
+
+export function coverageReviewCsv(report, opts = {}) {
+  const headers = [
+    'review_decision',
+    'review_instruction',
+    'review_notes',
+    'reviewed_by',
+    'canonical_name',
+    'submission_url_override',
+    'pricing',
+    'lang',
+    'classification',
+    'candidate_import_recommendation',
+    'url',
+    'domain',
+    'source_files',
+    'source_locations',
+    'registry_target_ids',
+    'registry_submit_urls',
+    'occurrence_count',
+  ];
+
+  const rows = coverageReviewRows(report, opts).map(row =>
+    headers.map(header => row[header])
+  );
+
+  return [
+    headers.join(','),
+    ...rows.map(row => row.map(csvEscape).join(',')),
+  ].join('\n') + '\n';
+}
+
+export function writeCoverageReviewCsv(report, path, opts = {}) {
+  ensureParent(path);
+  writeFileSync(path, coverageReviewCsv(report, opts), 'utf-8');
+}
+
+function reviewDecision(row) {
+  const direct = String(row.review_decision || row.decision || '').trim().toLowerCase();
+  if (direct) return direct;
+  const approved = String(row.approved || '').trim().toLowerCase();
+  if (APPROVED_DECISIONS.has(approved)) return 'approved';
+  return '';
+}
+
+function isApprovedDecision(decision) {
+  return APPROVED_DECISIONS.has(decision) ||
+    DOMAIN_VARIANT_APPROVALS.has(decision) ||
+    DOMAIN_CHANGE_APPROVALS.has(decision);
+}
+
+function isRejectedDecision(decision) {
+  return REJECTED_DECISION_PATTERN.test(decision);
+}
+
+function rowImportUrl(row) {
+  return String(row.submission_url_override || row.submit_url || row.url || '').trim();
+}
+
+function blockReason(row, normalized, decision) {
+  const classification = String(row.classification || '').trim();
+  const recommendation = String(row.candidate_import_recommendation || '').trim();
+  const pricing = normalizePricing(row.pricing, row.price_text || row.status);
+
+  if (!decision) return 'not_reviewed';
+  if (isRejectedDecision(decision)) return 'rejected_by_review';
+  if (!isApprovedDecision(decision)) return 'unknown_review_decision';
+  if (!normalized) return 'invalid_url';
+  if (classification === 'exact_in_registry') return 'already_in_registry';
+  if (recommendation === 'already_in_registry') return 'already_in_registry';
+  if (recommendation === 'skip_source_page') return 'source_page_not_importable';
+  if (pricing === 'paid') return 'paid_candidate_not_imported';
+  if (classification === 'domain_in_registry_only' && !DOMAIN_VARIANT_APPROVALS.has(decision)) {
+    return 'domain_variant_needs_explicit_approval';
+  }
+  const originalDomain = String(row.domain || '').trim().toLowerCase();
+  if (
+    originalDomain &&
+    normalized.domain !== originalDomain.replace(/^www\./, '') &&
+    !DOMAIN_CHANGE_APPROVALS.has(decision)
+  ) {
+    return 'domain_change_needs_explicit_approval';
+  }
+  return '';
+}
+
+function forceNonExecutableImportMode(target) {
+  if (['manual_strategic', 'skip'].includes(target.submission?.mode)) return target;
+  return {
+    ...target,
+    auto: '',
+    original_auto: '',
+    technical: {
+      ...(target.technical || {}),
+      last_scouted_at: null,
+      auth: 'unknown',
+      captcha: 'unknown',
+      reachable: 'unknown',
+    },
+    submission: {
+      ...(target.submission || {}),
+      mode: 'needs_scout',
+      status: 'new',
+      reason: 'coverage_review_approved_needs_scout',
+      last_submitted_at: null,
+      last_verified_at: null,
+    },
+    quality: {
+      ...(target.quality || {}),
+      risk: 'unknown',
+    },
+  };
+}
+
+function targetFromReviewRow(row, normalized, opts = {}) {
+  const now = nowIso();
+  const name = String(row.canonical_name || row.title || row.name || row.domain || normalized.domain).trim();
+  const notes = [
+    row.review_notes ? `review_notes: ${row.review_notes}` : '',
+    row.review_instruction ? `review_instruction: ${row.review_instruction}` : '',
+  ].filter(Boolean).join('\n');
+  const target = canonicalTargetFromRow({
+    title: name || normalized.domain,
+    submission_link: normalized.url,
+    pricing: row.pricing || 'unknown',
+    price_text: row.price_text || '',
+    lang: row.lang || opts.lang || 'unknown',
+    group: row.group || opts.group || 'coverage-review',
+    type: 'form',
+    notes,
+    source_files: row.source_files,
+    source_locations: row.source_locations,
+    occurrence_count: row.occurrence_count,
+  }, {
+    source: opts.source || 'coverage-review',
+  });
+
+  if (!target) return null;
+  const safeTarget = forceNonExecutableImportMode(target);
+  return {
+    ...safeTarget,
+    source_meta: {
+      ...(safeTarget.source_meta || {}),
+      coverage_classification: row.classification || '',
+      coverage_recommendation: row.candidate_import_recommendation || '',
+      coverage_registry_target_ids: row.registry_target_ids || '',
+      coverage_registry_submit_urls: row.registry_submit_urls || '',
+      coverage_review_decision: reviewDecision(row),
+      coverage_reviewed_by: row.reviewed_by || '',
+      coverage_reviewed_at: opts.reviewedAt || now,
+      coverage_original_url: row.url || '',
+      coverage_original_domain: row.domain || '',
+    },
+  };
+}
+
+export function importCoverageReview(registryPath, reviewPath, opts = {}) {
+  const registry = loadRegistry(registryPath);
+  const rows = parseCsv(readFileSync(reviewPath, 'utf-8'));
+  const incoming = [];
+  const skipped = [];
+  const blocked = [];
+
+  rows.forEach((row, index) => {
+    const line = index + 2;
+    const decision = reviewDecision(row);
+    const normalized = normalizeUrl(rowImportUrl(row));
+    const reason = blockReason(row, normalized, decision);
+
+    if (reason) {
+      const entry = {
+        line,
+        url: rowImportUrl(row) || row.url || '',
+        domain: row.domain || normalized?.domain || '',
+        classification: row.classification || '',
+        review_decision: decision,
+        reason,
+      };
+      if (!decision || isRejectedDecision(decision)) skipped.push(entry);
+      else blocked.push(entry);
+      return;
+    }
+
+    const target = targetFromReviewRow(row, normalized, opts);
+    if (!target) {
+      blocked.push({
+        line,
+        url: rowImportUrl(row),
+        domain: row.domain || '',
+        classification: row.classification || '',
+        review_decision: decision,
+        reason: 'target_conversion_failed',
+      });
+      return;
+    }
+    incoming.push(target);
+  });
+
+  const blockedImport = blocked.length > 0 && !opts.allowPartial;
+  const importable = blockedImport ? [] : incoming;
+  const merged = mergeTargets(registry.targets || [], importable);
+  const saved = opts.dryRun || blockedImport
+    ? { targets: registry.targets || [] }
+    : saveRegistry({ ...registry, targets: merged.targets }, registryPath);
+
+  return {
+    path: registryPath,
+    review: reviewPath,
+    dry_run: Boolean(opts.dryRun),
+    blocked_import: blockedImport,
+    rows: rows.length,
+    approved_rows: incoming.length,
+    imported: importable.length,
+    would_import: incoming.length,
+    duplicates: merged.duplicates,
+    renamed_ids: merged.renamed_ids || 0,
+    skipped: skipped.length,
+    blocked: blocked.length,
+    registry_total: (registry.targets || []).length,
+    resulting_total: blockedImport ? (registry.targets || []).length : merged.targets.length,
+    total: saved.targets.length,
+    mode_policy: 'approved_rows_imported_as_non_executable_needs_scout_unless_manual_or_skip',
+    imported_targets: importable.map(target => ({
+      id: target.id,
+      mode: target.submission?.mode,
+      pricing: target.pricing,
+      submit_url: target.submit_url,
+    })),
+    skipped_rows: skipped,
+    blocked_rows: blocked,
+  };
 }
