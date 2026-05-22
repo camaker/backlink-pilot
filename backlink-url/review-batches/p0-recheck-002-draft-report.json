@@ -1,0 +1,156 @@
+{
+  "generated_at": "2026-05-22T10:34:55.187Z",
+  "batch": "backlink-url/review-batches/p0-recheck-002.csv",
+  "suggestions": "backlink-url/review-batches/p0-recheck-002-suggestions.csv",
+  "batch_id": "p0-recheck-002",
+  "mode_policy": "drafts_rejections_only_no_approvals_no_registry_changes",
+  "min_confidence": "high",
+  "reviewed_by": "read_only_evidence",
+  "enabled_rejection_decisions": [
+    "reject_auth_required",
+    "reject_duplicate",
+    "reject_not_submit",
+    "reject_paid"
+  ],
+  "batch_rows": 17,
+  "suggestion_rows": 17,
+  "drafted_rows": 0,
+  "skipped_rows": 17,
+  "blocked_rows": 0,
+  "priority_counts": {
+    "P0": 17
+  },
+  "action_counts": {
+    "verify_distinct_submit_url_for_existing_domain": 5,
+    "verify_submit_form_then_approve_or_reject": 12
+  },
+  "drafted": [],
+  "skipped": [
+    {
+      "line": 2,
+      "review_row": "75",
+      "url": "https://aiscout.net/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 3,
+      "review_row": "79",
+      "url": "https://aitoolsdirectory.com/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 4,
+      "review_row": "208",
+      "url": "https://devhunt.org/submit",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 5,
+      "review_row": "472",
+      "url": "https://www.sideprojectors.com/project/new",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 6,
+      "review_row": "497",
+      "url": "https://stackshare.io/new-product",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 7,
+      "review_row": "63",
+      "url": "https://ai.xyz/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 8,
+      "review_row": "64",
+      "url": "https://aiagents.live/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 9,
+      "review_row": "65",
+      "url": "https://aiagentsbase.com/submit",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 10,
+      "review_row": "68",
+      "url": "https://aiagentsmarketplace.com/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 11,
+      "review_row": "72",
+      "url": "https://aimatchpro.ai/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 12,
+      "review_row": "78",
+      "url": "https://aitools.love/submit",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 13,
+      "review_row": "81",
+      "url": "https://www.aitrendytools.com/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 14,
+      "review_row": "115",
+      "url": "https://bestofweb.io/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 15,
+      "review_row": "274",
+      "url": "https://getbyte.co/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 16,
+      "review_row": "332",
+      "url": "https://launchvault.com/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 17,
+      "review_row": "392",
+      "url": "https://www.nocodedevs.com/submit",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 18,
+      "review_row": "395",
+      "url": "https://nocodelist.co/submit",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    }
+  ],
+  "blocked": []
+}
