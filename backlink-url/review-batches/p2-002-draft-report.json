@@ -1,0 +1,807 @@
+{
+  "generated_at": "2026-05-22T08:44:25.391Z",
+  "batch": "backlink-url/review-batches/p2-002.csv",
+  "suggestions": "backlink-url/review-batches/p2-002-suggestions.csv",
+  "batch_id": "p2-002",
+  "mode_policy": "drafts_rejections_only_no_approvals_no_registry_changes",
+  "min_confidence": "high",
+  "reviewed_by": "read_only_evidence",
+  "enabled_rejection_decisions": [
+    "reject_auth_required",
+    "reject_duplicate",
+    "reject_not_submit",
+    "reject_paid"
+  ],
+  "batch_rows": 100,
+  "suggestion_rows": 100,
+  "drafted_rows": 6,
+  "skipped_rows": 45,
+  "blocked_rows": 49,
+  "priority_counts": {
+    "P2": 100
+  },
+  "action_counts": {
+    "verify_directory_fit_before_any_approval": 100
+  },
+  "drafted": [
+    {
+      "line": 13,
+      "review_row": "382",
+      "url": "https://neilpatel.com/ai-tools",
+      "domain": "neilpatel.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:382"
+    },
+    {
+      "line": 22,
+      "review_row": "407",
+      "url": "https://www.openpr.com/",
+      "domain": "openpr.com",
+      "suggested_review_decision": "reject_paid",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:407"
+    },
+    {
+      "line": 33,
+      "review_row": "436",
+      "url": "https://profithunt.co/",
+      "domain": "profithunt.co",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:436"
+    },
+    {
+      "line": 41,
+      "review_row": "471",
+      "url": "https://www.showmelocal.com/",
+      "domain": "showmelocal.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:471"
+    },
+    {
+      "line": 77,
+      "review_row": "235",
+      "url": "https://example.com/",
+      "domain": "example.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:235"
+    },
+    {
+      "line": 80,
+      "review_row": "61",
+      "url": "https://advicefromatwentysomething.com/3-simple-ways-to-reconnect-with-your-creativity",
+      "domain": "advicefromatwentysomething.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:61"
+    }
+  ],
+  "skipped": [
+    {
+      "line": 4,
+      "review_row": "352",
+      "url": "https://makerthrive.com/",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 6,
+      "review_row": "358",
+      "url": "https://www.massagetherapy.com/",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 8,
+      "review_row": "364",
+      "url": "https://www.mixcloud.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 15,
+      "review_row": "387",
+      "url": "https://www.newswiretoday.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 19,
+      "review_row": "401",
+      "url": "https://www.onlineprnews.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 24,
+      "review_row": "413",
+      "url": "https://www.patreon.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 28,
+      "review_row": "424",
+      "url": "https://placester.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 29,
+      "review_row": "426",
+      "url": "https://porch.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 30,
+      "review_row": "428",
+      "url": "https://www.pr-free.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 35,
+      "review_row": "444",
+      "url": "https://www.quibblo.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 37,
+      "review_row": "458",
+      "url": "https://www.rundown.ai/tools",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 39,
+      "review_row": "467",
+      "url": "https://www.scribd.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 42,
+      "review_row": "476",
+      "url": "https://www.sitepoint.com/community",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 43,
+      "review_row": "482",
+      "url": "https://www.slant.co/",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 44,
+      "review_row": "485",
+      "url": "https://www.slideshare.net/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 46,
+      "review_row": "491",
+      "url": "https://soundcloud.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 48,
+      "review_row": "501",
+      "url": "https://startupfa.me/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 49,
+      "review_row": "502",
+      "url": "https://www.startups.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 50,
+      "review_row": "505",
+      "url": "https://startus.cc/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 51,
+      "review_row": "507",
+      "url": "https://www.strava.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 53,
+      "review_row": "511",
+      "url": "https://substack.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 55,
+      "review_row": "517",
+      "url": "https://taalk.com/",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 56,
+      "review_row": "518",
+      "url": "https://www.teacherspayteachers.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 57,
+      "review_row": "519",
+      "url": "https://tech.co/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 60,
+      "review_row": "538",
+      "url": "https://toolsfine.com/",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 61,
+      "review_row": "540",
+      "url": "https://trustmrr.com/",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 62,
+      "review_row": "542",
+      "url": "https://www.tumblr.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 63,
+      "review_row": "543",
+      "url": "https://tupalo.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 66,
+      "review_row": "552",
+      "url": "https://www.webmasterworld.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 69,
+      "review_row": "557",
+      "url": "https://www.wellness.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 70,
+      "review_row": "558",
+      "url": "https://whatlaunchedtoday.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 71,
+      "review_row": "560",
+      "url": "https://www.where2go.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 76,
+      "review_row": "203",
+      "url": "https://custom.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 79,
+      "review_row": "58",
+      "url": "https://accounts.google.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 82,
+      "review_row": "89",
+      "url": "https://www.anspblog.org/fin-to-limb-to-art",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 83,
+      "review_row": "91",
+      "url": "https://any-site.com/",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 84,
+      "review_row": "93",
+      "url": "https://api.indexnow.org/indexnow",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 85,
+      "review_row": "97",
+      "url": "https://www.arlindovsky.net/2022/06/calendarizacao-da-mobilidade-por-doenca",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 86,
+      "review_row": "98",
+      "url": "https://www.arlindovsky.net/2024/05/e-depois-de-abril-paulo-prudencio",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 91,
+      "review_row": "110",
+      "url": "https://bakersroyale.com/chocolate-banana-bread-muffins-stuffed-with-reeses-peanut-butter-cup",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 92,
+      "review_row": "112",
+      "url": "https://bangshift.com/bangshift1320/baby-gators-photos-nhra-divisional-sportsman-drag-racing-action-shots",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 96,
+      "review_row": "120",
+      "url": "https://bevcooks.com/2019/06/creamy-chicken-and-asparagus-casserole",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 98,
+      "review_row": "123",
+      "url": "https://www.bing.com/indexnow",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 99,
+      "review_row": "128",
+      "url": "https://www.blafusel.de/phpbb/memberlist.php?mode=viewprofile&u=8625",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 101,
+      "review_row": "130",
+      "url": "https://www.blend4web.com/ru/forums/users/alexreynolds/posts",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    }
+  ],
+  "blocked": [
+    {
+      "line": 2,
+      "review_row": "350",
+      "url": "https://www.make.com/en/partners",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 3,
+      "review_row": "351",
+      "url": "https://www.makerpad.co/",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 5,
+      "review_row": "357",
+      "url": "https://www.manta.com/",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 7,
+      "review_row": "360",
+      "url": "https://www.merchantcircle.com/",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 9,
+      "review_row": "366",
+      "url": "https://www.modelmayhem.com/",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 10,
+      "review_row": "371",
+      "url": "https://www.mumsnet.com/Talk",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 11,
+      "review_row": "373",
+      "url": "https://my.g2.com/sellers/welcome",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 12,
+      "review_row": "377",
+      "url": "https://myfolio.com/",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 14,
+      "review_row": "386",
+      "url": "https://newsaasly.com/",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 16,
+      "review_row": "394",
+      "url": "https://www.nocodefounders.com/",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 17,
+      "review_row": "397",
+      "url": "https://www.notion.so/integrations",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 18,
+      "review_row": "399",
+      "url": "https://noxilo.com/",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 20,
+      "review_row": "403",
+      "url": "https://open-launch.com/",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 21,
+      "review_row": "405",
+      "url": "https://openclawdir.com/",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 23,
+      "review_row": "411",
+      "url": "https://pastebin.com/",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 25,
+      "review_row": "414",
+      "url": "https://www.pearltrees.com/",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 26,
+      "review_row": "416",
+      "url": "https://penzu.com/",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 27,
+      "review_row": "420",
+      "url": "https://pipedream.com/docs/components",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 31,
+      "review_row": "429",
+      "url": "https://www.pr.com/",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 32,
+      "review_row": "434",
+      "url": "https://www.prlog.org/",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 34,
+      "review_row": "440",
+      "url": "https://proofstories.io/",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 36,
+      "review_row": "455",
+      "url": "https://replit.com/",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 38,
+      "review_row": "466",
+      "url": "https://www.scoop.it/",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 40,
+      "review_row": "469",
+      "url": "https://www.semfirms.com/",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 45,
+      "review_row": "490",
+      "url": "https://www.sooperarticles.com/",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 47,
+      "review_row": "494",
+      "url": "https://www.spoke.com/",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 52,
+      "review_row": "508",
+      "url": "https://www.strikingly.com/",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 54,
+      "review_row": "512",
+      "url": "https://www.sulekha.com/",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 58,
+      "review_row": "528",
+      "url": "https://thesaasdirectory.com/",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 59,
+      "review_row": "532",
+      "url": "https://todaylaunches.com/",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 64,
+      "review_row": "549",
+      "url": "https://www.warriorforum.com/",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 65,
+      "review_row": "551",
+      "url": "https://webdesign-inspiration.com/",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 67,
+      "review_row": "554",
+      "url": "https://www.weebly.com/",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 68,
+      "review_row": "555",
+      "url": "https://wefunder.com/",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 72,
+      "review_row": "566",
+      "url": "https://wordpress.com/",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 73,
+      "review_row": "569",
+      "url": "https://www.yellowpagesgoesgreen.org/",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 74,
+      "review_row": "570",
+      "url": "https://www.yogatrail.com/",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 75,
+      "review_row": "579",
+      "url": "https://zapier.com/developer",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 78,
+      "review_row": "57",
+      "url": "https://abracomex.org/aula-inaugural-graduacao-servicos-juridicos-online",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 81,
+      "review_row": "88",
+      "url": "https://another-blog.com/tech-post",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 87,
+      "review_row": "102",
+      "url": "https://athomeinthefuture.com/2022/03/design-decorate-perfect-backyard",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 88,
+      "review_row": "107",
+      "url": "https://www.bakerella.com/16-sweet-easter-treats",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 89,
+      "review_row": "108",
+      "url": "https://www.bakerella.com/sweets-for-the-season",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 90,
+      "review_row": "109",
+      "url": "https://www.bakerella.com/yummy-mummy-snack-cakes",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 93,
+      "review_row": "113",
+      "url": "https://www.beautythroughimperfection.com/reindeer-donuts",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 94,
+      "review_row": "118",
+      "url": "https://www.betterreading.com.au/news/awards/breaking-news-announcing-the-2023-better-reading-top-100",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 95,
+      "review_row": "119",
+      "url": "https://www.betterreading.com.au/news/book-life/wine-coffee-tea-what-do-you-drink-while-youre-reading",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 97,
+      "review_row": "121",
+      "url": "https://bevcooks.com/2024/08/homemade-ricotta",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 100,
+      "review_row": "129",
+      "url": "https://blankitinerary.com/santana-fall.html",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    }
+  ]
+}

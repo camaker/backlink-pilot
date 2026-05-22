@@ -1,0 +1,221 @@
+{
+  "generated_at": "2026-05-22T08:44:25.870Z",
+  "batch": "backlink-url/review-batches/p2-005.csv",
+  "suggestions": "backlink-url/review-batches/p2-005-suggestions.csv",
+  "batch_id": "p2-005",
+  "mode_policy": "drafts_rejections_only_no_approvals_no_registry_changes",
+  "min_confidence": "high",
+  "reviewed_by": "read_only_evidence",
+  "enabled_rejection_decisions": [
+    "reject_auth_required",
+    "reject_duplicate",
+    "reject_not_submit",
+    "reject_paid"
+  ],
+  "batch_rows": 24,
+  "suggestion_rows": 24,
+  "drafted_rows": 1,
+  "skipped_rows": 14,
+  "blocked_rows": 9,
+  "priority_counts": {
+    "P2": 24
+  },
+  "action_counts": {
+    "verify_directory_fit_before_any_approval": 24
+  },
+  "drafted": [
+    {
+      "line": 8,
+      "review_row": "547",
+      "url": "http://www.w3.org/2000/svg",
+      "domain": "w3.org",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:547"
+    }
+  ],
+  "skipped": [
+    {
+      "line": 3,
+      "review_row": "530",
+      "url": "https://threewood.jp/hpgen/HPB/entries/25.html",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 6,
+      "review_row": "545",
+      "url": "https://url/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 9,
+      "review_row": "548",
+      "url": "https://wallhaven.cc/user/lauralehman",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 10,
+      "review_row": "556",
+      "url": "https://www.weirdsciencedccomics.com/2022/02/batmancatwoman-10-review.html",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 14,
+      "review_row": "564",
+      "url": "https://www.wonderfulmalaysia.com/tips/heading-to-malaysia-the-superstitions-you-ought-to-know.htm",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 16,
+      "review_row": "567",
+      "url": "https://xxx.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 17,
+      "review_row": "568",
+      "url": "https://yandex.com/indexnow",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 18,
+      "review_row": "571",
+      "url": "https://your-product.com/",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 19,
+      "review_row": "572",
+      "url": "https://your-site.com/",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 20,
+      "review_row": "573",
+      "url": "https://www.yourcupofcake.com/almond-banana-bread",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 21,
+      "review_row": "574",
+      "url": "https://www.yourcupofcake.com/banana-bread-coffee-cake",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 22,
+      "review_row": "575",
+      "url": "https://www.yourcupofcake.com/candy-cane-muddy-buddies",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 23,
+      "review_row": "576",
+      "url": "https://www.yourcupofcake.com/cinnamon-toast-crunch-cupcakes",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 24,
+      "review_row": "577",
+      "url": "https://www.yourcupofcake.com/easy-to-make-snowman-cupcakes",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    }
+  ],
+  "blocked": [
+    {
+      "line": 2,
+      "review_row": "529",
+      "url": "http://www.thinkgrowgiggle.com/2020/07/10-best-mentor-texts-to-use-for-reading.html",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 4,
+      "review_row": "533",
+      "url": "https://tonypolecastro.com/at204",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 5,
+      "review_row": "534",
+      "url": "https://tonypolecastro.com/guitar-notes-for-beginners/comment-page-12",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 7,
+      "review_row": "546",
+      "url": "https://www.visitrichmond.co.uk/blog/read/2024/03/english-tourism-week-2024-gardens-and-parks-b48",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 11,
+      "review_row": "561",
+      "url": "https://whimsysoul.com/napa-valley-wine-train",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 12,
+      "review_row": "562",
+      "url": "https://wiki.alumni.net/wiki/User:MincEdlate33363909",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 13,
+      "review_row": "563",
+      "url": "https://www.wonderfulmalaysia.com/food/best-wet-markets-kuala-lumpur.htm",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 15,
+      "review_row": "565",
+      "url": "https://www.wonderfulmalaysia.com/tips/sport-activities-on-a-vacation-in-malaysia.htm",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    },
+    {
+      "line": 25,
+      "review_row": "578",
+      "url": "https://www.yourcupofcake.com/pineapple-mango-bruschetta",
+      "reason": "suggested_decision_not_allowed_for_batch_row",
+      "suggested_review_decision": "reject_auth_required",
+      "review_decision_options": "approved | reject_not_directory | reject_not_submit | reject_paid"
+    }
+  ]
+}
