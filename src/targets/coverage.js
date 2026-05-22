@@ -78,6 +78,9 @@ const DOCUMENTATION_PLACEHOLDER_DOMAINS = new Set([
   'site.com',
   'some-directory.com',
   'test.example',
+  'url',
+  'xxx.com',
+  'your-site.com',
 ]);
 
 const NON_CATALOG_SOURCE_PATTERNS = [
@@ -1331,7 +1334,7 @@ function obviousNonDirectoryUrlReason(row, evidence) {
   const host = url.hostname.toLowerCase().replace(/^www\./, '');
   const path = url.pathname.toLowerCase();
   const fullPath = `${path}${url.search.toLowerCase()}`;
-  const contentPagePattern = /\/(?:19|20)\d{2}[/-]\d{1,2}(?:[/-]\d{1,2})?\/|\/\d{4}\/\d{2}\/\d{2}\/|\/comment-page-\d+|\/comments?(?:\/|$)|\/tips\/|\/recipes?\/|\/news\/|\/blog\/|\/blogs?\/|\/posts?\/|\/articles?\/|\/discussions?\/threads?\/|\/forums?\/|\/thread\.php|\/viewtopic\.php|\/show_bug\.cgi|\/member(?:list)?\.php|\/profil(?:e|_)|\/users?\//;
+  const contentPagePattern = /\/(?:19|20)\d{2}[/-]\d{1,2}(?:[/-]\d{1,2})?\/|\/\d{4}\/\d{2}\/\d{2}\/|\/comment-page-\d+|\/comments?(?:\/|$)|\/tips\/|\/recipes?\/|\/news\/|\/blog\/|\/blogs?\/|\/posts?\/|\/articles?\/|\/discussions?\/threads?\/|\/forums?\/|\/thread\.php|\/viewtopic\.php|\/show_bug\.cgi|\/member(?:list)?\.php|\/profil(?:e|_|\/)|\/profiles?\/|\/searchuser(?:[_-]|$)|\/searchuser_full\.php|\/users?\//;
   const sourcePageHostPattern = /(^|\.)blogs?\.|(^|\.)news\./;
 
   if (contentPagePattern.test(fullPath) && !hasExplicitSubmissionPath(normalized.url)) {
