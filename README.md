@@ -104,6 +104,24 @@ Saved sessions are Playwright `storageState` files under `playwright/.auth/`, wh
 
 ---
 
+## Controlled Test Overrides
+
+Real execution normally requires product readiness, target audit, and `auto_safe` scout evidence. Dangerous overrides are intentionally friction-heavy:
+
+- `--allow-auto-candidate`
+- `--skip-readiness-check`
+- `--skip-target-audit`
+
+When any of these are used with `--execute`, the runner now requires:
+
+```bash
+--confirm-controlled-test CONTROLLED_TEST_ONLY
+```
+
+The confirmation and override list are written to `runs/.../artifacts/run-execution-overrides.json`. Do not use these switches for normal backlink campaigns.
+
+---
+
 ## Engine Comparison
 
 | Engine | Setup | Pros | Cons |

@@ -4,6 +4,7 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { runPlan } from '../src/runner/run.js';
+import { CONTROLLED_TEST_CONFIRMATION } from '../src/runner/run.js';
 import {
   defaultStateForPlan,
   getItemState,
@@ -211,6 +212,7 @@ describe('plan runner dry-run safety', () => {
         results,
         configObject: readyConfig(),
         skipTargetAudit: true,
+        confirmControlledTest: CONTROLLED_TEST_CONFIRMATION,
         submitFn: async (site, opts) => {
           calls.push({ site, opts });
           return { status: 'pending_review', url: 'https://safe.example/listing/demo' };
@@ -255,6 +257,7 @@ describe('plan runner dry-run safety', () => {
         results,
         configObject: readyConfig(),
         skipTargetAudit: true,
+        confirmControlledTest: CONTROLLED_TEST_CONFIRMATION,
         submitFn: async () => ({
           status: 'pending_review',
           url: 'https://safe.example/thank-you',
@@ -335,6 +338,7 @@ describe('plan runner dry-run safety', () => {
         execute: true,
         skipReadinessCheck: true,
         skipTargetAudit: true,
+        confirmControlledTest: CONTROLLED_TEST_CONFIRMATION,
         authDir,
         delay: '0ms',
         results,
@@ -511,6 +515,79 @@ describe('plan runner dry-run safety', () => {
       assert.equal(summary.target_audit.ok, true);
       assert.equal(summary.target_audit.skipped, false);
       assert.equal(auditArtifact.report.ok, true);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('requires a controlled-test confirmation for dangerous execution overrides', async () => {
+    const dir = tempDir();
+    try {
+      const plan = join(dir, 'plan.json');
+      const registry = join(dir, 'registry.json');
+      writeRegistry(registry, [
+        { id: 'candidate', submit_url: 'https://candidate.example/submit', mode: 'auto_candidate' },
+      ]);
+      writeFileSync(plan, JSON.stringify({
+        created_at: 'plan-1',
+        registry,
+        targets: [
+          { id: 'candidate', submit_url: 'https://candidate.example/submit', mode: 'auto_candidate' },
+        ],
+      }, null, 2));
+
+      await assert.rejects(
+        () => runPlan(plan, {
+          execute: true,
+          allowAutoCandidate: true,
+          skipTargetAudit: true,
+          delay: '0ms',
+          configObject: readyConfig(),
+        }),
+        /Dangerous execution override\(s\) require --confirm-controlled-test CONTROLLED_TEST_ONLY/
+      );
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('records controlled-test override confirmations in run artifacts', async () => {
+    const dir = tempDir();
+    try {
+      const plan = join(dir, 'plan.json');
+      const artifacts = join(dir, 'artifacts');
+      const registry = join(dir, 'registry.json');
+      writeRegistry(registry, [
+        { id: 'candidate', submit_url: 'https://candidate.example/submit', mode: 'auto_candidate' },
+      ]);
+      writeFileSync(plan, JSON.stringify({
+        created_at: 'plan-1',
+        registry,
+        targets: [
+          { order: 1, id: 'candidate', submit_url: 'https://candidate.example/submit', mode: 'auto_candidate' },
+        ],
+      }, null, 2));
+
+      const summary = await runPlan(plan, {
+        execute: true,
+        allowAutoCandidate: true,
+        skipTargetAudit: true,
+        confirmControlledTest: CONTROLLED_TEST_CONFIRMATION,
+        delay: '0ms',
+        artifacts,
+        configObject: readyConfig(),
+        submitFn: async () => ({ status: 'pending_review', url: 'https://candidate.example/listing/demo' }),
+      });
+      const overrideArtifact = JSON.parse(readFileSync(join(artifacts, 'run-execution-overrides.json'), 'utf-8'));
+
+      assert.equal(summary.submitted, 1);
+      assert.deepEqual(summary.execution_overrides.codes.sort(), ['allow_auto_candidate', 'skip_target_audit']);
+      assert.equal(summary.execution_overrides.confirmed, true);
+      assert.equal(overrideArtifact.controlled_test.confirmed, true);
+      assert.deepEqual(overrideArtifact.overrides.map(item => item.code).sort(), [
+        'allow_auto_candidate',
+        'skip_target_audit',
+      ]);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

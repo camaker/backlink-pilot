@@ -104,6 +104,24 @@ node src/cli.js run-plan runs/batch-001/plan.json \
 
 ---
 
+## 受控测试 Override
+
+真实执行默认必须通过产品准入、目标库 audit 和 `auto_safe` scout 证据。危险 override 被刻意设计成高摩擦：
+
+- `--allow-auto-candidate`
+- `--skip-readiness-check`
+- `--skip-target-audit`
+
+这些参数只要和 `--execute` 一起使用，就必须显式传入：
+
+```bash
+--confirm-controlled-test CONTROLLED_TEST_ONLY
+```
+
+确认短语和 override 列表会写入 `runs/.../artifacts/run-execution-overrides.json`。正常外链批次不要使用这些开关。
+
+---
+
 ## 引擎对比
 
 | 引擎 | 安装 | 优点 | 缺点 |

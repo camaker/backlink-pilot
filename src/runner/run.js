@@ -27,6 +27,7 @@ import {
 } from './queue.js';
 
 const SAFE_EXECUTION_MODES = new Set(['auto_safe']);
+export const CONTROLLED_TEST_CONFIRMATION = 'CONTROLLED_TEST_ONLY';
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -85,6 +86,46 @@ function auditSummary(report = {}, skipped = false) {
     blockers: normalized.summary?.blockers || 0,
     warnings: normalized.summary?.warnings || 0,
     by_code: normalized.summary?.by_code || {},
+  };
+}
+
+function requestedExecutionOverrides(opts = {}) {
+  const overrides = [];
+  if (opts.allowAutoCandidate) {
+    overrides.push({
+      code: 'allow_auto_candidate',
+      message: 'Allows real execution of unverified auto_candidate targets.',
+    });
+  }
+  if (opts.skipReadinessCheck) {
+    overrides.push({
+      code: 'skip_readiness_check',
+      message: 'Skips product readiness blockers for real execution.',
+    });
+  }
+  if (opts.skipTargetAudit) {
+    overrides.push({
+      code: 'skip_target_audit',
+      message: 'Skips registry target safety audit for real execution.',
+    });
+  }
+  return overrides;
+}
+
+function assertControlledTestConfirmation(opts = {}, overrides = []) {
+  const confirmation = String(opts.confirmControlledTest || '').trim();
+  const required = overrides.length > 0;
+  if (required && confirmation !== CONTROLLED_TEST_CONFIRMATION) {
+    const codes = overrides.map(item => item.code).join(', ');
+    throw new Error(
+      `Dangerous execution override(s) require --confirm-controlled-test ${CONTROLLED_TEST_CONFIRMATION}: ${codes}`
+    );
+  }
+  return {
+    required,
+    confirmed: required,
+    provided: Boolean(confirmation),
+    codes: overrides.map(item => item.code),
   };
 }
 
@@ -173,6 +214,10 @@ export async function runPlan(planPath, opts = {}) {
   const max = Number.isFinite(limit) && limit > 0 ? limit : plan.targets.length;
   const plannedTargets = (plan.targets || []).slice(0, max);
   const registry = registryTargetMap(plan, opts);
+  const executionOverrides = execute ? requestedExecutionOverrides(opts) : [];
+  const controlledTest = execute
+    ? assertControlledTestConfirmation(opts, executionOverrides)
+    : { required: false, confirmed: false, provided: false, codes: [] };
   const submitFn = opts.submitFn || submit;
   const config = execute
     ? opts.configObject || await loadConfig({
@@ -213,6 +258,9 @@ export async function runPlan(planPath, opts = {}) {
     target_audit: execute
       ? auditSummary(targetAudit, Boolean(opts.skipTargetAudit))
       : null,
+    execution_overrides: execute
+      ? controlledTest
+      : null,
     processed: 0,
     skipped: 0,
     submitted: 0,
@@ -228,6 +276,10 @@ export async function runPlan(planPath, opts = {}) {
     writeArtifactJson(join(artifactsDir, 'run-target-audit.json'), {
       target_audit_skipped: Boolean(opts.skipTargetAudit),
       report: targetAudit,
+    });
+    writeArtifactJson(join(artifactsDir, 'run-execution-overrides.json'), {
+      controlled_test: controlledTest,
+      overrides: executionOverrides,
     });
   }
 
