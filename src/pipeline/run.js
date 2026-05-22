@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import { join } from 'path';
-import { buildSubmissionPlan, saveSubmissionPlan } from '../planner/plan.js';
+import { buildScoutQueuePlan, buildSubmissionPlan, saveSubmissionPlan } from '../planner/plan.js';
 import { buildReport } from '../report/summary.js';
 import { runPlan } from '../runner/run.js';
 import { scoutPlan } from '../scout/plan.js';
@@ -67,6 +67,20 @@ function planOptions(opts, registry, productConfig, limit) {
   };
 }
 
+function scoutQueueOptions(opts, registry, productConfig, limit) {
+  return {
+    registry,
+    productConfig,
+    freeOnly: Boolean(opts.freeOnly),
+    allowUnknownPricing: Boolean(opts.allowUnknownPricing),
+    modes: opts.scoutModes,
+    lang: opts.lang,
+    source: opts.source,
+    limit,
+    includeRisk: Boolean(opts.includeRisk),
+  };
+}
+
 function summarizePlanStep(plan, output, extra = {}) {
   return {
     targets: plan.targets?.length || 0,
@@ -82,8 +96,12 @@ function ensureJsonlFile(path) {
 
 export async function runPipeline(opts = {}) {
   const execute = Boolean(opts.execute);
+  const shouldScout = Boolean(opts.scout || opts.scoutQueue);
   if (opts.verify && !execute) {
     throw new Error('--verify requires --execute in pipeline because dry-run results do not contain listing URLs');
+  }
+  if (opts.scoutQueue && !opts.updateRegistry) {
+    throw new Error('--scout-queue requires --update-registry so scout evidence can safely refresh the run plan');
   }
 
   const runDir = opts.runDir || defaultRunDir();
@@ -94,14 +112,17 @@ export async function runPipeline(opts = {}) {
   ensureDir(runDir);
 
   const buildPlanFn = opts.buildPlanFn || buildSubmissionPlan;
+  const buildScoutQueueFn = opts.buildScoutQueueFn || buildScoutQueuePlan;
   const savePlanFn = opts.savePlanFn || saveSubmissionPlan;
   const scoutPlanFn = opts.scoutPlanFn || scoutPlan;
   const runPlanFn = opts.runPlanFn || runPlan;
   const verifyResultsFn = opts.verifyResultsFn || verifyResults;
   const buildReportFn = opts.buildReportFn || buildReport;
 
-  let plan = buildPlanFn(planOptions(opts, registry, productConfig, limit));
-  const activePlanPath = opts.scout ? paths.scout_plan : paths.plan;
+  let plan = shouldScout && opts.scoutQueue
+    ? buildScoutQueueFn(scoutQueueOptions(opts, registry, productConfig, limit))
+    : buildPlanFn(planOptions(opts, registry, productConfig, limit));
+  const activePlanPath = shouldScout ? paths.scout_plan : paths.plan;
   savePlanFn(plan, activePlanPath);
 
   const summary = {
@@ -110,13 +131,17 @@ export async function runPipeline(opts = {}) {
     registry,
     paths,
     steps: {
-      plan: summarizePlanStep(plan, activePlanPath, { phase: opts.scout ? 'pre_scout' : 'run' }),
+      plan: summarizePlanStep(plan, activePlanPath, {
+        phase: shouldScout ? 'pre_scout' : 'run',
+        source: shouldScout && opts.scoutQueue ? 'scout_queue' : 'run_plan',
+      }),
     },
   };
 
-  if (opts.scout) {
+  if (shouldScout) {
+    const { mode: _planMode, ...scoutOpts } = opts;
     summary.steps.scout = await scoutPlanFn(paths.scout_plan, {
-      ...opts,
+      ...scoutOpts,
       state: paths.scout_state,
       results: paths.scout_results,
       limit,
@@ -127,19 +152,22 @@ export async function runPipeline(opts = {}) {
       updateRegistry: Boolean(opts.updateRegistry),
     });
 
-    if (opts.updateRegistry) {
+    if (opts.updateRegistry || opts.scoutQueue) {
       const refreshed = buildPlanFn(planOptions(opts, registry, productConfig, limit));
       savePlanFn(refreshed, paths.plan);
       summary.steps.scout_plan = summary.steps.plan;
       summary.steps.plan = summarizePlanStep(refreshed, paths.plan, {
         phase: 'post_scout',
-        refreshed_after_scout: true,
+        source: 'run_plan',
+        refreshed_after_scout: Boolean(opts.updateRegistry),
+        scout_queue: Boolean(opts.scoutQueue),
       });
       plan = refreshed;
     } else {
       savePlanFn(plan, paths.plan);
       summary.steps.plan = summarizePlanStep(plan, paths.plan, {
         phase: 'run',
+        source: 'run_plan',
         refreshed_after_scout: false,
       });
     }

@@ -462,6 +462,8 @@ program
   .option('--limit <n>', 'Maximum target count', '10')
   .option('--include-risk', 'Allow high-risk targets in the plan')
   .option('--scout', 'Scout the planned targets before running')
+  .option('--scout-queue', 'Build the scout plan from unscouted auto_candidate/needs_scout targets, then refresh the run plan')
+  .option('--scout-modes <items>', 'Comma-separated target modes for --scout-queue', 'auto_candidate,needs_scout')
   .option('--scout-delay <duration>', 'Delay between scouts, e.g. 10s or 1m', '10s')
   .option('--no-persist', 'Do not persist per-target scout JSON files')
   .option('--execute', 'Actually submit targets; without this flag the pipeline only dry-runs')

@@ -46,11 +46,11 @@ node src/cli.js init --url https://your-product.com
 # 4. 真实提交前先做产品资料准入检查
 node src/cli.js readiness --level automation
 
-# 5. 侦察、生成计划、dry-run，最后只执行 auto_safe
-node src/cli.js plan --registry resources/targets.canonical.yaml --free-only --allow-unknown-pricing --mode runnable --limit 10 --output runs/batch-001/plan.json
-node src/cli.js scout-plan runs/batch-001/plan.json --limit 10 --delay 10s --update-registry --registry resources/targets.canonical.yaml
-node src/cli.js run-plan runs/batch-001/plan.json --limit 10 --delay 0ms
-node src/cli.js run-plan runs/batch-001/plan.json --execute --delay 90s --config config.yaml --registry resources/targets.canonical.yaml
+# 5. 先侦察未验证目标，写回证据，刷新安全运行计划，并 dry-run
+node src/cli.js pipeline --run-dir runs/batch-001 --registry resources/targets.canonical.yaml --free-only --allow-unknown-pricing --scout-queue --update-registry --limit 10
+
+# 6. 复核 runs/batch-001/plan.json 后，只执行已验证的 auto_safe 目标
+node src/cli.js pipeline --run-dir runs/execute-001 --registry resources/targets.canonical.yaml --config config.yaml --free-only --mode auto_safe --limit 3 --execute --delay 90s
 ```
 
 也可以完全不预先生成配置，直接在命令里传产品信息；工具会自动生成被 `.gitignore` 忽略的本地 `config.yaml`：
@@ -122,6 +122,8 @@ node src/cli.js init --url <产品官网>    # 自动生成本地产品配置
 node src/cli.js readiness                # 检查产品资料是否满足真实提交准入
 node src/cli.js auth login --url <URL>   # 为 assisted 目标保存人工登录会话
 node src/cli.js scout <URL> --deep       # 侦察站点表单
+node src/cli.js scout-queue              # 生成未侦察目标队列
+node src/cli.js pipeline --scout-queue   # 侦察未验证目标，刷新计划，再 dry-run 或执行
 node src/cli.js scout-plan <计划文件>    # 批量侦察计划里的目标并更新安全等级
 node src/cli.js run-plan <计划文件>      # dry-run 或执行 auto_safe 目标
 node src/cli.js verify-results <JSONL>   # 从执行结果里验证外链是否上线

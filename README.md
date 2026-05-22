@@ -46,11 +46,11 @@ node src/cli.js init --url https://your-product.com
 # 4. Check readiness before real submissions
 node src/cli.js readiness --level automation
 
-# 5. Scout, plan, dry-run, then execute only verified auto_safe targets
-node src/cli.js plan --registry resources/targets.canonical.yaml --free-only --allow-unknown-pricing --mode runnable --limit 10 --output runs/batch-001/plan.json
-node src/cli.js scout-plan runs/batch-001/plan.json --limit 10 --delay 10s --update-registry --registry resources/targets.canonical.yaml
-node src/cli.js run-plan runs/batch-001/plan.json --limit 10 --delay 0ms
-node src/cli.js run-plan runs/batch-001/plan.json --execute --delay 90s --config config.yaml --registry resources/targets.canonical.yaml
+# 5. Scout unverified targets, refresh the safe run plan, and dry-run it
+node src/cli.js pipeline --run-dir runs/batch-001 --registry resources/targets.canonical.yaml --free-only --allow-unknown-pricing --scout-queue --update-registry --limit 10
+
+# 6. Execute only verified auto_safe targets after reviewing runs/batch-001/plan.json
+node src/cli.js pipeline --run-dir runs/execute-001 --registry resources/targets.canonical.yaml --config config.yaml --free-only --mode auto_safe --limit 3 --execute --delay 90s
 ```
 
 You can also skip pre-generating config and pass product details directly. The CLI will create the gitignored local `config.yaml` automatically:
@@ -121,6 +121,8 @@ node src/cli.js init --url <product-url> # Auto-generate local product config
 node src/cli.js readiness                # Validate product readiness before real submissions
 node src/cli.js auth login --url <url>   # Save a manual login session for assisted targets
 node src/cli.js scout <url> --deep       # Discover form fields
+node src/cli.js scout-queue              # Build a plan of unscouted targets
+node src/cli.js pipeline --scout-queue   # Scout unverified targets, refresh plan, dry-run or execute
 node src/cli.js scout-plan <plan>        # Scout a generated plan and update target safety
 node src/cli.js run-plan <plan>          # Dry-run or execute verified auto_safe targets
 node src/cli.js verify-results <jsonl>   # Verify backlinks from run results
