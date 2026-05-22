@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { verifyBacklink } from './backlink.js';
+import { updateRegistryWithVerificationResults } from './registry.js';
 
 const DEFAULT_MIN_LISTING_CONFIDENCE = 0.75;
 
@@ -32,6 +33,7 @@ export async function verifyResults(resultsPath, opts = {}) {
   const max = Number.isFinite(limit) && limit > 0 ? limit : rows.length;
   const verifyFn = opts.verifyFn || verifyBacklink;
   const minConfidence = Number(opts.minListingConfidence || DEFAULT_MIN_LISTING_CONFIDENCE);
+  const registryUpdates = [];
   const summary = {
     results: resultsPath,
     output,
@@ -40,6 +42,7 @@ export async function verifyResults(resultsPath, opts = {}) {
     verified: 0,
     not_found: 0,
     failed: 0,
+    registry_update: null,
   };
 
   for (const row of rows.slice(0, max)) {
@@ -47,31 +50,40 @@ export async function verifyResults(resultsPath, opts = {}) {
     const candidate = candidates.find(item => Number(item.confidence || 0) >= minConfidence);
     const listingUrl = row.listing_url || candidate?.url || '';
     if (!listingUrl) {
-      appendJsonl(output, {
+      const skippedResult = {
         target_id: row.target_id,
         status: 'skipped',
         reason: candidates.length ? 'no_high_confidence_listing_url' : 'missing_listing_url',
         listing_url_candidates: candidates,
         min_listing_confidence: minConfidence,
         at: new Date().toISOString(),
-      });
+      };
+      appendJsonl(output, skippedResult);
+      registryUpdates.push(skippedResult);
       summary.skipped++;
       continue;
     }
 
     const result = await verifyFn(listingUrl, opts.productUrl, opts);
-    appendJsonl(output, {
+    const verificationResult = {
       target_id: row.target_id,
+      submit_url: row.submit_url || '',
       submission_status: row.status,
       listing_url_source: row.listing_url ? 'result_listing_url' : candidate?.source || '',
       listing_url_confidence: row.listing_url ? row.listing_url_confidence || 1 : candidate?.confidence || 0,
       ...result,
-    });
+    };
+    appendJsonl(output, verificationResult);
+    registryUpdates.push(verificationResult);
 
     summary.checked++;
     if (result.status === 'backlink_verified') summary.verified++;
     else if (result.status === 'backlink_not_found') summary.not_found++;
     else summary.failed++;
+  }
+
+  if (opts.updateRegistry) {
+    summary.registry_update = updateRegistryWithVerificationResults(registryUpdates, opts);
   }
 
   return summary;

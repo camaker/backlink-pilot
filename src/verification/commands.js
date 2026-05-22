@@ -41,5 +41,10 @@ export async function verifyResultsCommand(resultsPath, opts = {}) {
   console.log(`Not found: ${summary.not_found}`);
   console.log(`Skipped: ${summary.skipped}`);
   console.log(`Failed: ${summary.failed}`);
+  if (summary.registry_update) {
+    console.log(`Registry updated: ${summary.registry_update.updated}`);
+    console.log(`Registry skipped: ${summary.registry_update.skipped}`);
+    console.log(`Registry: ${summary.registry_update.registry}`);
+  }
   return summary;
 }

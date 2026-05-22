@@ -380,6 +380,8 @@ program
   .option('--limit <n>', 'Maximum result rows to verify')
   .option('--timeout <ms>', 'Fetch timeout in milliseconds')
   .option('--min-listing-confidence <n>', 'Minimum extracted listing URL confidence to verify', '0.75')
+  .option('--update-registry', 'Write verification evidence back to the canonical registry')
+  .option('--registry <path>', 'Canonical registry path for --update-registry')
   .option('--json', 'Output summary as JSON')
   .action(async (results, opts) => {
     await verifyResultsCommand(results, opts);
