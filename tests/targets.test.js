@@ -5,6 +5,7 @@ import { join } from 'path';
 import { tmpdir } from 'os';
 import { inferTargetMode } from '../src/targets/classify.js';
 import { normalizeUrl } from '../src/targets/normalize.js';
+import { auditTargets, formatAuditReport } from '../src/targets/audit.js';
 import {
   dedupeRegistryIds,
   filterTargets,
@@ -238,6 +239,74 @@ targets:
     assert.deepEqual(filterTargets(targets, { notFound: true }).map(target => target.id), ['not-found']);
     assert.deepEqual(filterTargets(targets, { backlinkStatus: 'not_found' }).map(target => target.id), ['not-found']);
     assert.deepEqual(filterTargets(targets, { hasLiveListing: true }).map(target => target.id), ['verified']);
+  });
+});
+
+describe('target registry audit filtering', () => {
+  it('filters findings by code and severity without changing blocker status', () => {
+    const report = auditTargets([
+      {
+        id: 'duplicate',
+        domain: 'dup.example',
+        submit_url: 'https://dup.example/submit',
+        pricing: 'free',
+        submission: {
+          mode: 'auto_candidate',
+        },
+        quality: {
+          risk: 'unknown',
+        },
+      },
+      {
+        id: 'duplicate',
+        domain: 'dup2.example',
+        submit_url: 'https://dup2.example/submit',
+        pricing: 'unknown',
+        submission: {
+          mode: 'auto_candidate',
+        },
+        quality: {
+          risk: 'unknown',
+        },
+      },
+    ], {
+      code: 'auto_candidate_needs_scout',
+      severity: 'warning',
+    });
+
+    assert.equal(report.ok, false);
+    assert.equal(report.summary.blockers, 1);
+    assert.equal(report.summary.filtered_blockers, 0);
+    assert.equal(report.summary.filtered_warnings, 2);
+    assert.deepEqual(report.filtered_warnings.map(item => item.code), [
+      'auto_candidate_needs_scout',
+      'auto_candidate_needs_scout',
+    ]);
+  });
+
+  it('formats only filtered findings when audit filters are active', () => {
+    const report = auditTargets([
+      {
+        id: 'candidate',
+        domain: 'candidate.example',
+        submit_url: 'https://candidate.example/submit',
+        pricing: 'unknown',
+        submission: {
+          mode: 'auto_candidate',
+        },
+        quality: {
+          risk: 'unknown',
+        },
+      },
+    ], {
+      code: 'auto_candidate_needs_scout',
+    });
+
+    const formatted = formatAuditReport(report, { limitFindings: 10 });
+
+    assert.match(formatted, /Filtered warnings: 1/);
+    assert.match(formatted, /auto_candidate_needs_scout/);
+    assert.doesNotMatch(formatted, /runnable_unknown_pricing candidate/);
   });
 });
 

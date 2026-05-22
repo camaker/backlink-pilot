@@ -78,6 +78,25 @@ function countBy(items = [], keyFn) {
   return counts;
 }
 
+function asFilterSet(value) {
+  if (!value) return null;
+  const items = String(value)
+    .split(',')
+    .map(item => item.trim())
+    .filter(Boolean);
+  return items.length ? new Set(items) : null;
+}
+
+function filterFindings(findings = [], opts = {}) {
+  const codes = asFilterSet(opts.code || opts.codes);
+  const severities = asFilterSet(opts.severity || opts.severities);
+  return findings.filter(item => {
+    if (codes && !codes.has(item.code)) return false;
+    if (severities && !severities.has(item.severity)) return false;
+    return true;
+  });
+}
+
 function auditDuplicateIds(targets = []) {
   const findings = [];
   const seen = new Map();
@@ -300,6 +319,9 @@ export function auditTargets(targets = [], opts = {}) {
   ];
   const blockers = findings.filter(item => item.severity === 'blocker');
   const warnings = findings.filter(item => item.severity === 'warning');
+  const filteredFindings = filterFindings(findings, opts);
+  const filteredBlockers = filteredFindings.filter(item => item.severity === 'blocker');
+  const filteredWarnings = filteredFindings.filter(item => item.severity === 'warning');
 
   return {
     ok: blockers.length === 0,
@@ -308,11 +330,22 @@ export function auditTargets(targets = [], opts = {}) {
     stats: registryStats(targets),
     blockers,
     warnings,
+    filtered_blockers: filteredBlockers,
+    filtered_warnings: filteredWarnings,
     summary: {
       blockers: blockers.length,
       warnings: warnings.length,
       by_severity: countBy(findings, item => item.severity),
       by_code: countBy(findings, item => item.code),
+      filtered_blockers: filteredBlockers.length,
+      filtered_warnings: filteredWarnings.length,
+      filtered_by_severity: countBy(filteredFindings, item => item.severity),
+      filtered_by_code: countBy(filteredFindings, item => item.code),
+    },
+    filters: {
+      code: opts.code || opts.codes || '',
+      severity: opts.severity || opts.severities || '',
+      active: Boolean((opts.code || opts.codes || opts.severity || opts.severities)),
     },
   };
 }
@@ -333,6 +366,9 @@ function formatFinding(item) {
 export function formatAuditReport(report = {}, opts = {}) {
   const limit = Number.parseInt(opts.limitFindings || 50, 10);
   const max = Number.isFinite(limit) && limit >= 0 ? limit : 50;
+  const filtersActive = Boolean(report.filters?.active);
+  const blockers = filtersActive ? report.filtered_blockers || [] : report.blockers || [];
+  const warnings = filtersActive ? report.filtered_warnings || [] : report.warnings || [];
   const lines = [
     `Target audit: ${report.ok ? 'ready' : 'blocked'}`,
     `Registry: ${report.registry || '(memory)'}`,
@@ -342,14 +378,20 @@ export function formatAuditReport(report = {}, opts = {}) {
     `Finding codes: ${JSON.stringify(report.summary?.by_code || {})}`,
   ];
 
-  if (report.blockers?.length) {
-    lines.push('', `Blockers (showing ${Math.min(max, report.blockers.length)} of ${report.blockers.length})`);
-    for (const item of report.blockers.slice(0, max)) lines.push(`- ${formatFinding(item)}`);
+  if (filtersActive) {
+    lines.push(`Filtered blockers: ${report.summary?.filtered_blockers || 0}`);
+    lines.push(`Filtered warnings: ${report.summary?.filtered_warnings || 0}`);
+    lines.push(`Filtered codes: ${JSON.stringify(report.summary?.filtered_by_code || {})}`);
   }
 
-  if (report.warnings?.length) {
-    lines.push('', `Warnings (showing ${Math.min(max, report.warnings.length)} of ${report.warnings.length})`);
-    for (const item of report.warnings.slice(0, max)) lines.push(`- ${formatFinding(item)}`);
+  if (blockers.length) {
+    lines.push('', `Blockers (showing ${Math.min(max, blockers.length)} of ${blockers.length})`);
+    for (const item of blockers.slice(0, max)) lines.push(`- ${formatFinding(item)}`);
+  }
+
+  if (warnings.length) {
+    lines.push('', `Warnings (showing ${Math.min(max, warnings.length)} of ${warnings.length})`);
+    for (const item of warnings.slice(0, max)) lines.push(`- ${formatFinding(item)}`);
   }
 
   return lines.join('\n');

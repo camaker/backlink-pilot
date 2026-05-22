@@ -273,6 +273,8 @@ targets
   .command('audit')
   .description('Audit target registry safety before automated execution')
   .option('--registry <path>', 'Canonical registry path')
+  .option('--code <items>', 'Only display findings with these comma-separated finding codes')
+  .option('--severity <items>', 'Only display findings with these comma-separated severities, e.g. blocker,warning')
   .option('--limit-findings <n>', 'Maximum blockers and warnings to print', '50')
   .option('--fail-on-blockers', 'Exit non-zero when blockers are found')
   .option('--json', 'Output as JSON')
