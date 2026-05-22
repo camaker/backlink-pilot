@@ -1,0 +1,218 @@
+{
+  "generated_at": "2026-05-22T08:15:23.021Z",
+  "batch": "backlink-url/review-batches/p0-006.csv",
+  "suggestions": "backlink-url/review-batches/p0-006-suggestions.csv",
+  "batch_id": "p0-006",
+  "mode_policy": "drafts_rejections_only_no_approvals_no_registry_changes",
+  "min_confidence": "high",
+  "reviewed_by": "read_only_evidence",
+  "enabled_rejection_decisions": [
+    "reject_auth_required",
+    "reject_duplicate",
+    "reject_not_submit",
+    "reject_paid"
+  ],
+  "batch_rows": 25,
+  "suggestion_rows": 25,
+  "drafted_rows": 2,
+  "skipped_rows": 23,
+  "blocked_rows": 0,
+  "priority_counts": {
+    "P0": 25
+  },
+  "action_counts": {
+    "verify_distinct_submit_url_for_existing_domain": 5,
+    "verify_submit_form_then_approve_or_reject": 20
+  },
+  "drafted": [
+    {
+      "line": 18,
+      "review_row": "393",
+      "url": "https://www.nocodefinder.com/submit",
+      "domain": "nocodefinder.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:393"
+    },
+    {
+      "line": 25,
+      "review_row": "106",
+      "url": "https://bai.tools/submit",
+      "domain": "bai.tools",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:106"
+    }
+  ],
+  "skipped": [
+    {
+      "line": 2,
+      "review_row": "75",
+      "url": "https://aiscout.net/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 3,
+      "review_row": "79",
+      "url": "https://aitoolsdirectory.com/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 4,
+      "review_row": "208",
+      "url": "https://devhunt.org/submit",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 5,
+      "review_row": "472",
+      "url": "https://www.sideprojectors.com/project/new",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 6,
+      "review_row": "497",
+      "url": "https://stackshare.io/new-product",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 7,
+      "review_row": "63",
+      "url": "https://ai.xyz/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 8,
+      "review_row": "64",
+      "url": "https://aiagents.live/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 9,
+      "review_row": "65",
+      "url": "https://aiagentsbase.com/submit",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 10,
+      "review_row": "68",
+      "url": "https://aiagentsmarketplace.com/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 11,
+      "review_row": "72",
+      "url": "https://aimatchpro.ai/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 12,
+      "review_row": "78",
+      "url": "https://aitools.love/submit",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 13,
+      "review_row": "81",
+      "url": "https://www.aitrendytools.com/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 14,
+      "review_row": "115",
+      "url": "https://bestofweb.io/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 15,
+      "review_row": "274",
+      "url": "https://getbyte.co/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 16,
+      "review_row": "332",
+      "url": "https://launchvault.com/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 17,
+      "review_row": "392",
+      "url": "https://www.nocodedevs.com/submit",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 19,
+      "review_row": "395",
+      "url": "https://nocodelist.co/submit",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 20,
+      "review_row": "550",
+      "url": "https://www.wearenocode.com/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 21,
+      "review_row": "55",
+      "url": "https://a.example/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 22,
+      "review_row": "90",
+      "url": "https://any-directory.com/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 23,
+      "review_row": "92",
+      "url": "https://any-site.com/submit",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 24,
+      "review_row": "104",
+      "url": "https://b.example/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 26,
+      "review_row": "171",
+      "url": "https://c.example/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    }
+  ],
+  "blocked": []
+}

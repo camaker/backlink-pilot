@@ -1,0 +1,136 @@
+{
+  "generated_at": "2026-05-22T08:20:10.953Z",
+  "batch": "backlink-url/review-batches/p0-007.csv",
+  "suggestions": "backlink-url/review-batches/p0-007-suggestions.csv",
+  "batch_id": "p0-007",
+  "mode_policy": "drafts_rejections_only_no_approvals_no_registry_changes",
+  "min_confidence": "high",
+  "reviewed_by": "read_only_evidence",
+  "enabled_rejection_decisions": [
+    "reject_auth_required",
+    "reject_duplicate",
+    "reject_not_submit",
+    "reject_paid"
+  ],
+  "batch_rows": 13,
+  "suggestion_rows": 13,
+  "drafted_rows": 7,
+  "skipped_rows": 6,
+  "blocked_rows": 0,
+  "priority_counts": {
+    "P0": 13
+  },
+  "action_counts": {
+    "verify_submit_form_then_approve_or_reject": 13
+  },
+  "drafted": [
+    {
+      "line": 5,
+      "review_row": "236",
+      "url": "https://example.com/submit",
+      "domain": "example.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:236"
+    },
+    {
+      "line": 7,
+      "review_row": "475",
+      "url": "https://site.com/submit",
+      "domain": "site.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:475"
+    },
+    {
+      "line": 8,
+      "review_row": "481",
+      "url": "http://www.sixwordstories.net/2009/07/submit-a-story/comment-page-188",
+      "domain": "sixwordstories.net",
+      "suggested_review_decision": "reject_paid",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:481"
+    },
+    {
+      "line": 10,
+      "review_row": "176",
+      "url": "https://www.capterra.com/vendors",
+      "domain": "capterra.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:176"
+    },
+    {
+      "line": 12,
+      "review_row": "273",
+      "url": "https://www.getapp.com/vendors",
+      "domain": "getapp.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:273"
+    },
+    {
+      "line": 13,
+      "review_row": "488",
+      "url": "https://www.softwareadvice.com/vendors",
+      "domain": "softwareadvice.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:488"
+    },
+    {
+      "line": 14,
+      "review_row": "541",
+      "url": "https://www.trustradius.com/vendors",
+      "domain": "trustradius.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:541"
+    }
+  ],
+  "skipped": [
+    {
+      "line": 2,
+      "review_row": "204",
+      "url": "https://custom.example/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 3,
+      "review_row": "206",
+      "url": "https://d.example/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 4,
+      "review_row": "221",
+      "url": "https://e.example/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 6,
+      "review_row": "385",
+      "url": "https://new-site.com/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 9,
+      "review_row": "489",
+      "url": "https://some-directory.com/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 11,
+      "review_row": "200",
+      "url": "https://crozdesk.com/vendors",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    }
+  ],
+  "blocked": []
+}
