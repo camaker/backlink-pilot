@@ -17,6 +17,7 @@ import {
   statsTargetsCommand,
 } from './targets/commands.js';
 import { buildSubmissionPlan, saveSubmissionPlan } from './planner/plan.js';
+import { pipelineCommand } from './pipeline/commands.js';
 import { runPlan } from './runner/run.js';
 import { verifyBacklinkCommand, verifyResultsCommand } from './verification/commands.js';
 import { reportCommand } from './report/commands.js';
@@ -401,6 +402,41 @@ program
   .option('--json', 'Output as JSON')
   .action(async (opts) => {
     await reportCommand(opts);
+  });
+
+program
+  .command('pipeline')
+  .description('Run a safe batch workflow: plan, optional scout, dry-run or execute, optional verify, report')
+  .option('--run-dir <path>', 'Directory for all batch artifacts')
+  .option('--registry <path>', 'Canonical registry path')
+  .option('--config <path>', 'Config file path')
+  .option('--product-config <path>', 'Product config path')
+  .option('--product-url <url>', 'Product URL used for verification when config is not embedded in the plan')
+  .option('--free-only', 'Only include free targets')
+  .option('--allow-unknown-pricing', 'With --free-only, also include targets where pricing has not been verified')
+  .option('--mode <mode>', 'Submission mode to include; use runnable for auto_safe/auto_candidate/assisted', 'runnable')
+  .option('--lang <lang>', 'Filter by target language')
+  .option('--source <name>', 'Filter by source')
+  .option('--limit <n>', 'Maximum target count', '10')
+  .option('--include-risk', 'Allow high-risk targets in the plan')
+  .option('--scout', 'Scout the planned targets before running')
+  .option('--scout-delay <duration>', 'Delay between scouts, e.g. 10s or 1m', '10s')
+  .option('--no-persist', 'Do not persist per-target scout JSON files')
+  .option('--execute', 'Actually submit targets; without this flag the pipeline only dry-runs')
+  .option('--delay <duration>', 'Delay between run-plan targets, e.g. 90s or 2m')
+  .option('--allow-auto-candidate', 'Allow executing unverified auto_candidate targets')
+  .option('--assisted', 'Allow assisted targets to run with human-in-the-loop browser sessions')
+  .option('--auth-profile <name>', 'Saved manual auth profile required for assisted targets')
+  .option('--auth-dir <path>', 'Auth profile directory')
+  .option('--readiness-level <level>', 'Product readiness level required for --execute: automation or launch', 'automation')
+  .option('--skip-readiness-check', 'Skip product readiness gate for a controlled test; result is still audited')
+  .option('--engine <engine>', 'Browser engine: bb or playwright')
+  .option('--verify', 'Verify backlinks after execute')
+  .option('--min-listing-confidence <n>', 'Minimum extracted listing URL confidence to verify', '0.75')
+  .option('--update-registry', 'Write scout and verification evidence back to the canonical registry')
+  .option('--json', 'Output summary as JSON')
+  .action(async (opts) => {
+    await pipelineCommand(opts);
   });
 
 program

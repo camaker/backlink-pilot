@@ -387,4 +387,39 @@ describe('plan runner dry-run safety', () => {
       rmSync(dir, { recursive: true, force: true });
     }
   });
+
+  it('creates state and results files even when a terminal state skips all targets', async () => {
+    const dir = tempDir();
+    try {
+      const plan = join(dir, 'plan.json');
+      const state = join(dir, 'state.json');
+      const results = join(dir, 'results.jsonl');
+      const registry = join(dir, 'registry.json');
+      writeRegistry(registry, [
+        { id: 'safe', submit_url: 'https://safe.example/submit', mode: 'auto_safe' },
+      ]);
+      writeFileSync(plan, JSON.stringify({
+        created_at: 'plan-1',
+        registry,
+        targets: [
+          { id: 'safe', submit_url: 'https://safe.example/submit', mode: 'auto_safe', status: 'skipped' },
+        ],
+      }, null, 2));
+      writeFileSync(state, JSON.stringify({
+        version: 1,
+        items: [
+          { id: 'safe', status: 'skipped', attempts: 0, last_error: 'previously_skipped' },
+        ],
+      }));
+
+      const summary = await runPlan(plan, { state, results, delay: '0ms' });
+
+      assert.equal(summary.skipped, 1);
+      assert.equal(existsSync(state), true);
+      assert.equal(existsSync(results), true);
+      assert.equal(readFileSync(results, 'utf-8'), '');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
 });

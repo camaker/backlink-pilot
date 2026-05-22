@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, mkdirSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { dirname, join } from 'path';
 import { parse } from 'yaml';
 import { submit } from '../submit.js';
@@ -55,6 +55,11 @@ function ensureParent(path) {
 function appendJsonl(path, entry) {
   ensureParent(path);
   writeFileSync(path, `${JSON.stringify(entry)}\n`, { flag: 'a', encoding: 'utf-8' });
+}
+
+function ensureJsonlFile(path) {
+  ensureParent(path);
+  if (!existsSync(path)) writeFileSync(path, '', 'utf-8');
 }
 
 function defaultArtifactsDir(planPath) {
@@ -189,6 +194,9 @@ export async function runPlan(planPath, opts = {}) {
       report: readiness,
     });
   }
+
+  saveRunnerState(statePath, state);
+  ensureJsonlFile(resultsPath);
 
   for (const target of (plan.targets || []).slice(0, max)) {
     const item = state.items.find(entry => entry.id === target.id);
