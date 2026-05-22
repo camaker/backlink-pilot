@@ -98,6 +98,36 @@ const REVIEW_BATCH_HEADERS = [
   'batch_order',
   ...REVIEW_QUEUE_HEADERS,
 ];
+const REVIEW_EVIDENCE_HEADERS = [
+  'batch_id',
+  'batch_order',
+  'review_row',
+  'review_action',
+  'url',
+  'domain',
+  'http_status',
+  'fetch_ok',
+  'final_url',
+  'final_domain',
+  'domain_changed',
+  'content_type',
+  'title',
+  'form_count',
+  'input_count',
+  'submit_button_signal',
+  'submit_path_signal',
+  'directory_signal',
+  'auth_signal',
+  'oauth_signal',
+  'captcha_signal',
+  'cloudflare_signal',
+  'payment_signal',
+  'duplicate_registry_url',
+  'suggested_decision',
+  'evidence_notes',
+  'fetch_error',
+  'checked_at',
+];
 const REVIEW_QUEUE_EDITABLE_FIELDS = [
   'review_decision',
   'review_notes',
@@ -675,6 +705,291 @@ function normalizedRegistrySubmitUrls(row) {
     .filter(Boolean);
 }
 
+function stripHtml(value) {
+  return String(value || '')
+    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function htmlTitle(html) {
+  const match = String(html || '').match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+  return stripHtml(match?.[1] || '').slice(0, 180);
+}
+
+function boolText(value) {
+  return value ? 'yes' : 'no';
+}
+
+function htmlSignalEvidence(html, url = '') {
+  const raw = String(html || '');
+  const lower = raw.toLowerCase();
+  const text = stripHtml(raw).toLowerCase();
+  const combined = `${url}\n${text}`;
+  const formCount = (raw.match(/<form\b/gi) || []).length;
+  const inputCount = (raw.match(/<(input|textarea|select)\b/gi) || []).length;
+  const submitButtonSignal = /type=["']?submit|>\s*(submit|add (tool|product|startup|site|app)|list (your|my)|send|publish|launch|提交|发布|收录)\b/i.test(raw);
+  const submitPathSignal = /submit|submission|add[-_/]?(tool|product|site|startup|app)|products\/new|submissions\/new|vendors\/new|claim|showcase/i.test(url);
+  const directorySignal = /directory|tools?|startup|submit your|add your|list your|product|saas|ai tool|marketplace|catalog|目录|导航|收录/i.test(combined);
+  const authSignal = /sign\s?in|log\s?in|login|create account|register|authentication|required account|登录|注册/i.test(text);
+  const oauthSignal = /continue with (google|github|twitter|x)|sign in with (google|github)|oauth|google-oauth/i.test(text);
+  const captchaSignal = /captcha|recaptcha|hcaptcha|turnstile|verify you are human|robot|验证码|人机验证/i.test(lower);
+  const cloudflareSignal = /cloudflare|cf-browser-verification|checking your browser|just a moment|cf-turnstile/i.test(lower);
+  const paymentSignal = /stripe|checkout|payment|pricing|buy now|paid listing|\$\s?\d+|付费|收费|付款|购买/i.test(text);
+
+  return {
+    title: htmlTitle(raw),
+    form_count: formCount,
+    input_count: inputCount,
+    submit_button_signal: submitButtonSignal,
+    submit_path_signal: submitPathSignal,
+    directory_signal: directorySignal,
+    auth_signal: authSignal,
+    oauth_signal: oauthSignal,
+    captcha_signal: captchaSignal,
+    cloudflare_signal: cloudflareSignal,
+    payment_signal: paymentSignal,
+  };
+}
+
+function suggestedEvidenceDecision(row, evidence) {
+  if (evidence.fetch_error) return 'review_fetch_failed';
+  if (evidence.duplicate_registry_url) return 'reject_duplicate';
+  if (evidence.payment_signal) return 'reject_paid';
+  if (evidence.auth_signal || evidence.oauth_signal) return 'reject_auth_required';
+  if (evidence.captcha_signal || evidence.cloudflare_signal) return 'reject_auth_required';
+  if (evidence.form_count > 0 && (evidence.submit_button_signal || evidence.submit_path_signal)) {
+    return String(row.classification || '') === 'domain_in_registry_only'
+      ? 'review_possible_domain_variant'
+      : 'review_possible_submit_form';
+  }
+  if (!evidence.submit_path_signal && !evidence.submit_button_signal) return 'reject_not_submit';
+  return 'review_manually';
+}
+
+function signalTrue(value) {
+  return value === true || value === 'yes';
+}
+
+function evidenceNotes(evidence) {
+  const notes = [];
+  if (signalTrue(evidence.duplicate_registry_url)) notes.push('normalized URL duplicates registry submit URL');
+  if (signalTrue(evidence.payment_signal)) notes.push('payment/pricing signal found');
+  if (signalTrue(evidence.auth_signal)) notes.push('login/register signal found');
+  if (signalTrue(evidence.oauth_signal)) notes.push('OAuth signal found');
+  if (signalTrue(evidence.captcha_signal)) notes.push('CAPTCHA signal found');
+  if (signalTrue(evidence.cloudflare_signal)) notes.push('Cloudflare/human verification signal found');
+  if (evidence.form_count > 0) notes.push(`${evidence.form_count} form(s), ${evidence.input_count} input/select/textarea fields`);
+  if (signalTrue(evidence.submit_button_signal)) notes.push('submit/add/list/publish button text signal found');
+  if (signalTrue(evidence.submit_path_signal)) notes.push('URL path looks like a submission endpoint');
+  if (signalTrue(evidence.directory_signal)) notes.push('directory/listing marketplace text signal found');
+  if (signalTrue(evidence.domain_changed)) notes.push(`final domain changed to ${evidence.final_domain}`);
+  if (evidence.fetch_error) notes.push(evidence.fetch_error);
+  return notes.join('; ');
+}
+
+async function fetchTextEvidence(url, opts = {}) {
+  const fetchFn = opts.fetchFn || fetch;
+  const timeoutMs = Math.max(1000, numericValue(opts.timeoutMs, 15000));
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetchFn(url, {
+      redirect: 'follow',
+      signal: controller.signal,
+      headers: {
+        'user-agent': opts.userAgent || 'BacklinkPilotReviewEvidence/2.1',
+        accept: 'text/html,application/xhtml+xml,text/plain;q=0.9,*/*;q=0.5',
+      },
+    });
+    const text = await response.text();
+    return {
+      ok: response.ok,
+      status: response.status,
+      final_url: response.url || url,
+      content_type: response.headers?.get?.('content-type') || '',
+      text,
+    };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function evidenceRowFromFailure(row, index, error, checkedAt) {
+  const url = rowImportUrl(row) || row.url || '';
+  const normalized = normalizeUrl(url);
+  const evidence = {
+    batch_id: row.batch_id || '',
+    batch_order: row.batch_order || index + 1,
+    review_row: row.review_row || '',
+    review_action: row.review_action || '',
+    url,
+    domain: row.domain || normalized?.domain || '',
+    http_status: '',
+    fetch_ok: 'no',
+    final_url: '',
+    final_domain: '',
+    domain_changed: 'unknown',
+    content_type: '',
+    title: '',
+    form_count: 0,
+    input_count: 0,
+    submit_button_signal: 'no',
+    submit_path_signal: boolText(/submit|submission|add[-_/]?(tool|product|site|startup|app)|products\/new|submissions\/new|vendors\/new|claim|showcase/i.test(url)),
+    directory_signal: 'unknown',
+    auth_signal: 'unknown',
+    oauth_signal: 'unknown',
+    captcha_signal: 'unknown',
+    cloudflare_signal: 'unknown',
+    payment_signal: 'unknown',
+    duplicate_registry_url: 'unknown',
+    suggested_decision: 'review_fetch_failed',
+    fetch_error: error.message || String(error),
+    checked_at: checkedAt,
+  };
+  evidence.evidence_notes = evidenceNotes(evidence);
+  return evidence;
+}
+
+function evidenceRowFromResponse(row, index, fetched, checkedAt) {
+  const url = rowImportUrl(row) || row.url || '';
+  const normalized = normalizeUrl(url);
+  const finalNormalized = normalizeUrl(fetched.final_url) || normalized;
+  const htmlSignals = htmlSignalEvidence(fetched.text, fetched.final_url || url);
+  const registryUrls = normalizedRegistrySubmitUrls(row);
+  const duplicateRegistryUrl = Boolean(
+    (normalized && registryUrls.some(existing => existing.dedupeKey === normalized.dedupeKey)) ||
+    (finalNormalized && registryUrls.some(existing => existing.dedupeKey === finalNormalized.dedupeKey))
+  );
+  const domainChanged = Boolean(
+    normalized?.domain &&
+    finalNormalized?.domain &&
+    normalized.domain !== finalNormalized.domain
+  );
+  const evidence = {
+    batch_id: row.batch_id || '',
+    batch_order: row.batch_order || index + 1,
+    review_row: row.review_row || '',
+    review_action: row.review_action || '',
+    url,
+    domain: row.domain || normalized?.domain || '',
+    http_status: fetched.status,
+    fetch_ok: boolText(fetched.ok),
+    final_url: fetched.final_url || '',
+    final_domain: finalNormalized?.domain || '',
+    domain_changed: boolText(domainChanged),
+    content_type: fetched.content_type,
+    title: htmlSignals.title,
+    form_count: htmlSignals.form_count,
+    input_count: htmlSignals.input_count,
+    submit_button_signal: boolText(htmlSignals.submit_button_signal),
+    submit_path_signal: boolText(htmlSignals.submit_path_signal),
+    directory_signal: boolText(htmlSignals.directory_signal),
+    auth_signal: boolText(htmlSignals.auth_signal),
+    oauth_signal: boolText(htmlSignals.oauth_signal),
+    captcha_signal: boolText(htmlSignals.captcha_signal),
+    cloudflare_signal: boolText(htmlSignals.cloudflare_signal),
+    payment_signal: boolText(htmlSignals.payment_signal),
+    duplicate_registry_url: boolText(duplicateRegistryUrl),
+    fetch_error: fetched.ok ? '' : `HTTP ${fetched.status}`,
+    checked_at: checkedAt,
+  };
+  const booleanEvidence = {
+    ...evidence,
+    domain_changed: domainChanged,
+    submit_button_signal: htmlSignals.submit_button_signal,
+    submit_path_signal: htmlSignals.submit_path_signal,
+    directory_signal: htmlSignals.directory_signal,
+    auth_signal: htmlSignals.auth_signal,
+    oauth_signal: htmlSignals.oauth_signal,
+    captcha_signal: htmlSignals.captcha_signal,
+    cloudflare_signal: htmlSignals.cloudflare_signal,
+    payment_signal: htmlSignals.payment_signal,
+    duplicate_registry_url: duplicateRegistryUrl,
+    fetch_error: evidence.fetch_error,
+  };
+  evidence.suggested_decision = suggestedEvidenceDecision(row, booleanEvidence);
+  evidence.evidence_notes = evidenceNotes(booleanEvidence);
+  return evidence;
+}
+
+export async function buildCoverageReviewEvidence(batchPath, opts = {}) {
+  const rows = parseCsv(readFileSync(batchPath, 'utf-8'));
+  const offset = Math.max(0, numericValue(opts.offset, 0));
+  const limit = opts.limit === undefined || opts.limit === null || opts.limit === ''
+    ? rows.length
+    : Math.max(1, numericValue(opts.limit, rows.length));
+  const selected = rows.slice(offset, offset + limit);
+  const evidenceRows = [];
+
+  for (let index = 0; index < selected.length; index += 1) {
+    const row = selected[index];
+    const checkedAt = nowIso();
+    const url = rowImportUrl(row) || row.url || '';
+    const normalized = normalizeUrl(url);
+    if (!normalized) {
+      evidenceRows.push(evidenceRowFromFailure(row, offset + index, new Error('invalid_url'), checkedAt));
+      continue;
+    }
+
+    try {
+      const fetched = await fetchTextEvidence(normalized.url, opts);
+      evidenceRows.push(evidenceRowFromResponse(row, offset + index, fetched, checkedAt));
+    } catch (error) {
+      evidenceRows.push(evidenceRowFromFailure(row, offset + index, error, checkedAt));
+    }
+  }
+
+  return {
+    generated_at: nowIso(),
+    batch: batchPath,
+    offset,
+    limit,
+    total_rows: rows.length,
+    checked_rows: evidenceRows.length,
+    summary: evidenceRows.reduce((acc, row) => {
+      acc.suggested_decisions[row.suggested_decision] = (acc.suggested_decisions[row.suggested_decision] || 0) + 1;
+      if (row.auth_signal === 'yes' || row.oauth_signal === 'yes') acc.auth_signals += 1;
+      if (row.captcha_signal === 'yes' || row.cloudflare_signal === 'yes') acc.captcha_or_cloudflare_signals += 1;
+      if (row.payment_signal === 'yes') acc.payment_signals += 1;
+      if (row.duplicate_registry_url === 'yes') acc.duplicate_registry_urls += 1;
+      if (Number(row.form_count) > 0) acc.rows_with_forms += 1;
+      return acc;
+    }, {
+      suggested_decisions: {},
+      rows_with_forms: 0,
+      auth_signals: 0,
+      captcha_or_cloudflare_signals: 0,
+      payment_signals: 0,
+      duplicate_registry_urls: 0,
+    }),
+    evidence_rows: evidenceRows,
+  };
+}
+
+export function coverageReviewEvidenceCsv(evidence) {
+  const rows = evidence.evidence_rows.map(row =>
+    REVIEW_EVIDENCE_HEADERS.map(header => row[header])
+  );
+  return [
+    REVIEW_EVIDENCE_HEADERS.join(','),
+    ...rows.map(row => row.map(csvEscape).join(',')),
+  ].join('\n') + '\n';
+}
+
+export function writeCoverageReviewEvidence(evidence, opts = {}) {
+  if (opts.output) {
+    ensureParent(opts.output);
+    writeFileSync(opts.output, coverageReviewEvidenceCsv(evidence), 'utf-8');
+  }
+  if (opts.jsonOutput) {
+    ensureParent(opts.jsonOutput);
+    writeFileSync(opts.jsonOutput, JSON.stringify(evidence, null, 2) + '\n', 'utf-8');
+  }
+}
+
 function reviewQualityFindings(row, line, opts = {}) {
   const decision = reviewDecision(row);
   const blockers = [];
@@ -1184,7 +1499,7 @@ function reviewQueuePriority(row) {
       priority: 'P0',
       score,
       action: 'verify_distinct_submit_url_for_existing_domain',
-      decision_options: 'approved_domain_variant | reject_duplicate | reject_not_submit',
+      decision_options: 'approved_domain_variant | reject_duplicate | reject_not_submit | reject_paid | reject_auth_required',
     };
   }
 

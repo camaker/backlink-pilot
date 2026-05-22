@@ -10,6 +10,7 @@ import {
 import { auditRegistry, formatAuditReport } from './audit.js';
 import {
   applyCoverageReviewQueue,
+  buildCoverageReviewEvidence,
   buildCoverageReviewBatch,
   buildCoverageReport,
   buildCoverageReviewQueue,
@@ -18,6 +19,7 @@ import {
   validateCoverageReviewBatch,
   validateCoverageReview,
   writeCoverageCandidatesCsv,
+  writeCoverageReviewEvidence,
   writeCoverageReviewBatch,
   writeCoverageReviewPromotionReport,
   writeCoverageReport,
@@ -330,6 +332,45 @@ export async function coverageReviewBatchCommand(queuePath, opts = {}) {
   }
 
   return batch;
+}
+
+export async function coverageReviewEvidenceCommand(batchPath, opts = {}) {
+  const evidence = await buildCoverageReviewEvidence(batchPath, {
+    offset: opts.offset,
+    limit: opts.limit,
+    timeoutMs: opts.timeoutMs,
+    userAgent: opts.userAgent,
+  });
+
+  writeCoverageReviewEvidence(evidence, {
+    output: opts.output,
+    jsonOutput: opts.jsonOutput,
+  });
+
+  if (opts.json) {
+    console.log(JSON.stringify(evidence, null, 2));
+    return evidence;
+  }
+
+  console.log(`Batch: ${evidence.batch}`);
+  console.log(`Rows: ${evidence.total_rows}`);
+  console.log(`Checked rows: ${evidence.checked_rows}`);
+  console.log(`Summary: ${JSON.stringify(evidence.summary)}`);
+  if (opts.output) console.log(`Evidence CSV: ${opts.output}`);
+  if (opts.jsonOutput) console.log(`Evidence JSON: ${opts.jsonOutput}`);
+  for (const row of evidence.evidence_rows.slice(0, Number.parseInt(opts.preview || 10, 10))) {
+    console.log([
+      row.batch_order,
+      row.http_status || 'ERR',
+      row.suggested_decision,
+      row.form_count,
+      row.auth_signal,
+      row.payment_signal,
+      row.url,
+    ].join('\t'));
+  }
+
+  return evidence;
 }
 
 export async function applyCoverageReviewQueueCommand(reviewPath, queuePath, opts = {}) {

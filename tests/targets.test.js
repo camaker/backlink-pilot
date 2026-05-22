@@ -8,10 +8,12 @@ import { normalizeUrl } from '../src/targets/normalize.js';
 import { auditTargets, formatAuditReport } from '../src/targets/audit.js';
 import {
   applyCoverageReviewQueue,
+  buildCoverageReviewEvidence,
   buildCoverageReviewBatch,
   buildCoverageReport,
   buildCoverageReviewQueue,
   coverageCandidatesCsv,
+  coverageReviewEvidenceCsv,
   coverageReviewBatchCsv,
   coverageReviewBatchMarkdown,
   coverageReviewQueueCsv,
@@ -21,6 +23,7 @@ import {
   validateCoverageReviewBatch,
   validateCoverageReview,
   writeCoverageReviewPromotionReport,
+  writeCoverageReviewEvidence,
   writeCoverageReviewBatch,
   writeCoverageReviewQueue,
   writeCoverageCandidatesCsv,
@@ -823,7 +826,7 @@ targets:
         'manual.example',
       ]);
       assert.equal(queue.rows[0].review_row, 4);
-      assert.equal(queue.rows[0].review_decision_options, 'approved_domain_variant | reject_duplicate | reject_not_submit');
+      assert.equal(queue.rows[0].review_decision_options, 'approved_domain_variant | reject_duplicate | reject_not_submit | reject_paid | reject_auth_required');
       assert.match(csv, /priority,priority_score,review_row,review_decision,review_decision_options,review_action/);
       assert.doesNotMatch(readFileSync(output, 'utf-8'), /91wink.com/);
     } finally {
@@ -1006,6 +1009,154 @@ targets:
         'batch_decision_not_allowed',
         'batch_duplicate_review_row',
       ]);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('collects read-only evidence for coverage review batches', async () => {
+    const dir = tempDir();
+    try {
+      const batch = join(dir, 'coverage-review-batch.csv');
+      const output = join(dir, 'evidence', 'batch-evidence.csv');
+      const jsonOutput = join(dir, 'evidence', 'batch-evidence.json');
+      writeFileSync(batch, [
+        [
+          'batch_id',
+          'batch_order',
+          'priority',
+          'priority_score',
+          'review_row',
+          'review_decision',
+          'review_decision_options',
+          'review_action',
+          'review_instruction',
+          'review_notes',
+          'reviewed_by',
+          'submission_url_override',
+          'canonical_name',
+          'pricing',
+          'lang',
+          'classification',
+          'candidate_import_recommendation',
+          'url',
+          'domain',
+          'occurrence_count',
+          'source_files',
+          'source_locations',
+          'registry_target_ids',
+          'registry_submit_urls',
+        ].join(','),
+        [
+          'p0-001',
+          '1',
+          'P0',
+          '300',
+          '10',
+          '',
+          'approved_domain_variant | reject_duplicate | reject_not_submit | reject_paid | reject_auth_required',
+          'verify_distinct_submit_url_for_existing_domain',
+          'verify same-domain variant',
+          '',
+          '',
+          '',
+          'Same Domain',
+          'unknown',
+          'unknown',
+          'domain_in_registry_only',
+          'review_submit_url',
+          'https://same.example/add',
+          'same.example',
+          '1',
+          'coverage.csv',
+          'coverage.csv:2',
+          'same-existing',
+          'https://same.example/submit',
+        ].join(','),
+        [
+          'p0-001',
+          '2',
+          'P0',
+          '290',
+          '11',
+          '',
+          'approved | reject_not_submit | reject_paid | reject_auth_required',
+          'verify_submit_form_then_approve_or_reject',
+          'verify submit form',
+          '',
+          '',
+          '',
+          'Paid Submit',
+          'unknown',
+          'unknown',
+          'missing_domain',
+          'review_submit_url',
+          'https://paid.example/submit',
+          'paid.example',
+          '1',
+          'coverage.csv',
+          'coverage.csv:3',
+          '',
+          '',
+        ].join(','),
+        [
+          'p0-001',
+          '3',
+          'P0',
+          '280',
+          '12',
+          '',
+          'approved_domain_variant | reject_duplicate | reject_not_submit | reject_paid | reject_auth_required',
+          'verify_distinct_submit_url_for_existing_domain',
+          'verify duplicate',
+          '',
+          '',
+          '',
+          'Duplicate',
+          'unknown',
+          'unknown',
+          'domain_in_registry_only',
+          'review_submit_url',
+          'https://dup.example/submit',
+          'dup.example',
+          '1',
+          'coverage.csv',
+          'coverage.csv:4',
+          'dup-existing',
+          'https://dup.example/submit',
+        ].join(','),
+      ].join('\n'));
+
+      const fakeFetch = async (url) => {
+        const html = url.includes('paid.example')
+          ? '<html><head><title>Paid Submit</title></head><body><h1>Submit your product</h1><p>Paid listing $99 checkout</p></body></html>'
+          : '<html><head><title>Add Tool</title></head><body><form><input name="name" required><input name="url" required><button type="submit">Submit tool</button></form></body></html>';
+        return {
+          ok: true,
+          status: 200,
+          url,
+          headers: { get: () => 'text/html' },
+          text: async () => html,
+        };
+      };
+
+      const evidence = await buildCoverageReviewEvidence(batch, { fetchFn: fakeFetch });
+      const csv = coverageReviewEvidenceCsv(evidence);
+      writeCoverageReviewEvidence(evidence, { output, jsonOutput });
+      const json = JSON.parse(readFileSync(jsonOutput, 'utf-8'));
+
+      assert.equal(evidence.total_rows, 3);
+      assert.equal(evidence.checked_rows, 3);
+      assert.equal(evidence.evidence_rows[0].suggested_decision, 'review_possible_domain_variant');
+      assert.equal(evidence.evidence_rows[0].form_count, 1);
+      assert.equal(evidence.evidence_rows[1].suggested_decision, 'reject_paid');
+      assert.equal(evidence.evidence_rows[1].payment_signal, 'yes');
+      assert.equal(evidence.evidence_rows[2].suggested_decision, 'reject_duplicate');
+      assert.equal(evidence.summary.payment_signals, 1);
+      assert.equal(evidence.summary.duplicate_registry_urls, 1);
+      assert.match(csv, /suggested_decision/);
+      assert.match(readFileSync(output, 'utf-8'), /review_possible_domain_variant/);
+      assert.equal(json.checked_rows, 3);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

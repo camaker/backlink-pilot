@@ -100,6 +100,18 @@ node src/cli.js targets coverage-review-batch backlink-url/coverage-review-queue
 
 ## Promotion Gate
 
+可选但推荐：先收集只读 HTTP/HTML evidence，辅助人工判断，不填写、不点击、不提交任何表单：
+
+```bash
+node src/cli.js targets coverage-review-evidence backlink-url/review-batches/p0-001.csv \
+  --limit 25 \
+  --timeout-ms 10000 \
+  --output backlink-url/review-batches/p0-001-evidence.csv \
+  --json-output backlink-url/review-batches/p0-001-evidence.json
+```
+
+Evidence 输出包含 HTTP 状态、最终 URL、表单数量、提交按钮信号、登录/OAuth/CAPTCHA/Cloudflare/付费信号、registry URL 重复信号和 `suggested_decision`。`suggested_decision` 只是审核辅助，不会自动写入 `review_decision`。
+
 编辑批次后先验证批次：
 
 ```bash
@@ -179,4 +191,3 @@ node src/cli.js scout-queue \
 ```
 
 随后用 pipeline/scout-plan 收集表单证据。只有 scout 证据证明页面可达、无 auth/CAPTCHA/payment 阻断、字段映射完整，目标才可能升级为 `auto_safe`。真实执行仍必须通过 readiness、target audit、stale plan 检查和 dry-run。
-

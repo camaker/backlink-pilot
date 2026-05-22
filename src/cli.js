@@ -12,6 +12,7 @@ import { forceUpdate } from './bb-update.js';
 import { runCampaign } from './campaign.js';
 import {
   applyCoverageReviewQueueCommand,
+  coverageReviewEvidenceCommand,
   coverageReviewBatchCommand,
   importTargetsCommand,
   auditTargetsCommand,
@@ -366,6 +367,21 @@ targets
   .option('--json', 'Output as JSON')
   .action(async (batch, opts) => {
     await validateCoverageReviewBatchCommand(batch, opts);
+  });
+
+targets
+  .command('coverage-review-evidence <batch>')
+  .description('Collect read-only HTTP/HTML evidence for a coverage review batch without submitting')
+  .option('--output <path>', 'Write evidence CSV')
+  .option('--json-output <path>', 'Write full evidence JSON')
+  .option('--offset <n>', 'Zero-based offset within the batch', '0')
+  .option('--limit <n>', 'Maximum rows to check')
+  .option('--timeout-ms <n>', 'Fetch timeout per URL in milliseconds', '15000')
+  .option('--user-agent <value>', 'HTTP user-agent for read-only evidence fetches')
+  .option('--preview <n>', 'Rows to preview in text output', '10')
+  .option('--json', 'Output as JSON')
+  .action(async (batch, opts) => {
+    await coverageReviewEvidenceCommand(batch, opts);
   });
 
 targets
