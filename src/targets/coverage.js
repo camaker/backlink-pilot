@@ -175,6 +175,52 @@ const REVIEW_QUEUE_EDITABLE_FIELDS = [
   'pricing',
   'lang',
 ];
+const MANUAL_REVIEW_HEADERS = [
+  'manual_rank',
+  'priority',
+  'priority_score',
+  'review_row',
+  'review_action',
+  'manual_bucket',
+  'risk_level',
+  'recommended_next_step',
+  'url',
+  'domain',
+  'canonical_name',
+  'pricing',
+  'lang',
+  'classification',
+  'candidate_import_recommendation',
+  'occurrence_count',
+  'registry_target_ids',
+  'registry_submit_urls',
+  'source_files',
+  'latest_batch_id',
+  'evidence_file',
+  'suggestion_file',
+  'http_status',
+  'fetch_ok',
+  'final_url',
+  'form_count',
+  'input_count',
+  'submit_path_signal',
+  'directory_signal',
+  'auth_signal',
+  'oauth_signal',
+  'captcha_signal',
+  'cloudflare_signal',
+  'payment_signal',
+  'evidence_suggested_decision',
+  'suggested_review_decision',
+  'suggestion_confidence',
+  'possible_approval_decision',
+  'reviewer_action',
+  'suggested_review_notes',
+  'safety_gate_reason',
+  'safety_gate_batch_id',
+  'safety_gate_report',
+  'checked_at',
+];
 
 function normalizePath(value) {
   return String(value || '').replace(/\\/g, '/');
@@ -2564,4 +2610,433 @@ export function promoteCoverageReviewBatch(registryPath, reviewPath, batchPath, 
 export function writeCoverageReviewPromotionReport(result, path) {
   ensureParent(path);
   writeFileSync(path, JSON.stringify(result, null, 2) + '\n', 'utf-8');
+}
+
+function reviewRowKey(row) {
+  return `${String(row.review_row || '').trim()}|${String(rowImportUrl(row) || row.url || '').trim()}`;
+}
+
+function dateValue(row, field = 'checked_at') {
+  const parsed = Date.parse(row?.[field] || row?.generated_at || '');
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function newerReviewRecord(current, candidate, field = 'checked_at') {
+  if (!current) return candidate;
+  const currentDate = dateValue(current, field);
+  const candidateDate = dateValue(candidate, field);
+  if (candidateDate > currentDate) return candidate;
+  if (candidateDate === currentDate) {
+    const currentBatch = String(current.batch_id || '');
+    const candidateBatch = String(candidate.batch_id || '');
+    if (candidateBatch.localeCompare(currentBatch) > 0) return candidate;
+  }
+  return current;
+}
+
+function incrementCount(counts, key) {
+  const normalized = key || '(blank)';
+  counts[normalized] = (counts[normalized] || 0) + 1;
+}
+
+function latestCoverageReviewHistory(batchDir, currentKeys) {
+  const evidenceByKey = new Map();
+  const suggestionByKey = new Map();
+  const blockedByKey = new Map();
+  if (!batchDir || !existsSync(batchDir)) {
+    return { evidenceByKey, suggestionByKey, blockedByKey };
+  }
+
+  for (const file of readdirSync(batchDir)) {
+    const fullPath = join(batchDir, file);
+    if (!statSync(fullPath).isFile()) continue;
+
+    if (file.endsWith('-evidence.csv')) {
+      for (const row of parseCsv(readFileSync(fullPath, 'utf-8'))) {
+        const key = reviewRowKey(row);
+        if (!currentKeys.has(key)) continue;
+        evidenceByKey.set(key, newerReviewRecord(evidenceByKey.get(key), {
+          ...row,
+          source_evidence_file: file,
+        }));
+      }
+    }
+
+    if (file.endsWith('-suggestions.csv')) {
+      for (const row of parseCsv(readFileSync(fullPath, 'utf-8'))) {
+        const key = reviewRowKey(row);
+        if (!currentKeys.has(key)) continue;
+        suggestionByKey.set(key, newerReviewRecord(suggestionByKey.get(key), {
+          ...row,
+          source_suggestion_file: file,
+        }));
+      }
+    }
+
+    if (file.endsWith('-draft-report.json')) {
+      const report = JSON.parse(readFileSync(fullPath, 'utf-8'));
+      for (const row of report.blocked || []) {
+        const key = reviewRowKey(row);
+        if (!currentKeys.has(key)) continue;
+        blockedByKey.set(key, newerReviewRecord(blockedByKey.get(key), {
+          ...row,
+          generated_at: report.generated_at,
+          batch_id: report.batch_id,
+          source_draft_report_file: file,
+        }, 'generated_at'));
+      }
+    }
+  }
+
+  return { evidenceByKey, suggestionByKey, blockedByKey };
+}
+
+function manualReviewBucket(queueRow, suggestion, evidence, blocked) {
+  if (!suggestion && !evidence) return 'no_read_only_evidence_yet';
+  if (blocked) return 'safety_gate_blocked_auto_rejection';
+  if (suggestion?.suggested_review_decision === 'needs_manual_check') {
+    if (suggestion.evidence_suggested_decision === 'review_fetch_failed') return 'fetch_failed_cannot_decide';
+    if (suggestion.reviewer_action === 'manual_confirm_submit_form_and_blockers') return 'manual_submit_form_confirmation_required';
+    return 'manual_browser_check_required';
+  }
+  if (suggestion?.suggestion_confidence === 'medium') return 'medium_confidence_requires_human_confirmation';
+  if (suggestion?.suggestion_confidence === 'low') return 'low_confidence_requires_human_confirmation';
+  if (queueRow.review_action === 'verify_directory_fit_before_any_approval') return 'directory_fit_requires_human_confirmation';
+  if (queueRow.review_action === 'verify_distinct_submit_url_for_existing_domain') return 'same_domain_submit_url_requires_human_confirmation';
+  if (evidence?.suggested_decision === 'review_fetch_failed') return 'fetch_failed_cannot_decide';
+  return 'manual_confirmation_required';
+}
+
+function manualReviewRiskLevel(queueRow, suggestion, evidence, blocked) {
+  if (blocked) return 'high_manual_risk';
+  if (queueRow.priority === 'P0') return 'high_priority_manual';
+  if (suggestion?.suggestion_confidence === 'low' || evidence?.suggested_decision === 'review_fetch_failed') return 'unknown_manual_risk';
+  if (queueRow.review_action === 'verify_directory_fit_before_any_approval') return 'fit_risk';
+  return 'manual_risk';
+}
+
+function manualReviewNextStep(queueRow, suggestion, evidence, blocked) {
+  if (blocked) {
+    return 'Open in a normal browser, verify directory fit and submit path, then edit review decision manually only if evidence is clear.';
+  }
+  if (!suggestion && !evidence) return 'Collect read-only evidence or open manually before any decision.';
+  if (queueRow.review_action === 'verify_distinct_submit_url_for_existing_domain') {
+    return 'Confirm this URL is a distinct valid submit URL from existing registry URLs; reject duplicate or invalid paths.';
+  }
+  if (suggestion?.suggested_review_decision === 'needs_manual_check' && suggestion?.evidence_suggested_decision === 'review_fetch_failed') {
+    return 'Retry in browser; do not reject based only on fetch failure, timeout, 403, 429, CAPTCHA, or Cloudflare.';
+  }
+  if (suggestion?.possible_approval_decision) {
+    return 'Manually verify visible free submit form, required fields, no auth/CAPTCHA/payment blocker, then consider approval as non-executable needs_scout.';
+  }
+  if (suggestion?.suggested_review_decision === 'reject_auth_required' || evidence?.auth_signal === 'yes') {
+    return 'Decide whether this is assisted/manual-strategic; do not automate without explicit login/session plan and persisted selectors.';
+  }
+  if (suggestion?.suggested_review_decision === 'reject_paid' || evidence?.payment_signal === 'yes') {
+    return 'Confirm whether a free submission path exists; reject if only paid/sponsored listing is available.';
+  }
+  if (queueRow.review_action === 'verify_directory_fit_before_any_approval') {
+    return 'Verify this is a real product/startup/SaaS/AI directory, not a source page, blog comment, profile, generic article, or unrelated vertical.';
+  }
+  return 'Open manually and record approve/reject decision with notes; approval must remain non-executable needs_scout until scout evidence exists.';
+}
+
+function productContextPaths(opts = {}) {
+  const configured = Array.isArray(opts.productContextPaths)
+    ? opts.productContextPaths
+    : splitFilterValues(opts.productContextPaths || '');
+  return configured.length ? configured : [
+    '.agents/product-marketing.md',
+    '.claude/product-marketing.md',
+    'product-marketing-context.md',
+  ];
+}
+
+function productContextStatus(opts = {}) {
+  return productContextPaths(opts).map(contextPath => ({
+    path: contextPath,
+    exists: existsSync(contextPath),
+  }));
+}
+
+function manualReviewRowsFromQueue(queueRows, history) {
+  return queueRows.map((queueRow, index) => {
+    const key = reviewRowKey(queueRow);
+    const evidence = history.evidenceByKey.get(key) || null;
+    const suggestion = history.suggestionByKey.get(key) || null;
+    const blocked = history.blockedByKey.get(key) || null;
+
+    return {
+      manual_rank: String(index + 1),
+      priority: queueRow.priority || '',
+      priority_score: queueRow.priority_score || '',
+      review_row: queueRow.review_row || '',
+      review_action: queueRow.review_action || '',
+      manual_bucket: manualReviewBucket(queueRow, suggestion, evidence, blocked),
+      risk_level: manualReviewRiskLevel(queueRow, suggestion, evidence, blocked),
+      recommended_next_step: manualReviewNextStep(queueRow, suggestion, evidence, blocked),
+      url: rowImportUrl(queueRow) || queueRow.url || '',
+      domain: queueRow.domain || '',
+      canonical_name: queueRow.canonical_name || '',
+      pricing: queueRow.pricing || '',
+      lang: queueRow.lang || '',
+      classification: queueRow.classification || '',
+      candidate_import_recommendation: queueRow.candidate_import_recommendation || '',
+      occurrence_count: queueRow.occurrence_count || '',
+      registry_target_ids: queueRow.registry_target_ids || '',
+      registry_submit_urls: queueRow.registry_submit_urls || '',
+      source_files: queueRow.source_files || '',
+      latest_batch_id: suggestion?.batch_id || evidence?.batch_id || '',
+      evidence_file: evidence?.source_evidence_file || '',
+      suggestion_file: suggestion?.source_suggestion_file || '',
+      http_status: suggestion?.http_status || evidence?.http_status || '',
+      fetch_ok: suggestion?.fetch_ok || evidence?.fetch_ok || '',
+      final_url: suggestion?.final_url || evidence?.final_url || '',
+      form_count: suggestion?.form_count || evidence?.form_count || '',
+      input_count: suggestion?.input_count || evidence?.input_count || '',
+      submit_path_signal: suggestion?.submit_path_signal || evidence?.submit_path_signal || '',
+      directory_signal: suggestion?.directory_signal || evidence?.directory_signal || '',
+      auth_signal: suggestion?.auth_signal || evidence?.auth_signal || '',
+      oauth_signal: suggestion?.oauth_signal || evidence?.oauth_signal || '',
+      captcha_signal: suggestion?.captcha_signal || evidence?.captcha_signal || '',
+      cloudflare_signal: suggestion?.cloudflare_signal || evidence?.cloudflare_signal || '',
+      payment_signal: suggestion?.payment_signal || evidence?.payment_signal || '',
+      evidence_suggested_decision: suggestion?.evidence_suggested_decision || evidence?.suggested_decision || '',
+      suggested_review_decision: suggestion?.suggested_review_decision || '',
+      suggestion_confidence: suggestion?.suggestion_confidence || '',
+      possible_approval_decision: suggestion?.possible_approval_decision || '',
+      reviewer_action: suggestion?.reviewer_action || '',
+      suggested_review_notes: suggestion?.suggested_review_notes || evidence?.evidence_notes || '',
+      safety_gate_reason: blocked?.reason || '',
+      safety_gate_batch_id: blocked?.batch_id || '',
+      safety_gate_report: blocked?.source_draft_report_file || '',
+      checked_at: suggestion?.checked_at || evidence?.checked_at || '',
+    };
+  });
+}
+
+function summarizeManualReviewRows(rows, contextStatus) {
+  const summary = {
+    generated_at: nowIso(),
+    queue_rows: rows.length,
+    product_context_present: contextStatus.some(row => row.exists),
+    product_context_paths: contextStatus,
+    policy: 'manual_review_only_no_approvals_no_registry_changes_no_real_submissions',
+    by_priority: {},
+    by_review_action: {},
+    by_manual_bucket: {},
+    by_risk_level: {},
+    by_suggested_review_decision: {},
+    by_suggestion_confidence: {},
+    evidence_coverage: {
+      rows_with_evidence_or_suggestion: 0,
+      rows_without_evidence_or_suggestion: 0,
+      rows_with_safety_gate_block: 0,
+      possible_approval_after_manual_confirmation: 0,
+    },
+  };
+
+  for (const row of rows) {
+    incrementCount(summary.by_priority, row.priority);
+    incrementCount(summary.by_review_action, row.review_action);
+    incrementCount(summary.by_manual_bucket, row.manual_bucket);
+    incrementCount(summary.by_risk_level, row.risk_level);
+    incrementCount(summary.by_suggested_review_decision, row.suggested_review_decision || 'no_suggestion');
+    incrementCount(summary.by_suggestion_confidence, row.suggestion_confidence || 'no_suggestion');
+    if (row.evidence_file || row.suggestion_file) summary.evidence_coverage.rows_with_evidence_or_suggestion += 1;
+    else summary.evidence_coverage.rows_without_evidence_or_suggestion += 1;
+    if (row.safety_gate_reason) summary.evidence_coverage.rows_with_safety_gate_block += 1;
+    if (row.possible_approval_decision) summary.evidence_coverage.possible_approval_after_manual_confirmation += 1;
+  }
+
+  return summary;
+}
+
+export function buildCoverageReviewManualPack(queuePath, opts = {}) {
+  const queueRows = parseCsv(readFileSync(queuePath, 'utf-8'));
+  const batchDir = opts.batchDir || join(dirname(queuePath), 'review-batches');
+  const currentKeys = new Set(queueRows.map(reviewRowKey));
+  const contextStatus = productContextStatus(opts);
+  const rows = manualReviewRowsFromQueue(
+    queueRows,
+    latestCoverageReviewHistory(batchDir, currentKeys)
+  );
+  const nextLimit = Math.max(1, numericValue(opts.nextLimit, 100));
+  const summary = summarizeManualReviewRows(rows, contextStatus);
+
+  return {
+    generated_at: summary.generated_at,
+    queue: queuePath,
+    batch_dir: batchDir,
+    mode_policy: summary.policy,
+    next_limit: nextLimit,
+    rows,
+    p0_rows: rows.filter(row => row.priority === 'P0'),
+    next_rows: rows.slice(0, nextLimit),
+    summary,
+  };
+}
+
+function manualReviewCsv(rows) {
+  return [
+    MANUAL_REVIEW_HEADERS.join(','),
+    ...rows.map(row => MANUAL_REVIEW_HEADERS.map(header => csvEscape(row[header])).join(',')),
+  ].join('\n') + '\n';
+}
+
+function markdownTableFromCounts(counts) {
+  return Object.entries(counts)
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .map(([key, value]) => `| ${key} | ${value} |`)
+    .join('\n');
+}
+
+function markdownEscape(value) {
+  return String(value || '').replace(/\|/g, '\\|');
+}
+
+function manualReviewSummaryMarkdown(pack) {
+  const p0Rows = pack.p0_rows.map(row => [
+    row.manual_rank,
+    row.review_row,
+    row.domain,
+    row.manual_bucket,
+    row.suggested_review_decision || 'no_suggestion',
+    row.suggestion_confidence || '',
+    row.url,
+  ].map(markdownEscape).join(' | ')).map(line => `| ${line} |`).join('\n');
+
+  return [
+    '# Manual Review Pack',
+    '',
+    `Generated: ${pack.generated_at}`,
+    '',
+    '## Scope',
+    '',
+    `- Current queue rows: ${pack.summary.queue_rows}`,
+    `- P0 rows: ${pack.summary.by_priority.P0 || 0}`,
+    `- P2 rows: ${pack.summary.by_priority.P2 || 0}`,
+    `- Rows with evidence or suggestion history: ${pack.summary.evidence_coverage.rows_with_evidence_or_suggestion}`,
+    `- Rows without evidence or suggestion history: ${pack.summary.evidence_coverage.rows_without_evidence_or_suggestion}`,
+    `- Rows blocked by safety gate in prior drafts: ${pack.summary.evidence_coverage.rows_with_safety_gate_block}`,
+    `- Possible approvals after manual confirmation: ${pack.summary.evidence_coverage.possible_approval_after_manual_confirmation}`,
+    '',
+    'Policy: manual review only. No approvals, no registry imports, no real submissions, no login or CAPTCHA/Cloudflare bypass.',
+    '',
+    '## By Priority',
+    '',
+    '| Priority | Count |',
+    '|---|---:|',
+    markdownTableFromCounts(pack.summary.by_priority),
+    '',
+    '## By Review Action',
+    '',
+    '| Action | Count |',
+    '|---|---:|',
+    markdownTableFromCounts(pack.summary.by_review_action),
+    '',
+    '## By Manual Bucket',
+    '',
+    '| Bucket | Count |',
+    '|---|---:|',
+    markdownTableFromCounts(pack.summary.by_manual_bucket),
+    '',
+    '## By Suggested Decision',
+    '',
+    '| Suggested Decision | Count |',
+    '|---|---:|',
+    markdownTableFromCounts(pack.summary.by_suggested_review_decision),
+    '',
+    '## P0 Manual Queue',
+    '',
+    '| Rank | Review Row | Domain | Manual Bucket | Suggested Decision | Confidence | URL |',
+    '|---:|---:|---|---|---|---|---|',
+    p0Rows,
+    '',
+    '## Files',
+    '',
+    '- Full remaining queue: remaining-manual-review.csv',
+    '- P0-only queue: p0-manual-review.csv',
+    '- Next queue slice: next-100-manual-review.csv',
+    '- Machine-readable summary: manual-review-summary.json',
+    '- Readiness blockers: product-readiness-blockers.md',
+    '',
+    '## Human Review Rules',
+    '',
+    '1. Do not approve based on HTTP fetch alone. Approval requires a visible valid submit form, directory fit, no mandatory login/payment/CAPTCHA, and a clear submit URL.',
+    '2. Do not reject on fetch failure alone. Retry in a normal browser first.',
+    '3. Treat auth/OAuth/2FA/CAPTCHA/Cloudflare as assisted/manual, never auto.',
+    '4. Treat paid/sponsored-only listing paths as reject_paid unless a free path is visible.',
+    '5. Any approved row must remain non-executable needs_scout until scout evidence maps the form fields and submit button.',
+    '',
+  ].join('\n');
+}
+
+function productReadinessBlockersMarkdown(pack) {
+  const contextLines = pack.summary.product_context_paths.map(row =>
+    `- ${row.path}: ${row.exists ? 'present' : 'missing'}`
+  );
+  return [
+    '# Product Readiness Blockers',
+    '',
+    `Generated: ${pack.generated_at}`,
+    '',
+    'Real submission remains blocked unless product marketing context and launch readiness are complete. Checked paths:',
+    '',
+    ...contextLines,
+    '',
+    '## Hard Blocks Before Real Submission',
+    '',
+    '1. Public product URL with no password wall.',
+    '2. Pricing page, even if the product is free while in beta.',
+    '3. Privacy policy and terms pages.',
+    '4. Logo assets: PNG, SVG, square 1024x1024, favicon.',
+    '5. 5-8 real product screenshots and a 60-90 second demo video.',
+    '6. GEO-ready landing pages: one H1, sequential headings, FAQ schema, Organization/Product/SoftwareApplication structured data.',
+    '7. At least 3 alternative pages and 3 use-case pages live and indexed.',
+    '',
+    '## Soft Blocks',
+    '',
+    '1. Template gallery or lead magnet asset when relevant.',
+    '2. At least 20 beta or early users who could leave reviews on review platforms.',
+    '',
+    '## Execution Policy',
+    '',
+    'Until the hard blocks are satisfied, run-plan execution must stay blocked. The only safe work is candidate review, manual confirmation, scout planning, and dry-run validation.',
+    '',
+  ].join('\n');
+}
+
+export function writeCoverageReviewManualPack(pack, opts = {}) {
+  const outputDir = opts.outputDir || join(dirname(pack.queue), 'manual-review');
+  mkdirSync(outputDir, { recursive: true });
+  const files = {
+    remaining_manual_review_csv: join(outputDir, 'remaining-manual-review.csv'),
+    p0_manual_review_csv: join(outputDir, 'p0-manual-review.csv'),
+    next_manual_review_csv: join(outputDir, `next-${pack.next_limit}-manual-review.csv`),
+    summary_json: join(outputDir, 'manual-review-summary.json'),
+    summary_md: join(outputDir, 'manual-review-summary.md'),
+    readiness_blockers_md: join(outputDir, 'product-readiness-blockers.md'),
+  };
+  const publicFiles = Object.fromEntries(
+    Object.entries(files).map(([key, value]) => [key, normalizePath(value)])
+  );
+
+  const summary = {
+    ...pack.summary,
+    files: publicFiles,
+  };
+
+  writeFileSync(files.remaining_manual_review_csv, manualReviewCsv(pack.rows), 'utf-8');
+  writeFileSync(files.p0_manual_review_csv, manualReviewCsv(pack.p0_rows), 'utf-8');
+  writeFileSync(files.next_manual_review_csv, manualReviewCsv(pack.next_rows), 'utf-8');
+  writeFileSync(files.summary_json, JSON.stringify(summary, null, 2) + '\n', 'utf-8');
+  writeFileSync(files.summary_md, manualReviewSummaryMarkdown({ ...pack, summary }), 'utf-8');
+  writeFileSync(files.readiness_blockers_md, productReadinessBlockersMarkdown({ ...pack, summary }), 'utf-8');
+
+  return {
+    output_dir: normalizePath(outputDir),
+    files: publicFiles,
+    summary,
+  };
 }

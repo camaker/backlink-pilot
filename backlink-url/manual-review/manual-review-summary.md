@@ -1,6 +1,6 @@
 # Manual Review Pack
 
-Generated: 2026-05-22T09:05:37.252Z
+Generated: 2026-05-22T09:19:31.825Z
 
 ## Scope
 
@@ -82,11 +82,11 @@ Policy: manual review only. No approvals, no registry imports, no real submissio
 
 ## Files
 
-- Full remaining queue: backlink-url/manual-review/remaining-manual-review.csv
-- P0-only queue: backlink-url/manual-review/p0-manual-review.csv
-- Next 100 queue: backlink-url/manual-review/next-100-manual-review.csv
-- Machine-readable summary: backlink-url/manual-review/manual-review-summary.json
-- Readiness blockers: backlink-url/manual-review/product-readiness-blockers.md
+- Full remaining queue: remaining-manual-review.csv
+- P0-only queue: p0-manual-review.csv
+- Next queue slice: next-100-manual-review.csv
+- Machine-readable summary: manual-review-summary.json
+- Readiness blockers: product-readiness-blockers.md
 
 ## Human Review Rules
 

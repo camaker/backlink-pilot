@@ -14,6 +14,7 @@ import {
   buildCoverageReviewBatch,
   buildCoverageReviewDraft,
   buildCoverageReport,
+  buildCoverageReviewManualPack,
   buildCoverageReviewQueue,
   buildCoverageReviewSuggestions,
   importCoverageReview,
@@ -24,6 +25,7 @@ import {
   writeCoverageReviewEvidence,
   writeCoverageReviewSuggestions,
   writeCoverageReviewDraft,
+  writeCoverageReviewManualPack,
   writeCoverageReviewBatch,
   writeCoverageReviewPromotionReport,
   writeCoverageReport,
@@ -561,6 +563,46 @@ export async function promoteCoverageReviewBatchCommand(reviewPath, batchPath, o
     }
     process.exitCode = 1;
   }
+
+  return result;
+}
+
+export async function coverageReviewManualPackCommand(queuePath, opts = {}) {
+  const pack = buildCoverageReviewManualPack(queuePath, {
+    batchDir: opts.batchDir,
+    nextLimit: opts.nextLimit,
+    productContextPaths: opts.productContextPaths,
+  });
+  const written = writeCoverageReviewManualPack(pack, {
+    outputDir: opts.outputDir,
+  });
+
+  const result = {
+    ...pack.summary,
+    output_dir: written.output_dir,
+    files: written.files,
+  };
+
+  if (opts.json) {
+    console.log(JSON.stringify(result, null, 2));
+    return result;
+  }
+
+  console.log(`Queue: ${pack.queue}`);
+  console.log(`Batch dir: ${pack.batch_dir}`);
+  console.log(`Output dir: ${written.output_dir}`);
+  console.log(`Rows: ${pack.summary.queue_rows}`);
+  console.log(`Priority counts: ${JSON.stringify(pack.summary.by_priority)}`);
+  console.log(`Manual buckets: ${JSON.stringify(pack.summary.by_manual_bucket)}`);
+  console.log(`Evidence rows: ${pack.summary.evidence_coverage.rows_with_evidence_or_suggestion}`);
+  console.log(`Rows without evidence: ${pack.summary.evidence_coverage.rows_without_evidence_or_suggestion}`);
+  console.log(`Safety-gate blocked rows: ${pack.summary.evidence_coverage.rows_with_safety_gate_block}`);
+  console.log(`Possible approvals after manual confirmation: ${pack.summary.evidence_coverage.possible_approval_after_manual_confirmation}`);
+  console.log(`Product context present: ${pack.summary.product_context_present}`);
+  console.log(`Full manual review CSV: ${written.files.remaining_manual_review_csv}`);
+  console.log(`P0 manual review CSV: ${written.files.p0_manual_review_csv}`);
+  console.log(`Next manual review CSV: ${written.files.next_manual_review_csv}`);
+  console.log(`Summary: ${written.files.summary_md}`);
 
   return result;
 }

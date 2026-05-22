@@ -15,6 +15,7 @@ import {
   coverageReviewDraftCommand,
   coverageReviewEvidenceCommand,
   coverageReviewBatchCommand,
+  coverageReviewManualPackCommand,
   coverageReviewSuggestCommand,
   importTargetsCommand,
   auditTargetsCommand,
@@ -442,6 +443,21 @@ targets
   .option('--json', 'Output as JSON')
   .action(async (review, batch, opts) => {
     await promoteCoverageReviewBatchCommand(review, batch, opts);
+  });
+
+targets
+  .command('coverage-review-manual-pack <queue>')
+  .description('Generate a manual review pack from the current review queue and prior evidence without approving or importing')
+  .option('--batch-dir <path>', 'Directory containing review batch evidence, suggestions, and draft reports')
+  .option('--output-dir <path>', 'Directory to write the manual review pack')
+  .option('--next-limit <n>', 'Rows to include in the next manual review slice', '100')
+  .option('--product-context-paths <items>', 'Comma-separated product context paths to check')
+  .option('--json', 'Output as JSON')
+  .action(async (queue, opts) => {
+    await coverageReviewManualPackCommand(queue, {
+      ...opts,
+      productContextPaths: opts.productContextPaths,
+    });
   });
 
 program

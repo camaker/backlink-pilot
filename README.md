@@ -144,6 +144,7 @@ node src/cli.js targets coverage-review-batch <queue.csv>   # Create small human
 node src/cli.js targets coverage-review-suggest <batch.csv> <evidence.csv>  # Create non-binding review suggestions from read-only evidence
 node src/cli.js targets coverage-review-draft <batch.csv> <suggestions.csv>  # Draft rejection-only batch edits from high-confidence suggestions
 node src/cli.js targets promote-coverage-review-batch <review.csv> <batch.csv> --dry-run  # Validate batch promotion before import/scout
+node src/cli.js targets coverage-review-manual-pack <queue.csv>  # Generate a manual review pack from remaining candidates
 node src/cli.js pipeline --scout-queue   # Scout unverified targets, refresh plan, dry-run or execute
 node src/cli.js scout-plan <plan>        # Scout a generated plan and update target safety
 node src/cli.js run-plan <plan>          # Dry-run or execute verified auto_safe targets

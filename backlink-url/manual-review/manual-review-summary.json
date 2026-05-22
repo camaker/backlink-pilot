@@ -1,7 +1,21 @@
 {
-  "generated_at": "2026-05-22T09:05:37.252Z",
+  "generated_at": "2026-05-22T09:19:31.825Z",
   "queue_rows": 429,
   "product_context_present": false,
+  "product_context_paths": [
+    {
+      "path": ".agents/product-marketing.md",
+      "exists": false
+    },
+    {
+      "path": ".claude/product-marketing.md",
+      "exists": false
+    },
+    {
+      "path": "product-marketing-context.md",
+      "exists": false
+    }
+  ],
   "policy": "manual_review_only_no_approvals_no_registry_changes_no_real_submissions",
   "by_priority": {
     "P0": 28,
@@ -44,7 +58,7 @@
   "files": {
     "remaining_manual_review_csv": "backlink-url/manual-review/remaining-manual-review.csv",
     "p0_manual_review_csv": "backlink-url/manual-review/p0-manual-review.csv",
-    "next_100_manual_review_csv": "backlink-url/manual-review/next-100-manual-review.csv",
+    "next_manual_review_csv": "backlink-url/manual-review/next-100-manual-review.csv",
     "summary_json": "backlink-url/manual-review/manual-review-summary.json",
     "summary_md": "backlink-url/manual-review/manual-review-summary.md",
     "readiness_blockers_md": "backlink-url/manual-review/product-readiness-blockers.md"

@@ -145,6 +145,7 @@ node src/cli.js targets coverage-review-batch <队列CSV>   # 从外链候选队
 node src/cli.js targets coverage-review-suggest <批次CSV> <evidence.csv>  # 从只读证据生成非绑定审核建议
 node src/cli.js targets coverage-review-draft <批次CSV> <suggestions.csv>  # 从高置信建议生成仅拒绝的批次草案
 node src/cli.js targets promote-coverage-review-batch <主review> <批次CSV> --dry-run  # 批次回写前的完整安全门禁
+node src/cli.js targets coverage-review-manual-pack <队列CSV>  # 从剩余候选生成可审计人工复核包
 node src/cli.js pipeline --scout-queue   # 侦察未验证目标，刷新计划，再 dry-run 或执行
 node src/cli.js scout-plan <计划文件>    # 批量侦察计划里的目标并更新安全等级
 node src/cli.js run-plan <计划文件>      # dry-run 或执行 auto_safe 目标

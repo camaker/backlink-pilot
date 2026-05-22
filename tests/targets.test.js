@@ -11,6 +11,7 @@ import {
   buildCoverageReviewEvidence,
   buildCoverageReviewBatch,
   buildCoverageReviewDraft,
+  buildCoverageReviewManualPack,
   buildCoverageReport,
   buildCoverageReviewQueue,
   buildCoverageReviewSuggestions,
@@ -29,6 +30,7 @@ import {
   writeCoverageReviewEvidence,
   writeCoverageReviewSuggestions,
   writeCoverageReviewDraft,
+  writeCoverageReviewManualPack,
   writeCoverageReviewBatch,
   writeCoverageReviewQueue,
   writeCoverageCandidatesCsv,
@@ -1756,6 +1758,68 @@ targets:
       assert.equal(updated.reviewed_by, 'qa');
       assert.equal(updated.pricing, 'free');
       assert.equal(reportJson.mode_policy, result.mode_policy);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('builds a manual review pack from queue rows and prior evidence', () => {
+    const dir = tempDir();
+    try {
+      const batchDir = join(dir, 'review-batches');
+      const outputDir = join(dir, 'manual-review');
+      const queue = join(dir, 'coverage-review-queue.csv');
+      mkdirSync(batchDir, { recursive: true });
+      writeFileSync(queue, [
+        'priority,priority_score,review_row,review_decision,review_decision_options,review_action,review_instruction,review_notes,reviewed_by,submission_url_override,canonical_name,pricing,lang,classification,candidate_import_recommendation,url,domain,occurrence_count,source_files,source_locations,registry_target_ids,registry_submit_urls',
+        'P0,187,2,,approved | reject_not_submit,verify_submit_form_then_approve_or_reject,verify submit form,,,,Submit Example,unknown,unknown,missing_domain,review_submit_url,https://submit.example/submit,submit.example,2,coverage-candidates.csv,coverage-candidates.csv:2,,',
+        'P2,80,3,,approved | reject_not_submit,verify_directory_fit_before_any_approval,verify fit,,,,Blog Example,unknown,unknown,missing_domain,review_submit_url,https://blog.example/post,blog.example,1,coverage-candidates.csv,coverage-candidates.csv:3,,',
+        'P2,60,4,,approved | reject_not_submit,verify_directory_fit_before_any_approval,verify fit,,,,Unknown Example,unknown,unknown,missing_domain,review_submit_url,https://unknown.example/,unknown.example,1,coverage-candidates.csv,coverage-candidates.csv:4,,',
+      ].join('\n'));
+      writeFileSync(join(batchDir, 'b1-evidence.csv'), [
+        'batch_id,batch_order,review_row,review_action,url,domain,http_status,fetch_ok,final_url,final_domain,domain_changed,content_type,title,form_count,input_count,submit_button_signal,submit_path_signal,directory_signal,auth_signal,oauth_signal,captcha_signal,cloudflare_signal,payment_signal,duplicate_registry_url,suggested_decision,evidence_notes,fetch_error,checked_at',
+        'b1,1,2,verify_submit_form_then_approve_or_reject,https://submit.example/submit,submit.example,200,yes,https://submit.example/submit,submit.example,no,text/html,Submit,1,3,yes,yes,yes,no,no,no,no,no,no,review_possible_submit_form,form and directory signals,,2026-01-01T00:00:00.000Z',
+        'b1,2,3,verify_directory_fit_before_any_approval,https://blog.example/post,blog.example,200,yes,https://blog.example/post,blog.example,no,text/html,Blog,1,2,no,no,no,yes,no,no,no,no,no,reject_auth_required,login signal,,2026-01-01T00:00:01.000Z',
+      ].join('\n'));
+      writeFileSync(join(batchDir, 'b1-suggestions.csv'), [
+        'batch_id,batch_order,review_row,priority,review_action,url,domain,current_review_decision,review_decision_options,evidence_suggested_decision,suggested_review_decision,suggestion_confidence,possible_approval_decision,reviewer_action,suggested_review_notes,suggested_pricing,suggestion_basis,evidence_matched,evidence_match_key,http_status,fetch_ok,final_url,final_domain,form_count,input_count,submit_button_signal,submit_path_signal,directory_signal,auth_signal,oauth_signal,captcha_signal,cloudflare_signal,payment_signal,duplicate_registry_url,fetch_error,checked_at',
+        'b1,1,2,P0,verify_submit_form_then_approve_or_reject,https://submit.example/submit,submit.example,,approved | reject_not_submit,review_possible_submit_form,needs_manual_check,low,approved,manual_confirm_submit_form_and_blockers,manual confirmation required,,form signal,yes,review_row:2,200,yes,https://submit.example/submit,submit.example,1,3,yes,yes,yes,no,no,no,no,no,no,,2026-01-01T00:00:00.000Z',
+        'b1,2,3,P2,verify_directory_fit_before_any_approval,https://blog.example/post,blog.example,,approved | reject_not_submit,reject_auth_required,reject_auth_required,high,,reject_or_route_to_assisted_manual_flow,login signal,,login,yes,review_row:3,200,yes,https://blog.example/post,blog.example,1,2,no,no,no,yes,no,no,no,no,no,,2026-01-01T00:00:01.000Z',
+      ].join('\n'));
+      writeFileSync(join(batchDir, 'b1-draft-report.json'), JSON.stringify({
+        generated_at: '2026-01-01T00:00:02.000Z',
+        batch_id: 'b1',
+        blocked: [{
+          review_row: '3',
+          url: 'https://blog.example/post',
+          reason: 'suggested_decision_not_allowed_for_batch_row',
+          suggested_review_decision: 'reject_auth_required',
+        }],
+      }, null, 2));
+
+      const pack = buildCoverageReviewManualPack(queue, {
+        batchDir,
+        nextLimit: 2,
+        productContextPaths: [join(dir, 'product-marketing.md')],
+      });
+      const written = writeCoverageReviewManualPack(pack, { outputDir });
+      const remainingRows = parseCsv(readFileSync(written.files.remaining_manual_review_csv, 'utf-8'));
+      const nextRows = parseCsv(readFileSync(written.files.next_manual_review_csv, 'utf-8'));
+      const summary = JSON.parse(readFileSync(written.files.summary_json, 'utf-8'));
+
+      assert.equal(pack.rows.length, 3);
+      assert.equal(pack.p0_rows.length, 1);
+      assert.equal(pack.next_rows.length, 2);
+      assert.equal(remainingRows.length, 3);
+      assert.equal(nextRows.length, 2);
+      assert.equal(pack.rows[0].manual_bucket, 'manual_submit_form_confirmation_required');
+      assert.equal(pack.rows[1].manual_bucket, 'safety_gate_blocked_auto_rejection');
+      assert.equal(pack.rows[2].manual_bucket, 'no_read_only_evidence_yet');
+      assert.equal(summary.evidence_coverage.rows_with_safety_gate_block, 1);
+      assert.equal(summary.evidence_coverage.possible_approval_after_manual_confirmation, 1);
+      assert.equal(summary.product_context_present, false);
+      assert.equal(existsSync(written.files.summary_md), true);
+      assert.equal(existsSync(written.files.readiness_blockers_md), true);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
