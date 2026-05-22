@@ -1,7 +1,9 @@
 import { existsSync, readFileSync } from 'fs';
 import { DEFAULT_REGISTRY_FILE, loadRegistry, registryStats } from '../targets/registry.js';
+import { auditTargets } from '../targets/audit.js';
 
 const SUBMITTED_OR_PENDING_STATUSES = new Set(['submitted', 'pending_review', 'accepted']);
+const SCOUT_QUEUE_MODES = new Set(['auto_candidate', 'needs_scout']);
 
 function nowIso() {
   return new Date().toISOString();
@@ -85,6 +87,48 @@ export function summarizeVerificationRows(rows = []) {
   };
 }
 
+function isUnscoutedScoutCandidate(target = {}) {
+  return SCOUT_QUEUE_MODES.has(target.submission?.mode || '') &&
+    !target.technical?.last_scouted_at &&
+    target.quality?.risk !== 'high';
+}
+
+function isFreeOrUnknown(target = {}) {
+  return target.pricing === 'free' || target.pricing === 'unknown';
+}
+
+function summarizeAutomationReadiness(targets = []) {
+  const audit = auditTargets(targets);
+  const targetIdsWithBlockers = new Set(
+    audit.blockers
+      .map(item => item.target_id)
+      .filter(Boolean)
+  );
+  const hasNoAuditBlockers = target => !targetIdsWithBlockers.has(target.id);
+  const scoutCandidates = targets.filter(isUnscoutedScoutCandidate);
+  const autoSafe = targets.filter(target => target.submission?.mode === 'auto_safe');
+  const executeReadyFree = autoSafe.filter(target =>
+    target.pricing === 'free' &&
+    target.quality?.risk !== 'high' &&
+    hasNoAuditBlockers(target)
+  );
+  const pricingReview = autoSafe.filter(target =>
+    target.pricing === 'unknown' &&
+    hasNoAuditBlockers(target)
+  );
+
+  return {
+    scout_queue_candidates: scoutCandidates.length,
+    scout_queue_free_or_unknown: scoutCandidates.filter(isFreeOrUnknown).length,
+    auto_safe_targets: autoSafe.length,
+    execute_ready_auto_safe_free: executeReadyFree.length,
+    auto_safe_pricing_review: pricingReview.length,
+    assisted_targets: targets.filter(target => target.submission?.mode === 'assisted').length,
+    manual_strategic_targets: targets.filter(target => target.submission?.mode === 'manual_strategic').length,
+    skip_targets: targets.filter(target => target.submission?.mode === 'skip').length,
+  };
+}
+
 export function summarizeRegistry(registryPath = DEFAULT_REGISTRY_FILE, opts = {}) {
   if (opts.explicit && !existsSync(registryPath)) {
     throw new Error(`registry file not found: ${registryPath}`);
@@ -107,6 +151,7 @@ export function summarizeRegistry(registryPath = DEFAULT_REGISTRY_FILE, opts = {
       target.submission?.backlink_status === 'verified' &&
       target.submission?.live_listing_url
     ).length,
+    automation: summarizeAutomationReadiness(targets),
   };
 }
 
@@ -125,6 +170,91 @@ function summarizePipeline(runSummary, verificationSummary, registrySummary) {
     registry_not_found_targets: registrySummary.by_backlink_status.not_found || 0,
     registry_live_listing_targets: registrySummary.live_listing_count,
   };
+}
+
+function action(priority, id, title, reason, command = '') {
+  return { priority, id, title, reason, command };
+}
+
+function buildNextActions(runSummary, verificationSummary, registrySummary, inputs = {}) {
+  const actions = [];
+  const registry = inputs.registry || DEFAULT_REGISTRY_FILE;
+  const results = inputs.results || '<results.jsonl>';
+  const automation = registrySummary.automation || {};
+  const submittedWithoutVerification = summarizePipeline(runSummary, verificationSummary, registrySummary)
+    .submitted_without_verification;
+
+  if (submittedWithoutVerification > 0) {
+    actions.push(action(
+      1,
+      'verify_submitted_results',
+      'Verify submitted or pending listings',
+      `${submittedWithoutVerification} submitted/pending target(s) have not been checked for a live backlink yet.`,
+      `node src/cli.js verify-results ${results} --product-url <product-url> --update-registry --registry ${registry}`
+    ));
+  }
+
+  if ((runSummary.dry_run_ready || 0) > 0) {
+    actions.push(action(
+      2,
+      'execute_dry_run_ready_targets',
+      'Review dry-run output, then execute auto_safe targets',
+      `${runSummary.dry_run_ready} target(s) passed dry-run gating. Execute only after reviewing the plan and product readiness.`,
+      `node src/cli.js pipeline --registry ${registry} --config config.yaml --free-only --mode auto_safe --limit ${runSummary.dry_run_ready} --execute --delay 90s`
+    ));
+  }
+
+  if ((runSummary.targets || 0) === 0 && (automation.execute_ready_auto_safe_free || 0) > 0) {
+    actions.push(action(
+      3,
+      'dry_run_auto_safe_targets',
+      'Dry-run verified auto_safe targets',
+      `${automation.execute_ready_auto_safe_free} free auto_safe target(s) have sufficient evidence for a dry-run plan.`,
+      `node src/cli.js pipeline --registry ${registry} --free-only --mode auto_safe --limit ${Math.min(automation.execute_ready_auto_safe_free, 10)}`
+    ));
+  }
+
+  if ((automation.scout_queue_free_or_unknown || 0) > 0) {
+    actions.push(action(
+      4,
+      'scout_unverified_targets',
+      'Scout unverified directory targets',
+      `${automation.scout_queue_free_or_unknown} free/unknown-pricing target(s) still need scout evidence before automation.`,
+      `node src/cli.js pipeline --registry ${registry} --free-only --allow-unknown-pricing --scout-queue --update-registry --limit ${Math.min(automation.scout_queue_free_or_unknown, 10)}`
+    ));
+  }
+
+  if ((automation.auto_safe_pricing_review || 0) > 0) {
+    actions.push(action(
+      5,
+      'review_unknown_pricing',
+      'Manually verify pricing for auto_safe targets',
+      `${automation.auto_safe_pricing_review} auto_safe target(s) have mapped forms but unknown pricing.`,
+      `node src/cli.js targets list --registry ${registry} --mode auto_safe`
+    ));
+  }
+
+  if ((automation.assisted_targets || 0) > 0) {
+    actions.push(action(
+      6,
+      'prepare_assisted_sessions',
+      'Prepare assisted login sessions where appropriate',
+      `${automation.assisted_targets} target(s) require human-in-the-loop login or account context.`,
+      'node src/cli.js auth login --profile <target-id> --url <login-url>'
+    ));
+  }
+
+  if (!actions.length) {
+    actions.push(action(
+      9,
+      'no_automation_backlog',
+      'No immediate automation backlog detected',
+      'No submitted verification backlog, dry-run queue, auto_safe queue, or unscouted free/unknown queue was detected.',
+      ''
+    ));
+  }
+
+  return actions.sort((a, b) => a.priority - b.priority);
 }
 
 export function buildReport(opts = {}) {
@@ -146,6 +276,10 @@ export function buildReport(opts = {}) {
     verification,
     registry,
     pipeline: summarizePipeline(run, verification, registry),
+    next_actions: buildNextActions(run, verification, registry, {
+      results: opts.results,
+      registry: registryPath,
+    }),
   };
 }
 
@@ -188,5 +322,18 @@ export function formatReport(report = {}) {
     `Submitted without verification: ${report.pipeline?.submitted_without_verification || 0}`,
     `Registry verified targets: ${report.pipeline?.registry_verified_targets || 0}`,
     `Registry not found targets: ${report.pipeline?.registry_not_found_targets || 0}`,
+    '',
+    'Automation readiness',
+    `Scout queue candidates: ${report.registry?.automation?.scout_queue_candidates || 0}`,
+    `Scout queue free/unknown: ${report.registry?.automation?.scout_queue_free_or_unknown || 0}`,
+    `Auto-safe targets: ${report.registry?.automation?.auto_safe_targets || 0}`,
+    `Execute-ready free auto_safe: ${report.registry?.automation?.execute_ready_auto_safe_free || 0}`,
+    `Auto-safe pricing review: ${report.registry?.automation?.auto_safe_pricing_review || 0}`,
+    `Assisted targets: ${report.registry?.automation?.assisted_targets || 0}`,
+    '',
+    'Next actions',
+    ...((report.next_actions || []).map(item =>
+      `P${item.priority} ${item.id}: ${item.title}${item.command ? ` - ${item.command}` : ''}`
+    )),
   ].join('\n');
 }
