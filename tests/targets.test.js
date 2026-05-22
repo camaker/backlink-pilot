@@ -1,11 +1,17 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, rmSync, writeFileSync } from 'fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { inferTargetMode } from '../src/targets/classify.js';
 import { normalizeUrl } from '../src/targets/normalize.js';
 import { auditTargets, formatAuditReport } from '../src/targets/audit.js';
+import {
+  buildCoverageReport,
+  coverageCandidatesCsv,
+  writeCoverageCandidatesCsv,
+  writeCoverageReport,
+} from '../src/targets/coverage.js';
 import {
   dedupeRegistryIds,
   filterTargets,
@@ -310,6 +316,109 @@ describe('target registry audit filtering', () => {
   });
 });
 
+describe('target coverage audit', () => {
+  it('compares extracted URL files against the canonical registry', () => {
+    const dir = tempDir();
+    try {
+      const inputDir = join(dir, 'backlink-url');
+      const registry = join(dir, 'registry.yaml');
+      writeFileSync(registry, `
+version: 1
+targets:
+  - id: exact
+    domain: exact.example
+    submit_url: https://exact.example/submit
+    normalized_key: exact.example/submit
+    submission:
+      mode: needs_scout
+  - id: same-domain
+    domain: same.example
+    submit_url: https://same.example/submit-tool
+    normalized_key: same.example/submit-tool
+    submission:
+      mode: needs_scout
+`);
+      mkdirp(inputDir);
+      writeFileSync(join(inputDir, 'targets.csv'), `"submission_link","title"
+"https://exact.example/submit?ref=notion","Exact"
+"https://same.example/submit","Same domain"
+`);
+      writeFileSync(join(inputDir, 'links.json'), JSON.stringify({
+        results: [
+          {
+            articleUrl: 'https://91wink.com/source-page/',
+            externalLinks: [
+              { url: 'https://missing.example/add-product' },
+            ],
+          },
+        ],
+      }));
+      writeFileSync(join(inputDir, 'notes.md'), [
+        '# Links',
+        '- https://missing.example/add-product',
+        '- https://plain-missing.example',
+      ].join('\n'));
+
+      const report = buildCoverageReport(inputDir, { registry });
+
+      assert.equal(report.summary.unique_urls_in_input, 5);
+      assert.equal(report.summary.exact_in_registry, 1);
+      assert.equal(report.summary.domain_in_registry_only, 1);
+      assert.equal(report.summary.missing_domain, 3);
+      assert.equal(report.summary.url_occurrences, 6);
+      assert.deepEqual(
+        report.by_file.map(file => [file.file, file.unique_urls]),
+        [
+          ['links.json', 2],
+          ['notes.md', 2],
+          ['targets.csv', 2],
+        ]
+      );
+      assert.equal(
+        report.items.find(item => item.domain === 'same.example').candidate_import_recommendation,
+        'review_submit_url'
+      );
+      assert.equal(
+        report.items.find(item => item.domain === '91wink.com').candidate_import_recommendation,
+        'skip_source_page'
+      );
+      assert.equal(
+        report.items.find(item => item.domain === 'missing.example').candidate_import_recommendation,
+        'review_submit_url'
+      );
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('writes JSON reports and candidate CSVs for manual review', () => {
+    const dir = tempDir();
+    try {
+      const inputDir = join(dir, 'backlink-url');
+      const registry = join(dir, 'registry.yaml');
+      const output = join(dir, 'out', 'coverage-report.json');
+      const candidates = join(dir, 'out', 'coverage-candidates.csv');
+      writeFileSync(registry, 'version: 1\ntargets: []\n');
+      mkdirp(inputDir);
+      writeFileSync(join(inputDir, 'targets.csv'), `"submission_link","title"
+"https://quote.example/submit?name=a,b","Comma"
+`);
+
+      const report = buildCoverageReport(inputDir, { registry });
+      const csv = coverageCandidatesCsv(report);
+      writeCoverageReport(report, output);
+      writeCoverageCandidatesCsv(report, candidates);
+
+      assert.match(csv, /classification,candidate_import_recommendation,url/);
+      assert.match(csv, /https:\/\/quote.example\/submit\?name=a%2Cb/);
+      assert.equal(JSON.parse(readFileSync(output, 'utf-8')).summary.unique_urls_in_input, 1);
+      assert.match(readFileSync(candidates, 'utf-8'), /quote.example/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
+
 describe('submission plan', () => {
   it('builds a safe plan that excludes skip/manual strategic targets by default', () => {
     const dir = tempDir();
@@ -502,4 +611,8 @@ function loadTargetsFromFileFromRows(rows) {
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
+}
+
+function mkdirp(path) {
+  mkdirSync(path, { recursive: true });
 }

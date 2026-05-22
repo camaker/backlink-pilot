@@ -8,6 +8,11 @@ import {
   registryStats,
 } from './registry.js';
 import { auditRegistry, formatAuditReport } from './audit.js';
+import {
+  buildCoverageReport,
+  writeCoverageCandidatesCsv,
+  writeCoverageReport,
+} from './coverage.js';
 
 function printStats(stats) {
   console.log(`Total: ${stats.total}`);
@@ -105,4 +110,39 @@ export async function dedupeTargetIdsCommand(opts = {}) {
   console.log(`Targets: ${result.total}`);
   console.log(`IDs renamed: ${result.renamed_ids}`);
   return result;
+}
+
+export async function coverageTargetsCommand(inputDir, opts = {}) {
+  const report = buildCoverageReport(inputDir, {
+    ...opts,
+    registry: opts.registry || DEFAULT_REGISTRY_FILE,
+  });
+
+  if (opts.output) {
+    writeCoverageReport(report, opts.output);
+  }
+
+  if (opts.candidates) {
+    writeCoverageCandidatesCsv(report, opts.candidates);
+  }
+
+  if (opts.json) {
+    console.log(JSON.stringify(report, null, 2));
+    return report;
+  }
+
+  console.log(`Input: ${inputDir}`);
+  console.log(`Registry: ${report.registry}`);
+  console.log(`Registry targets: ${report.summary.registry_targets}`);
+  console.log(`Files scanned: ${report.summary.files_scanned}`);
+  console.log(`URL occurrences: ${report.summary.url_occurrences}`);
+  console.log(`Unique URLs: ${report.summary.unique_urls_in_input}`);
+  console.log(`Exact in registry: ${report.summary.exact_in_registry}`);
+  console.log(`Domain in registry only: ${report.summary.domain_in_registry_only}`);
+  console.log(`Missing domain: ${report.summary.missing_domain}`);
+  console.log(`Candidate recommendations: ${JSON.stringify(report.recommendations.counts)}`);
+  if (opts.output) console.log(`Coverage report: ${opts.output}`);
+  if (opts.candidates) console.log(`Candidate CSV: ${opts.candidates}`);
+
+  return report;
 }

@@ -13,6 +13,7 @@ import { runCampaign } from './campaign.js';
 import {
   importTargetsCommand,
   auditTargetsCommand,
+  coverageTargetsCommand,
   dedupeTargetIdsCommand,
   listTargetsCommand,
   normalizeTargetsCommand,
@@ -280,6 +281,17 @@ targets
   .option('--json', 'Output as JSON')
   .action(async (opts) => {
     await auditTargetsCommand(opts);
+  });
+
+targets
+  .command('coverage <dir>')
+  .description('Compare extracted backlink URL files against the canonical target registry')
+  .option('--registry <path>', 'Canonical registry path')
+  .option('--output <path>', 'Write full coverage report JSON')
+  .option('--candidates <path>', 'Write review candidate CSV')
+  .option('--json', 'Output full report as JSON')
+  .action(async (dir, opts) => {
+    await coverageTargetsCommand(dir, opts);
   });
 
 program
