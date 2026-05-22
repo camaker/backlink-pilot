@@ -1,0 +1,905 @@
+{
+  "generated_at": "2026-05-22T11:15:15.221Z",
+  "batch": "backlink-url/review-batches/p2-recheck-003.csv",
+  "suggestions": "backlink-url/review-batches/p2-recheck-003-suggestions.csv",
+  "batch_id": "p2-recheck-003",
+  "mode_policy": "drafts_rejections_only_no_approvals_no_registry_changes",
+  "min_confidence": "high",
+  "reviewed_by": "read_only_evidence",
+  "enabled_rejection_decisions": [
+    "reject_auth_required",
+    "reject_duplicate",
+    "reject_not_directory",
+    "reject_not_submit",
+    "reject_paid"
+  ],
+  "batch_rows": 100,
+  "suggestion_rows": 100,
+  "drafted_rows": 82,
+  "skipped_rows": 18,
+  "blocked_rows": 0,
+  "priority_counts": {
+    "P2": 100
+  },
+  "action_counts": {
+    "verify_directory_fit_before_any_approval": 100
+  },
+  "drafted": [
+    {
+      "line": 2,
+      "review_row": "147",
+      "url": "https://blogs.city.ac.uk/sustainable-city/sortingchallenge/sorting-challenge-2014-15",
+      "domain": "blogs.city.ac.uk",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:147"
+    },
+    {
+      "line": 3,
+      "review_row": "148",
+      "url": "https://blogs.deusto.es/innovandis/exprime-las-naranjas",
+      "domain": "blogs.deusto.es",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:148"
+    },
+    {
+      "line": 4,
+      "review_row": "149",
+      "url": "https://blogs.deusto.es/innovandis/llegando-al-nivel-pro-con-lxs-20g-en-innovandis",
+      "domain": "blogs.deusto.es",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:149"
+    },
+    {
+      "line": 5,
+      "review_row": "150",
+      "url": "https://blogs.eltiempo.com/el-tiempo-del-cine/2025/02/10/oscar-2025-analisis-de-cada-categoria-parte-i",
+      "domain": "blogs.eltiempo.com",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:150"
+    },
+    {
+      "line": 6,
+      "review_row": "151",
+      "url": "http://blogs.evergreen.edu/morisa24/box-2-2",
+      "domain": "blogs.evergreen.edu",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:151"
+    },
+    {
+      "line": 7,
+      "review_row": "152",
+      "url": "http://blogs.evergreen.edu/morisa24/box-4",
+      "domain": "blogs.evergreen.edu",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:152"
+    },
+    {
+      "line": 8,
+      "review_row": "153",
+      "url": "https://blogs.memphis.edu/padm3601/2015/02/11/death-penalty",
+      "domain": "blogs.memphis.edu",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:153"
+    },
+    {
+      "line": 9,
+      "review_row": "154",
+      "url": "https://blogs.ubc.ca/etec540socialmedia2013/sample-page/introduction-to-google",
+      "domain": "blogs.ubc.ca",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:154"
+    },
+    {
+      "line": 10,
+      "review_row": "155",
+      "url": "https://blogs.ucl.ac.uk/brits/2014/06/01/sales-growth-curves",
+      "domain": "blogs.ucl.ac.uk",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:155"
+    },
+    {
+      "line": 11,
+      "review_row": "156",
+      "url": "https://blogs.urz.uni-halle.de/startklar/quellen-und-verweise/comment-page-3",
+      "domain": "blogs.urz.uni-halle.de",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:156"
+    },
+    {
+      "line": 12,
+      "review_row": "157",
+      "url": "https://blogs.uww.edu/artofmakai/2021/03/23/hyper-light-drifter-the-game-that-taught-me-how-to-play-video-games",
+      "domain": "blogs.uww.edu",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:157"
+    },
+    {
+      "line": 13,
+      "review_row": "158",
+      "url": "https://blogs.uww.edu/artofmakai/2021/04/13/how-to-draw-the-importance-of-schedules",
+      "domain": "blogs.uww.edu",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:158"
+    },
+    {
+      "line": 14,
+      "review_row": "159",
+      "url": "https://blogs.zeiss.com/news/messtechnik-de/sorgsamkeit-bringt-sie-weiter",
+      "domain": "blogs.zeiss.com",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:159"
+    },
+    {
+      "line": 15,
+      "review_row": "160",
+      "url": "https://bordeaux.onvasortir.com/profil_msg_inexistant.php",
+      "domain": "bordeaux.onvasortir.com",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:160"
+    },
+    {
+      "line": 17,
+      "review_row": "163",
+      "url": "https://www.browneyedbaker.com/how-to-make-pate-a-choux-fill-eclairs-and-cream-puffs",
+      "domain": "browneyedbaker.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:163"
+    },
+    {
+      "line": 18,
+      "review_row": "164",
+      "url": "https://bugs.documentfoundation.org/show_bug.cgi?id=162681",
+      "domain": "bugs.documentfoundation.org",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:164"
+    },
+    {
+      "line": 19,
+      "review_row": "174",
+      "url": "https://calaos.fr/forum/member.php?action=profile&uid=7732",
+      "domain": "calaos.fr",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:174"
+    },
+    {
+      "line": 20,
+      "review_row": "175",
+      "url": "https://cantstayoutofthekitchen.com/2022/01/06/blueberry-walnut-overnight-oatmeal",
+      "domain": "cantstayoutofthekitchen.com",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:175"
+    },
+    {
+      "line": 21,
+      "review_row": "177",
+      "url": "https://capturebilling.com/new-quality-aca-reporting-standards",
+      "domain": "capturebilling.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:177"
+    },
+    {
+      "line": 24,
+      "review_row": "180",
+      "url": "https://www.certifiedpastryaficionado.com/churro-waffles",
+      "domain": "certifiedpastryaficionado.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:180"
+    },
+    {
+      "line": 25,
+      "review_row": "181",
+      "url": "https://www.certifiedpastryaficionado.com/nutella-cream-pie",
+      "domain": "certifiedpastryaficionado.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:181"
+    },
+    {
+      "line": 26,
+      "review_row": "183",
+      "url": "https://www.chandigarhcity.com/discussions/threads/quordle-to-quorle",
+      "domain": "chandigarhcity.com",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:183"
+    },
+    {
+      "line": 27,
+      "review_row": "184",
+      "url": "https://chayagrossberg.com/diagnosis-versus-you",
+      "domain": "chayagrossberg.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:184"
+    },
+    {
+      "line": 28,
+      "review_row": "185",
+      "url": "https://chayagrossberg.com/how-do-you-know-if-youre-receiving-informed-consent",
+      "domain": "chayagrossberg.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:185"
+    },
+    {
+      "line": 29,
+      "review_row": "186",
+      "url": "https://chhs.news.niu.edu/2025/01/15/niu-school-of-nursing-adds-hispanic-student-nurses-alianza-hsna-to-support-students",
+      "domain": "chhs.news.niu.edu",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:186"
+    },
+    {
+      "line": 31,
+      "review_row": "189",
+      "url": "https://claude.ai/code",
+      "domain": "claude.ai",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:189"
+    },
+    {
+      "line": 32,
+      "review_row": "190",
+      "url": "https://claude.ai/code)%EF%BC%8C%E4%BD%A0%E4%B8%8D%E9%9C%80%E8%A6%81%E7%9C%8B%E4%BB%BB%E4%BD%95%E5%85%B6%E4%BB%96%E6%96%87%E6%A1%A3%E3%80%82Clone",
+      "domain": "claude.ai",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:190"
+    },
+    {
+      "line": 33,
+      "review_row": "194",
+      "url": "https://community.ops.io/albacube_d9724d5112893f8a",
+      "domain": "community.ops.io",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:194"
+    },
+    {
+      "line": 34,
+      "review_row": "195",
+      "url": "https://www.completelydelicious.com/tips/make-brownies-shiny-crackly-crust",
+      "domain": "completelydelicious.com",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:195"
+    },
+    {
+      "line": 35,
+      "review_row": "196",
+      "url": "https://www.cornbeanspigskids.com/2024/08/back-to-school-my-kids-favorite.html",
+      "domain": "cornbeanspigskids.com",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:196"
+    },
+    {
+      "line": 36,
+      "review_row": "197",
+      "url": "https://www.craftberrybush.com/2017/08/watercolor-lessons-and-free-printable.html",
+      "domain": "craftberrybush.com",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:197"
+    },
+    {
+      "line": 37,
+      "review_row": "198",
+      "url": "https://www.craftberrybush.com/2025/01/heart-shaped-flower-arrangement-for-valentines-day.html",
+      "domain": "craftberrybush.com",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:198"
+    },
+    {
+      "line": 39,
+      "review_row": "209",
+      "url": "https://digitalwellbeing.org/five-reasons-why-chatgpt-is-the-future-of-digital-mental-health-support",
+      "domain": "digitalwellbeing.org",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:209"
+    },
+    {
+      "line": 40,
+      "review_row": "211",
+      "url": "https://www.dinnerwithjulie.com/2017/12/05/nigels-fruitcake",
+      "domain": "dinnerwithjulie.com",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:211"
+    },
+    {
+      "line": 41,
+      "review_row": "212",
+      "url": "https://www.dinnerwithjulie.com/2019/12/23/kaiserschmarrn-torn-shredded-pancake",
+      "domain": "dinnerwithjulie.com",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:212"
+    },
+    {
+      "line": 42,
+      "review_row": "213",
+      "url": "https://www.dinnerwithjulie.com/2021/11/03/plant-based-deep-n-delicious-chocolate-cake",
+      "domain": "dinnerwithjulie.com",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:213"
+    },
+    {
+      "line": 43,
+      "review_row": "214",
+      "url": "https://www.dinnerwithjulie.com/recipes/butterscotch-pecan-mmmuffins",
+      "domain": "dinnerwithjulie.com",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:214"
+    },
+    {
+      "line": 44,
+      "review_row": "218",
+      "url": "https://diythrill.com/2018/09/23/orange-citrus-poo-pourri-recipe",
+      "domain": "diythrill.com",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:218"
+    },
+    {
+      "line": 45,
+      "review_row": "222",
+      "url": "https://earthpeopletechnology.com/forums/profile/contractwarn",
+      "domain": "earthpeopletechnology.com",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:222"
+    },
+    {
+      "line": 46,
+      "review_row": "225",
+      "url": "http://www.eilentein.com/2019/02/ryijy-ja-kuinka-sen-tein.html",
+      "domain": "eilentein.com",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:225"
+    },
+    {
+      "line": 47,
+      "review_row": "232",
+      "url": "https://everythingboardgames.com/2024/11/exploring-the-world-of-online-board-games.html",
+      "domain": "everythingboardgames.com",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:232"
+    },
+    {
+      "line": 48,
+      "review_row": "233",
+      "url": "https://www.everythingetsy.com/2013/02/10-social-media-tips-to-make-you-a-rock-star",
+      "domain": "everythingetsy.com",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:233"
+    },
+    {
+      "line": 49,
+      "review_row": "237",
+      "url": "https://exsloth.com/vegan-breakfast-cookies",
+      "domain": "exsloth.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:237"
+    },
+    {
+      "line": 50,
+      "review_row": "241",
+      "url": "https://fallfordiy.com/blog/2015/11/18/diy-paint-dipped-advent-calendar-bottles",
+      "domain": "fallfordiy.com",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:241"
+    },
+    {
+      "line": 51,
+      "review_row": "242",
+      "url": "https://fashionablefoods.com/2014/10/20/roasted-butternut-squash-and-apple-soup",
+      "domain": "fashionablefoods.com",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:242"
+    },
+    {
+      "line": 52,
+      "review_row": "243",
+      "url": "https://fashionablefoods.com/2014/11/10/2014119turkey-roulade",
+      "domain": "fashionablefoods.com",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:243"
+    },
+    {
+      "line": 53,
+      "review_row": "244",
+      "url": "https://fashionablefoods.com/2014/12/01/2014121make-ahead-monday-shepherds-pie",
+      "domain": "fashionablefoods.com",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:244"
+    },
+    {
+      "line": 54,
+      "review_row": "245",
+      "url": "https://fashionablefoods.com/2014/12/28/creamy-ham-and-pea-pasta",
+      "domain": "fashionablefoods.com",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:245"
+    },
+    {
+      "line": 55,
+      "review_row": "249",
+      "url": "https://feettothefire.blogs.wesleyan.edu/2009/02/26/main-street-marketplace/comment-page-2",
+      "domain": "feettothefire.blogs.wesleyan.edu",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:249"
+    },
+    {
+      "line": 57,
+      "review_row": "254",
+      "url": "https://www.fitlivingeats.com/a-festive-holiday-sangria-recipe-tips-for-a-healthier-cocktail",
+      "domain": "fitlivingeats.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:254"
+    },
+    {
+      "line": 58,
+      "review_row": "255",
+      "url": "https://www.fitlivingeats.com/how-to-make-homemade-oat-milk",
+      "domain": "fitlivingeats.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:255"
+    },
+    {
+      "line": 59,
+      "review_row": "256",
+      "url": "https://www.fitlivingeats.com/how-to-make-juice-without-a-juicer-3-green-juice-recipes",
+      "domain": "fitlivingeats.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:256"
+    },
+    {
+      "line": 60,
+      "review_row": "257",
+      "url": "https://www.fitlivingeats.com/qa-founders-motion-matcha-one-go-energy-boosters",
+      "domain": "fitlivingeats.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:257"
+    },
+    {
+      "line": 61,
+      "review_row": "259",
+      "url": "https://www.fivereasonssports.com/news/ultimate-miami-heat-fan-travel-guide-tickets-hotels-and-local-hotspots",
+      "domain": "fivereasonssports.com",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:259"
+    },
+    {
+      "line": 62,
+      "review_row": "262",
+      "url": "https://flokii.com/users/view/58762",
+      "domain": "flokii.com",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:262"
+    },
+    {
+      "line": 63,
+      "review_row": "264",
+      "url": "https://forum.epicbrowser.com/profile.php?id=78821",
+      "domain": "forum.epicbrowser.com",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:264"
+    },
+    {
+      "line": 64,
+      "review_row": "265",
+      "url": "https://forum.gekko.wizb.it/user-14910.html",
+      "domain": "forum.gekko.wizb.it",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:265"
+    },
+    {
+      "line": 65,
+      "review_row": "266",
+      "url": "https://forum.padowan.dk/profile.php?id=33438",
+      "domain": "forum.padowan.dk",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:266"
+    },
+    {
+      "line": 66,
+      "review_row": "268",
+      "url": "https://forums.maxperformanceinc.com/forums/member.php?u=202517",
+      "domain": "forums.maxperformanceinc.com",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:268"
+    },
+    {
+      "line": 67,
+      "review_row": "270",
+      "url": "https://freesound.org/people/florianreichelt/sounds/440601",
+      "domain": "freesound.org",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:270"
+    },
+    {
+      "line": 70,
+      "review_row": "289",
+      "url": "https://global21.oceansconference.org/2019/04/01/join-5000-ocean-technology-experts-at-ocean-business",
+      "domain": "global21.oceansconference.org",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:289"
+    },
+    {
+      "line": 71,
+      "review_row": "290",
+      "url": "http://godchild.keenspot.com/comic/chapter-3-page-05",
+      "domain": "godchild.keenspot.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:290"
+    },
+    {
+      "line": 73,
+      "review_row": "296",
+      "url": "https://greenerideal.com/wellness/disconnect-to-reconnect-connecting-with-nature-in-the-digital-age",
+      "domain": "greenerideal.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:296"
+    },
+    {
+      "line": 75,
+      "review_row": "300",
+      "url": "https://happyhourprojects.com/snake-bracelet",
+      "domain": "happyhourprojects.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:300"
+    },
+    {
+      "line": 76,
+      "review_row": "302",
+      "url": "https://help.lametric.com/support/discussions/topics/6000067542",
+      "domain": "help.lametric.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:302"
+    },
+    {
+      "line": 78,
+      "review_row": "317",
+      "url": "https://www.itsfilmedthere.com/2019/01/whats-happening.html",
+      "domain": "itsfilmedthere.com",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:317"
+    },
+    {
+      "line": 79,
+      "review_row": "318",
+      "url": "https://jilliancyork.com/2010/02/20/on-memorability",
+      "domain": "jilliancyork.com",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:318"
+    },
+    {
+      "line": 82,
+      "review_row": "322",
+      "url": "https://jobs.hyperisland.com/company/georgiana-al-usa",
+      "domain": "jobs.hyperisland.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:322"
+    },
+    {
+      "line": 83,
+      "review_row": "323",
+      "url": "https://jonnegroni.com/2017/11/20/cinemaholics-review-justice-league-punisher",
+      "domain": "jonnegroni.com",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:323"
+    },
+    {
+      "line": 88,
+      "review_row": "334",
+      "url": "https://www.learnalanguage.com/blog/italian-greetings-how-are-you-in-italian",
+      "domain": "learnalanguage.com",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:334"
+    },
+    {
+      "line": 89,
+      "review_row": "335",
+      "url": "https://www.lilistravelplans.com/best-time-to-visit-tanzania",
+      "domain": "lilistravelplans.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:335"
+    },
+    {
+      "line": 90,
+      "review_row": "336",
+      "url": "https://www.lilistravelplans.com/chemka-hot-springs-moshi-tanzania",
+      "domain": "lilistravelplans.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:336"
+    },
+    {
+      "line": 91,
+      "review_row": "337",
+      "url": "https://www.lilistravelplans.com/materuni-waterfall-moshi-tanzania",
+      "domain": "lilistravelplans.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:337"
+    },
+    {
+      "line": 93,
+      "review_row": "343",
+      "url": "https://lovestrategies.com/are-you-a-walking-red-flag-7-habits-that-might-be-sabotaging-your-love-life",
+      "domain": "lovestrategies.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:343"
+    },
+    {
+      "line": 94,
+      "review_row": "344",
+      "url": "https://lovestrategies.com/types-of-guys-who-stay-single",
+      "domain": "lovestrategies.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:344"
+    },
+    {
+      "line": 95,
+      "review_row": "345",
+      "url": "https://www.madrimasd.org/blogs/astrofisica/2022/05/20/134942",
+      "domain": "madrimasd.org",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:345"
+    },
+    {
+      "line": 96,
+      "review_row": "346",
+      "url": "https://www.madrimasd.org/blogs/matematicas/2024/02/11/150483",
+      "domain": "madrimasd.org",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:346"
+    },
+    {
+      "line": 97,
+      "review_row": "347",
+      "url": "https://www.mae.gov.bi/en/an-audience-with-the-iom-head-of-the-mission-in-burundi",
+      "domain": "mae.gov.bi",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:347"
+    },
+    {
+      "line": 98,
+      "review_row": "348",
+      "url": "https://www.mae.gov.bi/en/vacancy-announcement",
+      "domain": "mae.gov.bi",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:348"
+    },
+    {
+      "line": 99,
+      "review_row": "353",
+      "url": "https://www.makeupsavvy.co.uk/2019/12/best-budget-concealers-for-pale-skin-2019.html",
+      "domain": "makeupsavvy.co.uk",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:353"
+    },
+    {
+      "line": 100,
+      "review_row": "354",
+      "url": "https://www.mangoandsalt.com/2023/05/04/galgos-podencos-tout-savoir-adoption-levriers-despagne",
+      "domain": "mangoandsalt.com",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:354"
+    },
+    {
+      "line": 101,
+      "review_row": "355",
+      "url": "https://www.mangoandsalt.com/2024/07/11/collection-de-chaussures-barefoot-avis-conseils-2",
+      "domain": "mangoandsalt.com",
+      "suggested_review_decision": "reject_not_directory",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:355"
+    }
+  ],
+  "skipped": [
+    {
+      "line": 16,
+      "review_row": "161",
+      "url": "https://brownbagteacher.com/what-im-reading",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 22,
+      "review_row": "178",
+      "url": "https://career.tu-sofia.bg/employer/geometry-dash-subzero",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 23,
+      "review_row": "179",
+      "url": "https://cartoonresearch.com/index.php/forgotten-anime-57-kirara-2000",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 30,
+      "review_row": "187",
+      "url": "https://cinescopia.com/las-10-mejores-peliculas-de-casey-affleck/2024/08",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 38,
+      "review_row": "207",
+      "url": "https://www.demilked.com/just-a-girl",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 56,
+      "review_row": "253",
+      "url": "https://www.fitlivingeats.com/7-easy-everyday-gluten-free-swaps",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 68,
+      "review_row": "276",
+      "url": "https://www.ginjfo.com/actualites/logiciels/jeux-video-logiciels/les-sims-4-fetent-leur-25e-anniversaire-avec-du-nouveau-contenu-massif-20250227",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 69,
+      "review_row": "287",
+      "url": "https://www.gizlogic.com/android-auto-8-4-lanzamiento",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 72,
+      "review_row": "291",
+      "url": "http://godchild.keenspot.com/comic/evolution-of-maggie",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 74,
+      "review_row": "299",
+      "url": "https://happyhealthymama.com/air-fryer-apples-healthy.html",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 77,
+      "review_row": "315",
+      "url": "https://iotwreport.com/letitia-james-indicted-for-banking-fraud",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 80,
+      "review_row": "320",
+      "url": "https://joaniesimon.com/94f737822923f4567e1a7ce9681e5b9a-2",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 81,
+      "review_row": "321",
+      "url": "https://joaniesimon.com/grilled-lemon-garlic-potato-kabobs/grilled-potato-kabobs-with-lemon-and-garlic",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 84,
+      "review_row": "327",
+      "url": "http://www.kcn.ne.jp/~gorosan/cgi-bin/diarypro/diary.cgi?mode=comment&no=97",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 85,
+      "review_row": "328",
+      "url": "http://www.kt.rim.or.jp/~youie/cgi-bin/nanmeri/nanmeri.cgi?mode=comment&no=224",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 86,
+      "review_row": "329",
+      "url": "http://www.kt.rim.or.jp/~youie/cgi-bin/nanmeri/nanmeri.cgi?mode=comment&no=239",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 87,
+      "review_row": "330",
+      "url": "https://labsk.net/index.php?action=profile%3Bu%3D50620",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 92,
+      "review_row": "342",
+      "url": "https://loveandmarriageblog.com/beach-water-cocktail",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    }
+  ],
+  "blocked": []
+}

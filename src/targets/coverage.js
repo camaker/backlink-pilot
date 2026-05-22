@@ -1316,6 +1316,35 @@ function hasExplicitSubmissionPath(value) {
   }
 }
 
+function obviousNonDirectoryUrlReason(row, evidence) {
+  if (String(row.review_action || '') !== 'verify_directory_fit_before_any_approval') return '';
+  const normalized = normalizeUrl(rowImportUrl(row) || row.url || evidence?.url || '');
+  if (!normalized) return '';
+
+  let url;
+  try {
+    url = new URL(normalized.url);
+  } catch {
+    return '';
+  }
+
+  const host = url.hostname.toLowerCase().replace(/^www\./, '');
+  const path = url.pathname.toLowerCase();
+  const fullPath = `${path}${url.search.toLowerCase()}`;
+  const contentPagePattern = /\/(?:19|20)\d{2}[/-]\d{1,2}(?:[/-]\d{1,2})?\/|\/\d{4}\/\d{2}\/\d{2}\/|\/comment-page-\d+|\/comments?(?:\/|$)|\/tips\/|\/recipes?\/|\/news\/|\/blog\/|\/blogs?\/|\/posts?\/|\/articles?\/|\/discussions?\/threads?\/|\/forums?\/|\/thread\.php|\/viewtopic\.php|\/show_bug\.cgi|\/member(?:list)?\.php|\/profil(?:e|_)|\/users?\//;
+  const sourcePageHostPattern = /(^|\.)blogs?\.|(^|\.)news\./;
+
+  if (contentPagePattern.test(fullPath) && !hasExplicitSubmissionPath(normalized.url)) {
+    return `URL path (${path}) looks like a source article, profile, forum, comment, or issue page`;
+  }
+
+  if (sourcePageHostPattern.test(host) && path.length > 1 && !hasExplicitSubmissionPath(normalized.url)) {
+    return `host/path (${host}${path}) looks like a blog/news content page, not a directory`;
+  }
+
+  return '';
+}
+
 function isSameDomainNonSubmitCandidate(row, evidence) {
   if (String(row.classification || '') !== 'domain_in_registry_only') return false;
   const candidateUrl = rowImportUrl(row) || row.url || evidence?.url || '';
@@ -1379,6 +1408,19 @@ function conservativeSuggestion(row, evidence) {
       suggestion_confidence: 'high',
       possible_approval_decision: '',
       reviewer_action: 'reject_unless_manual_review_finds_a_current_submit_url',
+      suggested_pricing: '',
+      basis,
+    };
+  }
+
+  const nonDirectoryReason = obviousNonDirectoryUrlReason(row, evidence);
+  if (nonDirectoryReason) {
+    basis.push(nonDirectoryReason);
+    return {
+      suggested_review_decision: 'reject_not_directory',
+      suggestion_confidence: 'high',
+      possible_approval_decision: '',
+      reviewer_action: 'reject_non_directory_source_page',
       suggested_pricing: '',
       basis,
     };
@@ -1624,6 +1666,7 @@ function defaultDraftDecisions(opts = {}) {
   return new Set(values.length ? values : [
     'reject_auth_required',
     'reject_duplicate',
+    'reject_not_directory',
     'reject_not_submit',
     'reject_paid',
   ]);
