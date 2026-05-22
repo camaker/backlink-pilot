@@ -14,6 +14,7 @@ import {
   coverageReviewQueueCsv,
   coverageReviewCsv,
   importCoverageReview,
+  validateCoverageReview,
   writeCoverageReviewQueue,
   writeCoverageCandidatesCsv,
   writeCoverageReport,
@@ -468,6 +469,8 @@ targets:
         [
           'review_decision',
           'canonical_name',
+          'reviewed_by',
+          'review_notes',
           'pricing',
           'classification',
           'candidate_import_recommendation',
@@ -480,6 +483,8 @@ targets:
         [
           'approved',
           'Approved Directory',
+          'qa',
+          'verified simple public submit form',
           'unknown',
           'missing_domain',
           'review_submit_url',
@@ -492,6 +497,8 @@ targets:
         [
           '',
           'Not Reviewed',
+          '',
+          '',
           'unknown',
           'missing_domain',
           'review_submit_url',
@@ -538,6 +545,8 @@ targets:
         [
           'review_decision',
           'canonical_name',
+          'reviewed_by',
+          'review_notes',
           'pricing',
           'classification',
           'candidate_import_recommendation',
@@ -550,6 +559,8 @@ targets:
         [
           'approved',
           'Source Page',
+          'qa',
+          'source page should still be blocked',
           'unknown',
           'missing_domain',
           'skip_source_page',
@@ -562,6 +573,8 @@ targets:
         [
           'approved',
           'Same Domain',
+          'qa',
+          'same-domain generic approval should be blocked',
           'unknown',
           'domain_in_registry_only',
           'review_submit_url',
@@ -605,8 +618,8 @@ targets:
     normalized_key: same.example/submit-tool
 `);
       writeFileSync(review, [
-        'review_decision,canonical_name,pricing,classification,candidate_import_recommendation,url,domain,source_files,source_locations,occurrence_count',
-        'approved_domain_variant,Same Domain Add,unknown,domain_in_registry_only,review_submit_url,https://same.example/add,same.example,coverage.csv,coverage.csv:2,1',
+        'review_decision,canonical_name,reviewed_by,review_notes,pricing,classification,candidate_import_recommendation,url,domain,source_files,source_locations,registry_submit_urls,occurrence_count',
+        'approved_domain_variant,Same Domain Add,qa,verified distinct add endpoint,unknown,domain_in_registry_only,review_submit_url,https://same.example/add,same.example,coverage.csv,coverage.csv:2,https://same.example/submit-tool,1',
       ].join('\n'));
 
       const result = importCoverageReview(registry, review);
@@ -618,6 +631,95 @@ targets:
       const imported = loaded.targets.find(target => target.submit_url === 'https://same.example/add');
       assert.equal(imported.submission.mode, 'needs_scout');
       assert.equal(imported.quality.risk, 'unknown');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('validates approved coverage rows before import', () => {
+    const dir = tempDir();
+    try {
+      const review = join(dir, 'coverage-review.csv');
+      writeFileSync(review, [
+        [
+          'review_decision',
+          'canonical_name',
+          'reviewed_by',
+          'review_notes',
+          'pricing',
+          'classification',
+          'candidate_import_recommendation',
+          'url',
+          'domain',
+          'source_files',
+          'source_locations',
+          'occurrence_count',
+        ].join(','),
+        [
+          'approved',
+          'Missing Evidence',
+          '',
+          '',
+          'unknown',
+          'missing_domain',
+          'review_submit_url',
+          'https://missing-evidence.example/submit',
+          'missing-evidence.example',
+          'coverage.csv',
+          'coverage.csv:2',
+          '1',
+        ].join(','),
+        [
+          '',
+          'Not Reviewed',
+          '',
+          '',
+          'unknown',
+          'missing_domain',
+          'review_submit_url',
+          'https://not-reviewed.example/submit',
+          'not-reviewed.example',
+          'coverage.csv',
+          'coverage.csv:3',
+          '1',
+        ].join(','),
+      ].join('\n'));
+
+      const validation = validateCoverageReview(review);
+
+      assert.equal(validation.ok, false);
+      assert.equal(validation.rows, 2);
+      assert.equal(validation.approved, 1);
+      assert.equal(validation.unreviewed, 1);
+      assert.deepEqual(validation.blockers.map(item => item.code), [
+        'approved_missing_reviewed_by',
+        'approved_missing_review_notes',
+      ]);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('blocks coverage review import when approved rows lack review evidence', () => {
+    const dir = tempDir();
+    try {
+      const registry = join(dir, 'registry.yaml');
+      const review = join(dir, 'coverage-review.csv');
+      writeFileSync(registry, 'version: 1\ntargets: []\n');
+      writeFileSync(review, [
+        'review_decision,canonical_name,pricing,classification,candidate_import_recommendation,url,domain,source_files,source_locations,occurrence_count',
+        'approved,Missing Evidence,unknown,missing_domain,review_submit_url,https://missing-evidence.example/submit,missing-evidence.example,coverage.csv,coverage.csv:2,1',
+      ].join('\n'));
+
+      const result = importCoverageReview(registry, review);
+      const loaded = loadRegistry(registry);
+
+      assert.equal(result.blocked_import, true);
+      assert.equal(result.imported, 0);
+      assert.equal(result.blocked, 1);
+      assert.equal(result.blocked_rows[0].reason, 'approved_missing_reviewed_by');
+      assert.equal(result.review_validation.ok, false);
+      assert.equal(loaded.targets.length, 0);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

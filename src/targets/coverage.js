@@ -643,6 +643,263 @@ function blockReason(row, normalized, decision) {
   return '';
 }
 
+function reviewFinding(row, line, severity, code, message) {
+  return {
+    line,
+    severity,
+    code,
+    message,
+    url: rowImportUrl(row) || row.url || '',
+    domain: row.domain || '',
+    classification: row.classification || '',
+    candidate_import_recommendation: row.candidate_import_recommendation || '',
+    review_decision: reviewDecision(row),
+  };
+}
+
+function splitReviewList(value) {
+  return String(value || '')
+    .split(/\s*;\s*/)
+    .map(item => item.trim())
+    .filter(Boolean);
+}
+
+function normalizedRegistrySubmitUrls(row) {
+  return splitReviewList(row.registry_submit_urls)
+    .map(value => normalizeUrl(value))
+    .filter(Boolean);
+}
+
+function reviewQualityFindings(row, line, opts = {}) {
+  const decision = reviewDecision(row);
+  const blockers = [];
+  const warnings = [];
+  const classification = String(row.classification || '').trim();
+  const recommendation = String(row.candidate_import_recommendation || '').trim();
+  const pricing = normalizePricing(row.pricing, row.price_text || row.status);
+  const normalized = normalizeUrl(rowImportUrl(row));
+  const originalDomain = String(row.domain || '').trim().toLowerCase().replace(/^www\./, '');
+  const requireReviewer = opts.requireReviewer !== false;
+  const requireReviewNotes = opts.requireReviewNotes !== false;
+
+  if (!decision) return { blockers, warnings };
+  if (isRejectedDecision(decision)) return { blockers, warnings };
+
+  if (!isApprovedDecision(decision)) {
+    blockers.push(reviewFinding(
+      row,
+      line,
+      'blocker',
+      'unknown_review_decision',
+      'Review decision is non-empty but is not an approved or rejected decision.'
+    ));
+    return { blockers, warnings };
+  }
+
+  if (!normalized) {
+    blockers.push(reviewFinding(
+      row,
+      line,
+      'blocker',
+      'approved_invalid_url',
+      'Approved review row does not resolve to a valid HTTP(S) import URL.'
+    ));
+  }
+
+  if (requireReviewer && !String(row.reviewed_by || '').trim()) {
+    blockers.push(reviewFinding(
+      row,
+      line,
+      'blocker',
+      'approved_missing_reviewed_by',
+      'Approved review row must record who performed the human review.'
+    ));
+  }
+
+  if (requireReviewNotes && !String(row.review_notes || '').trim()) {
+    blockers.push(reviewFinding(
+      row,
+      line,
+      'blocker',
+      'approved_missing_review_notes',
+      'Approved review row must include reviewer notes describing the evidence checked.'
+    ));
+  }
+
+  if (classification === 'exact_in_registry' || recommendation === 'already_in_registry') {
+    blockers.push(reviewFinding(
+      row,
+      line,
+      'blocker',
+      'approved_already_in_registry',
+      'Already-covered rows must not be approved for import.'
+    ));
+  }
+
+  if (recommendation === 'skip_source_page') {
+    blockers.push(reviewFinding(
+      row,
+      line,
+      'blocker',
+      'approved_source_page',
+      'Source/index pages must not be approved as importable submit targets.'
+    ));
+  }
+
+  if (pricing === 'paid') {
+    blockers.push(reviewFinding(
+      row,
+      line,
+      'blocker',
+      'approved_paid_candidate',
+      'Paid candidates cannot be imported through the coverage review path.'
+    ));
+  }
+
+  if (pricing === 'unknown') {
+    warnings.push(reviewFinding(
+      row,
+      line,
+      'warning',
+      'approved_unknown_pricing',
+      'Approved row has unknown pricing and must be checked before any free-only execution plan.'
+    ));
+  }
+
+  if (classification === 'domain_in_registry_only' && !DOMAIN_VARIANT_APPROVALS.has(decision)) {
+    blockers.push(reviewFinding(
+      row,
+      line,
+      'blocker',
+      'domain_variant_needs_explicit_approval',
+      'Same-domain variants require approved_domain_variant, not generic approved.'
+    ));
+  }
+
+  if (DOMAIN_VARIANT_APPROVALS.has(decision)) {
+    const registryUrls = normalizedRegistrySubmitUrls(row);
+    if (classification !== 'domain_in_registry_only') {
+      blockers.push(reviewFinding(
+        row,
+        line,
+        'blocker',
+        'domain_variant_approval_wrong_classification',
+        'approved_domain_variant is only valid for domain_in_registry_only rows.'
+      ));
+    }
+    if (!registryUrls.length) {
+      blockers.push(reviewFinding(
+        row,
+        line,
+        'blocker',
+        'domain_variant_missing_registry_context',
+        'approved_domain_variant requires existing registry submit URLs for comparison.'
+      ));
+    }
+    if (normalized && registryUrls.some(existing => existing.dedupeKey === normalized.dedupeKey)) {
+      blockers.push(reviewFinding(
+        row,
+        line,
+        'blocker',
+        'domain_variant_duplicates_registry_url',
+        'approved_domain_variant points to a URL already present in the registry.'
+      ));
+    }
+  }
+
+  if (normalized && originalDomain && normalized.domain !== originalDomain && !DOMAIN_CHANGE_APPROVALS.has(decision)) {
+    blockers.push(reviewFinding(
+      row,
+      line,
+      'blocker',
+      'domain_change_needs_explicit_approval',
+      'Changing the candidate domain requires approved_domain_change.'
+    ));
+  }
+
+  if (DOMAIN_CHANGE_APPROVALS.has(decision)) {
+    if (!String(row.submission_url_override || '').trim()) {
+      blockers.push(reviewFinding(
+        row,
+        line,
+        'blocker',
+        'domain_change_requires_submission_url_override',
+        'approved_domain_change must use submission_url_override so the original extracted URL remains auditable.'
+      ));
+    }
+    if (normalized && originalDomain && normalized.domain === originalDomain) {
+      blockers.push(reviewFinding(
+        row,
+        line,
+        'blocker',
+        'domain_change_without_changed_domain',
+        'approved_domain_change was used but the import URL domain did not change.'
+      ));
+    }
+  }
+
+  if (recommendation === 'needs_manual_review') {
+    warnings.push(reviewFinding(
+      row,
+      line,
+      'warning',
+      'approved_manual_review_candidate',
+      'Approved row came from a broad manual-review bucket; scout evidence is mandatory before any execution.'
+    ));
+  }
+
+  return { blockers, warnings };
+}
+
+function countReviewDecisions(rows) {
+  const counts = {
+    approved: 0,
+    rejected: 0,
+    unreviewed: 0,
+    unknown_decision: 0,
+  };
+
+  for (const row of rows) {
+    const decision = reviewDecision(row);
+    if (!decision) counts.unreviewed += 1;
+    else if (isApprovedDecision(decision)) counts.approved += 1;
+    else if (isRejectedDecision(decision)) counts.rejected += 1;
+    else counts.unknown_decision += 1;
+  }
+
+  return counts;
+}
+
+function validateCoverageReviewRows(rows, opts = {}) {
+  const blockers = [];
+  const warnings = [];
+  rows.forEach((row, index) => {
+    const line = index + 2;
+    const findings = reviewQualityFindings(row, line, opts);
+    blockers.push(...findings.blockers);
+    warnings.push(...findings.warnings);
+  });
+
+  return {
+    generated_at: nowIso(),
+    rows: rows.length,
+    ...countReviewDecisions(rows),
+    ok: blockers.length === 0,
+    blockers_count: blockers.length,
+    warnings_count: warnings.length,
+    blockers,
+    warnings,
+  };
+}
+
+export function validateCoverageReview(reviewPath, opts = {}) {
+  const rows = parseCsv(readFileSync(reviewPath, 'utf-8'));
+  return {
+    review: reviewPath,
+    ...validateCoverageReviewRows(rows, opts),
+  };
+}
+
 function forceNonExecutableImportMode(target) {
   if (['manual_strategic', 'skip'].includes(target.submission?.mode)) return target;
   return {
@@ -716,6 +973,13 @@ function targetFromReviewRow(row, normalized, opts = {}) {
 export function importCoverageReview(registryPath, reviewPath, opts = {}) {
   const registry = loadRegistry(registryPath);
   const rows = parseCsv(readFileSync(reviewPath, 'utf-8'));
+  const validation = validateCoverageReviewRows(rows, opts);
+  const validationBlockersByLine = new Map();
+  for (const blocker of validation.blockers) {
+    if (!validationBlockersByLine.has(blocker.line)) {
+      validationBlockersByLine.set(blocker.line, blocker);
+    }
+  }
   const incoming = [];
   const skipped = [];
   const blocked = [];
@@ -724,7 +988,8 @@ export function importCoverageReview(registryPath, reviewPath, opts = {}) {
     const line = index + 2;
     const decision = reviewDecision(row);
     const normalized = normalizeUrl(rowImportUrl(row));
-    const reason = blockReason(row, normalized, decision);
+    const validationBlocker = validationBlockersByLine.get(line);
+    const reason = blockReason(row, normalized, decision) || validationBlocker?.code || '';
 
     if (reason) {
       const entry = {
@@ -734,6 +999,7 @@ export function importCoverageReview(registryPath, reviewPath, opts = {}) {
         classification: row.classification || '',
         review_decision: decision,
         reason,
+        message: validationBlocker?.message || '',
       };
       if (!decision || isRejectedDecision(decision)) skipped.push(entry);
       else blocked.push(entry);
@@ -778,6 +1044,7 @@ export function importCoverageReview(registryPath, reviewPath, opts = {}) {
     registry_total: (registry.targets || []).length,
     resulting_total: blockedImport ? (registry.targets || []).length : merged.targets.length,
     total: saved.targets.length,
+    review_validation: validation,
     mode_policy: 'approved_rows_imported_as_non_executable_needs_scout_unless_manual_or_skip',
     imported_targets: importable.map(target => ({
       id: target.id,

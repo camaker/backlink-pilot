@@ -21,6 +21,7 @@ import {
   listTargetsCommand,
   normalizeTargetsCommand,
   statsTargetsCommand,
+  validateCoverageReviewCommand,
 } from './targets/commands.js';
 import { buildSubmissionPlan, saveSubmissionPlan } from './planner/plan.js';
 import { scoutQueueCommand } from './planner/commands.js';
@@ -311,6 +312,18 @@ targets
   .option('--json', 'Output as JSON')
   .action(async (file, opts) => {
     await importCoverageReviewCommand(file, opts);
+  });
+
+targets
+  .command('validate-coverage-review <file>')
+  .description('Validate approved coverage review rows before importing')
+  .option('--no-require-reviewer', 'Do not require reviewed_by on approved rows')
+  .option('--no-require-review-notes', 'Do not require review_notes on approved rows')
+  .option('--limit-findings <n>', 'Maximum blockers and warnings to print', '20')
+  .option('--fail-on-blockers', 'Exit non-zero when blockers are found')
+  .option('--json', 'Output as JSON')
+  .action(async (file, opts) => {
+    await validateCoverageReviewCommand(file, opts);
   });
 
 targets
