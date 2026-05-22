@@ -8,13 +8,17 @@ import { normalizeUrl } from '../src/targets/normalize.js';
 import { auditTargets, formatAuditReport } from '../src/targets/audit.js';
 import {
   applyCoverageReviewQueue,
+  buildCoverageReviewBatch,
   buildCoverageReport,
   buildCoverageReviewQueue,
   coverageCandidatesCsv,
+  coverageReviewBatchCsv,
+  coverageReviewBatchMarkdown,
   coverageReviewQueueCsv,
   coverageReviewCsv,
   importCoverageReview,
   validateCoverageReview,
+  writeCoverageReviewBatch,
   writeCoverageReviewQueue,
   writeCoverageCandidatesCsv,
   writeCoverageReport,
@@ -838,6 +842,67 @@ targets:
       assert.equal(queue.queue_rows, 1);
       assert.equal(queue.priority_counts.P9, 1);
       assert.equal(queue.rows[0].review_action, 'skip_rejected_or_source_page');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('builds focused coverage review batches from a queue', () => {
+    const dir = tempDir();
+    try {
+      const queuePath = join(dir, 'coverage-review-queue.csv');
+      const output = join(dir, 'batches', 'p0-batch.csv');
+      const markdown = join(dir, 'batches', 'p0-batch.md');
+      writeFileSync(queuePath, [
+        [
+          'priority',
+          'priority_score',
+          'review_row',
+          'review_decision',
+          'review_decision_options',
+          'review_action',
+          'review_instruction',
+          'review_notes',
+          'reviewed_by',
+          'submission_url_override',
+          'canonical_name',
+          'pricing',
+          'lang',
+          'classification',
+          'candidate_import_recommendation',
+          'url',
+          'domain',
+          'occurrence_count',
+          'source_files',
+          'source_locations',
+          'registry_target_ids',
+          'registry_submit_urls',
+        ].join(','),
+        'P0,300,10,,approved | reject_not_submit,verify_submit_form_then_approve_or_reject,,,,,Submit One,unknown,unknown,missing_domain,review_submit_url,https://one.example/submit,one.example,1,coverage.csv,coverage.csv:2,,',
+        'P2,25,11,,approved | reject_not_directory,verify_directory_fit_before_any_approval,,,,,Manual,unknown,unknown,missing_domain,needs_manual_review,https://manual.example/,manual.example,1,coverage.csv,coverage.csv:3,,',
+        'P0,250,12,,approved_domain_variant | reject_duplicate,verify_distinct_submit_url_for_existing_domain,,,,,Same Domain,unknown,unknown,domain_in_registry_only,review_submit_url,https://same.example/add,same.example,1,coverage.csv,coverage.csv:4,same,https://same.example/submit',
+      ].join('\n'));
+
+      const batch = buildCoverageReviewBatch(queuePath, {
+        priority: 'P0',
+        limit: 1,
+        offset: 1,
+        batchId: 'test-p0',
+      });
+      const csv = coverageReviewBatchCsv(batch);
+      const md = coverageReviewBatchMarkdown(batch);
+      writeCoverageReviewBatch(batch, { output, markdown });
+
+      assert.equal(batch.batch_id, 'test-p0');
+      assert.equal(batch.matching_rows, 2);
+      assert.equal(batch.batch_rows, 1);
+      assert.equal(batch.remaining_after_batch, 0);
+      assert.equal(batch.rows[0].url, 'https://same.example/add');
+      assert.match(csv, /batch_id,batch_order,priority/);
+      assert.match(md, /Coverage Review Batch: test-p0/);
+      assert.match(readFileSync(output, 'utf-8'), /test-p0/);
+      assert.match(readFileSync(markdown, 'utf-8'), /approved_domain_variant/);
+      assert.doesNotMatch(readFileSync(output, 'utf-8'), /manual.example/);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

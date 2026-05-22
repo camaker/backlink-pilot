@@ -93,6 +93,11 @@ const REVIEW_QUEUE_HEADERS = [
   'registry_target_ids',
   'registry_submit_urls',
 ];
+const REVIEW_BATCH_HEADERS = [
+  'batch_id',
+  'batch_order',
+  ...REVIEW_QUEUE_HEADERS,
+];
 const REVIEW_QUEUE_EDITABLE_FIELDS = [
   'review_decision',
   'review_notes',
@@ -1188,6 +1193,140 @@ export function coverageReviewQueueCsv(queue) {
 export function writeCoverageReviewQueue(queue, path) {
   ensureParent(path);
   writeFileSync(path, coverageReviewQueueCsv(queue), 'utf-8');
+}
+
+function splitFilterValues(value) {
+  return String(value || '')
+    .split(',')
+    .map(item => item.trim())
+    .filter(Boolean);
+}
+
+function batchIdFromOpts(opts = {}) {
+  if (opts.batchId) return String(opts.batchId);
+  const priority = splitFilterValues(opts.priority || 'P0').join('-') || 'all';
+  const offset = numericValue(opts.offset, 0);
+  const limit = numericValue(opts.limit, 25);
+  return `coverage-review-${priority.toLowerCase()}-${offset + 1}-${offset + limit}`;
+}
+
+export function buildCoverageReviewBatch(queuePath, opts = {}) {
+  const rows = parseCsv(readFileSync(queuePath, 'utf-8'));
+  const priorities = new Set(splitFilterValues(opts.priority || 'P0'));
+  const actions = new Set(splitFilterValues(opts.action || ''));
+  const offset = Math.max(0, numericValue(opts.offset, 0));
+  const limit = Math.max(1, numericValue(opts.limit, 25));
+  const batchId = batchIdFromOpts({ ...opts, offset, limit });
+  const filtered = rows.filter(row => {
+    if (priorities.size && !priorities.has(row.priority)) return false;
+    if (actions.size && !actions.has(row.review_action)) return false;
+    return true;
+  });
+  const selected = filtered.slice(offset, offset + limit).map((row, index) => ({
+    ...row,
+    batch_id: batchId,
+    batch_order: offset + index + 1,
+  }));
+  const actionCounts = selected.reduce((acc, row) => {
+    acc[row.review_action] = (acc[row.review_action] || 0) + 1;
+    return acc;
+  }, {});
+  const priorityCounts = selected.reduce((acc, row) => {
+    acc[row.priority] = (acc[row.priority] || 0) + 1;
+    return acc;
+  }, {});
+
+  return {
+    generated_at: nowIso(),
+    queue: queuePath,
+    batch_id: batchId,
+    priority_filter: [...priorities],
+    action_filter: [...actions],
+    offset,
+    limit,
+    matching_rows: filtered.length,
+    batch_rows: selected.length,
+    remaining_after_batch: Math.max(0, filtered.length - offset - selected.length),
+    priority_counts: priorityCounts,
+    action_counts: actionCounts,
+    instructions: [
+      'Edit only review_decision, review_notes, reviewed_by, submission_url_override, canonical_name, pricing, and lang.',
+      'Use approved only for verified public submit forms with no paid, login-only, CAPTCHA-only, or source-page blocker.',
+      'Use approved_domain_variant only when a same-domain URL is a distinct valid submit endpoint and not a duplicate registry URL.',
+      'Use reject_not_submit, reject_duplicate, reject_paid, reject_auth_required, or reject_not_directory when evidence is insufficient.',
+      'After editing, run apply-coverage-review-queue with --dry-run before any in-place update.',
+    ],
+    rows: selected,
+  };
+}
+
+export function coverageReviewBatchCsv(batch) {
+  const rows = batch.rows.map(row =>
+    REVIEW_BATCH_HEADERS.map(header => row[header])
+  );
+  return [
+    REVIEW_BATCH_HEADERS.join(','),
+    ...rows.map(row => row.map(csvEscape).join(',')),
+  ].join('\n') + '\n';
+}
+
+export function coverageReviewBatchMarkdown(batch) {
+  const lines = [
+    `# Coverage Review Batch: ${batch.batch_id}`,
+    '',
+    `Generated: ${batch.generated_at}`,
+    `Queue: ${batch.queue}`,
+    `Priority filter: ${batch.priority_filter.join(', ') || '(all)'}`,
+    `Action filter: ${batch.action_filter.join(', ') || '(all)'}`,
+    `Offset: ${batch.offset}`,
+    `Limit: ${batch.limit}`,
+    `Matching rows: ${batch.matching_rows}`,
+    `Batch rows: ${batch.batch_rows}`,
+    `Remaining after batch: ${batch.remaining_after_batch}`,
+    `Priority counts: ${JSON.stringify(batch.priority_counts)}`,
+    `Action counts: ${JSON.stringify(batch.action_counts)}`,
+    '',
+    '## Review Rules',
+    '',
+    ...batch.instructions.map(item => `- ${item}`),
+    '',
+    '## Decision Vocabulary',
+    '',
+    '- `approved`: verified public submit form; no auth/CAPTCHA/payment/source-page blocker.',
+    '- `approved_domain_variant`: same-domain candidate is a distinct valid submit endpoint, not a duplicate.',
+    '- `reject_not_submit`: page is not a submission endpoint.',
+    '- `reject_duplicate`: already represented by an existing registry submit URL.',
+    '- `reject_paid`: paid listing or paid-only submission.',
+    '- `reject_auth_required`: login/OAuth is required before submission.',
+    '- `reject_not_directory`: not a relevant directory/listing surface.',
+    '',
+    '## Rows',
+    '',
+    '| order | review_row | priority | action | domain | url | decision options |',
+    '|---:|---:|---|---|---|---|---|',
+    ...batch.rows.map(row => [
+      row.batch_order,
+      row.review_row,
+      row.priority,
+      row.review_action,
+      row.domain,
+      row.url,
+      row.review_decision_options,
+    ].map(value => String(value || '').replace(/\|/g, '\\|')).join(' | ')).map(line => `| ${line} |`),
+    '',
+  ];
+  return lines.join('\n');
+}
+
+export function writeCoverageReviewBatch(batch, opts = {}) {
+  if (opts.output) {
+    ensureParent(opts.output);
+    writeFileSync(opts.output, coverageReviewBatchCsv(batch), 'utf-8');
+  }
+  if (opts.markdown) {
+    ensureParent(opts.markdown);
+    writeFileSync(opts.markdown, coverageReviewBatchMarkdown(batch), 'utf-8');
+  }
 }
 
 function coverageReviewRowsCsv(rows) {

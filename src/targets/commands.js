@@ -10,11 +10,13 @@ import {
 import { auditRegistry, formatAuditReport } from './audit.js';
 import {
   applyCoverageReviewQueue,
+  buildCoverageReviewBatch,
   buildCoverageReport,
   buildCoverageReviewQueue,
   importCoverageReview,
   validateCoverageReview,
   writeCoverageCandidatesCsv,
+  writeCoverageReviewBatch,
   writeCoverageReport,
   writeCoverageReviewQueue,
   writeCoverageReviewCsv,
@@ -259,6 +261,41 @@ export async function coverageReviewQueueCommand(reviewPath, opts = {}) {
   }
 
   return queue;
+}
+
+export async function coverageReviewBatchCommand(queuePath, opts = {}) {
+  const batch = buildCoverageReviewBatch(queuePath, {
+    priority: opts.priority,
+    action: opts.action,
+    offset: opts.offset,
+    limit: opts.limit,
+    batchId: opts.batchId,
+  });
+
+  writeCoverageReviewBatch(batch, {
+    output: opts.output,
+    markdown: opts.markdown,
+  });
+
+  if (opts.json) {
+    console.log(JSON.stringify(batch, null, 2));
+    return batch;
+  }
+
+  console.log(`Queue: ${batch.queue}`);
+  console.log(`Batch: ${batch.batch_id}`);
+  console.log(`Matching rows: ${batch.matching_rows}`);
+  console.log(`Batch rows: ${batch.batch_rows}`);
+  console.log(`Remaining after batch: ${batch.remaining_after_batch}`);
+  console.log(`Priority counts: ${JSON.stringify(batch.priority_counts)}`);
+  console.log(`Action counts: ${JSON.stringify(batch.action_counts)}`);
+  if (opts.output) console.log(`Batch CSV: ${opts.output}`);
+  if (opts.markdown) console.log(`Batch instructions: ${opts.markdown}`);
+  for (const row of batch.rows.slice(0, Number.parseInt(opts.preview || 10, 10))) {
+    console.log(`${row.batch_order}\t${row.priority}\trow:${row.review_row}\t${row.review_action}\t${row.url}`);
+  }
+
+  return batch;
 }
 
 export async function applyCoverageReviewQueueCommand(reviewPath, queuePath, opts = {}) {

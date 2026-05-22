@@ -12,6 +12,7 @@ import { forceUpdate } from './bb-update.js';
 import { runCampaign } from './campaign.js';
 import {
   applyCoverageReviewQueueCommand,
+  coverageReviewBatchCommand,
   importTargetsCommand,
   auditTargetsCommand,
   coverageReviewQueueCommand,
@@ -335,6 +336,22 @@ targets
   .option('--json', 'Output as JSON')
   .action(async (file, opts) => {
     await coverageReviewQueueCommand(file, opts);
+  });
+
+targets
+  .command('coverage-review-batch <queue>')
+  .description('Create a focused editable batch from a prioritized coverage review queue')
+  .option('--output <path>', 'Write batch CSV')
+  .option('--markdown <path>', 'Write reviewer instructions as Markdown')
+  .option('--priority <items>', 'Comma-separated priority values to include', 'P0')
+  .option('--action <items>', 'Comma-separated review_action values to include')
+  .option('--offset <n>', 'Zero-based offset within filtered rows', '0')
+  .option('--limit <n>', 'Maximum rows in the batch', '25')
+  .option('--batch-id <id>', 'Stable batch id to write into the CSV')
+  .option('--preview <n>', 'Rows to preview in text output', '10')
+  .option('--json', 'Output as JSON')
+  .action(async (queue, opts) => {
+    await coverageReviewBatchCommand(queue, opts);
   });
 
 targets
