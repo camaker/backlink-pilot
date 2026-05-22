@@ -12,6 +12,8 @@ import { forceUpdate } from './bb-update.js';
 import { runCampaign } from './campaign.js';
 import {
   importTargetsCommand,
+  auditTargetsCommand,
+  dedupeTargetIdsCommand,
   listTargetsCommand,
   normalizeTargetsCommand,
   statsTargetsCommand,
@@ -250,12 +252,31 @@ targets
   });
 
 targets
+  .command('dedupe-ids')
+  .description('Rename duplicate target IDs while preserving existing registry evidence')
+  .option('--registry <path>', 'Canonical registry path')
+  .action(async (opts) => {
+    await dedupeTargetIdsCommand(opts);
+  });
+
+targets
   .command('stats')
   .description('Show canonical registry statistics')
   .option('--registry <path>', 'Canonical registry path')
   .option('--json', 'Output as JSON')
   .action(async (opts) => {
     await statsTargetsCommand(opts);
+  });
+
+targets
+  .command('audit')
+  .description('Audit target registry safety before automated execution')
+  .option('--registry <path>', 'Canonical registry path')
+  .option('--limit-findings <n>', 'Maximum blockers and warnings to print', '50')
+  .option('--fail-on-blockers', 'Exit non-zero when blockers are found')
+  .option('--json', 'Output as JSON')
+  .action(async (opts) => {
+    await auditTargetsCommand(opts);
   });
 
 program

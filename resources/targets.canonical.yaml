@@ -1,6 +1,6 @@
 version: 1
 generated_at: 2026-05-21T15:44:34.969Z
-updated_at: 2026-05-21T15:44:39.133Z
+updated_at: 2026-05-22T00:50:01.370Z
 targets:
   - id: 01webdirectory
     name: 01webdirectory
@@ -1306,7 +1306,7 @@ targets:
       risk: unknown
     created_at: 2026-05-21T15:44:39.088Z
     updated_at: 2026-05-21T15:44:39.088Z
-  - id: aigc
+  - id: aigc-aigclist-com-submit-ai-tools-free
     name: AIGC便利店
     domain: aigclist.com
     root_url: https://aigclist.com/
@@ -1325,6 +1325,7 @@ targets:
       - targets.yaml
     source_meta:
       id: aigc
+      previous_id: aigc
     technical:
       last_scouted_at: null
       auth: unknown
@@ -1339,7 +1340,7 @@ targets:
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.088Z
-    updated_at: 2026-05-21T15:44:39.088Z
+    updated_at: 2026-05-22T00:50:01.365Z
   - id: aiheron-com
     name: 智鹭AI
     domain: aiheron.com
@@ -1649,7 +1650,7 @@ targets:
       risk: unknown
     created_at: 2026-05-21T15:44:39.088Z
     updated_at: 2026-05-21T15:44:39.088Z
-  - id: ai-mojo
+  - id: ai-mojo-aimojo-pro-submit
     name: AI Mojo
     domain: aimojo.pro
     root_url: https://aimojo.pro/
@@ -1668,6 +1669,7 @@ targets:
       - targets.yaml
     source_meta:
       id: ai-mojo
+      previous_id: ai-mojo
     technical:
       last_scouted_at: null
       auth: unknown
@@ -1682,7 +1684,7 @@ targets:
     quality:
       risk: low
     created_at: 2026-05-21T15:44:39.088Z
-    updated_at: 2026-05-21T15:44:39.088Z
+    updated_at: 2026-05-22T00:50:01.367Z
   - id: ai-nav
     name: AI NAV
     domain: ainavpro.com
@@ -1888,7 +1890,7 @@ targets:
       risk: low
     created_at: 2026-05-21T15:44:39.089Z
     updated_at: 2026-05-21T15:44:39.089Z
-  - id: ai-scout
+  - id: ai-scout-aiscout-net-submit-listing-details
     external_id: 14368f41-8f50-81c3-98f7-ec3f6b06d963
     name: AI scout
     domain: aiscout.net
@@ -1908,6 +1910,7 @@ targets:
       - notion
     source_meta:
       id: ai-scout
+      previous_id: ai-scout
     technical:
       last_scouted_at: null
       auth: unknown
@@ -1922,7 +1925,7 @@ targets:
     quality:
       risk: medium
     created_at: 2026-05-21T15:44:39.089Z
-    updated_at: 2026-05-21T15:44:39.089Z
+    updated_at: 2026-05-22T00:50:01.367Z
   - id: ai-stash
     external_id: 14368f41-8f50-8130-a99c-e8e471524193
     name: AI Stash
@@ -3028,7 +3031,7 @@ targets:
       risk: unknown
     created_at: 2026-05-21T15:44:39.091Z
     updated_at: 2026-05-21T15:44:39.091Z
-  - id: aiwith-me
+  - id: aiwith-me-aiwith-me-zh-submit
     name: aiwith.me
     domain: aiwith.me
     root_url: https://aiwith.me/
@@ -3047,6 +3050,7 @@ targets:
       - targets.yaml
     source_meta:
       id: aiwith-me
+      previous_id: aiwith-me
     technical:
       last_scouted_at: null
       auth: unknown
@@ -3061,7 +3065,7 @@ targets:
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.091Z
-    updated_at: 2026-05-21T15:44:39.091Z
+    updated_at: 2026-05-22T00:50:01.367Z
   - id: ai-wizard
     external_id: 14368f41-8f50-8149-b31a-e2baea804ce7
     name: AI Wizard
@@ -3510,7 +3514,7 @@ targets:
       risk: medium
     created_at: 2026-05-21T15:44:39.092Z
     updated_at: 2026-05-21T15:44:39.092Z
-  - id: alternativeto
+  - id: alternativeto-alternativeto-net-manage-item
     external_id: 14368f41-8f50-819c-9505-d074abe174dc
     name: AlternativeTo
     domain: alternativeto.net
@@ -3530,6 +3534,7 @@ targets:
       - notion
     source_meta:
       id: alternativeto
+      previous_id: alternativeto
     technical:
       last_scouted_at: null
       auth: unknown
@@ -3544,7 +3549,7 @@ targets:
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.092Z
-    updated_at: 2026-05-21T15:44:39.092Z
+    updated_at: 2026-05-22T00:50:01.368Z
   - id: alteropen
     external_id: 14368f41-8f50-81a3-bfa4-d111c5618a50
     name: AlterOpen
@@ -5030,7 +5035,7 @@ targets:
       risk: medium
     created_at: 2026-05-21T15:44:39.095Z
     updated_at: 2026-05-21T15:44:39.095Z
-  - id: dev-hunt
+  - id: dev-hunt-devhunt-org-account-tools-new
     external_id: 14368f41-8f50-8159-8ae0-d139d0df866d
     name: Dev Hunt
     domain: devhunt.org
@@ -5050,6 +5055,7 @@ targets:
       - notion
     source_meta:
       id: dev-hunt
+      previous_id: dev-hunt
     technical:
       last_scouted_at: null
       auth: unknown
@@ -5064,7 +5070,7 @@ targets:
     quality:
       risk: medium
     created_at: 2026-05-21T15:44:39.095Z
-    updated_at: 2026-05-21T15:44:39.095Z
+    updated_at: 2026-05-22T00:50:01.368Z
   - id: dev-pages
     external_id: 14368f41-8f50-812c-81d1-e67263859e65
     name: Dev Pages
@@ -7003,7 +7009,7 @@ targets:
       risk: unknown
     created_at: 2026-05-21T15:44:39.099Z
     updated_at: 2026-05-21T15:44:39.099Z
-  - id: gate2ai
+  - id: gate2ai-gate2ai-com-zh-cn-submit-tool
     name: Gate2AI
     domain: gate2ai.com
     root_url: https://www.gate2ai.com/
@@ -7022,6 +7028,7 @@ targets:
       - targets.yaml
     source_meta:
       id: gate2ai
+      previous_id: gate2ai
     technical:
       last_scouted_at: null
       auth: unknown
@@ -7036,7 +7043,7 @@ targets:
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.099Z
-    updated_at: 2026-05-21T15:44:39.099Z
+    updated_at: 2026-05-22T00:50:01.368Z
   - id: getlatka
     external_id: 14368f41-8f50-81ac-b65f-c88e30ccc85c
     name: Getlatka
@@ -7140,7 +7147,7 @@ targets:
       risk: medium
     created_at: 2026-05-21T15:44:39.099Z
     updated_at: 2026-05-21T15:44:39.099Z
-  - id: github-com
+  - id: github-com-github-com-ljinkai-weekly-issues
     name: 独立开发变现周刊
     domain: github.com
     root_url: https://github.com/
@@ -7159,6 +7166,7 @@ targets:
       - targets.yaml
     source_meta:
       id: github-com
+      previous_id: github-com
     technical:
       last_scouted_at: null
       auth: unknown
@@ -7173,7 +7181,7 @@ targets:
     quality:
       risk: medium
     created_at: 2026-05-21T15:44:39.099Z
-    updated_at: 2026-05-21T15:44:39.099Z
+    updated_at: 2026-05-22T00:50:01.368Z
   - id: dev-resources
     external_id: 14368f41-8f50-8150-9673-dc0a384a0d8b
     name: DEV Resources
@@ -7209,7 +7217,7 @@ targets:
       risk: medium
     created_at: 2026-05-21T15:44:39.099Z
     updated_at: 2026-05-21T15:44:39.099Z
-  - id: github-com
+  - id: github-com-github-com-ruanyf-weekly-issues
     name: https://github.com/ruanyf/weekly/issues
     domain: github.com
     root_url: https://github.com/
@@ -7228,6 +7236,7 @@ targets:
       - targets.yaml
     source_meta:
       id: github-com
+      previous_id: github-com
     technical:
       last_scouted_at: null
       auth: unknown
@@ -7242,7 +7251,7 @@ targets:
     quality:
       risk: medium
     created_at: 2026-05-21T15:44:39.099Z
-    updated_at: 2026-05-21T15:44:39.099Z
+    updated_at: 2026-05-22T00:50:01.368Z
   - id: good-design-tools
     name: Good Design Tools
     domain: gooddesign.tools
@@ -8275,7 +8284,7 @@ targets:
       risk: medium
     created_at: 2026-05-21T15:44:39.101Z
     updated_at: 2026-05-21T15:44:39.101Z
-  - id: joinly
+  - id: joinly-joinly-xyz
     name: Joinly
     domain: joinly.xyz
     root_url: https://www.joinly.xyz/
@@ -8294,6 +8303,7 @@ targets:
       - targets.yaml
     source_meta:
       id: joinly
+      previous_id: joinly
     technical:
       last_scouted_at: null
       auth: unknown
@@ -8308,7 +8318,7 @@ targets:
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.101Z
-    updated_at: 2026-05-21T15:44:39.101Z
+    updated_at: 2026-05-22T00:50:01.369Z
   - id: juejin-cn
     name: 掘金
     domain: juejin.cn
@@ -8515,7 +8525,7 @@ targets:
       risk: unknown
     created_at: 2026-05-21T15:44:39.102Z
     updated_at: 2026-05-21T15:44:39.102Z
-  - id: launched
+  - id: launched-launched-io-submitstartup
     external_id: 14368f41-8f50-812e-91cf-cf723075bb27
     name: Launched
     domain: launched.io
@@ -8535,6 +8545,7 @@ targets:
       - notion
     source_meta:
       id: launched
+      previous_id: launched
     technical:
       last_scouted_at: null
       auth: unknown
@@ -8549,7 +8560,7 @@ targets:
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.102Z
-    updated_at: 2026-05-21T15:44:39.102Z
+    updated_at: 2026-05-22T00:50:01.369Z
   - id: launching-today
     name: Launching Today
     domain: launching.today
@@ -9375,7 +9386,7 @@ targets:
       risk: medium
     created_at: 2026-05-21T15:44:39.103Z
     updated_at: 2026-05-21T15:44:39.103Z
-  - id: ben-s-bites-news
+  - id: ben-s-bites-news-news-bensbites-com-submit
     external_id: 14368f41-8f50-81ac-8463-c9e81d8ce09e
     name: Ben's Bites News
     domain: news.bensbites.com
@@ -9395,6 +9406,7 @@ targets:
       - notion
     source_meta:
       id: ben-s-bites-news
+      previous_id: ben-s-bites-news
     technical:
       last_scouted_at: null
       auth: unknown
@@ -9409,7 +9421,7 @@ targets:
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.103Z
-    updated_at: 2026-05-21T15:44:39.103Z
+    updated_at: 2026-05-22T00:50:01.369Z
   - id: show-hn-hacker-news
     name: Show HN (Hacker News)
     domain: news.ycombinator.com
@@ -10134,7 +10146,7 @@ targets:
       risk: unknown
     created_at: 2026-05-21T15:44:39.104Z
     updated_at: 2026-05-21T15:44:39.104Z
-  - id: pitchwall
+  - id: pitchwall-pitchwall-co-product-submit
     external_id: 14368f41-8f50-8169-8cef-c771b58ad1e4
     name: Pitchwall
     domain: pitchwall.co
@@ -10154,6 +10166,7 @@ targets:
       - notion
     source_meta:
       id: pitchwall
+      previous_id: pitchwall
     technical:
       last_scouted_at: null
       auth: unknown
@@ -10168,7 +10181,7 @@ targets:
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.104Z
-    updated_at: 2026-05-21T15:44:39.104Z
+    updated_at: 2026-05-22T00:50:01.369Z
   - id: post-make
     external_id: 14368f41-8f50-8159-bbfc-f60e5295d351
     name: Post Make
@@ -10340,7 +10353,7 @@ targets:
       risk: medium
     created_at: 2026-05-21T15:44:39.104Z
     updated_at: 2026-05-21T15:44:39.104Z
-  - id: product-hunt
+  - id: product-hunt-producthunt-com-posts-new
     external_id: 14368f41-8f50-81f9-8035-c0f4520419b3
     name: Product Hunt
     domain: producthunt.com
@@ -10360,6 +10373,7 @@ targets:
       - notion
     source_meta:
       id: product-hunt
+      previous_id: product-hunt
     technical:
       last_scouted_at: null
       auth: unknown
@@ -10374,7 +10388,7 @@ targets:
     quality:
       risk: medium
     created_at: 2026-05-21T15:44:39.105Z
-    updated_at: 2026-05-21T15:44:39.105Z
+    updated_at: 2026-05-22T00:50:01.369Z
   - id: productlistdir-com
     name: https://productlistdir.com
     domain: productlistdir.com
@@ -11577,7 +11591,7 @@ targets:
       risk: unknown
     created_at: 2026-05-21T15:44:39.106Z
     updated_at: 2026-05-21T15:44:39.106Z
-  - id: simple-lister
+  - id: simple-lister-simplelister-com-submit
     external_id: 14368f41-8f50-811b-898e-e50758d8c5a9
     name: Simple Lister
     domain: simplelister.com
@@ -11597,6 +11611,7 @@ targets:
       - notion
     source_meta:
       id: simple-lister
+      previous_id: simple-lister
     technical:
       last_scouted_at: null
       auth: unknown
@@ -11611,7 +11626,7 @@ targets:
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.107Z
-    updated_at: 2026-05-21T15:44:39.107Z
+    updated_at: 2026-05-22T00:50:01.369Z
   - id: sitelike
     external_id: 14368f41-8f50-81be-8af2-e50bce545545
     name: Sitelike
@@ -12786,7 +12801,7 @@ targets:
       risk: unknown
     created_at: 2026-05-21T15:44:39.125Z
     updated_at: 2026-05-21T15:44:39.125Z
-  - id: submission-web-directory
+  - id: submission-web-directory-submissionwebdirectory-com-submit-php
     external_id: 14368f41-8f50-81d7-8776-e90c1b6a75a3
     name: Submission Web Directory
     domain: submissionwebdirectory.com
@@ -12806,6 +12821,7 @@ targets:
       - notion
     source_meta:
       id: submission-web-directory
+      previous_id: submission-web-directory
     technical:
       last_scouted_at: null
       auth: unknown
@@ -12820,7 +12836,7 @@ targets:
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.125Z
-    updated_at: 2026-05-21T15:44:39.125Z
+    updated_at: 2026-05-22T00:50:01.369Z
   - id: submit-biz
     name: Submit.biz
     domain: submit.biz
@@ -13269,7 +13285,7 @@ targets:
       risk: unknown
     created_at: 2026-05-21T15:44:39.126Z
     updated_at: 2026-05-21T15:44:39.126Z
-  - id: toolsfine
+  - id: toolsfine-tally-so-r-wvb7xg
     name: ToolsFine
     domain: tally.so
     root_url: https://tally.so/
@@ -13288,6 +13304,7 @@ targets:
       - targets.yaml
     source_meta:
       id: toolsfine
+      previous_id: toolsfine
     technical:
       last_scouted_at: null
       auth: unknown
@@ -13302,7 +13319,7 @@ targets:
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.126Z
-    updated_at: 2026-05-21T15:44:39.126Z
+    updated_at: 2026-05-22T00:50:01.369Z
   - id: sick-tools
     external_id: 14368f41-8f50-8196-b277-c6d37c70ee64
     name: Sick Tools
@@ -13372,7 +13389,7 @@ targets:
       risk: unknown
     created_at: 2026-05-21T15:44:39.126Z
     updated_at: 2026-05-21T15:44:39.126Z
-  - id: tap4-ai
+  - id: tap4-ai-tap4-ai-cn-submit
     name: Tap4 AI
     domain: tap4.ai
     root_url: https://tap4.ai/
@@ -13391,6 +13408,7 @@ targets:
       - targets.yaml
     source_meta:
       id: tap4-ai
+      previous_id: tap4-ai
     technical:
       last_scouted_at: null
       auth: unknown
@@ -13405,7 +13423,7 @@ targets:
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.126Z
-    updated_at: 2026-05-21T15:44:39.126Z
+    updated_at: 2026-05-22T00:50:01.369Z
   - id: tap4-ai-user-growth-ai-tools-directory
     name: https://tap4.ai/user-growth/ai-tools-directory
     domain: tap4.ai
@@ -13542,7 +13560,7 @@ targets:
       risk: unknown
     created_at: 2026-05-21T15:44:39.126Z
     updated_at: 2026-05-21T15:44:39.126Z
-  - id: techpluto
+  - id: techpluto-techpluto-com-submit-startup
     external_id: 14368f41-8f50-8196-949d-e3764f2d1700
     name: TechPluto
     domain: techpluto.com
@@ -13562,6 +13580,7 @@ targets:
       - notion
     source_meta:
       id: techpluto
+      previous_id: techpluto
     technical:
       last_scouted_at: null
       auth: unknown
@@ -13576,7 +13595,7 @@ targets:
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.126Z
-    updated_at: 2026-05-21T15:44:39.126Z
+    updated_at: 2026-05-22T00:50:01.370Z
   - id: tekpon
     external_id: 14368f41-8f50-8151-b105-dbf0483cb797
     name: Tekpon
@@ -14061,7 +14080,7 @@ targets:
       risk: low
     created_at: 2026-05-21T15:44:39.127Z
     updated_at: 2026-05-21T15:44:39.127Z
-  - id: the-ai-warehouse
+  - id: the-ai-warehouse-thewarehouse-ai-product-submission
     external_id: 14368f41-8f50-81a5-9d9e-e9e235daff41
     name: Warehouse AI
     domain: thewarehouse.ai
@@ -14082,6 +14101,7 @@ targets:
       - targets.yaml
     source_meta:
       id: the-ai-warehouse
+      previous_id: the-ai-warehouse
     technical:
       last_scouted_at: null
       auth: unknown
@@ -14096,7 +14116,7 @@ targets:
     quality:
       risk: medium
     created_at: 2026-05-21T15:44:39.127Z
-    updated_at: 2026-05-21T15:44:39.127Z
+    updated_at: 2026-05-22T00:50:01.370Z
   - id: tigg-cc
     name: 挖互联网
     domain: tigg.cc
@@ -15611,7 +15631,7 @@ targets:
       risk: medium
     created_at: 2026-05-21T15:44:39.130Z
     updated_at: 2026-05-21T15:44:39.130Z
-  - id: uneed
+  - id: uneed-uneed-best-submit-a-tool
     external_id: 14368f41-8f50-811a-945a-dac31b24ea65
     name: uneed
     domain: uneed.best
@@ -15631,6 +15651,7 @@ targets:
       - notion
     source_meta:
       id: uneed
+      previous_id: uneed
     technical:
       last_scouted_at: null
       auth: unknown
@@ -15645,7 +15666,7 @@ targets:
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.130Z
-    updated_at: 2026-05-21T15:44:39.130Z
+    updated_at: 2026-05-22T00:50:01.370Z
   - id: unloc
     external_id: 14368f41-8f50-8108-b398-f7c750c4b7c8
     name: Unloc.tools

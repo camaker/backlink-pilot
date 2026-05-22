@@ -1,4 +1,13 @@
-import { DEFAULT_REGISTRY_FILE, filterTargets, importTargets, loadRegistry, normalizeRegistry, registryStats } from './registry.js';
+import {
+  DEFAULT_REGISTRY_FILE,
+  dedupeRegistryIds,
+  filterTargets,
+  importTargets,
+  loadRegistry,
+  normalizeRegistry,
+  registryStats,
+} from './registry.js';
+import { auditRegistry, formatAuditReport } from './audit.js';
 
 function printStats(stats) {
   console.log(`Total: ${stats.total}`);
@@ -66,6 +75,7 @@ export async function normalizeTargetsCommand(opts = {}) {
   console.log(`Normalized registry: ${result.path}`);
   console.log(`Targets: ${result.total}`);
   console.log(`Duplicates removed: ${result.duplicates}`);
+  console.log(`IDs renamed: ${result.renamed_ids}`);
 }
 
 export async function statsTargetsCommand(opts = {}) {
@@ -76,4 +86,23 @@ export async function statsTargetsCommand(opts = {}) {
     return;
   }
   printStats(stats);
+}
+
+export async function auditTargetsCommand(opts = {}) {
+  const report = auditRegistry(opts.registry || DEFAULT_REGISTRY_FILE, opts);
+  if (opts.json) {
+    console.log(JSON.stringify(report, null, 2));
+  } else {
+    console.log(formatAuditReport(report, opts));
+  }
+  if (!report.ok && opts.failOnBlockers) process.exitCode = 1;
+  return report;
+}
+
+export async function dedupeTargetIdsCommand(opts = {}) {
+  const result = dedupeRegistryIds(opts.registry || DEFAULT_REGISTRY_FILE);
+  console.log(`Registry: ${result.path}`);
+  console.log(`Targets: ${result.total}`);
+  console.log(`IDs renamed: ${result.renamed_ids}`);
+  return result;
 }

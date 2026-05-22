@@ -6,6 +6,7 @@ import { tmpdir } from 'os';
 import { inferTargetMode } from '../src/targets/classify.js';
 import { normalizeUrl } from '../src/targets/normalize.js';
 import {
+  dedupeRegistryIds,
   filterTargets,
   importTargets,
   loadRegistry,
@@ -116,7 +117,7 @@ group_one:
 `);
 
       const targets = loadTargetsFromFile(file, { source: 'notion' });
-      assert.equal(targets[0].id, 'source-forge');
+      assert.equal(targets[0].id, 'source-forge-sourceforge-net');
       assert.equal(targets[0].external_id, '14368f41-8f50-81eb-bfda-eab66aa93110');
     } finally {
       rmSync(dir, { recursive: true, force: true });
@@ -134,6 +135,53 @@ group_one:
     const merged = mergeTargets(a, b);
     assert.equal(merged.targets.length, 1);
     assert.deepEqual(merged.targets[0].source.sort(), ['a', 'b']);
+  });
+
+  it('creates unique canonical IDs for same-named targets on different domains', () => {
+    const targets = loadTargetsFromFileFromRows([
+      { id: 'aigc', name: 'AIGC', submit_url: 'https://aigc.cn/submit', source: 'a' },
+      { id: 'aigc', name: 'AIGC', submit_url: 'https://aigclist.com/submit', source: 'b' },
+    ]);
+
+    assert.deepEqual(targets.map(target => target.id), ['aigc-aigc-cn', 'aigc-aigclist-com']);
+  });
+
+  it('renames duplicate persisted target IDs without dropping existing evidence', () => {
+    const dir = tempDir();
+    try {
+      const registry = join(dir, 'registry.yaml');
+      writeFileSync(registry, `
+version: 1
+targets:
+  - id: github-com
+    domain: github.com
+    submit_url: https://github.com/org/a/issues
+    normalized_key: github.com/org/a/issues
+    submission:
+      mode: manual_strategic
+      backlink_status: verified
+    source_meta:
+      id: github-com
+  - id: github-com
+    domain: github.com
+    submit_url: https://github.com/org/b/issues
+    normalized_key: github.com/org/b/issues
+    submission:
+      mode: manual_strategic
+    source_meta:
+      id: github-com
+`);
+
+      const result = dedupeRegistryIds(registry);
+      const loaded = loadRegistry(registry);
+
+      assert.equal(result.renamed_ids, 1);
+      assert.equal(new Set(loaded.targets.map(target => target.id)).size, 2);
+      assert.equal(loaded.targets[0].submission.backlink_status, 'verified');
+      assert.equal(loaded.targets[1].source_meta.previous_id, 'github-com');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 
   it('imports into a persisted registry and computes stats', () => {

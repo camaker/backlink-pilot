@@ -93,14 +93,18 @@ function isStableExplicitId(value) {
 
 function canonicalId(row, name, normalized) {
   if (isStableExplicitId(row.canonical_id)) return slugify(row.canonical_id);
-  if (isStableExplicitId(row.id)) return slugify(row.id);
 
   const nameSlug = slugify(name, '');
-  if (nameSlug && nameSlug.length > 2 && !['ai', 'seo', 'app'].includes(nameSlug)) {
-    return nameSlug;
+  const domainSlug = slugify(normalized.domain.replace(/\./g, '-'));
+  if (nameSlug && nameSlug.length > 2 && !['ai', 'seo', 'app', domainSlug].includes(nameSlug)) {
+    return slugify(`${nameSlug}-${domainSlug}`);
   }
 
-  return slugify(normalized.domain.replace(/\./g, '-'));
+  if (isStableExplicitId(row.id)) {
+    return slugify(`${row.id}-${domainSlug}`);
+  }
+
+  return domainSlug;
 }
 
 function externalId(row) {
@@ -288,6 +292,40 @@ function mergeTarget(existing, incoming) {
   return merged;
 }
 
+function uniqueTargetIds(targets = []) {
+  const seen = new Map();
+  let renamed = 0;
+  const updatedTargets = targets.map(target => {
+    const baseId = target.id || slugify(target.domain || target.normalized_key || target.submit_url);
+    const count = seen.get(baseId) || 0;
+    seen.set(baseId, count + 1);
+    if (count === 0) return target;
+
+    const normalized = normalizeUrl(target.submit_url);
+    const domainSlug = slugify(normalized?.domain?.replace(/\./g, '-') || target.domain || 'target');
+    const pathSlug = slugify(normalized?.path || target.submit_url || '', '');
+    let nextId = slugify([baseId, domainSlug, pathSlug].filter(Boolean).join('-'));
+    let suffix = 2;
+    while (seen.has(nextId)) {
+      nextId = slugify([baseId, domainSlug, pathSlug, suffix].filter(Boolean).join('-'));
+      suffix++;
+    }
+    seen.set(nextId, 1);
+    renamed++;
+    return {
+      ...target,
+      id: nextId,
+      source_meta: {
+        ...(target.source_meta || {}),
+        previous_id: target.source_meta?.previous_id || baseId,
+      },
+      updated_at: nowIso(),
+    };
+  });
+
+  return { targets: updatedTargets, renamed };
+}
+
 export function mergeTargets(existingTargets = [], incomingTargets = []) {
   const byKey = new Map();
   const duplicateKeys = [];
@@ -308,13 +346,15 @@ export function mergeTargets(existingTargets = [], incomingTargets = []) {
     }
   }
 
+  const uniqueIds = uniqueTargetIds([...byKey.values()]);
   return {
-    targets: [...byKey.values()].sort((a, b) =>
+    targets: uniqueIds.targets.sort((a, b) =>
       String(a.domain).localeCompare(String(b.domain)) ||
       String(a.submit_url).localeCompare(String(b.submit_url))
     ),
     imported: incomingTargets.length,
     duplicates: duplicateKeys.length,
+    renamed_ids: uniqueIds.renamed,
   };
 }
 
@@ -386,6 +426,18 @@ export function normalizeRegistry(registryPath = DEFAULT_REGISTRY_FILE) {
   return {
     total: merged.targets.length,
     duplicates: merged.duplicates,
+    renamed_ids: merged.renamed_ids || 0,
+    path: registryPath,
+  };
+}
+
+export function dedupeRegistryIds(registryPath = DEFAULT_REGISTRY_FILE) {
+  const registry = loadRegistry(registryPath);
+  const uniqueIds = uniqueTargetIds(registry.targets || []);
+  saveRegistry({ ...registry, targets: uniqueIds.targets }, registryPath);
+  return {
+    total: uniqueIds.targets.length,
+    renamed_ids: uniqueIds.renamed,
     path: registryPath,
   };
 }
