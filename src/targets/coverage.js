@@ -1335,10 +1335,15 @@ function obviousNonDirectoryUrlReason(row, evidence) {
   const path = url.pathname.toLowerCase();
   const fullPath = `${path}${url.search.toLowerCase()}`;
   const contentPagePattern = /\/(?:19|20)\d{2}[/-]\d{1,2}(?:[/-]\d{1,2})?\/|\/\d{4}\/\d{2}\/\d{2}\/|\/comment-page-\d+|\/comments?(?:\/|$)|\/tips\/|\/recipes?\/|\/news\/|\/blog\/|\/blogs?\/|\/posts?\/|\/articles?\/|\/discussions?\/threads?\/|\/forums?\/|\/thread\.php|\/viewtopic\.php|\/show_bug\.cgi|\/member(?:list)?\.php|\/profil(?:e|_|\/)|\/profiles?\/|\/searchuser(?:[_-]|$)|\/searchuser_full\.php|\/users?\//;
+  const sourcePageQueryPattern = /[?&](?:mode|action|view)=comment(?:&|$)/;
   const sourcePageHostPattern = /(^|\.)blogs?\.|(^|\.)news\./;
 
   if (contentPagePattern.test(fullPath) && !hasExplicitSubmissionPath(normalized.url)) {
     return `URL path (${path}) looks like a source article, profile, forum, comment, or issue page`;
+  }
+
+  if (sourcePageQueryPattern.test(fullPath) && !hasExplicitSubmissionPath(normalized.url)) {
+    return `URL query (${url.search.toLowerCase()}) looks like a comment page, not a product directory`;
   }
 
   if (sourcePageHostPattern.test(host) && path.length > 1 && !hasExplicitSubmissionPath(normalized.url)) {

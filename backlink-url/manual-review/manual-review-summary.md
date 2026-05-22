@@ -1,16 +1,16 @@
 # Manual Review Pack
 
-Generated: 2026-05-22T11:39:28.729Z
+Generated: 2026-05-22T11:50:04.433Z
 
 ## Scope
 
-- Current queue rows: 145
+- Current queue rows: 132
 - P0 rows: 17
-- P2 rows: 128
-- Rows with evidence or suggestion history: 145
+- P2 rows: 115
+- Rows with evidence or suggestion history: 132
 - Rows without evidence or suggestion history: 0
 - Rows blocked by safety gate in prior drafts: 0
-- Possible approvals after manual confirmation: 4
+- Possible approvals after manual confirmation: 1
 
 Policy: manual review only. No approvals, no registry imports, no real submissions, no login or CAPTCHA/Cloudflare bypass.
 
@@ -18,14 +18,14 @@ Policy: manual review only. No approvals, no registry imports, no real submissio
 
 | Priority | Count |
 |---|---:|
-| P2 | 128 |
+| P2 | 115 |
 | P0 | 17 |
 
 ## By Review Action
 
 | Action | Count |
 |---|---:|
-| verify_directory_fit_before_any_approval | 128 |
+| verify_directory_fit_before_any_approval | 115 |
 | verify_submit_form_then_approve_or_reject | 12 |
 | verify_distinct_submit_url_for_existing_domain | 5 |
 
@@ -33,17 +33,17 @@ Policy: manual review only. No approvals, no registry imports, no real submissio
 
 | Bucket | Count |
 |---|---:|
-| fetch_failed_cannot_decide | 79 |
-| medium_confidence_requires_human_confirmation | 58 |
-| manual_browser_check_required | 4 |
-| manual_submit_form_confirmation_required | 4 |
+| fetch_failed_cannot_decide | 75 |
+| medium_confidence_requires_human_confirmation | 53 |
+| manual_submit_form_confirmation_required | 3 |
+| manual_browser_check_required | 1 |
 
 ## By Suggested Decision
 
 | Suggested Decision | Count |
 |---|---:|
-| needs_manual_check | 87 |
-| reject_auth_required | 54 |
+| needs_manual_check | 79 |
+| reject_auth_required | 49 |
 | reject_not_submit | 4 |
 
 ## P0 Manual Queue
