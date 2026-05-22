@@ -10,9 +10,11 @@ import {
 import { auditRegistry, formatAuditReport } from './audit.js';
 import {
   buildCoverageReport,
+  buildCoverageReviewQueue,
   importCoverageReview,
   writeCoverageCandidatesCsv,
   writeCoverageReport,
+  writeCoverageReviewQueue,
   writeCoverageReviewCsv,
 } from './coverage.js';
 
@@ -198,4 +200,30 @@ export async function importCoverageReviewCommand(reviewPath, opts = {}) {
   }
 
   return result;
+}
+
+export async function coverageReviewQueueCommand(reviewPath, opts = {}) {
+  const queue = buildCoverageReviewQueue(reviewPath, {
+    includeSkipped: Boolean(opts.includeSkipped),
+  });
+
+  if (opts.output) {
+    writeCoverageReviewQueue(queue, opts.output);
+  }
+
+  if (opts.json) {
+    console.log(JSON.stringify(queue, null, 2));
+    return queue;
+  }
+
+  console.log(`Review: ${queue.review}`);
+  console.log(`Review rows: ${queue.total_review_rows}`);
+  console.log(`Queue rows: ${queue.queue_rows}`);
+  console.log(`Priority counts: ${JSON.stringify(queue.priority_counts)}`);
+  if (opts.output) console.log(`Queue CSV: ${opts.output}`);
+  for (const row of queue.rows.slice(0, Number.parseInt(opts.limit || 10, 10))) {
+    console.log(`${row.priority}\t${row.priority_score}\trow:${row.review_row}\t${row.review_action}\t${row.url}`);
+  }
+
+  return queue;
 }

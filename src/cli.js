@@ -13,6 +13,7 @@ import { runCampaign } from './campaign.js';
 import {
   importTargetsCommand,
   auditTargetsCommand,
+  coverageReviewQueueCommand,
   coverageTargetsCommand,
   dedupeTargetIdsCommand,
   importCoverageReviewCommand,
@@ -309,6 +310,17 @@ targets
   .option('--json', 'Output as JSON')
   .action(async (file, opts) => {
     await importCoverageReviewCommand(file, opts);
+  });
+
+targets
+  .command('coverage-review-queue <file>')
+  .description('Prioritize coverage review rows for human approval without importing')
+  .option('--output <path>', 'Write prioritized review queue CSV')
+  .option('--include-skipped', 'Include rejected/source/already-covered rows in the queue output')
+  .option('--limit <n>', 'Rows to preview in text output', '10')
+  .option('--json', 'Output as JSON')
+  .action(async (file, opts) => {
+    await coverageReviewQueueCommand(file, opts);
   });
 
 program

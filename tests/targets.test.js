@@ -8,9 +8,12 @@ import { normalizeUrl } from '../src/targets/normalize.js';
 import { auditTargets, formatAuditReport } from '../src/targets/audit.js';
 import {
   buildCoverageReport,
+  buildCoverageReviewQueue,
   coverageCandidatesCsv,
+  coverageReviewQueueCsv,
   coverageReviewCsv,
   importCoverageReview,
+  writeCoverageReviewQueue,
   writeCoverageCandidatesCsv,
   writeCoverageReport,
   writeCoverageReviewCsv,
@@ -613,6 +616,124 @@ targets:
       const imported = loaded.targets.find(target => target.submit_url === 'https://same.example/add');
       assert.equal(imported.submission.mode, 'needs_scout');
       assert.equal(imported.quality.risk, 'unknown');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('prioritizes review queues and excludes skipped rows by default', () => {
+    const dir = tempDir();
+    try {
+      const review = join(dir, 'coverage-review.csv');
+      const output = join(dir, 'out', 'coverage-review-queue.csv');
+      writeFileSync(review, [
+        [
+          'review_decision',
+          'canonical_name',
+          'pricing',
+          'classification',
+          'candidate_import_recommendation',
+          'url',
+          'domain',
+          'source_files',
+          'source_locations',
+          'registry_target_ids',
+          'registry_submit_urls',
+          'occurrence_count',
+        ].join(','),
+        [
+          '',
+          'Manual Fit',
+          'unknown',
+          'missing_domain',
+          'needs_manual_review',
+          'https://manual.example/',
+          'manual.example',
+          'repo-external-links.csv',
+          'repo-external-links.csv:2',
+          '',
+          '',
+          '1',
+        ].join(','),
+        [
+          '',
+          'Submit URL',
+          'unknown',
+          'missing_domain',
+          'review_submit_url',
+          'https://submit.example/submit',
+          'submit.example',
+          'coverage-candidates.csv',
+          'coverage-candidates.csv:2',
+          '',
+          '',
+          '2',
+        ].join(','),
+        [
+          '',
+          'Same Domain',
+          'unknown',
+          'domain_in_registry_only',
+          'review_submit_url',
+          'https://same.example/add',
+          'same.example',
+          'coverage-candidates.csv',
+          'coverage-candidates.csv:3',
+          'same-existing',
+          'https://same.example/submit',
+          '1',
+        ].join(','),
+        [
+          'reject_source_page',
+          'Source Page',
+          'unknown',
+          'missing_domain',
+          'skip_source_page',
+          'https://91wink.com/source',
+          '91wink.com',
+          'coverage.json',
+          'coverage.json:source',
+          '',
+          '',
+          '1',
+        ].join(','),
+      ].join('\n'));
+
+      const queue = buildCoverageReviewQueue(review);
+      const csv = coverageReviewQueueCsv(queue);
+      writeCoverageReviewQueue(queue, output);
+
+      assert.equal(queue.total_review_rows, 4);
+      assert.equal(queue.queue_rows, 3);
+      assert.deepEqual(queue.priority_counts, { P0: 2, P2: 1 });
+      assert.deepEqual(queue.rows.map(row => row.domain), [
+        'same.example',
+        'submit.example',
+        'manual.example',
+      ]);
+      assert.equal(queue.rows[0].review_row, 4);
+      assert.equal(queue.rows[0].review_decision_options, 'approved_domain_variant | reject_duplicate | reject_not_submit');
+      assert.match(csv, /priority,priority_score,review_row,review_action/);
+      assert.doesNotMatch(readFileSync(output, 'utf-8'), /91wink.com/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('can include skipped rows in review queue output', () => {
+    const dir = tempDir();
+    try {
+      const review = join(dir, 'coverage-review.csv');
+      writeFileSync(review, [
+        'review_decision,classification,candidate_import_recommendation,url,domain,occurrence_count',
+        'reject_source_page,missing_domain,skip_source_page,https://91wink.com/source,91wink.com,1',
+      ].join('\n'));
+
+      const queue = buildCoverageReviewQueue(review, { includeSkipped: true });
+
+      assert.equal(queue.queue_rows, 1);
+      assert.equal(queue.priority_counts.P9, 1);
+      assert.equal(queue.rows[0].review_action, 'skip_rejected_or_source_page');
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

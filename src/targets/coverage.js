@@ -50,6 +50,26 @@ const APPROVED_DECISIONS = new Set(['approved', 'approve', 'yes', 'y', 'true', '
 const DOMAIN_VARIANT_APPROVALS = new Set(['approved_domain_variant', 'approve_domain_variant']);
 const DOMAIN_CHANGE_APPROVALS = new Set(['approved_domain_change', 'approve_domain_change']);
 const REJECTED_DECISION_PATTERN = /^(reject|rejected|skip|skipped|already|duplicate)/;
+const REVIEW_QUEUE_HEADERS = [
+  'priority',
+  'priority_score',
+  'review_row',
+  'review_action',
+  'review_decision_options',
+  'classification',
+  'candidate_import_recommendation',
+  'url',
+  'domain',
+  'canonical_name',
+  'pricing',
+  'occurrence_count',
+  'source_files',
+  'source_locations',
+  'registry_target_ids',
+  'registry_submit_urls',
+  'review_instruction',
+  'review_notes',
+];
 
 function normalizePath(value) {
   return String(value || '').replace(/\\/g, '/');
@@ -572,6 +592,11 @@ function rowImportUrl(row) {
   return String(row.submission_url_override || row.submit_url || row.url || '').trim();
 }
 
+function numericValue(value, fallback = 0) {
+  const parsed = Number.parseInt(String(value || ''), 10);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
 function blockReason(row, normalized, decision) {
   const classification = String(row.classification || '').trim();
   const recommendation = String(row.candidate_import_recommendation || '').trim();
@@ -744,4 +769,137 @@ export function importCoverageReview(registryPath, reviewPath, opts = {}) {
     skipped_rows: skipped,
     blocked_rows: blocked,
   };
+}
+
+function reviewQueuePriority(row) {
+  const decision = reviewDecision(row);
+  const classification = String(row.classification || '').trim();
+  const recommendation = String(row.candidate_import_recommendation || '').trim();
+  const url = rowImportUrl(row).toLowerCase();
+  const sourceFiles = String(row.source_files || '').toLowerCase();
+  const occurrenceCount = numericValue(row.occurrence_count, 1);
+
+  if (isRejectedDecision(decision) || recommendation === 'skip_source_page') {
+    return {
+      priority: 'P9',
+      score: 0,
+      action: 'skip_rejected_or_source_page',
+      decision_options: 'leave_rejected',
+    };
+  }
+
+  if (classification === 'exact_in_registry' || recommendation === 'already_in_registry') {
+    return {
+      priority: 'P9',
+      score: 0,
+      action: 'skip_already_in_registry',
+      decision_options: 'leave_already_in_registry',
+    };
+  }
+
+  let score = 0;
+  if (recommendation === 'review_submit_url') score += 100;
+  if (classification === 'domain_in_registry_only') score += 75;
+  if (classification === 'missing_domain') score += 25;
+  if (/submit|submission|add[-_/]?(tool|product|site|startup|app)|products\/new|submissions\/new|vendors\/new|claim|showcase/.test(url)) score += 50;
+  if (/coverage|directory-submissions|notion|91wink/.test(sourceFiles)) score += 10;
+  score += Math.min(occurrenceCount, 10);
+
+  if (classification === 'domain_in_registry_only') {
+    score += 100;
+    return {
+      priority: 'P0',
+      score,
+      action: 'verify_distinct_submit_url_for_existing_domain',
+      decision_options: 'approved_domain_variant | reject_duplicate | reject_not_submit',
+    };
+  }
+
+  if (recommendation === 'review_submit_url') {
+    return {
+      priority: 'P0',
+      score,
+      action: 'verify_submit_form_then_approve_or_reject',
+      decision_options: 'approved | reject_not_submit | reject_paid | reject_auth_required',
+    };
+  }
+
+  if (/submit|add[-_/]?(tool|product|site|startup|app)|claim|showcase/.test(url)) {
+    return {
+      priority: 'P1',
+      score,
+      action: 'verify_possible_submit_url',
+      decision_options: 'approved | reject_not_submit | reject_paid | reject_auth_required',
+    };
+  }
+
+  return {
+    priority: 'P2',
+    score,
+    action: 'verify_directory_fit_before_any_approval',
+    decision_options: 'approved | reject_not_directory | reject_not_submit | reject_paid',
+  };
+}
+
+function compareReviewQueueRows(a, b) {
+  const priority = a.priority.localeCompare(b.priority);
+  if (priority) return priority;
+  if (b.priority_score !== a.priority_score) return b.priority_score - a.priority_score;
+  return String(a.domain).localeCompare(String(b.domain)) ||
+    String(a.url).localeCompare(String(b.url));
+}
+
+export function buildCoverageReviewQueue(reviewPath, opts = {}) {
+  const rows = parseCsv(readFileSync(reviewPath, 'utf-8'));
+  const includeSkipped = Boolean(opts.includeSkipped);
+  const queue = rows
+    .map((row, index) => {
+      const priority = reviewQueuePriority(row);
+      return {
+        ...row,
+        review_row: index + 2,
+        priority: priority.priority,
+        priority_score: priority.score,
+        review_action: priority.action,
+        review_decision_options: priority.decision_options,
+      };
+    })
+    .filter(row => includeSkipped || row.priority !== 'P9')
+    .sort(compareReviewQueueRows);
+
+  const counts = queue.reduce((acc, row) => {
+    acc[row.priority] = (acc[row.priority] || 0) + 1;
+    return acc;
+  }, {});
+
+  return {
+    generated_at: nowIso(),
+    review: reviewPath,
+    include_skipped: includeSkipped,
+    total_review_rows: rows.length,
+    queue_rows: queue.length,
+    priority_counts: counts,
+    instructions: [
+      'Review P0 rows first; they are most likely to be valid submit URLs or same-domain submit URL conflicts.',
+      'Do not approve paid, source-page, login-only, CAPTCHA-only, or non-directory pages.',
+      'Use approved_domain_variant only when a same-domain URL is a distinct valid submit endpoint.',
+      'Approved rows still import as needs_scout and cannot execute until scout and target audit pass.',
+    ],
+    rows: queue,
+  };
+}
+
+export function coverageReviewQueueCsv(queue) {
+  const rows = queue.rows.map(row =>
+    REVIEW_QUEUE_HEADERS.map(header => row[header])
+  );
+  return [
+    REVIEW_QUEUE_HEADERS.join(','),
+    ...rows.map(row => row.map(csvEscape).join(',')),
+  ].join('\n') + '\n';
+}
+
+export function writeCoverageReviewQueue(queue, path) {
+  ensureParent(path);
+  writeFileSync(path, coverageReviewQueueCsv(queue), 'utf-8');
 }
