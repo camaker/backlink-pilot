@@ -89,4 +89,50 @@ describe('scoutPlan', () => {
       rmSync(dir, { recursive: true, force: true });
     }
   });
+
+  it('times out a stuck target and continues with the next target', async () => {
+    const dir = tempDir();
+    try {
+      const plan = join(dir, 'plan.json');
+      const state = join(dir, 'scout-state.json');
+      const results = join(dir, 'scout-results.jsonl');
+      writeFileSync(plan, JSON.stringify({
+        created_at: 'plan-1',
+        targets: [
+          { id: 'stuck', submit_url: 'https://stuck.example/submit', mode: 'auto_candidate' },
+          { id: 'next', submit_url: 'https://next.example/submit', mode: 'auto_candidate' },
+        ],
+      }));
+
+      const summary = await scoutPlan(plan, {
+        state,
+        results,
+        delay: '0ms',
+        targetTimeout: '10ms',
+        configObject: { browser: { engine: 'playwright' } },
+        scoutFn: async (url, opts) => {
+          if (opts.targetId === 'stuck') {
+            await new Promise(resolve => setTimeout(resolve, 100));
+          }
+          return {
+            target_id: opts.targetId,
+            submit_url: url,
+            classification: { mode: 'needs_review', status: 'no_form_detected', reasons: ['test'] },
+          };
+        },
+      });
+
+      const parsedState = JSON.parse(readFileSync(state, 'utf-8'));
+      const lines = readFileSync(results, 'utf-8').trim().split('\n').map(JSON.parse);
+
+      assert.equal(summary.failed, 1);
+      assert.equal(summary.processed, 1);
+      assert.equal(parsedState.items.find(item => item.id === 'stuck').status, 'scout_failed');
+      assert.equal(parsedState.items.find(item => item.id === 'next').status, 'scouted');
+      assert.match(lines[0].error, /scout target timed out/);
+      assert.equal(lines[1].target_id, 'next');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
 });

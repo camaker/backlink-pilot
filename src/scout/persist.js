@@ -1,7 +1,7 @@
 import { mkdirSync, writeFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { stringify } from 'yaml';
-import { classifyScoutResult } from './classifier.js';
+import { classifyScoutResult, isBrowserErrorFinalUrl } from './classifier.js';
 import { slugify } from '../targets/normalize.js';
 import { DEFAULT_REGISTRY_FILE, loadRegistry, saveRegistry } from '../targets/registry.js';
 
@@ -55,6 +55,52 @@ function classificationChanged(left = {}, right = {}) {
     String(left.status || '') !== String(right.status || '');
 }
 
+function isRemoteNullString(value) {
+  const text = String(value || '');
+  return text.includes('"subtype": "null"') && text.includes('"value": null');
+}
+
+function cleanScoutString(value) {
+  return isRemoteNullString(value) ? '' : value;
+}
+
+function cleanScoutField(field = {}) {
+  const cleaned = {};
+  for (const [key, value] of Object.entries(field || {})) {
+    cleaned[key] = typeof value === 'string' ? cleanScoutString(value) : value;
+  }
+
+  if (!cleaned.selector || isRemoteNullString(cleaned.selector)) {
+    cleaned.selector = '';
+  }
+
+  return cleaned;
+}
+
+export function sanitizeScoutForms(forms = []) {
+  if (!Array.isArray(forms)) return [];
+  return forms.map(form => ({
+    ...form,
+    fields: Array.isArray(form.fields)
+      ? form.fields.map(cleanScoutField)
+      : [],
+    submit_buttons: Array.isArray(form.submit_buttons)
+      ? form.submit_buttons.map(cleanScoutField)
+      : [],
+  }));
+}
+
+export function sanitizeScoutResult(result = {}, target = {}) {
+  const fallbackFinalUrl = target.submit_url || result.submit_url || '';
+  return {
+    ...result,
+    final_url: isBrowserErrorFinalUrl(result.final_url)
+      ? fallbackFinalUrl
+      : result.final_url,
+    forms: sanitizeScoutForms(result.forms),
+  };
+}
+
 export function resolveScoutClassification(result = {}) {
   const computed = normalizeClassification(classifyScoutResult({
     ...result,
@@ -88,19 +134,23 @@ export function resolveScoutClassification(result = {}) {
 }
 
 export function applyScoutResultToTarget(target, result) {
-  const resolved = resolveScoutClassification(result);
+  const sanitized = sanitizeScoutResult(result, target);
+  const resolved = resolveScoutClassification({
+    ...sanitized,
+    final_url: result.final_url,
+  });
   const classification = resolved.classification || {};
-  const auth = result.signals?.login_required
+  const auth = sanitized.signals?.login_required
     ? 'required'
-    : result.signals?.oauth_available
+    : sanitized.signals?.oauth_available
       ? 'oauth'
       : classification.status === 'auth_required'
         ? 'required'
         : 'none';
-  const captcha = result.signals?.captcha || classification.status === 'captcha_required'
+  const captcha = sanitized.signals?.captcha || classification.status === 'captcha_required'
     ? 'required'
     : 'none';
-  const reachable = result.reachable === false || classification.status === 'dead'
+  const reachable = sanitized.reachable === false || classification.status === 'dead'
     ? 'no'
     : 'yes';
 
@@ -108,14 +158,14 @@ export function applyScoutResultToTarget(target, result) {
     ...target,
     technical: {
       ...(target.technical || {}),
-      last_scouted_at: result.checked_at || nowIso(),
+      last_scouted_at: sanitized.checked_at || nowIso(),
       auth,
       captcha,
       reachable,
-      final_url: result.final_url || target.submit_url,
-      http_status: result.http_status || null,
+      final_url: sanitized.final_url || target.submit_url,
+      http_status: sanitized.http_status || null,
     },
-    forms: result.forms || target.forms || [],
+    forms: sanitized.forms || target.forms || [],
     submission: {
       ...(target.submission || {}),
       mode: classification.mode || target.submission?.mode || 'needs_scout',

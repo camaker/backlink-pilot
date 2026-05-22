@@ -54,9 +54,12 @@ export function markItem(state, targetId, updates) {
 export function isTerminalStatus(status) {
   return [
     'submitted',
+    'submitted_unverified',
     'pending_review',
     'accepted',
     'duplicate',
+    'scouted',
+    'scout_failed',
     'skipped',
     'failed',
     'terminal_failed',

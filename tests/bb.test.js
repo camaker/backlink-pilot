@@ -1,6 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { isBbAvailable } from '../src/bb.js';
+import { readFileSync } from 'fs';
+import { bbCommand, isBbAvailable, normalizeBbOutput } from '../src/bb.js';
 
 describe('bb-browser availability', () => {
   it('isBbAvailable returns boolean', () => {
@@ -40,5 +41,46 @@ describe('bb timeout configuration', () => {
       // May fail due to Chrome not running, but should NOT fail due to timeout config
       assert.doesNotMatch(e.message, /timeout.*config/i);
     }
+  });
+});
+
+describe('bb output normalization', () => {
+  it('converts bb-browser remote null objects to an empty string', () => {
+    const output = `{
+  "type": "object",
+  "subtype": "null",
+  "value": null
+}`;
+
+    assert.equal(normalizeBbOutput(output), '');
+  });
+
+  it('converts bb-browser undefined objects to an empty string', () => {
+    assert.equal(normalizeBbOutput('{ "type": "undefined" }'), '');
+  });
+
+  it('returns primitive value fields as strings', () => {
+    assert.equal(normalizeBbOutput('{ "type": "number", "value": 42 }'), '42');
+  });
+
+  it('leaves ordinary text unchanged', () => {
+    assert.equal(normalizeBbOutput('hello'), 'hello');
+  });
+});
+
+describe('bb command execution', () => {
+  it('does not route bb-browser eval through cmd.exe on Windows', () => {
+    const command = bbCommand(['eval', "(() => 'a & b')()"]);
+
+    if (process.platform === 'win32') {
+      assert.notEqual(command.command.toLowerCase(), 'cmd.exe');
+      assert.ok(command.args.some(arg => String(arg).endsWith('bb-browser\\dist\\cli.js') || String(arg).endsWith('bb-browser/dist/cli.js')));
+    }
+    assert.equal(command.args.at(-1), "(() => 'a & b')()");
+  });
+
+  it('uses a larger output buffer for bb-browser subprocesses', () => {
+    const src = readFileSync('src/bb.js', 'utf-8');
+    assert.match(src, /maxBuffer:\s*opts\.maxBuffer\s*\|\|\s*16\s*\*\s*1024\s*\*\s*1024/);
   });
 });

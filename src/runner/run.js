@@ -12,6 +12,7 @@ import {
   validateProductReadiness,
 } from '../readiness/product.js';
 import { extractListingCandidates } from '../verification/listing.js';
+import { updateRegistryWithSubmissionResult } from '../submission/registry.js';
 import {
   ensureDir,
   targetArtifactDir,
@@ -362,7 +363,7 @@ export async function runPlan(planPath, opts = {}) {
         classified,
         listing_extraction: listingExtraction,
       });
-      appendJsonl(resultsPath, {
+      const resultRow = {
         target_id: target.id,
         status: classified.status,
         submit_url: target.submit_url,
@@ -375,7 +376,12 @@ export async function runPlan(planPath, opts = {}) {
         error: submission?.error || '',
         artifact_dir: targetArtifacts,
         at: new Date().toISOString(),
+      };
+      appendJsonl(resultsPath, resultRow);
+      const registryUpdate = updateRegistryWithSubmissionResult(resultRow, {
+        registry: registry.registryPath,
       });
+      writeArtifactJson(join(targetArtifacts, 'registry-submission-update.json'), registryUpdate);
       if (classified.status === 'failed') summary.failed++;
       else summary.submitted++;
     } catch (error) {

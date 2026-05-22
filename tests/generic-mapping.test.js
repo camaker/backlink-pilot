@@ -6,7 +6,7 @@ import {
   scoutMappedFields,
   selectorForScoutField,
 } from '../src/sites/generic.js';
-import { selectorForField } from '../src/scout/discover.js';
+import { gotoScoutPage, isSubmitLinkCandidate, selectorForField, sortSubmitLinks } from '../src/scout/discover.js';
 
 describe('scout selector generation', () => {
   it('builds stable selectors from discovered field attributes', () => {
@@ -26,6 +26,59 @@ describe('scout selector generation', () => {
       selectorForField({ tag: 'button', type: 'submit' }),
       'button[type="submit"]'
     );
+  });
+
+  it('prioritizes same-domain submit links over external submission services', () => {
+    const links = sortSubmitLinks([
+      {
+        text: 'We Submit Your SaaS to 140+ Directories Effortlessly',
+        href: 'https://submitsaas.com/',
+      },
+      {
+        text: 'Submit Tool',
+        href: 'https://aixcollection.com/get-started',
+      },
+      {
+        text: '',
+        href: 'https://x.com/submitmatic',
+      },
+    ], 'https://aixcollection.com/');
+
+    assert.equal(links[0].href, 'https://aixcollection.com/get-started');
+  });
+
+  it('does not classify directory names, product pages, or browser stores as submit links', () => {
+    assert.equal(
+      isSubmitLinkCandidate('https://ashlist.com/product/example', 'Example', 'https://ashlist.com/'),
+      false
+    );
+    assert.equal(
+      isSubmitLinkCandidate('https://chromewebstore.google.com/detail/example', 'Add to Chrome', 'https://example.com/'),
+      false
+    );
+    assert.equal(
+      isSubmitLinkCandidate('https://appalist.com/latest', 'Latest', 'https://appalist.com/'),
+      false
+    );
+  });
+
+  it('falls back to domcontentloaded when networkidle navigation times out', async () => {
+    const calls = [];
+    const page = {
+      async goto(url, options) {
+        calls.push({ url, options });
+        if (options.waitUntil === 'networkidle') throw new Error('networkidle timeout');
+      },
+    };
+
+    const result = await gotoScoutPage(page, 'https://example.com/submit');
+
+    assert.equal(result.ok, true);
+    assert.equal(result.fallback, true);
+    assert.match(result.error, /networkidle timeout/);
+    assert.equal(calls.length, 2);
+    assert.equal(calls[0].options.waitUntil, 'networkidle');
+    assert.equal(calls[1].options.waitUntil, 'domcontentloaded');
   });
 });
 

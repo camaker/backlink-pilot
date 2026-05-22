@@ -31,6 +31,27 @@ describe('scout classifier', () => {
     assert.equal(classifyScoutResult({ reachable: false }).status, 'dead');
   });
 
+  it('does not trust browser error pages as discovered forms', () => {
+    const result = classifyScoutResult({
+      reachable: true,
+      http_status: 200,
+      final_url: 'chrome-error://chromewebdata/',
+      forms: [
+        {
+          fields: [
+            { required: true, mapped_to: 'product.name' },
+            { required: true, mapped_to: 'product.url' },
+            { required: true, mapped_to: 'product.description' },
+          ],
+          submit_buttons: [{ text: 'Submit' }],
+        },
+      ],
+    });
+
+    assert.equal(result.mode, 'needs_scout');
+    assert.equal(result.status, 'browser_error');
+  });
+
   it('does not auto-submit when required fields are unmapped', () => {
     const result = classifyScoutResult({
       reachable: true,
@@ -49,12 +70,99 @@ describe('scout classifier', () => {
     assert.equal(result.mode, 'needs_scout');
     assert.match(result.reasons[0], /required_fields_unmapped/);
   });
+
+  it('does not auto-submit newsletter-only forms without product submission fields', () => {
+    const result = classifyScoutResult({
+      reachable: true,
+      http_status: 200,
+      forms: [
+        {
+          fields: [
+            { type: 'email', name: 'email-address', required: true, mapped_to: 'product.email' },
+          ],
+          submit_buttons: [{ text: 'Subscribe' }],
+        },
+      ],
+    });
+
+    assert.equal(result.mode, 'needs_scout');
+    assert.equal(result.status, 'unsupported_form');
+    assert.ok(result.reasons.some(reason => reason.startsWith('auto_safe_fields_missing:')));
+  });
+
+  it('allows optional required fields when the core product submission fields are mapped', () => {
+    const result = classifyScoutResult({
+      reachable: true,
+      http_status: 200,
+      forms: [
+        {
+          fields: [
+            { type: 'text', name: 'name', required: true, mapped_to: 'product.name' },
+            { type: 'url', name: 'url', required: true, mapped_to: 'product.url' },
+            { type: 'textarea', name: 'description', required: true, mapped_to: 'product.description' },
+            { type: 'email', name: 'email', required: true, mapped_to: 'product.email' },
+          ],
+          submit_buttons: [{ text: 'Submit' }],
+        },
+      ],
+    });
+
+    assert.equal(result.mode, 'auto_safe');
+  });
+
+  it('ignores infrastructure fields when deciding whether a form is auto safe', () => {
+    const result = classifyScoutResult({
+      reachable: true,
+      http_status: 200,
+      forms: [
+        {
+          fields: [
+            { type: 'hidden', name: '_wpnonce', required: true, mapped_to: '' },
+            { type: 'checkbox', name: 'terms', required: true, mapped_to: '' },
+            { type: 'submit', name: 'submit', required: true, mapped_to: '' },
+            { type: 'text', name: 'name', required: false, mapped_to: 'product.name' },
+            { type: 'url', name: 'url', required: false, mapped_to: 'product.url' },
+            { type: 'textarea', name: 'description', required: false, mapped_to: 'product.description' },
+          ],
+          submit_buttons: [{ text: 'Submit' }],
+        },
+      ],
+    });
+
+    assert.equal(result.mode, 'auto_safe');
+    assert.equal(result.status, 'mapped');
+  });
+
+  it('keeps required file uploads assisted', () => {
+    const result = classifyScoutResult({
+      reachable: true,
+      http_status: 200,
+      forms: [
+        {
+          fields: [
+            { type: 'text', name: 'name', required: true, mapped_to: 'product.name' },
+            { type: 'url', name: 'url', required: true, mapped_to: 'product.url' },
+            { type: 'textarea', name: 'description', required: true, mapped_to: 'product.description' },
+            { type: 'file', name: 'logo', required: true, mapped_to: 'product.logo' },
+          ],
+          submit_buttons: [{ text: 'Submit' }],
+        },
+      ],
+    });
+
+    assert.equal(result.mode, 'assisted');
+    assert.equal(result.status, 'asset_upload_required');
+  });
 });
 
 describe('submission result classifier', () => {
   it('separates pending review from unverified submission', () => {
     assert.equal(
       classifySubmissionResult({ confirmation: 'Thanks for submitting. Pending review.' }).status,
+      'pending_review'
+    );
+    assert.equal(
+      classifySubmissionResult({ body_text: '恭喜！您的站点已经成功提交，感谢您的支持。' }).status,
       'pending_review'
     );
     assert.equal(classifySubmissionResult({ confirmation: 'Clicked submit' }).status, 'submitted_unverified');

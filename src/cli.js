@@ -472,6 +472,7 @@ program
   .option('--source <name>', 'Filter by source')
   .option('--limit <n>', 'Maximum target count', '30')
   .option('--include-risk', 'Allow high-risk targets in the plan')
+  .option('--include-submitted', 'Include targets that already have last_submitted_at evidence')
   .option('--output <path>', 'Write plan to JSON/YAML file')
   .option('--json', 'Print JSON to stdout')
   .action(async (opts) => {
@@ -568,6 +569,7 @@ program
   .option('--results <path>', 'JSONL scout results path')
   .option('--limit <n>', 'Maximum targets to scout')
   .option('--delay <duration>', 'Delay between scouts, e.g. 10s or 1m')
+  .option('--target-timeout <duration>', 'Maximum time per target, e.g. 120s or 2m')
   .option('--retry', 'Retry targets already marked terminal in the scout state')
   .option('--mode <mode>', 'Only scout targets with this plan mode')
   .option('--no-deep', 'Do not follow submit/add links found on the page')

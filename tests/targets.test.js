@@ -2033,6 +2033,54 @@ targets:
       rmSync(dir, { recursive: true, force: true });
     }
   });
+
+  it('excludes previously submitted targets unless explicitly included', () => {
+    const dir = tempDir();
+    try {
+      const registry = join(dir, 'registry.yaml');
+      writeFileSync(registry, `
+version: 1
+targets:
+  - id: submitted
+    name: Submitted
+    domain: submitted.example
+    submit_url: https://submitted.example/submit
+    pricing: free
+    submission:
+      mode: auto_safe
+      status: mapped
+      last_submitted_at: 2026-05-22T00:00:00.000Z
+    quality:
+      risk: low
+  - id: fresh
+    name: Fresh
+    domain: fresh.example
+    submit_url: https://fresh.example/submit
+    pricing: free
+    submission:
+      mode: auto_safe
+      status: mapped
+      last_submitted_at: null
+    quality:
+      risk: low
+`);
+
+      const defaultPlan = buildSubmissionPlan({ registry, freeOnly: true, mode: 'auto_safe', limit: 10 });
+      const includeSubmittedPlan = buildSubmissionPlan({
+        registry,
+        freeOnly: true,
+        mode: 'auto_safe',
+        includeSubmitted: true,
+        limit: 10,
+      });
+
+      assert.deepEqual(defaultPlan.targets.map(target => target.id), ['fresh']);
+      assert.deepEqual(includeSubmittedPlan.targets.map(target => target.id), ['submitted', 'fresh']);
+      assert.equal(defaultPlan.excluded.find(target => target.id === 'submitted').last_submitted_at, '2026-05-22T00:00:00.000Z');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
 });
 
 describe('scout queue plan', () => {

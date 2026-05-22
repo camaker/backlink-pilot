@@ -1,20 +1,103 @@
 // bb.js — bb-browser execution layer
 // Wraps bb-browser CLI as subprocess calls, exposes Playwright-like page API
 
+import { existsSync } from 'fs';
+import { dirname, join } from 'path';
 import { execFileSync } from 'child_process';
 
 let _bbTimeout = 30000;
+let _resolvedBbCommand = null;
 
 function setBbTimeout(ms) {
   if (ms && ms > 0) _bbTimeout = ms;
 }
 
+function globalBbCliPath() {
+  try {
+    const npmRoot = execFileSync('npm', ['root', '-g'], {
+      encoding: 'utf-8',
+      timeout: 10000,
+    }).trim();
+    const cli = join(npmRoot, 'bb-browser', 'dist', 'cli.js');
+    return existsSync(cli) ? cli : '';
+  } catch {
+    return '';
+  }
+}
+
+function pathBbCliPath() {
+  try {
+    const where = execFileSync('where', ['bb-browser'], {
+      encoding: 'utf-8',
+      timeout: 10000,
+    })
+      .split(/\r?\n/)
+      .map(line => line.trim())
+      .filter(Boolean)
+      .find(path => !path.toLowerCase().endsWith('.cmd') && !path.toLowerCase().endsWith('.ps1'));
+
+    if (!where) return '';
+    const cli = join(dirname(where), 'node_modules', 'bb-browser', 'dist', 'cli.js');
+    return existsSync(cli) ? cli : '';
+  } catch {
+    return '';
+  }
+}
+
+function resolveBbCommand() {
+  if (_resolvedBbCommand) return _resolvedBbCommand;
+  if (process.platform === 'win32') {
+    const cli = globalBbCliPath() || pathBbCliPath();
+    if (cli) {
+      _resolvedBbCommand = { command: process.execPath, prefixArgs: [cli] };
+      return _resolvedBbCommand;
+    }
+  }
+  _resolvedBbCommand = { command: 'bb-browser', prefixArgs: [] };
+  return _resolvedBbCommand;
+}
+
+export function bbCommand(args = []) {
+  const resolved = resolveBbCommand();
+  return {
+    command: resolved.command,
+    args: [...resolved.prefixArgs, ...args],
+  };
+}
+
+export function execBb(args = [], opts = {}) {
+  const command = bbCommand(args);
+  return execFileSync(command.command, command.args, {
+    encoding: 'utf-8',
+    timeout: opts.timeout || _bbTimeout,
+    maxBuffer: opts.maxBuffer || 16 * 1024 * 1024,
+  });
+}
+
+export function normalizeBbOutput(raw) {
+  const text = String(raw ?? '').trim();
+  if (!text.startsWith('{') || !text.endsWith('}')) return text;
+
+  try {
+    const parsed = JSON.parse(text);
+    if (parsed && parsed.type === 'undefined') return '';
+    if (parsed && parsed.subtype === 'null' && parsed.value === null) return '';
+    if (Object.prototype.hasOwnProperty.call(parsed || {}, 'value')) {
+      return parsed.value === null || parsed.value === undefined
+        ? ''
+        : String(parsed.value);
+    }
+  } catch {
+    // Non-JSON page content can legitimately begin/end with braces.
+  }
+
+  return text;
+}
+
 function bb(...args) {
   try {
-    return execFileSync('bb-browser', args, {
-      encoding: 'utf-8',
-      timeout: _bbTimeout,
-    }).trim();
+    const output = execBb(args);
+    return args[0] === 'eval' ? normalizeBbOutput(output) : output.trim();
   } catch (e) {
     const msg = e.stderr?.trim() || e.message;
     if (msg.includes('ECONNREFUSED') || msg.includes('No page target') || msg.includes('connect')) {
@@ -35,6 +118,11 @@ function bb(...args) {
   }
 }
 
+function tabSuffix(tabId = '') {
+  const text = String(tabId || '').trim();
+  return text.length > 4 ? text.slice(-4).toLowerCase() : text;
+}
+
 function tryBb(...args) {
   try {
     return bb(...args);
@@ -52,7 +140,7 @@ function escapeJs(str) {
  */
 export function isBbAvailable() {
   try {
-    execFileSync('bb-browser', ['--version'], { encoding: 'utf-8', timeout: 10000 });
+    execBb(['--version'], { timeout: 10000 });
     return true;
   } catch { return false; }
 }
@@ -62,16 +150,10 @@ export function ensureBbRunning() {
   if (tryBb('tab', 'list') !== null) return true; // health check uses bb('tab', 'list')
 
   try {
-    execFileSync('bb-browser', ['daemon', 'start'], {
-      encoding: 'utf-8',
-      timeout: _bbTimeout,
-    });
+    execBb(['daemon', 'start']);
   } catch {
     try {
-      execFileSync('bb-browser', ['open', 'about:blank'], {
-        encoding: 'utf-8',
-        timeout: _bbTimeout,
-      });
+      execBb(['open', 'about:blank']);
     } catch {
       return false;
     }
@@ -87,6 +169,7 @@ export class BbPage {
   constructor(config = {}) {
     this._config = config;
     this._tabId = null;
+    this._closeTabIds = [];
     this._openedTabs = []; // track tabs for cleanup
 
     // Apply timeout from config
@@ -109,28 +192,60 @@ export class BbPage {
     const tabMatch = result.match(/Tab ID:\s*(\S+)/);
     if (tabMatch) {
       this._tabId = tabMatch[1];
+      this._closeTabIds.push(tabSuffix(this._tabId));
       this._openedTabs.push(this._tabId);
     }
-    // Wait for page to settle (no networkidle equivalent)
-    await new Promise(r => setTimeout(r, 2000));
+    await this._waitForNavigation(url, _opts);
+  }
+
+  _tabArgs(args = []) {
+    return this._tabId ? [...args, '--tab', this._tabId] : args;
+  }
+
+  _bb(...args) {
+    return bb(...this._tabArgs(args));
+  }
+
+  _eval(script) {
+    return this._bb('eval', script);
+  }
+
+  async _waitForNavigation(targetUrl, opts = {}) {
+    const timeout = Number(opts.timeout || this._config.browser?.timeout || 15000);
+    const start = Date.now();
+    let lastUrl = '';
+
+    while (Date.now() - start < timeout) {
+      await new Promise(r => setTimeout(r, 500));
+      try {
+        lastUrl = this.url();
+        if (lastUrl && lastUrl !== 'about:blank') return;
+      } catch {}
+    }
+
+    // Keep going with the loaded tab. Callers classify about:blank/chrome-error conservatively.
+    if (!lastUrl || lastUrl === 'about:blank') {
+      console.warn(`⚠️  bb-browser navigation did not settle for ${targetUrl}`);
+    }
   }
 
   /**
    * Close all tabs opened during this session
    */
   async cleanup() {
-    for (const tabId of this._openedTabs) {
+    for (const tabId of [...this._closeTabIds].reverse()) {
       try { bb('tab', 'close', tabId); } catch {}
     }
     this._openedTabs = [];
+    this._closeTabIds = [];
   }
 
   async fill(selectorOrRef, value) {
     if (selectorOrRef.startsWith('@')) {
-      bb('fill', selectorOrRef, value);
+      this._bb('fill', selectorOrRef, value);
     } else {
       // CSS selector — fill directly via DOM events for scout-persisted selectors.
-      const exists = bb('eval',
+      const exists = this._eval(
         `!!document.querySelector('${escapeJs(selectorOrRef)}')`);
       if (exists !== 'true') throw new Error(`Element not found: ${selectorOrRef}`);
       await this.evalFill(selectorOrRef, value);
@@ -139,7 +254,7 @@ export class BbPage {
 
   async click(selectorOrRef) {
     if (selectorOrRef.startsWith('@')) {
-      bb('click', selectorOrRef);
+      this._bb('click', selectorOrRef);
     } else {
       // CSS selector — use evalClick with full user-event simulation
       // This dispatches mousedown/mouseup/click to work with React/Vue components
@@ -153,27 +268,27 @@ export class BbPage {
   }
 
   async textContent(selector) {
-    return bb('eval', `document.querySelector('${escapeJs(selector)}')?.textContent || ''`);
+    return this._eval(`document.querySelector('${escapeJs(selector)}')?.textContent || ''`);
   }
 
   async content() {
-    return bb('eval', 'document.documentElement.outerHTML');
+    return this._eval('document.documentElement.outerHTML');
   }
 
   url() {
-    return bb('eval', 'window.location.href');
+    return this._eval('window.location.href');
   }
 
   async screenshot(path) {
-    if (path) bb('screenshot', path);
-    else bb('screenshot');
+    if (path) this._bb('screenshot', path);
+    else this._bb('screenshot');
   }
 
   /**
    * Get interactive snapshot — returns parsed accessibility tree text
    */
   async snapshot() {
-    return bb('snapshot', '-i');
+    return this._bb('snapshot', '-i');
   }
 
   /**
@@ -184,7 +299,7 @@ export class BbPage {
     if (selector.includes(':has-text(')) {
       return this._queryHasText(selector);
     }
-    const exists = bb('eval',
+    const exists = this._eval(
       `!!document.querySelector('${escapeJs(selector)}')`);
     if (exists === 'true') return new BbElementHandle(this, selector);
     return null;
@@ -204,7 +319,7 @@ export class BbPage {
     const match = selector.match(/^(\w+):has-text\(["'](.+?)["']\)$/);
     if (!match) return null;
     const [, tag, text] = match;
-    const exists = bb('eval',
+    const exists = this._eval(
       `!!Array.from(document.querySelectorAll('${tag}')).find(el => el.textContent.includes('${escapeJs(text)}'))`);
     if (exists === 'true') return new BbElementHandle(this, selector, { tag, text });
     return null;
@@ -214,7 +329,7 @@ export class BbPage {
    * Execute JS directly in page and fill/click by CSS selector
    */
   async evalFill(selector, value) {
-    bb('eval', `(() => {
+    this._eval(`(() => {
       const el = document.querySelector('${escapeJs(selector)}');
       if (!el) return;
       el.focus();
@@ -225,7 +340,7 @@ export class BbPage {
   }
 
   async evalClick(selector) {
-    bb('eval', `document.querySelector('${escapeJs(selector)}')?.click()`);
+    this._eval(`document.querySelector('${escapeJs(selector)}')?.click()`);
   }
 
   /**
@@ -233,7 +348,7 @@ export class BbPage {
    * Required for React/Vue components that don't respond to .click()
    */
   async evalClickReal(selector) {
-    bb('eval', `(() => {
+    this._eval(`(() => {
       const el = document.querySelector('${escapeJs(selector)}');
       if (!el) return;
       el.dispatchEvent(new MouseEvent('mousedown', {bubbles:true,cancelable:true}));
@@ -248,7 +363,7 @@ export class BbPage {
   }
 
   async evalClickByText(tag, text) {
-    bb('eval', `Array.from(document.querySelectorAll('${tag}')).find(el => el.textContent.includes('${escapeJs(text)}'))?.click()`);
+    this._eval(`Array.from(document.querySelectorAll('${tag}')).find(el => el.textContent.includes('${escapeJs(text)}'))?.click()`);
   }
 }
 
@@ -261,12 +376,24 @@ export class BbElementHandle {
     this._selector = selector;
     this._tag = opts.tag;
     this._text = opts.text;
+    this._expression = opts.expression;
+  }
+
+  _elementExpression() {
+    if (this._expression) return this._expression;
+    return `document.querySelector('${escapeJs(this._selector)}')`;
+  }
+
+  locator(selector) {
+    return new BbLocator(this._page, selector, {
+      rootExpression: this._elementExpression(),
+    });
   }
 
   async isVisible() {
     if (this._tag && this._text) {
       const result = this._page._config;
-      return bb('eval',
+      return this._page._eval(
         `(() => {
           const el = Array.from(document.querySelectorAll('${this._tag}')).find(e => e.textContent.includes('${escapeJs(this._text)}'));
           if (!el) return false;
@@ -275,9 +402,9 @@ export class BbElementHandle {
         })()`
       ) === 'true';
     }
-    return bb('eval',
+    return this._page._eval(
       `(() => {
-        const el = document.querySelector('${escapeJs(this._selector)}');
+        const el = ${this._elementExpression()};
         if (!el) return false;
         const r = el.getBoundingClientRect();
         return r.width > 0 && r.height > 0;
@@ -287,34 +414,58 @@ export class BbElementHandle {
 
   async textContent() {
     if (this._tag && this._text) {
-      return bb('eval',
+      return this._page._eval(
         `Array.from(document.querySelectorAll('${this._tag}')).find(e => e.textContent.includes('${escapeJs(this._text)}'))?.textContent || ''`);
     }
-    return bb('eval',
-      `document.querySelector('${escapeJs(this._selector)}')?.textContent || ''`);
+    return this._page._eval(
+      `(${this._elementExpression()})?.textContent || ''`);
   }
 
   async getAttribute(attr) {
-    return bb('eval',
-      `document.querySelector('${escapeJs(this._selector)}')?.getAttribute('${escapeJs(attr)}') || null`);
+    return this._page._eval(
+      `(${this._elementExpression()})?.getAttribute('${escapeJs(attr)}') || null`);
   }
 
   async click() {
     if (this._tag && this._text) {
       await this._page.evalClickByText(this._tag, this._text);
+    } else if (this._expression) {
+      this._page._eval(`(() => {
+        const el = ${this._elementExpression()};
+        if (!el) return;
+        el.dispatchEvent(new MouseEvent('mousedown', {bubbles:true,cancelable:true}));
+        el.dispatchEvent(new MouseEvent('mouseup', {bubbles:true,cancelable:true}));
+        el.dispatchEvent(new MouseEvent('click', {bubbles:true,cancelable:true}));
+        if (el.type === 'radio' || el.type === 'checkbox') {
+          el.checked = el.type === 'radio' ? true : !el.checked;
+          el.dispatchEvent(new Event('change', {bubbles:true}));
+          el.dispatchEvent(new Event('input', {bubbles:true}));
+        }
+      })()`);
     } else {
       await this._page.evalClickReal(this._selector);
     }
   }
 
   async fill(value) {
+    if (this._expression) {
+      this._page._eval(`(() => {
+        const el = ${this._elementExpression()};
+        if (!el) return;
+        el.focus();
+        el.value = '${escapeJs(value)}';
+        el.dispatchEvent(new Event('input', {bubbles: true}));
+        el.dispatchEvent(new Event('change', {bubbles: true}));
+      })()`);
+      return;
+    }
     await this._page.evalFill(this._selector, value);
   }
 
   async evaluate(fn) {
     // Simple evaluate — runs fn as string with el as argument
-    return bb('eval',
-      `(${fn.toString()})(document.querySelector('${escapeJs(this._selector)}'))`);
+    return this._page._eval(
+      `(${fn.toString()})(${this._elementExpression()})`);
   }
 }
 
@@ -322,29 +473,41 @@ export class BbElementHandle {
  * Locator wrapping bb-browser eval calls
  */
 export class BbLocator {
-  constructor(page, selector) {
+  constructor(page, selector, opts = {}) {
     this._page = page;
     this._selector = selector;
+    this._rootExpression = opts.rootExpression || 'document';
+  }
+
+  _queryExpression() {
+    return `${this._rootExpression}.querySelector('${escapeJs(this._selector)}')`;
+  }
+
+  _queryAllExpression() {
+    return `${this._rootExpression}.querySelectorAll('${escapeJs(this._selector)}')`;
   }
 
   first() {
-    return new BbElementHandle(this._page, this._selector);
+    return new BbElementHandle(this._page, this._selector, {
+      expression: this._queryExpression(),
+    });
   }
 
   async all() {
-    const countStr = bb('eval',
-      `document.querySelectorAll('${escapeJs(this._selector)}').length`);
+    const countStr = this._page._eval(
+      `${this._queryAllExpression()}.length`);
     const count = parseInt(countStr, 10) || 0;
     return Array.from({ length: count }, (_, i) =>
-      new BbElementHandle(this._page,
-        `document.querySelectorAll('${escapeJs(this._selector)}')[${i}]`)
+      new BbElementHandle(this._page, this._selector, {
+        expression: `${this._queryAllExpression()}[${i}]`,
+      })
     );
   }
 
   async isVisible() {
-    return bb('eval',
+    return this._page._eval(
       `(() => {
-        const el = document.querySelector('${escapeJs(this._selector)}');
+        const el = ${this._queryExpression()};
         if (!el) return false;
         const r = el.getBoundingClientRect();
         return r.width > 0 && r.height > 0;
@@ -353,10 +516,10 @@ export class BbLocator {
   }
 
   async fill(value) {
-    await this._page.evalFill(this._selector, value);
+    await this.first().fill(value);
   }
 
   async click() {
-    await this._page.evalClickReal(this._selector);
+    await this.first().click();
   }
 }

@@ -1,8 +1,9 @@
 // browser.js — Dual-engine browser wrapper
-// Supports rebrowser-playwright (default) and bb-browser
+// Supports official Playwright, optional rebrowser-playwright, and bb-browser
 
 import { existsSync } from 'fs';
-import { chromium } from 'rebrowser-playwright';
+import { chromium as playwrightChromium } from 'playwright';
+import { chromium as rebrowserChromium } from 'rebrowser-playwright';
 
 function resolveEngine(config) {
   if (config._engine) return config._engine;
@@ -10,18 +11,46 @@ function resolveEngine(config) {
   return 'playwright';
 }
 
+function resolvePlaywrightProvider(config = {}) {
+  const browserOpts = config.browser || {};
+  return (
+    config._playwrightProvider ||
+    browserOpts.playwright_provider ||
+    browserOpts.playwrightProvider ||
+    process.env.BACKLINK_PILOT_PLAYWRIGHT_PROVIDER ||
+    'playwright'
+  );
+}
+
+function resolveChromium(config = {}) {
+  return resolvePlaywrightProvider(config) === 'rebrowser'
+    ? rebrowserChromium
+    : playwrightChromium;
+}
+
 export async function launchBrowser(config = {}) {
   const browserOpts = config.browser || {};
   const storageState = config._authStatePath || browserOpts.storage_state || browserOpts.storageState;
+  const chromium = resolveChromium(config);
 
-  const browser = await chromium.launch({
+  const launchOptions = {
     headless: browserOpts.headless !== false,
     args: [
       '--disable-blink-features=AutomationControlled',
       '--no-sandbox',
       '--disable-dev-shm-usage',
     ],
-  });
+  };
+
+  const configuredExecutablePath = browserOpts.executable_path || browserOpts.executablePath;
+  const bundledExecutablePath = typeof chromium.executablePath === 'function'
+    ? chromium.executablePath()
+    : '';
+  const executablePath = configuredExecutablePath ||
+    (bundledExecutablePath && existsSync(bundledExecutablePath) ? bundledExecutablePath : '');
+  if (executablePath) launchOptions.executablePath = executablePath;
+
+  const browser = await chromium.launch(launchOptions);
 
   const contextOptions = {
     userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',

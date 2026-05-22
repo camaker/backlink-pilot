@@ -10,6 +10,7 @@ import {
   applyScoutResultToTarget,
   resolveScoutClassification,
   saveScoutResult,
+  sanitizeScoutForms,
   scoutResultPath,
   updateRegistryWithScoutResult,
 } from '../src/scout/persist.js';
@@ -110,6 +111,38 @@ describe('scout persistence', () => {
     assert.equal(updated.submission.status, 'mapped');
   });
 
+  it('keeps non-required fields non-required after bb-browser scout persistence', () => {
+    const updated = applyScoutResultToTarget({
+      id: 'example',
+      submit_url: 'https://example.com/submit',
+      technical: { auth: 'unknown' },
+      submission: { mode: 'auto_candidate', status: 'new' },
+    }, {
+      checked_at: '2026-05-21T00:00:00.000Z',
+      final_url: 'https://example.com/submit',
+      reachable: true,
+      signals: { login_required: false, oauth_available: false, captcha: false },
+      forms: [
+        {
+          fields: [
+            { type: 'text', name: 'name', required: false, mapped_to: 'product.name' },
+            { type: 'url', name: 'url', required: false, mapped_to: 'product.url' },
+            { type: 'textarea', name: 'description', required: false, mapped_to: 'product.description' },
+          ],
+          submit_buttons: [{ text: 'Submit', selector: 'button[type="submit"]' }],
+        },
+      ],
+      classification: {
+        mode: 'auto_safe',
+        status: 'mapped',
+        reasons: ['form_mapped_no_auth_no_captcha'],
+      },
+    });
+
+    assert.equal(updated.submission.mode, 'auto_safe');
+    assert.equal(updated.forms[0].fields.some(field => field.required), false);
+  });
+
   it('recomputes scout classification before applying registry updates', () => {
     const target = {
       id: 'example',
@@ -175,6 +208,44 @@ describe('scout persistence', () => {
     assert.equal(resolved.source, 'provided_conservative');
     assert.equal(resolved.mismatch, true);
     assert.match(resolved.classification.reasons.join('; '), /classification_mismatch:assisted->auto_safe/);
+  });
+
+  it('sanitizes bb-browser remote null field values before registry persistence', () => {
+    const remoteNull = `{
+  "type": "object",
+  "subtype": "null",
+  "value": null
+}`;
+    const forms = sanitizeScoutForms([
+      {
+        fields: [
+          {
+            tag: 'textarea',
+            type: remoteNull,
+            name: 'description',
+            id: remoteNull,
+            placeholder: remoteNull,
+            aria_label: remoteNull,
+            selector: `textarea[id="${remoteNull}"]`,
+          },
+        ],
+        submit_buttons: [
+          {
+            tag: 'input',
+            type: 'submit',
+            name: remoteNull,
+            selector: `input[id="${remoteNull}"]`,
+          },
+        ],
+      },
+    ]);
+
+    assert.equal(forms[0].fields[0].type, '');
+    assert.equal(forms[0].fields[0].id, '');
+    assert.equal(forms[0].fields[0].placeholder, '');
+    assert.equal(forms[0].fields[0].selector, '');
+    assert.equal(forms[0].submit_buttons[0].name, '');
+    assert.equal(forms[0].submit_buttons[0].selector, '');
   });
 
   it('updates a persisted registry by target id', () => {

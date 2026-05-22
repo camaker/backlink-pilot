@@ -23,11 +23,98 @@ function resolveHref(href, baseUrl) {
   }
 }
 
+function scoutableHref(href) {
+  if (!href) return false;
+  return /^https?:/i.test(href) || href.startsWith('/') || href.startsWith('./') || href.startsWith('../');
+}
+
+function normalizedHost(value = '') {
+  try {
+    return new URL(value).hostname.toLowerCase().replace(/^www\./, '');
+  } catch {
+    return '';
+  }
+}
+
+export function submitLinkScore(link, baseUrl) {
+  const href = link.href || '';
+  const text = link.text || '';
+  const combined = `${href} ${text}`.toLowerCase();
+  const baseHost = normalizedHost(baseUrl);
+  const hrefHost = normalizedHost(href);
+  let score = 0;
+
+  if (hrefHost && baseHost && hrefHost === baseHost) score += 100;
+  else if (hrefHost) score -= 40;
+
+  if (/\/(submit|add|suggest|contribute|promote|get-started)(\/|$|[?#-])/i.test(href)) score += 80;
+  if (/submit[\s-]?(tool|ai|product|startup|site)|add[\s-]?(url|tool|site|listing)|suggest|contribute|提交|收录|投稿/i.test(text)) score += 60;
+  if (/submission-select|submission-guidelines|submit\.php|submit-tool|submit-ai|add-ai|add-tool/i.test(href)) score += 40;
+  if (href.replace(/\/+$/, '') === baseUrl.replace(/\/+$/, '')) score -= 10;
+
+  if (/submitsaas|submitmatic|140\+ directories|submission service|we submit your|fast[-\s]?track|advertis|pricing|checkout|payment/i.test(combined)) score -= 120;
+  if (/x\.com|twitter\.com|facebook\.com|linkedin\.com|instagram\.com/i.test(hrefHost)) score -= 120;
+
+  return score;
+}
+
+export function isSubmitLinkCandidate(href = '', text = '', baseUrl = '') {
+  if (!scoutableHref(href)) return false;
+
+  const resolved = resolveHref(href, baseUrl);
+  let parsed;
+  try {
+    parsed = new URL(resolved);
+  } catch {
+    return false;
+  }
+
+  const host = parsed.hostname.toLowerCase().replace(/^www\./, '');
+  const pathAndQuery = `${parsed.pathname} ${parsed.search}`.toLowerCase();
+  const label = String(text || '').toLowerCase();
+  const combined = `${pathAndQuery} ${label}`;
+
+  if (/chromewebstore\.google\.com|x\.com|twitter\.com|facebook\.com|linkedin\.com|instagram\.com/.test(host)) return false;
+  if (/add to chrome|chrome extension|we submit your|140\+ directories|submitmatic/i.test(label)) return false;
+  if (/\/(product|products|category|categories|blog|changelog|press-releases|social-profiles|community-platforms|resource-sharing-sites|ai-directories|hacks)(\/|$)/i.test(parsed.pathname)) {
+    return /submit|add url|提交|收录|投稿/i.test(label);
+  }
+
+  return /submit|suggest|contribute|add[-\s]?(url|tool|site|listing|product)|promote|get-started|submission|提交|收录|投稿/i.test(combined);
+}
+
+export function sortSubmitLinks(links = [], baseUrl) {
+  return [...links]
+    .map((link, index) => ({
+      ...link,
+      _score: submitLinkScore(link, baseUrl),
+      _index: index,
+    }))
+    .sort((a, b) => b._score - a._score || a._index - b._index)
+    .map(({ _score, _index, ...link }) => link);
+}
+
 async function readPageUrl(page) {
   try {
     return typeof page.url === 'function' ? page.url() : '';
   } catch {
     return '';
+  }
+}
+
+export async function gotoScoutPage(page, url, opts = {}) {
+  const timeout = opts.timeout || 30000;
+  try {
+    await page.goto(url, { waitUntil: 'networkidle', timeout });
+    return { ok: true, fallback: false, error: '' };
+  } catch (error) {
+    try {
+      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: Math.min(timeout, 15000) });
+      return { ok: true, fallback: true, error: error.message };
+    } catch (fallbackError) {
+      fallbackError.message = `${fallbackError.message}\nInitial networkidle error: ${error.message}`;
+      throw fallbackError;
+    }
   }
 }
 
@@ -38,7 +125,9 @@ async function readField(input) {
   const id = await input.getAttribute('id').catch(() => '') || '';
   const placeholder = await input.getAttribute('placeholder').catch(() => '') || '';
   const ariaLabel = await input.getAttribute('aria-label').catch(() => '') || '';
-  const required = await input.getAttribute('required').catch(() => null) !== null;
+  const required = await input.evaluate(el =>
+    el.hasAttribute('required') || el.getAttribute('aria-required') === 'true'
+  ).catch(() => false);
 
   return {
     tag,
@@ -124,7 +213,7 @@ export async function scout(url, opts = {}) {
   console.log(`\n🔍 Scouting ${url}\n`);
 
   return withBrowser(config, async ({ page }) => {
-    await page.goto(url, { waitUntil: 'networkidle', timeout: 30000 });
+    const initialNavigation = await gotoScoutPage(page, url);
     await delay(1000);
 
     const result = {
@@ -145,6 +234,13 @@ export async function scout(url, opts = {}) {
       classification: null,
     };
 
+    if (initialNavigation.fallback) {
+      result.navigation = {
+        fallback: 'domcontentloaded',
+        error: initialNavigation.error,
+      };
+    }
+
     // Find submit/add links
     const links = await page.locator('a').all();
     const submitLinks = [];
@@ -154,15 +250,14 @@ export async function scout(url, opts = {}) {
       const text = await link.textContent().catch(() => '');
       if (!href) continue;
 
-      const isSubmit = /submit|add|list|suggest|contribute/i.test(href + ' ' + text);
-      if (isSubmit) {
+      if (isSubmitLinkCandidate(href, text, url)) {
         submitLinks.push({
           text: text?.trim().slice(0, 60),
           href: resolveHref(href, url),
         });
       }
     }
-    result.submit_links = submitLinks;
+    result.submit_links = sortSubmitLinks(submitLinks, url);
 
     console.log(`📋 Submit-related links found: ${submitLinks.length}`);
     for (const l of submitLinks) {
@@ -170,12 +265,19 @@ export async function scout(url, opts = {}) {
     }
 
     // If deep scouting, follow first submit link
-    if (opts.deep && submitLinks.length > 0) {
-      const target = submitLinks[0].href;
+    if (opts.deep && result.submit_links.length > 0) {
+      const target = result.submit_links[0].href;
       console.log(`\n📝 Following: ${target}`);
-      await page.goto(target, { waitUntil: 'networkidle', timeout: 30000 });
+      const deepNavigation = await gotoScoutPage(page, target);
       await delay(1000);
       result.final_url = await readPageUrl(page);
+      if (deepNavigation.fallback) {
+        result.navigation = {
+          ...(result.navigation || {}),
+          deep_fallback: 'domcontentloaded',
+          deep_error: deepNavigation.error,
+        };
+      }
 
       // Enumerate form fields
       const forms = await inspectForms(page);

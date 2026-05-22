@@ -23,6 +23,10 @@ function loadProductIdentity(configPath) {
   }
 }
 
+function hasSubmittedAttempt(target = {}) {
+  return Boolean(target.submission?.last_submitted_at);
+}
+
 export function buildSubmissionPlan(opts = {}) {
   const registry = loadRegistry(opts.registry || DEFAULT_REGISTRY_FILE);
   const mode = opts.mode || '';
@@ -44,12 +48,17 @@ export function buildSubmissionPlan(opts = {}) {
       return target.pricing === 'free' || target.pricing === 'unknown';
     })
     .filter(target => !excludedModes.has(target.submission?.mode))
+    .filter(target => opts.includeSubmitted || !hasSubmittedAttempt(target))
     .filter(target => opts.includeRisk || target.quality?.risk !== 'high')
     .slice(0, limit);
 
   const excluded = registry.targets
     .filter(target => !candidates.includes(target))
-    .filter(target => excludedModes.has(target.submission?.mode) || target.quality?.risk === 'high')
+    .filter(target =>
+      excludedModes.has(target.submission?.mode) ||
+      hasSubmittedAttempt(target) ||
+      target.quality?.risk === 'high'
+    )
     .map(target => ({
       id: target.id,
       name: target.name,
@@ -57,6 +66,7 @@ export function buildSubmissionPlan(opts = {}) {
       mode: target.submission?.mode,
       reason: target.submission?.reason,
       risk: target.quality?.risk,
+      last_submitted_at: target.submission?.last_submitted_at || '',
     }));
 
   return {
@@ -72,6 +82,7 @@ export function buildSubmissionPlan(opts = {}) {
       source: opts.source || '',
       include_risk: Boolean(opts.includeRisk),
       allow_unknown_pricing: Boolean(opts.allowUnknownPricing),
+      include_submitted: Boolean(opts.includeSubmitted),
     },
     targets: candidates.map((target, index) => ({
       order: index + 1,

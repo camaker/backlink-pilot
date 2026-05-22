@@ -1,7 +1,7 @@
 // bb-update.js — Auto-update bb-browser community site adapters
 
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
-import { execFileSync } from 'child_process';
+import { execBb } from './bb.js';
 
 const TIMESTAMP_FILE = 'logs/bb-update-last.txt';
 const DEFAULT_INTERVAL_HOURS = 24;
@@ -23,11 +23,7 @@ export async function maybeUpdateBbSites(config = {}) {
 
   console.log('🔄 Updating bb-browser site adapters...');
   try {
-    execFileSync('bb-browser', ['site', 'update'], {
-      encoding: 'utf-8',
-      timeout: 60000,
-      stdio: 'pipe',
-    });
+    execBb(['site', 'update'], { timeout: 60000 });
     console.log('✅ bb-browser sites updated');
   } catch (e) {
     console.warn(`⚠️  bb-browser site update failed: ${e.message}`);
@@ -44,11 +40,7 @@ export async function maybeUpdateBbSites(config = {}) {
 export function forceUpdate() {
   console.log('🔄 Updating bb-browser site adapters...');
   try {
-    execFileSync('bb-browser', ['site', 'update'], {
-      encoding: 'utf-8',
-      timeout: 60000,
-      stdio: 'inherit',
-    });
+    process.stdout.write(execBb(['site', 'update'], { timeout: 60000 }));
     if (!existsSync('logs')) mkdirSync('logs', { recursive: true });
     writeFileSync(TIMESTAMP_FILE, String(Date.now()), 'utf-8');
   } catch (e) {

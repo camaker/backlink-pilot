@@ -33,6 +33,19 @@ function parseMs(value, fallback = 10000) {
   return amount;
 }
 
+async function withTimeout(promise, timeoutMs, message) {
+  let timeoutId;
+  const timeout = new Promise((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error(message)), timeoutMs);
+  });
+
+  try {
+    return await Promise.race([promise, timeout]);
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
 function ensureParent(path) {
   mkdirSync(dirname(path), { recursive: true });
 }
@@ -55,6 +68,7 @@ export async function scoutPlan(planPath, opts = {}) {
   const resultsPath = opts.results || join(dirname(planPath), 'scout-results.jsonl');
   const state = loadRunnerState(statePath, plan);
   const delayMs = parseMs(opts.delay, 10000);
+  const targetTimeoutMs = parseMs(opts.targetTimeout || opts.targetTimeoutMs, 120000);
   const limit = Number.parseInt(opts.limit || plan.targets?.length || 0, 10);
   const max = Number.isFinite(limit) && limit > 0 ? limit : plan.targets.length;
   const scoutFn = opts.scoutFn || scout;
@@ -95,14 +109,14 @@ export async function scoutPlan(planPath, opts = {}) {
     saveRunnerState(statePath, state);
 
     try {
-      const result = await scoutFn(target.submit_url, {
+      const result = await withTimeout(scoutFn(target.submit_url, {
         ...opts,
         config: executionConfig,
         targetId: target.id,
         persist: opts.persist !== false,
         updateRegistry: Boolean(opts.updateRegistry),
         deep: opts.deep !== false,
-      });
+      }), targetTimeoutMs, `scout target timed out after ${targetTimeoutMs}ms`);
       const mode = result.classification?.mode || 'unknown';
       summary.by_mode[mode] = (summary.by_mode[mode] || 0) + 1;
       markItem(state, target.id, {

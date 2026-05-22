@@ -58,6 +58,9 @@ describe('runner queue state', () => {
     markItem(state, 'a', { status: 'dry_run_ready' });
     assert.equal(getItemState(state, 'a').status, 'dry_run_ready');
     assert.equal(isTerminalStatus('submitted'), true);
+    assert.equal(isTerminalStatus('submitted_unverified'), true);
+    assert.equal(isTerminalStatus('scouted'), true);
+    assert.equal(isTerminalStatus('scout_failed'), true);
     assert.equal(isTerminalStatus('dry_run_ready'), false);
   });
 });
@@ -515,6 +518,75 @@ describe('plan runner dry-run safety', () => {
       assert.equal(summary.target_audit.ok, true);
       assert.equal(summary.target_audit.skipped, false);
       assert.equal(auditArtifact.report.ok, true);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('writes successful submission attempts back to the registry without changing mapping status', async () => {
+    const dir = tempDir();
+    try {
+      const plan = join(dir, 'plan.json');
+      const registry = join(dir, 'registry.yaml');
+      const results = join(dir, 'results.jsonl');
+      writeFileSync(registry, `
+version: 1
+targets:
+  - id: safe
+    submit_url: https://safe.example/submit
+    pricing: free
+    quality:
+      risk: low
+    technical:
+      last_scouted_at: 2026-05-22T00:00:00.000Z
+      auth: none
+      captcha: none
+      reachable: yes
+    forms:
+      - fields:
+          - mapped_to: product.name
+            selector: input[name="name"]
+            required: true
+          - mapped_to: product.url
+            selector: input[name="url"]
+            required: true
+          - mapped_to: product.description
+            selector: textarea[name="description"]
+            required: true
+        submit_buttons:
+          - selector: button[type="submit"]
+    submission:
+      mode: auto_safe
+      status: mapped
+      last_submitted_at: null
+`);
+      writeFileSync(plan, JSON.stringify({
+        created_at: 'plan-1',
+        registry,
+        targets: [
+          { order: 1, id: 'safe', submit_url: 'https://safe.example/submit', mode: 'auto_safe' },
+        ],
+      }, null, 2));
+
+      await runPlan(plan, {
+        execute: true,
+        delay: '0ms',
+        results,
+        configObject: readyConfig(),
+        submitFn: async () => ({
+          status: 'pending_review',
+          url: 'https://safe.example/thanks',
+          confirmation: 'Thank you',
+        }),
+      });
+
+      const parsed = JSON.parse(JSON.stringify((await import('yaml')).parse(readFileSync(registry, 'utf-8'))));
+      const target = parsed.targets[0];
+      assert.equal(target.submission.status, 'mapped');
+      assert.equal(target.submission.last_submission_status, 'pending_review');
+      assert.equal(typeof target.submission.last_submitted_at, 'string');
+      assert.equal(target.submission.last_submission_final_url, 'https://safe.example/thanks');
+      assert.equal(target.submission.last_submission_confirmation, 'Thank you');
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
