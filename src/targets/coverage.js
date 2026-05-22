@@ -1084,13 +1084,15 @@ function possibleApprovalDecision(row) {
     : 'approved';
 }
 
+const CONFIDENCE_RANKS = {
+  high: 4,
+  medium: 3,
+  low: 2,
+  none: 1,
+};
+
 function confidenceRank(value) {
-  return {
-    high: 4,
-    medium: 3,
-    low: 2,
-    none: 1,
-  }[value] || 0;
+  return CONFIDENCE_RANKS[value] || 0;
 }
 
 function suggestionSummary(rows) {
@@ -1362,6 +1364,199 @@ export function writeCoverageReviewSuggestions(suggestions, opts = {}) {
   if (opts.jsonOutput) {
     ensureParent(opts.jsonOutput);
     writeFileSync(opts.jsonOutput, JSON.stringify(suggestions, null, 2) + '\n', 'utf-8');
+  }
+}
+
+function splitDecisionOptions(value) {
+  return String(value || '')
+    .split('|')
+    .map(item => item.trim().toLowerCase())
+    .filter(Boolean);
+}
+
+function confidenceAtLeast(value, minimum) {
+  const threshold = String(minimum || 'high').trim().toLowerCase();
+  if (!Object.prototype.hasOwnProperty.call(CONFIDENCE_RANKS, threshold)) {
+    throw new Error(`Invalid min confidence: ${minimum}. Use high, medium, low, or none.`);
+  }
+  return confidenceRank(value) >= confidenceRank(threshold);
+}
+
+function normalizeConfidenceThreshold(value) {
+  const threshold = String(value || 'high').trim().toLowerCase();
+  if (!Object.prototype.hasOwnProperty.call(CONFIDENCE_RANKS, threshold)) {
+    throw new Error(`Invalid min confidence: ${value}. Use high, medium, low, or none.`);
+  }
+  return threshold;
+}
+
+function defaultDraftDecisions(opts = {}) {
+  const values = splitFilterValues(opts.decisions || '');
+  return new Set(values.length ? values : [
+    'reject_auth_required',
+    'reject_duplicate',
+    'reject_not_submit',
+    'reject_paid',
+  ]);
+}
+
+function draftNoteFromSuggestion(suggestion) {
+  const notes = [
+    'drafted from read-only evidence suggestion',
+    suggestion.suggestion_confidence ? `confidence: ${suggestion.suggestion_confidence}` : '',
+    suggestion.suggested_review_notes || suggestion.suggestion_basis || '',
+  ].filter(Boolean);
+  return unique(notes).join('; ');
+}
+
+export function buildCoverageReviewDraft(batchPath, suggestionsPath, opts = {}) {
+  const batchRows = parseCsv(readFileSync(batchPath, 'utf-8'));
+  const suggestionRows = parseCsv(readFileSync(suggestionsPath, 'utf-8'));
+  const suggestionIndex = indexEvidenceRows(suggestionRows);
+  const minConfidence = normalizeConfidenceThreshold(opts.minConfidence);
+  const allowedDraftDecisions = defaultDraftDecisions(opts);
+  const reviewedBy = String(opts.reviewedBy || 'read_only_evidence').trim();
+  const rows = batchRows.map(row => ({ ...row }));
+  const drafted = [];
+  const skipped = [];
+  const blocked = [];
+
+  rows.forEach((row, index) => {
+    const line = index + 2;
+    const currentDecision = reviewDecision(row);
+    const { evidence: suggestion, key } = findEvidenceForBatchRow(row, suggestionIndex);
+
+    if (currentDecision) {
+      skipped.push({
+        line,
+        review_row: row.review_row || '',
+        url: row.url || '',
+        reason: 'already_has_review_decision',
+      });
+      return;
+    }
+
+    if (!suggestion) {
+      skipped.push({
+        line,
+        review_row: row.review_row || '',
+        url: row.url || '',
+        reason: 'no_matching_suggestion',
+      });
+      return;
+    }
+
+    const suggestedDecision = String(suggestion.suggested_review_decision || '').trim().toLowerCase();
+    const confidence = String(suggestion.suggestion_confidence || '').trim().toLowerCase();
+    if (!isRejectedDecision(suggestedDecision)) {
+      skipped.push({
+        line,
+        review_row: row.review_row || '',
+        url: row.url || '',
+        reason: 'suggestion_is_not_rejection',
+        suggested_review_decision: suggestedDecision,
+      });
+      return;
+    }
+
+    if (!allowedDraftDecisions.has(suggestedDecision)) {
+      skipped.push({
+        line,
+        review_row: row.review_row || '',
+        url: row.url || '',
+        reason: 'suggestion_rejection_not_enabled',
+        suggested_review_decision: suggestedDecision,
+      });
+      return;
+    }
+
+    if (!confidenceAtLeast(confidence, minConfidence)) {
+      skipped.push({
+        line,
+        review_row: row.review_row || '',
+        url: row.url || '',
+        reason: 'suggestion_confidence_below_threshold',
+        suggested_review_decision: suggestedDecision,
+        suggestion_confidence: confidence,
+      });
+      return;
+    }
+
+    const decisionOptions = splitDecisionOptions(row.review_decision_options);
+    if (decisionOptions.length && !decisionOptions.includes(suggestedDecision)) {
+      blocked.push({
+        line,
+        review_row: row.review_row || '',
+        url: row.url || '',
+        reason: 'suggested_decision_not_allowed_for_batch_row',
+        suggested_review_decision: suggestedDecision,
+        review_decision_options: row.review_decision_options || '',
+      });
+      return;
+    }
+
+    row.review_decision = suggestedDecision;
+    row.review_notes = draftNoteFromSuggestion(suggestion);
+    if (reviewedBy) row.reviewed_by = reviewedBy;
+    if (
+      suggestion.suggested_pricing &&
+      (!String(row.pricing || '').trim() || String(row.pricing || '').trim().toLowerCase() === 'unknown')
+    ) {
+      row.pricing = suggestion.suggested_pricing;
+    }
+
+    drafted.push({
+      line,
+      review_row: row.review_row || '',
+      url: row.url || '',
+      domain: row.domain || '',
+      suggested_review_decision: suggestedDecision,
+      suggestion_confidence: confidence,
+      suggestion_match_key: key,
+    });
+  });
+
+  const priorityCounts = rows.reduce((acc, row) => {
+    acc[row.priority] = (acc[row.priority] || 0) + 1;
+    return acc;
+  }, {});
+  const actionCounts = rows.reduce((acc, row) => {
+    acc[row.review_action] = (acc[row.review_action] || 0) + 1;
+    return acc;
+  }, {});
+
+  return {
+    generated_at: nowIso(),
+    batch: batchPath,
+    suggestions: suggestionsPath,
+    batch_id: firstExistingValue(...rows.map(row => row.batch_id)),
+    mode_policy: 'drafts_rejections_only_no_approvals_no_registry_changes',
+    min_confidence: minConfidence,
+    reviewed_by: reviewedBy,
+    enabled_rejection_decisions: [...allowedDraftDecisions],
+    batch_rows: rows.length,
+    suggestion_rows: suggestionRows.length,
+    drafted_rows: drafted.length,
+    skipped_rows: skipped.length,
+    blocked_rows: blocked.length,
+    priority_counts: priorityCounts,
+    action_counts: actionCounts,
+    rows,
+    drafted,
+    skipped,
+    blocked,
+  };
+}
+
+export function writeCoverageReviewDraft(draft, opts = {}) {
+  if (opts.output) {
+    ensureParent(opts.output);
+    writeFileSync(opts.output, coverageReviewBatchCsv(draft), 'utf-8');
+  }
+  if (opts.jsonOutput) {
+    const { rows, ...publicDraft } = draft;
+    ensureParent(opts.jsonOutput);
+    writeFileSync(opts.jsonOutput, JSON.stringify(publicDraft, null, 2) + '\n', 'utf-8');
   }
 }
 

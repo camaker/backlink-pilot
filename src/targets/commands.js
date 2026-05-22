@@ -12,6 +12,7 @@ import {
   applyCoverageReviewQueue,
   buildCoverageReviewEvidence,
   buildCoverageReviewBatch,
+  buildCoverageReviewDraft,
   buildCoverageReport,
   buildCoverageReviewQueue,
   buildCoverageReviewSuggestions,
@@ -22,6 +23,7 @@ import {
   writeCoverageCandidatesCsv,
   writeCoverageReviewEvidence,
   writeCoverageReviewSuggestions,
+  writeCoverageReviewDraft,
   writeCoverageReviewBatch,
   writeCoverageReviewPromotionReport,
   writeCoverageReport,
@@ -411,6 +413,55 @@ export async function coverageReviewSuggestCommand(batchPath, evidencePath, opts
   }
 
   return suggestions;
+}
+
+export async function coverageReviewDraftCommand(batchPath, suggestionsPath, opts = {}) {
+  let draft;
+  try {
+    draft = buildCoverageReviewDraft(batchPath, suggestionsPath, {
+      minConfidence: opts.minConfidence,
+      reviewedBy: opts.reviewedBy,
+      decisions: opts.decisions,
+    });
+  } catch (error) {
+    console.error(`Draft blocked: ${error.message || String(error)}`);
+    process.exitCode = 1;
+    return null;
+  }
+
+  writeCoverageReviewDraft(draft, {
+    output: opts.output,
+    jsonOutput: opts.jsonOutput,
+  });
+
+  if (opts.json) {
+    const { rows, ...publicDraft } = draft;
+    console.log(JSON.stringify(publicDraft, null, 2));
+    return draft;
+  }
+
+  console.log(`Batch: ${draft.batch}`);
+  console.log(`Suggestions: ${draft.suggestions}`);
+  console.log(`Batch rows: ${draft.batch_rows}`);
+  console.log(`Suggestion rows: ${draft.suggestion_rows}`);
+  console.log(`Drafted rows: ${draft.drafted_rows}`);
+  console.log(`Skipped rows: ${draft.skipped_rows}`);
+  console.log(`Blocked rows: ${draft.blocked_rows}`);
+  console.log(`Min confidence: ${draft.min_confidence}`);
+  console.log(`Enabled rejection decisions: ${draft.enabled_rejection_decisions.join(', ')}`);
+  if (opts.output) console.log(`Draft batch CSV: ${opts.output}`);
+  if (opts.jsonOutput) console.log(`Draft report JSON: ${opts.jsonOutput}`);
+  for (const row of draft.drafted.slice(0, Number.parseInt(opts.preview || 10, 10))) {
+    console.log([
+      row.review_row,
+      row.suggested_review_decision,
+      row.suggestion_confidence,
+      row.url,
+    ].join('\t'));
+  }
+
+  if (draft.blocked_rows > 0) process.exitCode = 1;
+  return draft;
 }
 
 export async function applyCoverageReviewQueueCommand(reviewPath, queuePath, opts = {}) {

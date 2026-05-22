@@ -12,6 +12,7 @@ import { forceUpdate } from './bb-update.js';
 import { runCampaign } from './campaign.js';
 import {
   applyCoverageReviewQueueCommand,
+  coverageReviewDraftCommand,
   coverageReviewEvidenceCommand,
   coverageReviewBatchCommand,
   coverageReviewSuggestCommand,
@@ -396,6 +397,20 @@ targets
   .option('--json', 'Output as JSON')
   .action(async (batch, evidence, opts) => {
     await coverageReviewSuggestCommand(batch, evidence, opts);
+  });
+
+targets
+  .command('coverage-review-draft <batch> <suggestions>')
+  .description('Create an editable rejection-only review batch draft from non-binding suggestions')
+  .option('--output <path>', 'Write drafted batch CSV')
+  .option('--json-output <path>', 'Write draft report JSON')
+  .option('--min-confidence <value>', 'Minimum suggestion confidence to draft', 'high')
+  .option('--reviewed-by <value>', 'Reviewer label to record on drafted rejection rows', 'read_only_evidence')
+  .option('--decisions <items>', 'Comma-separated rejection decisions eligible for drafting')
+  .option('--preview <n>', 'Drafted rows to preview in text output', '10')
+  .option('--json', 'Output as JSON')
+  .action(async (batch, suggestions, opts) => {
+    await coverageReviewDraftCommand(batch, suggestions, opts);
   });
 
 targets
