@@ -14,12 +14,14 @@ import {
   buildCoverageReviewBatch,
   buildCoverageReport,
   buildCoverageReviewQueue,
+  buildCoverageReviewSuggestions,
   importCoverageReview,
   promoteCoverageReviewBatch,
   validateCoverageReviewBatch,
   validateCoverageReview,
   writeCoverageCandidatesCsv,
   writeCoverageReviewEvidence,
+  writeCoverageReviewSuggestions,
   writeCoverageReviewBatch,
   writeCoverageReviewPromotionReport,
   writeCoverageReport,
@@ -371,6 +373,44 @@ export async function coverageReviewEvidenceCommand(batchPath, opts = {}) {
   }
 
   return evidence;
+}
+
+export async function coverageReviewSuggestCommand(batchPath, evidencePath, opts = {}) {
+  const suggestions = buildCoverageReviewSuggestions(batchPath, evidencePath, {
+    offset: opts.offset,
+    limit: opts.limit,
+  });
+
+  writeCoverageReviewSuggestions(suggestions, {
+    output: opts.output,
+    jsonOutput: opts.jsonOutput,
+  });
+
+  if (opts.json) {
+    console.log(JSON.stringify(suggestions, null, 2));
+    return suggestions;
+  }
+
+  console.log(`Batch: ${suggestions.batch}`);
+  console.log(`Evidence: ${suggestions.evidence}`);
+  console.log(`Batch rows: ${suggestions.total_batch_rows}`);
+  console.log(`Evidence rows: ${suggestions.evidence_rows}`);
+  console.log(`Suggestion rows: ${suggestions.suggestion_rows}`);
+  console.log(`Summary: ${JSON.stringify(suggestions.summary)}`);
+  if (opts.output) console.log(`Suggestion CSV: ${opts.output}`);
+  if (opts.jsonOutput) console.log(`Suggestion JSON: ${opts.jsonOutput}`);
+  for (const row of suggestions.rows.slice(0, Number.parseInt(opts.preview || 10, 10))) {
+    console.log([
+      row.batch_order,
+      row.suggested_review_decision,
+      row.suggestion_confidence,
+      row.possible_approval_decision || '-',
+      row.reviewer_action,
+      row.url,
+    ].join('\t'));
+  }
+
+  return suggestions;
 }
 
 export async function applyCoverageReviewQueueCommand(reviewPath, queuePath, opts = {}) {

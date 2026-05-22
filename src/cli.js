@@ -14,6 +14,7 @@ import {
   applyCoverageReviewQueueCommand,
   coverageReviewEvidenceCommand,
   coverageReviewBatchCommand,
+  coverageReviewSuggestCommand,
   importTargetsCommand,
   auditTargetsCommand,
   coverageReviewQueueCommand,
@@ -382,6 +383,19 @@ targets
   .option('--json', 'Output as JSON')
   .action(async (batch, opts) => {
     await coverageReviewEvidenceCommand(batch, opts);
+  });
+
+targets
+  .command('coverage-review-suggest <batch> <evidence>')
+  .description('Create non-binding review suggestions from a batch and read-only evidence')
+  .option('--output <path>', 'Write suggestion CSV')
+  .option('--json-output <path>', 'Write full suggestion JSON')
+  .option('--offset <n>', 'Zero-based offset within the batch', '0')
+  .option('--limit <n>', 'Maximum rows to suggest')
+  .option('--preview <n>', 'Rows to preview in text output', '10')
+  .option('--json', 'Output as JSON')
+  .action(async (batch, evidence, opts) => {
+    await coverageReviewSuggestCommand(batch, evidence, opts);
   });
 
 targets

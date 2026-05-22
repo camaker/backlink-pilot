@@ -128,6 +128,44 @@ const REVIEW_EVIDENCE_HEADERS = [
   'fetch_error',
   'checked_at',
 ];
+const REVIEW_SUGGESTION_HEADERS = [
+  'batch_id',
+  'batch_order',
+  'review_row',
+  'priority',
+  'review_action',
+  'url',
+  'domain',
+  'current_review_decision',
+  'review_decision_options',
+  'evidence_suggested_decision',
+  'suggested_review_decision',
+  'suggestion_confidence',
+  'possible_approval_decision',
+  'reviewer_action',
+  'suggested_review_notes',
+  'suggested_pricing',
+  'suggestion_basis',
+  'evidence_matched',
+  'evidence_match_key',
+  'http_status',
+  'fetch_ok',
+  'final_url',
+  'final_domain',
+  'form_count',
+  'input_count',
+  'submit_button_signal',
+  'submit_path_signal',
+  'directory_signal',
+  'auth_signal',
+  'oauth_signal',
+  'captcha_signal',
+  'cloudflare_signal',
+  'payment_signal',
+  'duplicate_registry_url',
+  'fetch_error',
+  'checked_at',
+];
 const REVIEW_QUEUE_EDITABLE_FIELDS = [
   'review_decision',
   'review_notes',
@@ -987,6 +1025,343 @@ export function writeCoverageReviewEvidence(evidence, opts = {}) {
   if (opts.jsonOutput) {
     ensureParent(opts.jsonOutput);
     writeFileSync(opts.jsonOutput, JSON.stringify(evidence, null, 2) + '\n', 'utf-8');
+  }
+}
+
+function firstExistingValue(...values) {
+  for (const value of values) {
+    const text = String(value ?? '').trim();
+    if (text) return text;
+  }
+  return '';
+}
+
+function evidenceMatchKeys(row) {
+  const keys = [];
+  const reviewRow = String(row.review_row || '').trim();
+  const batchId = String(row.batch_id || '').trim();
+  const batchOrder = String(row.batch_order || '').trim();
+  const url = normalizeUrl(rowImportUrl(row) || row.url || '');
+  const finalUrl = normalizeUrl(row.final_url || '');
+
+  if (reviewRow) keys.push(`review_row:${reviewRow}`);
+  if (batchId && batchOrder) keys.push(`batch:${batchId}:${batchOrder}`);
+  if (url) keys.push(`url:${url.dedupeKey}`);
+  if (finalUrl) keys.push(`url:${finalUrl.dedupeKey}`);
+  return unique(keys);
+}
+
+function indexEvidenceRows(rows) {
+  const indexed = new Map();
+  for (const row of rows) {
+    for (const key of evidenceMatchKeys(row)) {
+      if (!indexed.has(key)) indexed.set(key, row);
+    }
+  }
+  return indexed;
+}
+
+function findEvidenceForBatchRow(row, evidenceIndex) {
+  for (const key of evidenceMatchKeys(row)) {
+    const evidence = evidenceIndex.get(key);
+    if (evidence) return { evidence, key };
+  }
+  return { evidence: null, key: '' };
+}
+
+function evidenceYes(row, field) {
+  return String(row?.[field] || '').trim().toLowerCase() === 'yes';
+}
+
+function evidenceNumber(row, field) {
+  const parsed = Number.parseInt(String(row?.[field] || ''), 10);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function possibleApprovalDecision(row) {
+  return String(row.classification || '') === 'domain_in_registry_only'
+    ? 'approved_domain_variant'
+    : 'approved';
+}
+
+function confidenceRank(value) {
+  return {
+    high: 4,
+    medium: 3,
+    low: 2,
+    none: 1,
+  }[value] || 0;
+}
+
+function suggestionSummary(rows) {
+  return rows.reduce((acc, row) => {
+    const decision = row.suggested_review_decision || 'needs_manual_check';
+    const confidence = row.suggestion_confidence || 'none';
+    acc.suggested_review_decisions[decision] = (acc.suggested_review_decisions[decision] || 0) + 1;
+    acc.confidence[confidence] = (acc.confidence[confidence] || 0) + 1;
+    if (row.evidence_matched === 'yes') acc.evidence_matched += 1;
+    else acc.evidence_missing += 1;
+    if (confidenceRank(confidence) >= confidenceRank('high') && isRejectedDecision(decision)) {
+      acc.high_confidence_rejections += 1;
+    }
+    if (row.possible_approval_decision) acc.possible_approval_after_manual_confirmation += 1;
+    return acc;
+  }, {
+    suggested_review_decisions: {},
+    confidence: {},
+    evidence_matched: 0,
+    evidence_missing: 0,
+    high_confidence_rejections: 0,
+    possible_approval_after_manual_confirmation: 0,
+  });
+}
+
+function conservativeSuggestion(row, evidence) {
+  if (!evidence) {
+    return {
+      suggested_review_decision: 'needs_manual_check',
+      suggestion_confidence: 'none',
+      possible_approval_decision: '',
+      reviewer_action: 'collect_or_review_evidence',
+      suggested_pricing: '',
+      basis: ['no matching evidence row found'],
+    };
+  }
+
+  const basis = [];
+  const fetchOk = evidenceYes(evidence, 'fetch_ok');
+  const fetchError = firstExistingValue(evidence.fetch_error, fetchOk ? '' : evidence.http_status ? `HTTP ${evidence.http_status}` : '');
+  const duplicate = evidenceYes(evidence, 'duplicate_registry_url');
+  const paid = evidenceYes(evidence, 'payment_signal');
+  const auth = evidenceYes(evidence, 'auth_signal') || evidenceYes(evidence, 'oauth_signal');
+  const challenge = evidenceYes(evidence, 'captcha_signal') || evidenceYes(evidence, 'cloudflare_signal');
+  const submitSignal = evidenceYes(evidence, 'submit_button_signal') || evidenceYes(evidence, 'submit_path_signal');
+  const submitSurface = evidenceYes(evidence, 'submit_path_signal') ||
+    /submit|submission|add (tool|product|startup|site|app)|list your|publish|claim/i.test(`${evidence.title || ''} ${evidence.url || ''}`);
+  const directorySignal = evidenceYes(evidence, 'directory_signal');
+  const forms = evidenceNumber(evidence, 'form_count');
+  const httpStatus = evidenceNumber(evidence, 'http_status');
+
+  if (duplicate) {
+    basis.push('normalized URL duplicates an existing registry submit URL');
+    return {
+      suggested_review_decision: 'reject_duplicate',
+      suggestion_confidence: 'high',
+      possible_approval_decision: '',
+      reviewer_action: 'reject_if_registry_url_is_the_same_submission_endpoint',
+      suggested_pricing: '',
+      basis,
+    };
+  }
+
+  if ([404, 410].includes(httpStatus)) {
+    basis.push(`HTTP ${httpStatus} indicates the candidate URL is not a live submit endpoint`);
+    return {
+      suggested_review_decision: 'reject_not_submit',
+      suggestion_confidence: 'high',
+      possible_approval_decision: '',
+      reviewer_action: 'reject_unless_manual_review_finds_a_current_submit_url',
+      suggested_pricing: '',
+      basis,
+    };
+  }
+
+  if (paid && submitSurface) {
+    basis.push('payment/pricing signal appears on a submit/listing surface');
+    return {
+      suggested_review_decision: 'reject_paid',
+      suggestion_confidence: 'high',
+      possible_approval_decision: '',
+      reviewer_action: 'reject_unless_manual_review_confirms_free_submission_path',
+      suggested_pricing: 'paid',
+      basis,
+    };
+  }
+
+  if (auth) {
+    basis.push('login/register or OAuth signal found');
+    return {
+      suggested_review_decision: 'reject_auth_required',
+      suggestion_confidence: 'high',
+      possible_approval_decision: '',
+      reviewer_action: 'reject_or_route_to_assisted_manual_flow',
+      suggested_pricing: '',
+      basis,
+    };
+  }
+
+  if (challenge) {
+    basis.push('CAPTCHA or Cloudflare/human-verification signal found');
+    return {
+      suggested_review_decision: 'reject_auth_required',
+      suggestion_confidence: fetchOk ? 'medium' : 'high',
+      possible_approval_decision: '',
+      reviewer_action: 'reject_for_automation_unless_human_assisted_flow_is_explicitly_planned',
+      suggested_pricing: '',
+      basis,
+    };
+  }
+
+  if (fetchError) {
+    basis.push(fetchError);
+    return {
+      suggested_review_decision: 'needs_manual_check',
+      suggestion_confidence: 'low',
+      possible_approval_decision: '',
+      reviewer_action: 'manual_browser_check_required_before_decision',
+      suggested_pricing: '',
+      basis,
+    };
+  }
+
+  if (!submitSignal && !forms) {
+    basis.push('no submit path, submit button, or form signal found');
+    return {
+      suggested_review_decision: 'reject_not_submit',
+      suggestion_confidence: directorySignal ? 'medium' : 'high',
+      possible_approval_decision: '',
+      reviewer_action: 'reject_unless_manual_review_finds_hidden_submit_entry',
+      suggested_pricing: '',
+      basis,
+    };
+  }
+
+  if (forms > 0 && submitSignal && directorySignal) {
+    basis.push('form, submit signal, and directory/listing signal found');
+    return {
+      suggested_review_decision: 'needs_manual_check',
+      suggestion_confidence: 'medium',
+      possible_approval_decision: possibleApprovalDecision(row),
+      reviewer_action: 'manual_confirm_public_free_submit_form_before_approval',
+      suggested_pricing: '',
+      basis,
+    };
+  }
+
+  if (submitSignal) {
+    basis.push('submit URL/button signal found but evidence is incomplete');
+    return {
+      suggested_review_decision: 'needs_manual_check',
+      suggestion_confidence: 'low',
+      possible_approval_decision: '',
+      reviewer_action: 'manual_confirm_submit_form_and_blockers',
+      suggested_pricing: '',
+      basis,
+    };
+  }
+
+  basis.push('evidence is ambiguous');
+  return {
+    suggested_review_decision: 'needs_manual_check',
+    suggestion_confidence: 'low',
+    possible_approval_decision: '',
+    reviewer_action: 'manual_review_required',
+    suggested_pricing: '',
+    basis,
+  };
+}
+
+function suggestionNotes(row, evidence, suggestion) {
+  const notes = [
+    ...suggestion.basis,
+    evidence?.evidence_notes ? `evidence: ${evidence.evidence_notes}` : '',
+    suggestion.possible_approval_decision
+      ? `if manually confirmed, use ${suggestion.possible_approval_decision} with reviewer notes`
+      : '',
+    String(row.classification || '') === 'domain_in_registry_only'
+      ? 'same-domain variant must not use generic approved'
+      : '',
+  ].filter(Boolean);
+  return unique(notes).join('; ');
+}
+
+function suggestionRow(row, evidenceMatch) {
+  const evidence = evidenceMatch.evidence;
+  const suggestion = conservativeSuggestion(row, evidence);
+  return {
+    batch_id: row.batch_id || evidence?.batch_id || '',
+    batch_order: row.batch_order || evidence?.batch_order || '',
+    review_row: row.review_row || evidence?.review_row || '',
+    priority: row.priority || '',
+    review_action: row.review_action || evidence?.review_action || '',
+    url: rowImportUrl(row) || row.url || evidence?.url || '',
+    domain: row.domain || evidence?.domain || '',
+    current_review_decision: reviewDecision(row),
+    review_decision_options: row.review_decision_options || '',
+    evidence_suggested_decision: evidence?.suggested_decision || '',
+    suggested_review_decision: suggestion.suggested_review_decision,
+    suggestion_confidence: suggestion.suggestion_confidence,
+    possible_approval_decision: suggestion.possible_approval_decision,
+    reviewer_action: suggestion.reviewer_action,
+    suggested_review_notes: suggestionNotes(row, evidence, suggestion),
+    suggested_pricing: suggestion.suggested_pricing,
+    suggestion_basis: suggestion.basis.join('; '),
+    evidence_matched: evidence ? 'yes' : 'no',
+    evidence_match_key: evidenceMatch.key || '',
+    http_status: evidence?.http_status || '',
+    fetch_ok: evidence?.fetch_ok || '',
+    final_url: evidence?.final_url || '',
+    final_domain: evidence?.final_domain || '',
+    form_count: evidence?.form_count || '',
+    input_count: evidence?.input_count || '',
+    submit_button_signal: evidence?.submit_button_signal || '',
+    submit_path_signal: evidence?.submit_path_signal || '',
+    directory_signal: evidence?.directory_signal || '',
+    auth_signal: evidence?.auth_signal || '',
+    oauth_signal: evidence?.oauth_signal || '',
+    captcha_signal: evidence?.captcha_signal || '',
+    cloudflare_signal: evidence?.cloudflare_signal || '',
+    payment_signal: evidence?.payment_signal || '',
+    duplicate_registry_url: evidence?.duplicate_registry_url || '',
+    fetch_error: evidence?.fetch_error || '',
+    checked_at: evidence?.checked_at || '',
+  };
+}
+
+export function buildCoverageReviewSuggestions(batchPath, evidencePath, opts = {}) {
+  const batchRows = parseCsv(readFileSync(batchPath, 'utf-8'));
+  const evidenceRows = parseCsv(readFileSync(evidencePath, 'utf-8'));
+  const offset = Math.max(0, numericValue(opts.offset, 0));
+  const limit = opts.limit === undefined || opts.limit === null || opts.limit === ''
+    ? batchRows.length
+    : Math.max(1, numericValue(opts.limit, batchRows.length));
+  const selected = batchRows.slice(offset, offset + limit);
+  const evidenceIndex = indexEvidenceRows(evidenceRows);
+  const rows = selected.map(row => suggestionRow(row, findEvidenceForBatchRow(row, evidenceIndex)));
+
+  return {
+    generated_at: nowIso(),
+    batch: batchPath,
+    evidence: evidencePath,
+    mode_policy: 'suggestions_are_non_binding_and_do_not_modify_review_decisions',
+    offset,
+    limit,
+    total_batch_rows: batchRows.length,
+    evidence_rows: evidenceRows.length,
+    suggestion_rows: rows.length,
+    summary: suggestionSummary(rows),
+    rows,
+  };
+}
+
+export function coverageReviewSuggestionsCsv(suggestions) {
+  const rows = suggestions.rows.map(row =>
+    REVIEW_SUGGESTION_HEADERS.map(header => row[header])
+  );
+  return [
+    REVIEW_SUGGESTION_HEADERS.join(','),
+    ...rows.map(row => row.map(csvEscape).join(',')),
+  ].join('\n') + '\n';
+}
+
+export function writeCoverageReviewSuggestions(suggestions, opts = {}) {
+  if (opts.output) {
+    ensureParent(opts.output);
+    writeFileSync(opts.output, coverageReviewSuggestionsCsv(suggestions), 'utf-8');
+  }
+  if (opts.jsonOutput) {
+    ensureParent(opts.jsonOutput);
+    writeFileSync(opts.jsonOutput, JSON.stringify(suggestions, null, 2) + '\n', 'utf-8');
   }
 }
 

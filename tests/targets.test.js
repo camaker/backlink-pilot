@@ -12,11 +12,13 @@ import {
   buildCoverageReviewBatch,
   buildCoverageReport,
   buildCoverageReviewQueue,
+  buildCoverageReviewSuggestions,
   coverageCandidatesCsv,
   coverageReviewEvidenceCsv,
   coverageReviewBatchCsv,
   coverageReviewBatchMarkdown,
   coverageReviewQueueCsv,
+  coverageReviewSuggestionsCsv,
   coverageReviewCsv,
   importCoverageReview,
   promoteCoverageReviewBatch,
@@ -24,6 +26,7 @@ import {
   validateCoverageReview,
   writeCoverageReviewPromotionReport,
   writeCoverageReviewEvidence,
+  writeCoverageReviewSuggestions,
   writeCoverageReviewBatch,
   writeCoverageReviewQueue,
   writeCoverageCandidatesCsv,
@@ -1157,6 +1160,229 @@ targets:
       assert.match(csv, /suggested_decision/);
       assert.match(readFileSync(output, 'utf-8'), /review_possible_domain_variant/);
       assert.equal(json.checked_rows, 3);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('creates non-binding coverage review suggestions from evidence', () => {
+    const dir = tempDir();
+    try {
+      const batch = join(dir, 'coverage-review-batch.csv');
+      const evidence = join(dir, 'coverage-review-evidence.csv');
+      const output = join(dir, 'suggestions', 'batch-suggestions.csv');
+      const jsonOutput = join(dir, 'suggestions', 'batch-suggestions.json');
+      writeFileSync(batch, [
+        [
+          'batch_id',
+          'batch_order',
+          'priority',
+          'priority_score',
+          'review_row',
+          'review_decision',
+          'review_decision_options',
+          'review_action',
+          'review_instruction',
+          'review_notes',
+          'reviewed_by',
+          'submission_url_override',
+          'canonical_name',
+          'pricing',
+          'lang',
+          'classification',
+          'candidate_import_recommendation',
+          'url',
+          'domain',
+          'occurrence_count',
+          'source_files',
+          'source_locations',
+          'registry_target_ids',
+          'registry_submit_urls',
+        ].join(','),
+        [
+          'p0-001',
+          '1',
+          'P0',
+          '300',
+          '10',
+          '',
+          'approved_domain_variant | reject_duplicate | reject_not_submit | reject_paid | reject_auth_required',
+          'verify_distinct_submit_url_for_existing_domain',
+          'verify same-domain variant',
+          '',
+          '',
+          '',
+          'Same Domain',
+          'unknown',
+          'unknown',
+          'domain_in_registry_only',
+          'review_submit_url',
+          'https://same.example/add',
+          'same.example',
+          '1',
+          'coverage.csv',
+          'coverage.csv:2',
+          'same-existing',
+          'https://same.example/submit',
+        ].join(','),
+        [
+          'p0-001',
+          '2',
+          'P0',
+          '290',
+          '11',
+          '',
+          'approved | reject_not_submit | reject_paid | reject_auth_required',
+          'verify_submit_form_then_approve_or_reject',
+          'verify submit form',
+          '',
+          '',
+          '',
+          'Paid Submit',
+          'unknown',
+          'unknown',
+          'missing_domain',
+          'review_submit_url',
+          'https://paid.example/submit',
+          'paid.example',
+          '1',
+          'coverage.csv',
+          'coverage.csv:3',
+          '',
+          '',
+        ].join(','),
+        [
+          'p0-001',
+          '3',
+          'P0',
+          '280',
+          '12',
+          '',
+          'approved_domain_variant | reject_duplicate | reject_not_submit | reject_paid | reject_auth_required',
+          'verify_distinct_submit_url_for_existing_domain',
+          'verify duplicate',
+          '',
+          '',
+          '',
+          'Duplicate',
+          'unknown',
+          'unknown',
+          'domain_in_registry_only',
+          'review_submit_url',
+          'https://dup.example/submit',
+          'dup.example',
+          '1',
+          'coverage.csv',
+          'coverage.csv:4',
+          'dup-existing',
+          'https://dup.example/submit',
+        ].join(','),
+      ].join('\n'));
+      writeFileSync(evidence, [
+        [
+          'batch_id',
+          'batch_order',
+          'review_row',
+          'review_action',
+          'url',
+          'domain',
+          'http_status',
+          'fetch_ok',
+          'final_url',
+          'final_domain',
+          'domain_changed',
+          'content_type',
+          'title',
+          'form_count',
+          'input_count',
+          'submit_button_signal',
+          'submit_path_signal',
+          'directory_signal',
+          'auth_signal',
+          'oauth_signal',
+          'captcha_signal',
+          'cloudflare_signal',
+          'payment_signal',
+          'duplicate_registry_url',
+          'suggested_decision',
+          'evidence_notes',
+          'fetch_error',
+          'checked_at',
+        ].join(','),
+        'p0-001,1,10,verify_distinct_submit_url_for_existing_domain,https://same.example/add,same.example,200,yes,https://same.example/add,same.example,no,text/html,Add Tool,1,2,yes,yes,yes,no,no,no,no,no,no,review_possible_domain_variant,form found,,2026-05-22T00:00:00.000Z',
+        'p0-001,2,11,verify_submit_form_then_approve_or_reject,https://paid.example/submit,paid.example,200,yes,https://paid.example/submit,paid.example,no,text/html,Submit Tool,1,2,yes,yes,yes,no,no,no,no,yes,no,reject_paid,pricing found,,2026-05-22T00:00:00.000Z',
+        'p0-001,3,12,verify_distinct_submit_url_for_existing_domain,https://dup.example/submit,dup.example,200,yes,https://dup.example/submit,dup.example,no,text/html,Submit,1,2,yes,yes,yes,no,no,no,no,no,yes,reject_duplicate,duplicate,,2026-05-22T00:00:00.000Z',
+      ].join('\n'));
+
+      const suggestions = buildCoverageReviewSuggestions(batch, evidence);
+      const csv = coverageReviewSuggestionsCsv(suggestions);
+      writeCoverageReviewSuggestions(suggestions, { output, jsonOutput });
+      const json = JSON.parse(readFileSync(jsonOutput, 'utf-8'));
+
+      assert.equal(suggestions.suggestion_rows, 3);
+      assert.equal(suggestions.summary.evidence_matched, 3);
+      assert.deepEqual(suggestions.rows.map(row => row.suggested_review_decision), [
+        'needs_manual_check',
+        'reject_paid',
+        'reject_duplicate',
+      ]);
+      assert.equal(suggestions.rows[0].possible_approval_decision, 'approved_domain_variant');
+      assert.equal(suggestions.rows[0].suggested_review_notes.includes('same-domain variant must not use generic approved'), true);
+      assert.equal(suggestions.rows[1].suggested_pricing, 'paid');
+      assert.equal(suggestions.rows[2].suggestion_confidence, 'high');
+      assert.match(csv, /possible_approval_decision/);
+      assert.match(readFileSync(output, 'utf-8'), /approved_domain_variant/);
+      assert.equal(json.mode_policy, 'suggestions_are_non_binding_and_do_not_modify_review_decisions');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('does not turn broad payment text on generic pages into a paid rejection suggestion', () => {
+    const dir = tempDir();
+    try {
+      const batch = join(dir, 'coverage-review-batch.csv');
+      const evidence = join(dir, 'coverage-review-evidence.csv');
+      writeFileSync(batch, [
+        'batch_id,batch_order,priority,priority_score,review_row,review_decision,review_decision_options,review_action,review_instruction,review_notes,reviewed_by,submission_url_override,canonical_name,pricing,lang,classification,candidate_import_recommendation,url,domain,occurrence_count,source_files,source_locations,registry_target_ids,registry_submit_urls',
+        'p0-001,1,P0,300,10,,approved_domain_variant | reject_duplicate | reject_not_submit | reject_paid | reject_auth_required,verify_distinct_submit_url_for_existing_domain,verify same-domain variant,,,,GitHub,unknown,unknown,domain_in_registry_only,review_submit_url,https://github.com/,github.com,1,coverage.csv,coverage.csv:2,github-existing,https://github.com/org/repo/issues/new',
+      ].join('\n'));
+      writeFileSync(evidence, [
+        'batch_id,batch_order,review_row,review_action,url,domain,http_status,fetch_ok,final_url,final_domain,domain_changed,content_type,title,form_count,input_count,submit_button_signal,submit_path_signal,directory_signal,auth_signal,oauth_signal,captcha_signal,cloudflare_signal,payment_signal,duplicate_registry_url,suggested_decision,evidence_notes,fetch_error,checked_at',
+        'p0-001,1,10,verify_distinct_submit_url_for_existing_domain,https://github.com/,github.com,200,yes,https://github.com/,github.com,no,text/html,GitHub,5,14,yes,no,yes,yes,no,yes,no,yes,no,reject_paid,payment text found,,2026-05-22T00:00:00.000Z',
+      ].join('\n'));
+
+      const suggestions = buildCoverageReviewSuggestions(batch, evidence);
+
+      assert.notEqual(suggestions.rows[0].suggested_review_decision, 'reject_paid');
+      assert.equal(suggestions.rows[0].suggested_review_decision, 'reject_auth_required');
+      assert.equal(suggestions.rows[0].suggestion_confidence, 'high');
+      assert.equal(suggestions.rows[0].suggested_pricing, '');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('treats 404 evidence as not-submit before considering page payment text', () => {
+    const dir = tempDir();
+    try {
+      const batch = join(dir, 'coverage-review-batch.csv');
+      const evidence = join(dir, 'coverage-review-evidence.csv');
+      writeFileSync(batch, [
+        'batch_id,batch_order,priority,priority_score,review_row,review_decision,review_decision_options,review_action,review_instruction,review_notes,reviewed_by,submission_url_override,canonical_name,pricing,lang,classification,candidate_import_recommendation,url,domain,occurrence_count,source_files,source_locations,registry_target_ids,registry_submit_urls',
+        'p0-001,1,P0,300,10,,approved_domain_variant | reject_duplicate | reject_not_submit | reject_paid | reject_auth_required,verify_distinct_submit_url_for_existing_domain,verify same-domain variant,,,,ToolPilot,unknown,unknown,domain_in_registry_only,review_submit_url,https://toolpilot.example/submit,toolpilot.example,1,coverage.csv,coverage.csv:2,toolpilot-existing,https://toolpilot.example/add-tool',
+      ].join('\n'));
+      writeFileSync(evidence, [
+        'batch_id,batch_order,review_row,review_action,url,domain,http_status,fetch_ok,final_url,final_domain,domain_changed,content_type,title,form_count,input_count,submit_button_signal,submit_path_signal,directory_signal,auth_signal,oauth_signal,captcha_signal,cloudflare_signal,payment_signal,duplicate_registry_url,suggested_decision,evidence_notes,fetch_error,checked_at',
+        'p0-001,1,10,verify_distinct_submit_url_for_existing_domain,https://toolpilot.example/submit,toolpilot.example,404,no,https://toolpilot.example/submit,toolpilot.example,no,text/html,404 Not Found,4,15,yes,yes,yes,yes,no,yes,no,yes,no,review_fetch_failed,payment text found,HTTP 404,2026-05-22T00:00:00.000Z',
+      ].join('\n'));
+
+      const suggestions = buildCoverageReviewSuggestions(batch, evidence);
+
+      assert.equal(suggestions.rows[0].suggested_review_decision, 'reject_not_submit');
+      assert.equal(suggestions.rows[0].suggestion_confidence, 'high');
+      assert.equal(suggestions.rows[0].suggested_pricing, '');
+      assert.match(suggestions.rows[0].suggestion_basis, /HTTP 404/);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

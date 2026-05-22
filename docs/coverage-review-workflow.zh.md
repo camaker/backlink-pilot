@@ -29,6 +29,8 @@
 - `backlink-url/coverage-review-queue.csv`: 已排序的审核队列。
 - `backlink-url/review-batches/p0-001.csv`: 首个 P0 审核批次。
 - `backlink-url/review-batches/p0-001.md`: 首个 P0 批次说明。
+- `backlink-url/review-batches/p0-001-evidence.csv`: 首个 P0 批次的只读 HTTP/HTML evidence。
+- `backlink-url/review-batches/p0-001-suggestions.csv`: 基于 evidence 的非绑定审核建议。
 
 ## Safety Rules
 
@@ -111,6 +113,23 @@ node src/cli.js targets coverage-review-evidence backlink-url/review-batches/p0-
 ```
 
 Evidence 输出包含 HTTP 状态、最终 URL、表单数量、提交按钮信号、登录/OAuth/CAPTCHA/Cloudflare/付费信号、registry URL 重复信号和 `suggested_decision`。`suggested_decision` 只是审核辅助，不会自动写入 `review_decision`。
+
+生成非绑定审核建议：
+
+```bash
+node src/cli.js targets coverage-review-suggest \
+  backlink-url/review-batches/p0-001.csv \
+  backlink-url/review-batches/p0-001-evidence.csv \
+  --output backlink-url/review-batches/p0-001-suggestions.csv \
+  --json-output backlink-url/review-batches/p0-001-suggestions.json
+```
+
+Suggestion 文件仍然不修改任何审核表。它只把 evidence 转成更保守的人工复核建议：
+
+- 明确重复、明确付费提交页、明确登录/OAuth/CAPTCHA 阻断会给出拒绝建议。
+- 疑似有效表单不会自动批准，只会给出 `possible_approval_decision`，要求人工确认。
+- 同域候选即使可考虑批准，也只提示 `approved_domain_variant`，不能使用普通 `approved`。
+- 任何 `needs_manual_check` 都不能导入 registry。
 
 编辑批次后先验证批次：
 

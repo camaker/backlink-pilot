@@ -142,6 +142,7 @@ node src/cli.js auth login --url <URL>   # 为 assisted 目标保存人工登录
 node src/cli.js scout <URL> --deep       # 侦察站点表单
 node src/cli.js scout-queue              # 生成未侦察目标队列
 node src/cli.js targets coverage-review-batch <队列CSV>   # 从外链候选队列生成小批次人工审核表
+node src/cli.js targets coverage-review-suggest <批次CSV> <evidence.csv>  # 从只读证据生成非绑定审核建议
 node src/cli.js targets promote-coverage-review-batch <主review> <批次CSV> --dry-run  # 批次回写前的完整安全门禁
 node src/cli.js pipeline --scout-queue   # 侦察未验证目标，刷新计划，再 dry-run 或执行
 node src/cli.js scout-plan <计划文件>    # 批量侦察计划里的目标并更新安全等级
