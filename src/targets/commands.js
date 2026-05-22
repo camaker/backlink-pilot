@@ -32,6 +32,10 @@ export async function listTargetsCommand(opts = {}) {
     risk: opts.risk,
     lang: opts.lang,
     source: opts.source,
+    backlinkStatus: opts.backlinkStatus,
+    verified: Boolean(opts.verified),
+    notFound: Boolean(opts.notFound),
+    hasLiveListing: Boolean(opts.hasLiveListing),
     runnable: Boolean(opts.runnable),
   });
   const limit = Number.parseInt(opts.limit || rows.length, 10);
@@ -48,6 +52,8 @@ export async function listTargetsCommand(opts = {}) {
       target.submission?.mode || 'unknown',
       target.pricing || 'unknown',
       target.quality?.risk || 'unknown',
+      target.submission?.backlink_status || 'unverified',
+      target.submission?.live_listing_url || '',
       target.submit_url,
     ].join('\t'));
   }

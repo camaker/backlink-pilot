@@ -19,6 +19,7 @@ import {
 import { buildSubmissionPlan, saveSubmissionPlan } from './planner/plan.js';
 import { runPlan } from './runner/run.js';
 import { verifyBacklinkCommand, verifyResultsCommand } from './verification/commands.js';
+import { reportCommand } from './report/commands.js';
 import { scoutPlan } from './scout/plan.js';
 import { readinessCommand } from './readiness/commands.js';
 import {
@@ -228,6 +229,10 @@ targets
   .option('--risk <risk>', 'Filter by risk level')
   .option('--lang <lang>', 'Filter by language')
   .option('--source <name>', 'Filter by source')
+  .option('--backlink-status <status>', 'Filter by backlink status: verified, not_found, skipped, failed')
+  .option('--verified', 'Only list targets with verified backlinks')
+  .option('--not-found', 'Only list targets whose latest backlink check did not find the backlink')
+  .option('--has-live-listing', 'Only list targets with a recorded live listing URL')
   .option('--runnable', 'Only list runnable candidates: auto_safe, auto_candidate, assisted')
   .option('--limit <n>', 'Maximum rows to print')
   .option('--json', 'Output full rows as JSON')
@@ -385,6 +390,17 @@ program
   .option('--json', 'Output summary as JSON')
   .action(async (results, opts) => {
     await verifyResultsCommand(results, opts);
+  });
+
+program
+  .command('report')
+  .description('Summarize run results, backlink verification, and registry evidence')
+  .option('--results <path>', 'run-plan results.jsonl path')
+  .option('--verification <path>', 'verify-results JSONL path')
+  .option('--registry <path>', 'Canonical registry path')
+  .option('--json', 'Output as JSON')
+  .action(async (opts) => {
+    await reportCommand(opts);
   });
 
 program

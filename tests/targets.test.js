@@ -159,6 +159,37 @@ group_one:
       rmSync(dir, { recursive: true, force: true });
     }
   });
+
+  it('filters targets by backlink verification evidence', () => {
+    const targets = [
+      {
+        id: 'verified',
+        submission: {
+          mode: 'auto_safe',
+          backlink_status: 'verified',
+          live_listing_url: 'https://dir.example/tools/demo',
+        },
+      },
+      {
+        id: 'not-found',
+        submission: {
+          mode: 'auto_safe',
+          backlink_status: 'not_found',
+        },
+      },
+      {
+        id: 'unverified',
+        submission: {
+          mode: 'needs_scout',
+        },
+      },
+    ];
+
+    assert.deepEqual(filterTargets(targets, { verified: true }).map(target => target.id), ['verified']);
+    assert.deepEqual(filterTargets(targets, { notFound: true }).map(target => target.id), ['not-found']);
+    assert.deepEqual(filterTargets(targets, { backlinkStatus: 'not_found' }).map(target => target.id), ['not-found']);
+    assert.deepEqual(filterTargets(targets, { hasLiveListing: true }).map(target => target.id), ['verified']);
+  });
 });
 
 describe('submission plan', () => {

@@ -338,6 +338,10 @@ export function filterTargets(targets = [], filters = {}) {
     if (filters.risk && target.quality?.risk !== filters.risk) return false;
     if (filters.lang && target.lang !== filters.lang) return false;
     if (filters.source && !asArray(target.source).includes(filters.source)) return false;
+    if (filters.backlinkStatus && target.submission?.backlink_status !== filters.backlinkStatus) return false;
+    if (filters.verified && target.submission?.backlink_status !== 'verified') return false;
+    if (filters.notFound && target.submission?.backlink_status !== 'not_found') return false;
+    if (filters.hasLiveListing && !target.submission?.live_listing_url) return false;
     if (filters.runnable && !['auto_safe', 'auto_candidate', 'assisted'].includes(target.submission?.mode)) {
       return false;
     }
