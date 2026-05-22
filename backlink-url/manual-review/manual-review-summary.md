@@ -1,13 +1,13 @@
 # Manual Review Pack
 
-Generated: 2026-05-22T09:41:15.857Z
+Generated: 2026-05-22T09:49:39.068Z
 
 ## Scope
 
-- Current queue rows: 411
-- P0 rows: 18
+- Current queue rows: 410
+- P0 rows: 17
 - P2 rows: 393
-- Rows with evidence or suggestion history: 411
+- Rows with evidence or suggestion history: 410
 - Rows without evidence or suggestion history: 0
 - Rows blocked by safety gate in prior drafts: 221
 - Possible approvals after manual confirmation: 5
@@ -19,14 +19,14 @@ Policy: manual review only. No approvals, no registry imports, no real submissio
 | Priority | Count |
 |---|---:|
 | P2 | 393 |
-| P0 | 18 |
+| P0 | 17 |
 
 ## By Review Action
 
 | Action | Count |
 |---|---:|
 | verify_directory_fit_before_any_approval | 393 |
-| verify_submit_form_then_approve_or_reject | 13 |
+| verify_submit_form_then_approve_or_reject | 12 |
 | verify_distinct_submit_url_for_existing_domain | 5 |
 
 ## By Manual Bucket
@@ -34,7 +34,7 @@ Policy: manual review only. No approvals, no registry imports, no real submissio
 | Bucket | Count |
 |---|---:|
 | safety_gate_blocked_auto_rejection | 221 |
-| fetch_failed_cannot_decide | 93 |
+| fetch_failed_cannot_decide | 92 |
 | medium_confidence_requires_human_confirmation | 88 |
 | manual_browser_check_required | 5 |
 | manual_submit_form_confirmation_required | 4 |
@@ -44,7 +44,7 @@ Policy: manual review only. No approvals, no registry imports, no real submissio
 | Suggested Decision | Count |
 |---|---:|
 | reject_auth_required | 304 |
-| needs_manual_check | 102 |
+| needs_manual_check | 101 |
 | reject_not_submit | 5 |
 
 ## P0 Manual Queue
@@ -68,7 +68,6 @@ Policy: manual review only. No approvals, no registry imports, no real submissio
 | 15 | 332 | launchvault.com | fetch_failed_cannot_decide | needs_manual_check | low | https://launchvault.com/submit |
 | 16 | 392 | nocodedevs.com | medium_confidence_requires_human_confirmation | reject_auth_required | medium | https://www.nocodedevs.com/submit |
 | 17 | 395 | nocodelist.co | medium_confidence_requires_human_confirmation | reject_auth_required | medium | https://nocodelist.co/submit |
-| 18 | 550 | wearenocode.com | fetch_failed_cannot_decide | needs_manual_check | low | https://www.wearenocode.com/submit |
 
 ## Files
 
