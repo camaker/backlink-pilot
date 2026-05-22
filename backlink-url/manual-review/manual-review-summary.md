@@ -1,15 +1,15 @@
 # Manual Review Pack
 
-Generated: 2026-05-22T09:25:46.353Z
+Generated: 2026-05-22T09:41:15.857Z
 
 ## Scope
 
-- Current queue rows: 429
-- P0 rows: 28
-- P2 rows: 401
-- Rows with evidence or suggestion history: 429
+- Current queue rows: 411
+- P0 rows: 18
+- P2 rows: 393
+- Rows with evidence or suggestion history: 411
 - Rows without evidence or suggestion history: 0
-- Rows blocked by safety gate in prior drafts: 223
+- Rows blocked by safety gate in prior drafts: 221
 - Possible approvals after manual confirmation: 5
 
 Policy: manual review only. No approvals, no registry imports, no real submissions, no login or CAPTCHA/Cloudflare bypass.
@@ -18,33 +18,33 @@ Policy: manual review only. No approvals, no registry imports, no real submissio
 
 | Priority | Count |
 |---|---:|
-| P2 | 401 |
-| P0 | 28 |
+| P2 | 393 |
+| P0 | 18 |
 
 ## By Review Action
 
 | Action | Count |
 |---|---:|
-| verify_directory_fit_before_any_approval | 401 |
-| verify_submit_form_then_approve_or_reject | 23 |
+| verify_directory_fit_before_any_approval | 393 |
+| verify_submit_form_then_approve_or_reject | 13 |
 | verify_distinct_submit_url_for_existing_domain | 5 |
 
 ## By Manual Bucket
 
 | Bucket | Count |
 |---|---:|
-| safety_gate_blocked_auto_rejection | 223 |
-| fetch_failed_cannot_decide | 104 |
-| medium_confidence_requires_human_confirmation | 92 |
+| safety_gate_blocked_auto_rejection | 221 |
+| fetch_failed_cannot_decide | 93 |
+| medium_confidence_requires_human_confirmation | 88 |
 | manual_browser_check_required | 5 |
-| manual_submit_form_confirmation_required | 5 |
+| manual_submit_form_confirmation_required | 4 |
 
 ## By Suggested Decision
 
 | Suggested Decision | Count |
 |---|---:|
-| reject_auth_required | 310 |
-| needs_manual_check | 114 |
+| reject_auth_required | 304 |
+| needs_manual_check | 102 |
 | reject_not_submit | 5 |
 
 ## P0 Manual Queue
@@ -69,16 +69,6 @@ Policy: manual review only. No approvals, no registry imports, no real submissio
 | 16 | 392 | nocodedevs.com | medium_confidence_requires_human_confirmation | reject_auth_required | medium | https://www.nocodedevs.com/submit |
 | 17 | 395 | nocodelist.co | medium_confidence_requires_human_confirmation | reject_auth_required | medium | https://nocodelist.co/submit |
 | 18 | 550 | wearenocode.com | fetch_failed_cannot_decide | needs_manual_check | low | https://www.wearenocode.com/submit |
-| 19 | 55 | a.example | fetch_failed_cannot_decide | needs_manual_check | low | https://a.example/submit |
-| 20 | 90 | any-directory.com | fetch_failed_cannot_decide | needs_manual_check | low | https://any-directory.com/submit |
-| 21 | 92 | any-site.com | medium_confidence_requires_human_confirmation | reject_auth_required | medium | https://any-site.com/submit |
-| 22 | 104 | b.example | fetch_failed_cannot_decide | needs_manual_check | low | https://b.example/submit |
-| 23 | 171 | c.example | fetch_failed_cannot_decide | needs_manual_check | low | https://c.example/submit |
-| 24 | 204 | custom.example | fetch_failed_cannot_decide | needs_manual_check | low | https://custom.example/submit |
-| 25 | 206 | d.example | fetch_failed_cannot_decide | needs_manual_check | low | https://d.example/submit |
-| 26 | 221 | e.example | fetch_failed_cannot_decide | needs_manual_check | low | https://e.example/submit |
-| 27 | 385 | new-site.com | manual_submit_form_confirmation_required | needs_manual_check | low | https://new-site.com/submit |
-| 28 | 489 | some-directory.com | fetch_failed_cannot_decide | needs_manual_check | low | https://some-directory.com/submit |
 
 ## Files
 

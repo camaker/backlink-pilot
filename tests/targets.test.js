@@ -384,6 +384,9 @@ targets:
         '- https://missing.example/add-product',
         '- https://plain-missing.example',
       ].join('\n'));
+      writeFileSync(join(inputDir, 'coverage-review-queue.csv'), '"url"\n"https://ignored.example/submit"\n');
+      mkdirp(join(inputDir, 'manual-review'));
+      writeFileSync(join(inputDir, 'manual-review', 'remaining.csv'), '"url"\n"https://ignored-manual.example/submit"\n');
 
       const report = buildCoverageReport(inputDir, { registry });
 
@@ -412,6 +415,33 @@ targets:
         report.items.find(item => item.domain === 'missing.example').candidate_import_recommendation,
         'review_submit_url'
       );
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('preserves nested CSV source provenance and skips documentation placeholders', () => {
+    const dir = tempDir();
+    try {
+      const inputDir = join(dir, 'backlink-url');
+      const registry = join(dir, 'registry.yaml');
+      writeFileSync(registry, 'version: 1\ntargets: []\n');
+      mkdirp(inputDir);
+      writeFileSync(join(inputDir, 'repo-external-links.csv'), [
+        '"url","source_files","source_locations"',
+        '"https://any-site.com/submit","README.md; docs/guide.md","README.md:54; docs/guide.md:201"',
+      ].join('\n'));
+
+      const report = buildCoverageReport(inputDir, { registry });
+      const item = report.items.find(row => row.domain === 'any-site.com');
+      const reviewCsv = coverageReviewCsv(report);
+
+      assert.deepEqual(item.source_files, ['README.md', 'docs/guide.md']);
+      assert.deepEqual(item.source_locations, ['README.md:54', 'docs/guide.md:201']);
+      assert.equal(item.occurrence_count, 2);
+      assert.equal(item.candidate_import_recommendation, 'skip_placeholder_url');
+      assert.match(reviewCsv, /reject_not_submit,do_not_import_placeholder_url/);
+      assert.match(reviewCsv, /coverage_placeholder_filter/);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
@@ -1412,6 +1442,31 @@ targets:
       assert.equal(suggestions.rows[0].suggestion_confidence, 'high');
       assert.equal(suggestions.rows[0].suggested_pricing, '');
       assert.match(suggestions.rows[0].suggestion_basis, /HTTP 404/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('rejects non-production placeholder domains before manual browser review', () => {
+    const dir = tempDir();
+    try {
+      const batch = join(dir, 'coverage-review-batch.csv');
+      const evidence = join(dir, 'coverage-review-evidence.csv');
+      writeFileSync(batch, [
+        'batch_id,batch_order,priority,priority_score,review_row,review_decision,review_decision_options,review_action,review_instruction,review_notes,reviewed_by,submission_url_override,canonical_name,pricing,lang,classification,candidate_import_recommendation,url,domain,occurrence_count,source_files,source_locations,registry_target_ids,registry_submit_urls',
+        'p0-001,1,P0,300,10,,approved | reject_not_submit | reject_paid | reject_auth_required,verify_submit_form_then_approve_or_reject,verify submit form,,,,Example,unknown,unknown,missing_domain,review_submit_url,https://a.example/submit,a.example,1,tests/campaign.test.js,tests/campaign.test.js:8,,',
+      ].join('\n'));
+      writeFileSync(evidence, [
+        'batch_id,batch_order,review_row,review_action,url,domain,http_status,fetch_ok,final_url,final_domain,domain_changed,content_type,title,form_count,input_count,submit_button_signal,submit_path_signal,directory_signal,auth_signal,oauth_signal,captcha_signal,cloudflare_signal,payment_signal,duplicate_registry_url,suggested_decision,evidence_notes,fetch_error,checked_at',
+      ].join('\n'));
+
+      const suggestions = buildCoverageReviewSuggestions(batch, evidence);
+
+      assert.equal(suggestions.rows[0].suggested_review_decision, 'reject_not_submit');
+      assert.equal(suggestions.rows[0].suggestion_confidence, 'high');
+      assert.equal(suggestions.rows[0].reviewer_action, 'reject_non_production_placeholder_url');
+      assert.match(suggestions.rows[0].suggestion_basis, /reserved\/example domain/);
+      assert.equal(suggestions.summary.high_confidence_rejections, 1);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

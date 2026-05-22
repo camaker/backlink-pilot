@@ -20,7 +20,13 @@ const DEFAULT_IGNORED_FILENAMES = new Set([
   'coverage-report.json',
   'coverage-candidates.csv',
   'coverage-review.csv',
+  'coverage-review-queue.csv',
   'coverage-summary.md',
+]);
+
+const DEFAULT_IGNORED_DIRNAMES = new Set([
+  'manual-review',
+  'review-batches',
 ]);
 
 const CSV_URL_COLUMNS = [
@@ -44,6 +50,47 @@ const BARE_DOMAIN_FIELDS = new Set([
   'domain',
   'target_domain',
 ]);
+
+const RESERVED_EXACT_DOMAINS = new Set([
+  'example.com',
+  'example.net',
+  'example.org',
+  'localhost',
+]);
+
+const RESERVED_DOMAIN_SUFFIXES = [
+  '.example',
+  '.test',
+  '.invalid',
+  '.localhost',
+];
+
+const DOCUMENTATION_PLACEHOLDER_DOMAINS = new Set([
+  'another-blog.com',
+  'any-directory.com',
+  'any-site.com',
+  'custom.com',
+  'example-blog.com',
+  'mycoolapp.com',
+  'mysite.com',
+  'new-site.com',
+  'product.com',
+  'site.com',
+  'some-directory.com',
+  'test.example',
+]);
+
+const NON_CATALOG_SOURCE_PATTERNS = [
+  /^readme(?:\.zh)?\.md$/i,
+  /^claude\.md$/i,
+  /^docs\//i,
+  /^tests\//i,
+  /^config\.example\.ya?ml$/i,
+  /^resources\/backlink-resources\.example\.json$/i,
+  /^resources\/sites\.json$/i,
+  /^src\/config\.js$/i,
+  /^src\/submit\.js$/i,
+];
 
 const URL_PATTERN = /https?:\/\/[^\s<>"'`)\]}]+/gi;
 const APPROVED_DECISIONS = new Set(['approved', 'approve', 'yes', 'y', 'true', '1']);
@@ -246,6 +293,63 @@ function unique(values) {
   return [...new Set(values.filter(Boolean))];
 }
 
+function splitSemicolonValues(value) {
+  if (Array.isArray(value)) return value.flatMap(splitSemicolonValues);
+  return String(value || '')
+    .split(/\s*;\s*/)
+    .map(item => item.trim())
+    .filter(Boolean);
+}
+
+function sourceFileFromLocation(location) {
+  const text = normalizePath(location).trim();
+  const match = text.match(/^(.+?)(?::(?:row\s+\d+|\d+|json:).*)$/i);
+  return match?.[1] || '';
+}
+
+function rowSourceFiles(row) {
+  const files = [
+    ...splitSemicolonValues(row.source_files || row.source_file),
+    ...splitSemicolonValues(row.source_locations || row.source_location).map(sourceFileFromLocation),
+  ];
+  return unique(files.map(normalizePath));
+}
+
+function isReservedSuffixDomain(domain) {
+  const host = String(domain || '').trim().toLowerCase().replace(/^www\./, '');
+  if (!host || RESERVED_EXACT_DOMAINS.has(host)) return false;
+  return RESERVED_DOMAIN_SUFFIXES.some(suffix => host.endsWith(suffix));
+}
+
+function isNonCatalogSourceFile(sourceFile) {
+  const normalized = normalizePath(sourceFile).toLowerCase();
+  return NON_CATALOG_SOURCE_PATTERNS.some(pattern => pattern.test(normalized));
+}
+
+function hasOnlyNonCatalogSources(row) {
+  const files = rowSourceFiles(row);
+  return files.length > 0 && files.every(isNonCatalogSourceFile);
+}
+
+function nonProductionCandidateReason(row) {
+  const normalized = normalizeUrl(rowImportUrl(row) || row.url || '');
+  const domain = (normalized?.domain || row.domain || '').toLowerCase().replace(/^www\./, '');
+
+  if (RESERVED_EXACT_DOMAINS.has(domain)) {
+    return `reserved/example domain (${domain}) is not a real directory target`;
+  }
+
+  if (isReservedSuffixDomain(domain) && hasOnlyNonCatalogSources(row)) {
+    return `reserved/example domain (${domain}) from non-catalog source files is not a real directory target`;
+  }
+
+  if (DOCUMENTATION_PLACEHOLDER_DOMAINS.has(domain) && hasOnlyNonCatalogSources(row)) {
+    return `documentation/test placeholder domain (${domain}) from non-catalog source files`;
+  }
+
+  return '';
+}
+
 function cleanupUrlToken(value) {
   return String(value || '')
     .trim()
@@ -304,13 +408,26 @@ function extractUrlsFromCsv(text, context = {}) {
   rows.forEach((row, rowIndex) => {
     for (const column of CSV_URL_COLUMNS) {
       if (!Object.prototype.hasOwnProperty.call(row, column)) continue;
-      addRecord(records, row[column], {
-        ...context,
-        allow_bare_domain: true,
-        source_location: `${context.source_file}:row ${rowIndex + 2}:${column}`,
-        source_field: column,
-        source_type: 'csv',
-      });
+      const sourceFiles = splitSemicolonValues(row.source_files || row.source_file);
+      const sourceLocations = splitSemicolonValues(row.source_locations || row.source_location);
+      const sourceCount = Math.max(sourceFiles.length, sourceLocations.length, 1);
+
+      for (let sourceIndex = 0; sourceIndex < sourceCount; sourceIndex += 1) {
+        const sourceLocation = sourceLocations[sourceIndex] || '';
+        const sourceFile = sourceFiles[sourceIndex] ||
+          sourceFileFromLocation(sourceLocation) ||
+          sourceFiles[0] ||
+          context.source_file;
+
+        addRecord(records, row[column], {
+          ...context,
+          allow_bare_domain: true,
+          source_file: normalizePath(sourceFile),
+          source_location: sourceLocation || `${context.source_file}:row ${rowIndex + 2}:${column}`,
+          source_field: column,
+          source_type: sourceLocations.length || sourceFiles.length ? 'csv_nested' : 'csv',
+        });
+      }
     }
   });
 
@@ -386,6 +503,10 @@ function listFiles(rootDir, opts = {}) {
     ...DEFAULT_IGNORED_FILENAMES,
     ...asArray(opts.ignoreFilenames),
   ]);
+  const ignoredDirs = new Set([
+    ...DEFAULT_IGNORED_DIRNAMES,
+    ...asArray(opts.ignoreDirnames),
+  ]);
   const root = rootDir;
   const files = [];
 
@@ -393,6 +514,7 @@ function listFiles(rootDir, opts = {}) {
     if (!existsSync(path)) return;
     const stat = statSync(path);
     if (stat.isDirectory()) {
+      if (ignoredDirs.has(path.split(/[\\/]/).pop())) return;
       for (const entry of readdirSync(path).sort()) {
         walk(join(path, entry));
       }
@@ -513,6 +635,7 @@ function looksLikeSubmissionUrl(item) {
 function candidateRecommendation(item) {
   if (item.classification === 'exact_in_registry') return 'already_in_registry';
   if (item.classification === 'domain_in_registry_only') return 'review_submit_url';
+  if (nonProductionCandidateReason(item)) return 'skip_placeholder_url';
   if (isSourcePage(item)) return 'skip_source_page';
   if (looksLikeSubmissionUrl(item)) return 'review_submit_url';
   return 'needs_manual_review';
@@ -654,13 +777,23 @@ export function writeCoverageCandidatesCsv(report, path) {
 }
 
 function defaultReviewDecision(item) {
+  if (item.candidate_import_recommendation === 'skip_placeholder_url') return 'reject_not_submit';
   if (item.candidate_import_recommendation === 'skip_source_page') return 'reject_source_page';
   if (item.candidate_import_recommendation === 'already_in_registry') return 'already_in_registry';
   return '';
 }
 
+function defaultReviewNotes(item) {
+  return nonProductionCandidateReason(item);
+}
+
+function defaultReviewedBy(item) {
+  return nonProductionCandidateReason(item) ? 'coverage_placeholder_filter' : '';
+}
+
 function reviewInstruction(item) {
   if (item.classification === 'exact_in_registry') return 'do_not_import';
+  if (item.candidate_import_recommendation === 'skip_placeholder_url') return 'do_not_import_placeholder_url';
   if (item.candidate_import_recommendation === 'skip_source_page') return 'do_not_import_source_page';
   if (item.classification === 'domain_in_registry_only') return 'use_approved_domain_variant_only_if_this_is_a_distinct_valid_submit_url';
   if (item.candidate_import_recommendation === 'review_submit_url') return 'verify_submit_form_before_approval';
@@ -674,8 +807,8 @@ function coverageReviewRows(report, opts = {}) {
     .map(item => ({
       review_decision: defaultReviewDecision(item),
       review_instruction: reviewInstruction(item),
-      review_notes: '',
-      reviewed_by: '',
+      review_notes: defaultReviewNotes(item),
+      reviewed_by: defaultReviewedBy(item),
       canonical_name: item.domain,
       submission_url_override: '',
       pricing: 'unknown',
@@ -751,6 +884,7 @@ function blockReason(row, normalized, decision) {
   if (isRejectedDecision(decision)) return 'rejected_by_review';
   if (!isApprovedDecision(decision)) return 'unknown_review_decision';
   if (!normalized) return 'invalid_url';
+  if (nonProductionCandidateReason(row)) return 'non_production_placeholder_url';
   if (classification === 'exact_in_registry') return 'already_in_registry';
   if (recommendation === 'already_in_registry') return 'already_in_registry';
   if (recommendation === 'skip_source_page') return 'source_page_not_importable';
@@ -1189,6 +1323,18 @@ function isSameDomainNonSubmitCandidate(row, evidence) {
 }
 
 function conservativeSuggestion(row, evidence) {
+  const nonProductionReason = nonProductionCandidateReason(row);
+  if (nonProductionReason) {
+    return {
+      suggested_review_decision: 'reject_not_submit',
+      suggestion_confidence: 'high',
+      possible_approval_decision: '',
+      reviewer_action: 'reject_non_production_placeholder_url',
+      suggested_pricing: '',
+      basis: [nonProductionReason],
+    };
+  }
+
   if (!evidence) {
     return {
       suggested_review_decision: 'needs_manual_check',
@@ -2120,7 +2266,7 @@ function reviewQueuePriority(row) {
   const sourceFiles = String(row.source_files || '').toLowerCase();
   const occurrenceCount = numericValue(row.occurrence_count, 1);
 
-  if (isRejectedDecision(decision) || recommendation === 'skip_source_page') {
+  if (isRejectedDecision(decision) || recommendation === 'skip_source_page' || recommendation === 'skip_placeholder_url') {
     return {
       priority: 'P9',
       score: 0,
