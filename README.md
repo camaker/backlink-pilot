@@ -140,6 +140,8 @@ node src/cli.js readiness                # Validate product readiness before rea
 node src/cli.js auth login --url <url>   # Save a manual login session for assisted targets
 node src/cli.js scout <url> --deep       # Discover form fields
 node src/cli.js scout-queue              # Build a plan of unscouted targets
+node src/cli.js targets coverage-review-batch <queue.csv>   # Create small human review batches from backlink URL candidates
+node src/cli.js targets promote-coverage-review-batch <review.csv> <batch.csv> --dry-run  # Validate batch promotion before import/scout
 node src/cli.js pipeline --scout-queue   # Scout unverified targets, refresh plan, dry-run or execute
 node src/cli.js scout-plan <plan>        # Scout a generated plan and update target safety
 node src/cli.js run-plan <plan>          # Dry-run or execute verified auto_safe targets

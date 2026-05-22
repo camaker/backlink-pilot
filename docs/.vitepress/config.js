@@ -27,6 +27,7 @@ export default defineConfig({
           { text: 'Home', link: '/' },
           { text: 'Usage Guide / 使用指南', link: '/guide' },
           { text: 'Tutorial / 上手教程', link: '/tutorial' },
+          { text: 'Coverage Review / 外链数据审核', link: '/coverage-review-workflow.zh' },
         ],
       },
       {
