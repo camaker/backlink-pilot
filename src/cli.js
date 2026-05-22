@@ -11,6 +11,7 @@ import { showStatus } from './tracker.js';
 import { forceUpdate } from './bb-update.js';
 import { runCampaign } from './campaign.js';
 import {
+  applyCoverageReviewQueueCommand,
   importTargetsCommand,
   auditTargetsCommand,
   coverageReviewQueueCommand,
@@ -321,6 +322,18 @@ targets
   .option('--json', 'Output as JSON')
   .action(async (file, opts) => {
     await coverageReviewQueueCommand(file, opts);
+  });
+
+targets
+  .command('apply-coverage-review-queue <review> <queue>')
+  .description('Apply editable coverage review queue decisions back to a review CSV without importing')
+  .option('--output <path>', 'Write the updated review CSV to a new path')
+  .option('--in-place', 'Update the review CSV in place')
+  .option('--dry-run', 'Validate and summarize without writing')
+  .option('--allow-partial', 'Apply safe rows even if some queue rows are blocked')
+  .option('--json', 'Output as JSON')
+  .action(async (review, queue, opts) => {
+    await applyCoverageReviewQueueCommand(review, queue, opts);
   });
 
 program

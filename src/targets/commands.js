@@ -9,6 +9,7 @@ import {
 } from './registry.js';
 import { auditRegistry, formatAuditReport } from './audit.js';
 import {
+  applyCoverageReviewQueue,
   buildCoverageReport,
   buildCoverageReviewQueue,
   importCoverageReview,
@@ -226,4 +227,43 @@ export async function coverageReviewQueueCommand(reviewPath, opts = {}) {
   }
 
   return queue;
+}
+
+export async function applyCoverageReviewQueueCommand(reviewPath, queuePath, opts = {}) {
+  if (!opts.dryRun && !opts.output && !opts.inPlace) {
+    throw new Error('Refusing to apply review queue without --dry-run, --output, or --in-place.');
+  }
+
+  const result = applyCoverageReviewQueue(reviewPath, queuePath, {
+    dryRun: Boolean(opts.dryRun),
+    output: opts.output,
+    inPlace: Boolean(opts.inPlace),
+    allowPartial: Boolean(opts.allowPartial),
+  });
+
+  if (opts.json) {
+    console.log(JSON.stringify(result, null, 2));
+    if (result.blocked_apply) process.exitCode = 1;
+    return result;
+  }
+
+  console.log(`Review: ${result.review}`);
+  console.log(`Queue: ${result.queue}`);
+  console.log(`Dry run: ${result.dry_run}`);
+  console.log(`Review rows: ${result.review_rows}`);
+  console.log(`Queue rows: ${result.queue_rows}`);
+  console.log(`Applied rows: ${result.applied_rows}`);
+  console.log(`Skipped rows: ${result.skipped_rows}`);
+  console.log(`Blocked rows: ${result.blocked_rows}`);
+  if (result.output) console.log(`Output review CSV: ${result.output}`);
+
+  if (result.blocked_apply) {
+    console.log('Apply blocked: queue rows failed identity checks. Fix the queue file or pass --allow-partial for a controlled partial apply.');
+    for (const row of result.blocked.slice(0, 10)) {
+      console.log(`- queue line ${row.line}: ${row.reason} review_row=${row.review_row}`);
+    }
+    process.exitCode = 1;
+  }
+
+  return result;
 }

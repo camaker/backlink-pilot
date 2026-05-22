@@ -50,25 +50,57 @@ const APPROVED_DECISIONS = new Set(['approved', 'approve', 'yes', 'y', 'true', '
 const DOMAIN_VARIANT_APPROVALS = new Set(['approved_domain_variant', 'approve_domain_variant']);
 const DOMAIN_CHANGE_APPROVALS = new Set(['approved_domain_change', 'approve_domain_change']);
 const REJECTED_DECISION_PATTERN = /^(reject|rejected|skip|skipped|already|duplicate)/;
-const REVIEW_QUEUE_HEADERS = [
-  'priority',
-  'priority_score',
-  'review_row',
-  'review_action',
-  'review_decision_options',
+const COVERAGE_REVIEW_HEADERS = [
+  'review_decision',
+  'review_instruction',
+  'review_notes',
+  'reviewed_by',
+  'canonical_name',
+  'submission_url_override',
+  'pricing',
+  'lang',
   'classification',
   'candidate_import_recommendation',
   'url',
   'domain',
+  'source_files',
+  'source_locations',
+  'registry_target_ids',
+  'registry_submit_urls',
+  'occurrence_count',
+];
+const REVIEW_QUEUE_HEADERS = [
+  'priority',
+  'priority_score',
+  'review_row',
+  'review_decision',
+  'review_decision_options',
+  'review_action',
+  'review_instruction',
+  'review_notes',
+  'reviewed_by',
+  'submission_url_override',
   'canonical_name',
   'pricing',
+  'lang',
+  'classification',
+  'candidate_import_recommendation',
+  'url',
+  'domain',
   'occurrence_count',
   'source_files',
   'source_locations',
   'registry_target_ids',
   'registry_submit_urls',
-  'review_instruction',
+];
+const REVIEW_QUEUE_EDITABLE_FIELDS = [
+  'review_decision',
   'review_notes',
+  'reviewed_by',
+  'canonical_name',
+  'submission_url_override',
+  'pricing',
+  'lang',
 ];
 
 function normalizePath(value) {
@@ -535,32 +567,12 @@ function coverageReviewRows(report, opts = {}) {
 }
 
 export function coverageReviewCsv(report, opts = {}) {
-  const headers = [
-    'review_decision',
-    'review_instruction',
-    'review_notes',
-    'reviewed_by',
-    'canonical_name',
-    'submission_url_override',
-    'pricing',
-    'lang',
-    'classification',
-    'candidate_import_recommendation',
-    'url',
-    'domain',
-    'source_files',
-    'source_locations',
-    'registry_target_ids',
-    'registry_submit_urls',
-    'occurrence_count',
-  ];
-
   const rows = coverageReviewRows(report, opts).map(row =>
-    headers.map(header => row[header])
+    COVERAGE_REVIEW_HEADERS.map(header => row[header])
   );
 
   return [
-    headers.join(','),
+    COVERAGE_REVIEW_HEADERS.join(','),
     ...rows.map(row => row.map(csvEscape).join(',')),
   ].join('\n') + '\n';
 }
@@ -595,6 +607,13 @@ function rowImportUrl(row) {
 function numericValue(value, fallback = 0) {
   const parsed = Number.parseInt(String(value || ''), 10);
   return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function lineNumberFromReviewRow(row) {
+  const value = String(row.review_row || '').trim();
+  if (!/^\d+$/.test(value)) return null;
+  const parsed = Number.parseInt(value, 10);
+  return parsed >= 2 ? parsed : null;
 }
 
 function blockReason(row, normalized, decision) {
@@ -902,4 +921,127 @@ export function coverageReviewQueueCsv(queue) {
 export function writeCoverageReviewQueue(queue, path) {
   ensureParent(path);
   writeFileSync(path, coverageReviewQueueCsv(queue), 'utf-8');
+}
+
+function coverageReviewRowsCsv(rows) {
+  const csvRows = rows.map(row =>
+    COVERAGE_REVIEW_HEADERS.map(header => row[header])
+  );
+  return [
+    COVERAGE_REVIEW_HEADERS.join(','),
+    ...csvRows.map(row => row.map(csvEscape).join(',')),
+  ].join('\n') + '\n';
+}
+
+export function applyCoverageReviewQueue(reviewPath, queuePath, opts = {}) {
+  const reviewRows = parseCsv(readFileSync(reviewPath, 'utf-8'));
+  const queueRows = parseCsv(readFileSync(queuePath, 'utf-8'));
+  const updatedRows = reviewRows.map(row => ({ ...row }));
+  const applied = [];
+  const skipped = [];
+  const blocked = [];
+  const seenReviewRows = new Set();
+
+  queueRows.forEach((row, index) => {
+    const line = index + 2;
+    const reviewLine = lineNumberFromReviewRow(row);
+    if (!reviewLine) {
+      skipped.push({
+        line,
+        review_row: row.review_row || '',
+        reason: 'missing_or_invalid_review_row',
+      });
+      return;
+    }
+
+    if (seenReviewRows.has(reviewLine)) {
+      blocked.push({
+        line,
+        review_row: reviewLine,
+        reason: 'duplicate_review_row_in_queue',
+      });
+      return;
+    }
+    seenReviewRows.add(reviewLine);
+
+    const reviewIndex = reviewLine - 2;
+    const target = updatedRows[reviewIndex];
+    if (!target) {
+      blocked.push({
+        line,
+        review_row: reviewLine,
+        reason: 'review_row_out_of_range',
+      });
+      return;
+    }
+
+    const queueUrl = String(row.url || '').trim();
+    const reviewUrl = String(target.url || '').trim();
+    const queueDomain = String(row.domain || '').trim().toLowerCase();
+    const reviewDomain = String(target.domain || '').trim().toLowerCase();
+    if ((queueUrl && reviewUrl && queueUrl !== reviewUrl) || (queueDomain && reviewDomain && queueDomain !== reviewDomain)) {
+      blocked.push({
+        line,
+        review_row: reviewLine,
+        reason: 'review_row_identity_mismatch',
+        queue_url: queueUrl,
+        review_url: reviewUrl,
+      });
+      return;
+    }
+
+    const changed = {};
+    for (const field of REVIEW_QUEUE_EDITABLE_FIELDS) {
+      if (!Object.prototype.hasOwnProperty.call(row, field)) continue;
+      const nextValue = row[field] ?? '';
+      if (String(target[field] ?? '') === String(nextValue)) continue;
+      changed[field] = {
+        from: target[field] ?? '',
+        to: nextValue,
+      };
+      target[field] = nextValue;
+    }
+
+    if (Object.keys(changed).length) {
+      applied.push({
+        line,
+        review_row: reviewLine,
+        url: target.url || '',
+        domain: target.domain || '',
+        changed,
+      });
+    } else {
+      skipped.push({
+        line,
+        review_row: reviewLine,
+        reason: 'no_editable_changes',
+      });
+    }
+  });
+
+  const blockedApply = blocked.length > 0 && !opts.allowPartial;
+  const output = opts.output || (opts.inPlace ? reviewPath : '');
+  if (!opts.dryRun && output && !blockedApply) {
+    ensureParent(output);
+    writeFileSync(output, coverageReviewRowsCsv(updatedRows), 'utf-8');
+  }
+
+  return {
+    review: reviewPath,
+    queue: queuePath,
+    output,
+    dry_run: Boolean(opts.dryRun),
+    in_place: Boolean(opts.inPlace),
+    allow_partial: Boolean(opts.allowPartial),
+    blocked_apply: blockedApply,
+    review_rows: reviewRows.length,
+    queue_rows: queueRows.length,
+    applied_rows: blockedApply ? 0 : applied.length,
+    skipped_rows: skipped.length,
+    blocked_rows: blocked.length,
+    editable_fields: REVIEW_QUEUE_EDITABLE_FIELDS,
+    applied,
+    skipped,
+    blocked,
+  };
 }

@@ -1,12 +1,13 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { inferTargetMode } from '../src/targets/classify.js';
 import { normalizeUrl } from '../src/targets/normalize.js';
 import { auditTargets, formatAuditReport } from '../src/targets/audit.js';
 import {
+  applyCoverageReviewQueue,
   buildCoverageReport,
   buildCoverageReviewQueue,
   coverageCandidatesCsv,
@@ -29,6 +30,7 @@ import {
 } from '../src/targets/registry.js';
 import { buildSubmissionPlan } from '../src/planner/plan.js';
 import { buildScoutQueuePlan } from '../src/planner/plan.js';
+import { parseCsv } from '../src/targets/importers/csv.js';
 
 function tempDir() {
   return mkdtempSync(join(tmpdir(), 'backlink-pilot-targets-'));
@@ -713,7 +715,7 @@ targets:
       ]);
       assert.equal(queue.rows[0].review_row, 4);
       assert.equal(queue.rows[0].review_decision_options, 'approved_domain_variant | reject_duplicate | reject_not_submit');
-      assert.match(csv, /priority,priority_score,review_row,review_action/);
+      assert.match(csv, /priority,priority_score,review_row,review_decision,review_decision_options,review_action/);
       assert.doesNotMatch(readFileSync(output, 'utf-8'), /91wink.com/);
     } finally {
       rmSync(dir, { recursive: true, force: true });
@@ -734,6 +736,146 @@ targets:
       assert.equal(queue.queue_rows, 1);
       assert.equal(queue.priority_counts.P9, 1);
       assert.equal(queue.rows[0].review_action, 'skip_rejected_or_source_page');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('applies editable review queue decisions back to review rows', () => {
+    const dir = tempDir();
+    try {
+      const review = join(dir, 'coverage-review.csv');
+      const queue = join(dir, 'coverage-review-queue.csv');
+      const output = join(dir, 'updated-review.csv');
+      writeFileSync(review, [
+        [
+          'review_decision',
+          'review_instruction',
+          'review_notes',
+          'reviewed_by',
+          'canonical_name',
+          'submission_url_override',
+          'pricing',
+          'lang',
+          'classification',
+          'candidate_import_recommendation',
+          'url',
+          'domain',
+          'source_files',
+          'source_locations',
+          'registry_target_ids',
+          'registry_submit_urls',
+          'occurrence_count',
+        ].join(','),
+        [
+          '',
+          'verify_submit_form_before_approval',
+          '',
+          '',
+          'Submit URL',
+          '',
+          'unknown',
+          'unknown',
+          'missing_domain',
+          'review_submit_url',
+          'https://submit.example/submit',
+          'submit.example',
+          'coverage-candidates.csv',
+          'coverage-candidates.csv:2',
+          '',
+          '',
+          '2',
+        ].join(','),
+      ].join('\n'));
+      writeFileSync(queue, [
+        [
+          'priority',
+          'priority_score',
+          'review_row',
+          'review_decision',
+          'review_decision_options',
+          'review_action',
+          'review_instruction',
+          'review_notes',
+          'reviewed_by',
+          'submission_url_override',
+          'canonical_name',
+          'pricing',
+          'lang',
+          'classification',
+          'candidate_import_recommendation',
+          'url',
+          'domain',
+          'occurrence_count',
+          'source_files',
+          'source_locations',
+          'registry_target_ids',
+          'registry_submit_urls',
+        ].join(','),
+        [
+          'P0',
+          '187',
+          '2',
+          'approved',
+          'approved | reject_not_submit',
+          'verify_submit_form_then_approve_or_reject',
+          'verify_submit_form_before_approval',
+          'verified simple form',
+          'zh',
+          '',
+          'Submit Example',
+          'free',
+          'en',
+          'missing_domain',
+          'review_submit_url',
+          'https://submit.example/submit',
+          'submit.example',
+          '2',
+          'coverage-candidates.csv',
+          'coverage-candidates.csv:2',
+          '',
+          '',
+        ].join(','),
+      ].join('\n'));
+
+      const result = applyCoverageReviewQueue(review, queue, { output });
+      const [updated] = parseCsv(readFileSync(output, 'utf-8'));
+
+      assert.equal(result.applied_rows, 1);
+      assert.equal(result.blocked_apply, false);
+      assert.equal(updated.review_decision, 'approved');
+      assert.equal(updated.review_notes, 'verified simple form');
+      assert.equal(updated.reviewed_by, 'zh');
+      assert.equal(updated.canonical_name, 'Submit Example');
+      assert.equal(updated.pricing, 'free');
+      assert.equal(updated.lang, 'en');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('blocks review queue application when review row identity changed', () => {
+    const dir = tempDir();
+    try {
+      const review = join(dir, 'coverage-review.csv');
+      const queue = join(dir, 'coverage-review-queue.csv');
+      const output = join(dir, 'updated-review.csv');
+      writeFileSync(review, [
+        'review_decision,review_instruction,review_notes,reviewed_by,canonical_name,submission_url_override,pricing,lang,classification,candidate_import_recommendation,url,domain,source_files,source_locations,registry_target_ids,registry_submit_urls,occurrence_count',
+        ',verify_submit_form_before_approval,,,,,unknown,unknown,missing_domain,review_submit_url,https://submit.example/submit,submit.example,coverage-candidates.csv,coverage-candidates.csv:2,,,2',
+      ].join('\n'));
+      writeFileSync(queue, [
+        'priority,priority_score,review_row,review_decision,review_decision_options,review_action,review_instruction,review_notes,reviewed_by,submission_url_override,canonical_name,pricing,lang,classification,candidate_import_recommendation,url,domain,occurrence_count,source_files,source_locations,registry_target_ids,registry_submit_urls',
+        'P0,187,2,approved,approved | reject_not_submit,verify_submit_form_then_approve_or_reject,verify_submit_form_before_approval,verified,zh,,Submit Example,free,en,missing_domain,review_submit_url,https://other.example/submit,other.example,2,coverage-candidates.csv,coverage-candidates.csv:2,,',
+      ].join('\n'));
+
+      const result = applyCoverageReviewQueue(review, queue, { output });
+
+      assert.equal(result.blocked_apply, true);
+      assert.equal(result.applied_rows, 0);
+      assert.equal(result.blocked_rows, 1);
+      assert.equal(result.blocked[0].reason, 'review_row_identity_mismatch');
+      assert.equal(existsSync(output), false);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
