@@ -1,6 +1,6 @@
 # Manual Review Pack
 
-Generated: 2026-05-22T09:19:31.825Z
+Generated: 2026-05-22T09:25:46.353Z
 
 ## Scope
 
@@ -87,6 +87,13 @@ Policy: manual review only. No approvals, no registry imports, no real submissio
 - Next queue slice: next-100-manual-review.csv
 - Machine-readable summary: manual-review-summary.json
 - Readiness blockers: product-readiness-blockers.md
+
+The CSV files include the required coverage-review queue columns. After a human edits `review_decision`, `review_notes`, `reviewed_by`, and optional override fields, validate the edited file before promotion:
+
+```bash
+node src/cli.js targets validate-coverage-review-batch <edited-manual-review.csv> --fail-on-blockers
+node src/cli.js targets promote-coverage-review-batch backlink-url/coverage-review.csv <edited-manual-review.csv> --registry resources/targets.canonical.yaml --output backlink-url/coverage-review.updated.csv --dry-run
+```
 
 ## Human Review Rules
 

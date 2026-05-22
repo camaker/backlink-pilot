@@ -1812,12 +1812,15 @@ targets:
       assert.equal(pack.next_rows.length, 2);
       assert.equal(remainingRows.length, 3);
       assert.equal(nextRows.length, 2);
+      assert.equal(remainingRows[0].review_decision_options, 'approved | reject_not_submit');
+      assert.equal(remainingRows[0].review_instruction, 'verify submit form');
       assert.equal(pack.rows[0].manual_bucket, 'manual_submit_form_confirmation_required');
       assert.equal(pack.rows[1].manual_bucket, 'safety_gate_blocked_auto_rejection');
       assert.equal(pack.rows[2].manual_bucket, 'no_read_only_evidence_yet');
       assert.equal(summary.evidence_coverage.rows_with_safety_gate_block, 1);
       assert.equal(summary.evidence_coverage.possible_approval_after_manual_confirmation, 1);
       assert.equal(summary.product_context_present, false);
+      assert.equal(validateCoverageReviewBatch(written.files.p0_manual_review_csv).ok, true);
       assert.equal(existsSync(written.files.summary_md), true);
       assert.equal(existsSync(written.files.readiness_blockers_md), true);
     } finally {
