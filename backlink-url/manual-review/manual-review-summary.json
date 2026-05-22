@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-05-22T09:49:39.068Z",
-  "queue_rows": 410,
+  "generated_at": "2026-05-22T10:22:33.528Z",
+  "queue_rows": 357,
   "product_context_present": false,
   "product_context_paths": [
     {
@@ -19,40 +19,39 @@
   "policy": "manual_review_only_no_approvals_no_registry_changes_no_real_submissions",
   "by_priority": {
     "P0": 17,
-    "P2": 393
+    "P2": 340
   },
   "by_review_action": {
     "verify_distinct_submit_url_for_existing_domain": 5,
     "verify_submit_form_then_approve_or_reject": 12,
-    "verify_directory_fit_before_any_approval": 393
+    "verify_directory_fit_before_any_approval": 340
   },
   "by_manual_bucket": {
-    "fetch_failed_cannot_decide": 92,
-    "medium_confidence_requires_human_confirmation": 88,
+    "fetch_failed_cannot_decide": 93,
+    "medium_confidence_requires_human_confirmation": 87,
     "manual_submit_form_confirmation_required": 4,
-    "safety_gate_blocked_auto_rejection": 221,
-    "manual_browser_check_required": 5
+    "manual_browser_check_required": 5,
+    "directory_fit_requires_human_confirmation": 168
   },
   "by_risk_level": {
     "high_priority_manual": 17,
-    "fit_risk": 87,
-    "unknown_manual_risk": 85,
-    "high_manual_risk": 221
+    "fit_risk": 237,
+    "unknown_manual_risk": 103
   },
   "by_suggested_review_decision": {
-    "needs_manual_check": 101,
-    "reject_auth_required": 304,
+    "needs_manual_check": 102,
+    "reject_auth_required": 250,
     "reject_not_submit": 5
   },
   "by_suggestion_confidence": {
-    "low": 96,
-    "medium": 93,
-    "high": 221
+    "low": 97,
+    "medium": 92,
+    "high": 168
   },
   "evidence_coverage": {
-    "rows_with_evidence_or_suggestion": 410,
+    "rows_with_evidence_or_suggestion": 357,
     "rows_without_evidence_or_suggestion": 0,
-    "rows_with_safety_gate_block": 221,
+    "rows_with_safety_gate_block": 0,
     "possible_approval_after_manual_confirmation": 5
   },
   "files": {

@@ -864,6 +864,7 @@ targets:
       ]);
       assert.equal(queue.rows[0].review_row, 4);
       assert.equal(queue.rows[0].review_decision_options, 'approved_domain_variant | reject_duplicate | reject_not_submit | reject_paid | reject_auth_required');
+      assert.equal(queue.rows[2].review_decision_options, 'approved | reject_not_directory | reject_not_submit | reject_paid | reject_auth_required');
       assert.match(csv, /priority,priority_score,review_row,review_decision,review_decision_options,review_action/);
       assert.doesNotMatch(readFileSync(output, 'utf-8'), /91wink.com/);
     } finally {
@@ -1878,6 +1879,44 @@ targets:
       assert.equal(validateCoverageReviewBatch(written.files.p0_manual_review_csv).ok, true);
       assert.equal(existsSync(written.files.summary_md), true);
       assert.equal(existsSync(written.files.readiness_blockers_md), true);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('does not carry stale draft safety blockers after decision options are expanded', () => {
+    const dir = tempDir();
+    try {
+      const batchDir = join(dir, 'review-batches');
+      const queue = join(dir, 'coverage-review-queue.csv');
+      mkdirSync(batchDir, { recursive: true });
+      writeFileSync(queue, [
+        'priority,priority_score,review_row,review_decision,review_decision_options,review_action,review_instruction,review_notes,reviewed_by,submission_url_override,canonical_name,pricing,lang,classification,candidate_import_recommendation,url,domain,occurrence_count,source_files,source_locations,registry_target_ids,registry_submit_urls',
+        'P2,80,3,,approved | reject_not_submit | reject_auth_required,verify_directory_fit_before_any_approval,verify fit,,,,Blog Example,unknown,unknown,missing_domain,review_submit_url,https://blog.example/post,blog.example,1,coverage-candidates.csv,coverage-candidates.csv:3,,',
+      ].join('\n'));
+      writeFileSync(join(batchDir, 'b1-suggestions.csv'), [
+        'batch_id,batch_order,review_row,priority,review_action,url,domain,current_review_decision,review_decision_options,evidence_suggested_decision,suggested_review_decision,suggestion_confidence,possible_approval_decision,reviewer_action,suggested_review_notes,suggested_pricing,suggestion_basis,evidence_matched,evidence_match_key,http_status,fetch_ok,final_url,final_domain,form_count,input_count,submit_button_signal,submit_path_signal,directory_signal,auth_signal,oauth_signal,captcha_signal,cloudflare_signal,payment_signal,duplicate_registry_url,fetch_error,checked_at',
+        'b1,1,3,P2,verify_directory_fit_before_any_approval,https://blog.example/post,blog.example,,approved | reject_not_submit,reject_auth_required,reject_auth_required,high,,reject_or_route_to_assisted_manual_flow,login signal,,login,yes,review_row:3,200,yes,https://blog.example/post,blog.example,1,2,no,no,no,yes,no,no,no,no,no,,2026-01-01T00:00:01.000Z',
+      ].join('\n'));
+      writeFileSync(join(batchDir, 'b1-draft-report.json'), JSON.stringify({
+        generated_at: '2026-01-01T00:00:02.000Z',
+        batch_id: 'b1',
+        blocked: [{
+          review_row: '3',
+          url: 'https://blog.example/post',
+          reason: 'suggested_decision_not_allowed_for_batch_row',
+          suggested_review_decision: 'reject_auth_required',
+        }],
+      }, null, 2));
+
+      const pack = buildCoverageReviewManualPack(queue, {
+        batchDir,
+        productContextPaths: [join(dir, 'product-marketing.md')],
+      });
+
+      assert.equal(pack.rows[0].manual_bucket, 'directory_fit_requires_human_confirmation');
+      assert.equal(pack.rows[0].safety_gate_reason, '');
+      assert.equal(pack.summary.evidence_coverage.rows_with_safety_gate_block, 0);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

@@ -2324,7 +2324,7 @@ function reviewQueuePriority(row) {
     priority: 'P2',
     score,
     action: 'verify_directory_fit_before_any_approval',
-    decision_options: 'approved | reject_not_directory | reject_not_submit | reject_paid',
+    decision_options: 'approved | reject_not_directory | reject_not_submit | reject_paid | reject_auth_required',
   };
 }
 
@@ -2894,6 +2894,17 @@ function manualReviewNextStep(queueRow, suggestion, evidence, blocked) {
   return 'Open manually and record approve/reject decision with notes; approval must remain non-executable needs_scout until scout evidence exists.';
 }
 
+function activeSafetyGateBlock(queueRow, blocked) {
+  if (!blocked) return null;
+  const reason = String(blocked.reason || '').trim();
+  const suggestedDecision = String(blocked.suggested_review_decision || '').trim().toLowerCase();
+  if (reason === 'suggested_decision_not_allowed_for_batch_row' && suggestedDecision) {
+    const currentDecisionOptions = splitDecisionOptions(queueRow.review_decision_options);
+    if (currentDecisionOptions.includes(suggestedDecision)) return null;
+  }
+  return blocked;
+}
+
 function productContextPaths(opts = {}) {
   const configured = Array.isArray(opts.productContextPaths)
     ? opts.productContextPaths
@@ -2917,7 +2928,7 @@ function manualReviewRowsFromQueue(queueRows, history) {
     const key = reviewRowKey(queueRow);
     const evidence = history.evidenceByKey.get(key) || null;
     const suggestion = history.suggestionByKey.get(key) || null;
-    const blocked = history.blockedByKey.get(key) || null;
+    const blocked = activeSafetyGateBlock(queueRow, history.blockedByKey.get(key) || null);
 
     return {
       manual_rank: String(index + 1),
