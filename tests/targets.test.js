@@ -25,6 +25,10 @@ import {
   writeAuthLoginStatus,
 } from '../src/targets/auth-login-status.js';
 import {
+  buildAuthLoginOperatorPack,
+  writeAuthLoginOperatorPack,
+} from '../src/targets/auth-login-operator-pack.js';
+import {
   buildAuthRescoutPlan,
   writeAuthRescoutPlan,
 } from '../src/targets/auth-rescout-plan.js';
@@ -2594,6 +2598,96 @@ describe('auth login status', () => {
       assert.equal(csvRows[0].target_id, 'b');
       assert.equal(written.output.endsWith('auth-login-next.json'), true);
       assert.equal(written.csv_output.endsWith('auth-login-next.csv'), true);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe('auth login operator pack', () => {
+  it('generates a human-only login runbook and helper without submit, scout, or execute commands', () => {
+    const dir = tempDir();
+    try {
+      const input = join(dir, 'auth-login-next.json');
+      const outputDir = join(dir, 'out');
+      writeFileSync(input, JSON.stringify({
+        version: 1,
+        tasks: [
+          {
+            task_order: '1',
+            priority: 'P0',
+            target_id: 'needs-login',
+            name: 'Needs Login',
+            domain: 'login.example',
+            pricing: 'free',
+            risk: 'low',
+            auth_profile: 'needs-login',
+            status: 'manual_login_required',
+            login_url: 'https://login.example/sign-in',
+            submit_url: 'https://login.example/submit',
+            auth_scout_command: 'node src/cli.js scout "https://login.example/submit" --auth-profile "needs-login"',
+          },
+          {
+            task_order: '2',
+            priority: 'P0',
+            target_id: 'cross-domain',
+            name: 'Cross Domain',
+            domain: 'target.example',
+            pricing: 'free',
+            risk: 'low',
+            auth_profile: 'cross-domain',
+            login_url: 'https://other.example/login',
+            submit_url: 'https://target.example/submit',
+          },
+          {
+            task_order: '3',
+            priority: 'P1',
+            target_id: 'blocked',
+            name: 'Blocked',
+            domain: 'blocked.example',
+            pricing: 'unknown',
+            risk: 'unknown',
+            auth_profile: '',
+            login_url: '',
+          },
+        ],
+      }));
+
+      const pack = buildAuthLoginOperatorPack(input, {
+        refreshCommand: 'node src/cli.js targets auth-workflow-refresh queue.csv batch.json',
+      });
+      const written = writeAuthLoginOperatorPack(pack, {
+        outputDir,
+        name: 'operator-test',
+      });
+      const markdown = readFileSync(written.markdown, 'utf-8');
+      const powershell = readFileSync(written.powershell, 'utf-8');
+      const summary = JSON.parse(readFileSync(written.summary, 'utf-8'));
+
+      assert.equal(pack.constraints.generation_no_real_submission, true);
+      assert.equal(pack.constraints.generation_no_browser_launch, true);
+      assert.equal(pack.constraints.generated_script_requires_human_confirmation_per_target, true);
+      assert.equal(pack.constraints.generated_script_no_submit_command, true);
+      assert.equal(pack.constraints.generated_script_no_scout_command, true);
+      assert.equal(pack.constraints.generated_script_no_run_plan_execute, true);
+      assert.equal(pack.summary.task_rows, 3);
+      assert.equal(pack.summary.runnable_manual_login_rows, 1);
+      assert.equal(pack.summary.blocked_rows, 2);
+      assert.equal(pack.tasks[1].blocker, 'login_domain_mismatch:other.example->target.example');
+      assert.match(markdown, /Human-only login collection/);
+      assert.match(markdown, /node src\/cli\.js auth login --profile "needs-login"/);
+      assert.match(markdown, /login_domain_mismatch:other\.example-&gt;target\.example|login_domain_mismatch:other\.example->target\.example/);
+      assert.match(markdown, /auth-workflow-refresh queue\.csv batch\.json/);
+      assert.match(powershell, /Type LOGIN to open manual login browser/);
+      assert.match(powershell, /auth login --profile/);
+      assert.match(powershell, /Blocked cross-domain: login_domain_mismatch:other\.example->target\.example/);
+      assert.doesNotMatch(powershell, /src\/cli\.js scout/);
+      assert.doesNotMatch(powershell, /src\/cli\.js run-plan/);
+      assert.doesNotMatch(powershell, /--execute/);
+      assert.equal(summary.files.markdown.endsWith('operator-test.md'), true);
+      assert.equal(existsSync(written.markdown), true);
+      assert.equal(existsSync(written.powershell), true);
+      assert.equal(existsSync(written.summary), true);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

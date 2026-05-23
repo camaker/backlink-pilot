@@ -14,6 +14,7 @@ import {
   applyCoverageReviewQueueCommand,
   assistedSubmissionPackCommand,
   authLoginNextCommand,
+  authLoginOperatorPackCommand,
   authLoginPlanCommand,
   authLoginStatusCommand,
   authRescoutPlanCommand,
@@ -358,6 +359,18 @@ targets
   .option('--json', 'Output full task report as JSON')
   .action(async (batches, opts) => {
     await authLoginNextCommand(batches, opts);
+  });
+
+targets
+  .command('auth-login-operator-pack <nextLogin>')
+  .description('Generate a human-only assisted login runbook and PowerShell helper without executing commands')
+  .option('--output-dir <path>', 'Directory to write the operator pack')
+  .option('--name <name>', 'Base filename for generated operator pack files', 'auth-login-operator-current')
+  .option('--refresh-command <command>', 'Read-only workflow refresh command to print after login collection')
+  .option('--preview <n>', 'Rows to preview in text output', '10')
+  .option('--json', 'Output full operator pack as JSON')
+  .action(async (nextLogin, opts) => {
+    await authLoginOperatorPackCommand(nextLogin, opts);
   });
 
 targets

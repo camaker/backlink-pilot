@@ -94,6 +94,13 @@ node src/cli.js targets auth-workflow-refresh \
   --output-dir backlink-url/assisted-submission-pack \
   --next-limit 10
 
+# Optional: create a human-only login runbook and PowerShell helper.
+# The generated helper requires per-target confirmation and never submits, scouts, or executes a run plan.
+node src/cli.js targets auth-login-operator-pack \
+  backlink-url/assisted-submission-pack/auth-login-next-current.json \
+  --output-dir backlink-url/assisted-submission-pack \
+  --name auth-login-operator-current
+
 # 1. Open a visible Playwright browser and complete login manually
 node src/cli.js auth login --profile saashub --url https://www.saashub.com/login
 
@@ -167,6 +174,7 @@ node src/cli.js targets coverage-review-draft <batch.csv> <suggestions.csv>  # D
 node src/cli.js targets promote-coverage-review-batch <review.csv> <batch.csv> --dry-run  # Validate batch promotion before import/scout
 node src/cli.js targets coverage-review-manual-pack <queue.csv>  # Generate a manual review pack from remaining candidates
 node src/cli.js targets auth-login-next <batch...>  # Select next manual login tasks without executing them
+node src/cli.js targets auth-login-operator-pack <next-login.json>  # Generate a human-only login runbook and PowerShell helper
 node src/cli.js targets auth-workflow-refresh <queue.csv> <batch...>  # Refresh auth workflow artifacts without executing commands
 node src/cli.js pipeline --scout-queue   # Scout unverified targets, refresh plan, dry-run or execute
 node src/cli.js scout-plan <plan>        # Scout a generated plan and update target safety

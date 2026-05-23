@@ -23,6 +23,10 @@ import {
   writeAuthLoginStatus,
 } from './auth-login-status.js';
 import {
+  buildAuthLoginOperatorPack,
+  writeAuthLoginOperatorPack,
+} from './auth-login-operator-pack.js';
+import {
   buildAuthRescoutPlan,
   writeAuthRescoutPlan,
 } from './auth-rescout-plan.js';
@@ -292,6 +296,34 @@ export async function authLoginNextCommand(batchPaths, opts = {}) {
   }
 
   return report;
+}
+
+export async function authLoginOperatorPackCommand(inputPath, opts = {}) {
+  const pack = buildAuthLoginOperatorPack(inputPath, {
+    refreshCommand: opts.refreshCommand,
+  });
+  const written = writeAuthLoginOperatorPack(pack, {
+    outputDir: opts.outputDir,
+    name: opts.name,
+  });
+
+  if (opts.json) {
+    console.log(JSON.stringify({ ...pack, files: written }, null, 2));
+    return pack;
+  }
+
+  console.log(`Source: ${pack.source}`);
+  console.log(`Tasks: ${pack.summary.task_rows}`);
+  console.log(`Runnable manual login rows: ${pack.summary.runnable_manual_login_rows}`);
+  console.log(`Blocked rows: ${pack.summary.blocked_rows}`);
+  console.log(`Markdown: ${written.markdown}`);
+  console.log(`PowerShell: ${written.powershell}`);
+  console.log(`Summary: ${written.summary}`);
+  for (const task of pack.tasks.slice(0, Number.parseInt(opts.preview || 10, 10))) {
+    console.log(`${task.task_order}. ${task.priority}\t${task.target_id}\t${task.login_url}`);
+  }
+
+  return pack;
 }
 
 export async function authRescoutPlanCommand(queuePath, opts = {}) {
