@@ -36,12 +36,15 @@ import {
   importCoverageReviewCommand,
   listTargetsCommand,
   normalizeTargetsCommand,
+  applyPricingReviewDecisionsCommand,
+  pricingReviewDecisionDraftCommand,
   pricingReviewEvidenceCommand,
   pricingReviewQueueCommand,
   pricingReviewSuggestCommand,
   promoteCoverageReviewBatchCommand,
   statsTargetsCommand,
   validateCrossDomainFinalUrlDecisionsCommand,
+  validatePricingReviewDecisionsCommand,
   validateCoverageReviewBatchCommand,
   validateCoverageReviewCommand,
 } from './targets/commands.js';
@@ -363,6 +366,44 @@ targets
   .option('--json', 'Output summary as JSON')
   .action(async (queue, evidence, opts) => {
     await pricingReviewSuggestCommand(queue, evidence, opts);
+  });
+
+targets
+  .command('pricing-review-decision-draft <suggestions>')
+  .description('Generate an editable pricing review decision draft with blank review_decision rows')
+  .option('--output-dir <path>', 'Directory to write the decision draft', 'backlink-url/pricing-review')
+  .option('--json', 'Output summary as JSON')
+  .action(async (suggestions, opts) => {
+    await pricingReviewDecisionDraftCommand(suggestions, opts);
+  });
+
+targets
+  .command('validate-pricing-review-decisions <file>')
+  .description('Validate edited pricing review decisions without writing the registry')
+  .option('--allow-unreviewed', 'Warn instead of blocking blank review_decision rows')
+  .option('--no-require-reviewer', 'Do not require reviewer on reviewed rows')
+  .option('--no-require-reviewed-at', 'Do not require reviewed_at on reviewed rows')
+  .option('--no-require-review-notes', 'Do not require substantive review notes on reviewed rows')
+  .option('--limit-findings <n>', 'Maximum blockers and warnings to print', '20')
+  .option('--fail-on-blockers', 'Exit non-zero when blockers are found')
+  .option('--json', 'Output as JSON')
+  .action(async (file, opts) => {
+    await validatePricingReviewDecisionsCommand(file, opts);
+  });
+
+targets
+  .command('apply-pricing-review-decisions <file>')
+  .description('Preview or explicitly write reviewed pricing decisions to the registry')
+  .option('--registry <path>', 'Canonical registry path')
+  .option('--write-registry', 'Write reviewed pricing decisions; mark_paid also downgrades target to skip')
+  .option('--no-require-reviewer', 'Do not require reviewer on reviewed rows')
+  .option('--no-require-reviewed-at', 'Do not require reviewed_at on reviewed rows')
+  .option('--no-require-review-notes', 'Do not require substantive review notes on reviewed rows')
+  .option('--output <path>', 'Write patch report JSON')
+  .option('--preview <n>', 'Maximum proposal rows to print', '10')
+  .option('--json', 'Output as JSON')
+  .action(async (file, opts) => {
+    await applyPricingReviewDecisionsCommand(file, opts);
   });
 
 targets

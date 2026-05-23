@@ -50,12 +50,17 @@ import {
   writeAuthWorkflowRefresh,
 } from '../src/targets/auth-workflow-refresh.js';
 import {
+  applyPricingReviewDecisionPatch,
   buildPricingReviewEvidence,
+  buildPricingReviewDecisionDraft,
   buildPricingReviewQueue,
   buildPricingReviewSuggestions,
+  pricingReviewDecisionDraftCsv,
   pricingReviewEvidenceCsv,
   pricingReviewQueueCsv,
   pricingReviewSuggestionsCsv,
+  validatePricingReviewDecisions,
+  writePricingReviewDecisionDraft,
   writePricingReviewEvidence,
   writePricingReviewQueue,
   writePricingReviewSuggestions,
@@ -581,6 +586,124 @@ targets:
       assert.equal(existsSync(written.files.suggestions_csv), true);
       assert.equal(existsSync(written.files.suggestions_json), true);
       assert.equal(existsSync(written.files.suggestions_md), true);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('builds a pricing decision draft that remains blocked until human review', () => {
+    const dir = tempDir();
+    try {
+      const suggestionsPath = join(dir, 'pricing-review-suggestions.csv');
+      writeFileSync(suggestionsPath, [
+        'queue_order,target_id,name,domain,mode,submit_url,current_pricing,suggested_pricing,suggested_review_decision,suggestion_confidence,reviewer_action,suggested_review_notes,suggestion_basis,evidence_matched,http_status,fetch_ok,final_url,final_domain,submit_button_signal,submit_path_signal,directory_signal,auth_signal,oauth_signal,captcha_signal,cloudflare_signal,payment_signal,free_signal,freemium_signal,pricing_page_signal,checked_at,automation_policy',
+        '1,free-target,Free Target,free.example,auto_safe,https://free.example/submit,unknown,free,mark_free,high,confirm,evidence free,basis free,yes,200,yes,https://free.example/submit,free.example,yes,yes,yes,no,no,no,no,no,yes,no,no,2026-05-23T00:00:00.000Z,non_binding_suggestion_no_registry_write_no_submission',
+        '2,paid-target,Paid Target,paid.example,assisted,https://paid.example/submit,unknown,paid,mark_paid,high,confirm,evidence paid,basis paid,yes,200,yes,https://paid.example/submit,paid.example,yes,yes,yes,no,no,no,no,yes,no,no,yes,2026-05-23T00:00:00.000Z,non_binding_suggestion_no_registry_write_no_submission',
+      ].join('\n') + '\n');
+
+      const draft = buildPricingReviewDecisionDraft(suggestionsPath);
+      assert.equal(draft.constraints.review_decision_left_blank, true);
+      assert.equal(draft.summary.rows, 2);
+      assert.equal(draft.summary.rows_requiring_human_review, 2);
+      assert.equal(draft.rows.every(row => row.review_decision === ''), true);
+      assert.equal(draft.rows[0].suggested_review_decision, 'mark_free');
+      assert.equal(draft.rows[1].suggested_review_decision, 'mark_paid');
+
+      const csv = pricingReviewDecisionDraftCsv(draft);
+      assert.match(csv, /pricing_decision_draft_no_registry_write_no_submission/);
+      assert.match(csv, /reviewed_pricing/);
+
+      const draftCsv = join(dir, 'pricing-review-decision-draft.csv');
+      writeFileSync(draftCsv, csv);
+      const validation = validatePricingReviewDecisions(draftCsv);
+      assert.equal(validation.ok, false);
+      assert.equal(validation.blockers.filter(item => item.code === 'review_decision_missing').length, 2);
+
+      const written = writePricingReviewDecisionDraft(draft, { outputDir: join(dir, 'pricing-review') });
+      assert.equal(existsSync(written.files.decision_csv), true);
+      assert.equal(existsSync(written.files.decision_json), true);
+      assert.equal(existsSync(written.files.decision_md), true);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('applies reviewed pricing decisions only through an explicit write gate', () => {
+    const dir = tempDir();
+    try {
+      const registry = join(dir, 'registry.yaml');
+      const decisions = join(dir, 'pricing-review-decisions.csv');
+      writeFileSync(registry, `
+version: 1
+targets:
+  - id: free-target
+    name: Free Target
+    domain: free.example
+    submit_url: https://free.example/submit
+    pricing: unknown
+    submission:
+      mode: auto_safe
+      status: mapped
+      reason: mapped_form
+    technical:
+      auth: none
+      captcha: none
+      reachable: yes
+      last_scouted_at: 2026-05-22T00:00:00.000Z
+    forms:
+      - fields:
+          - mapped_to: product.name
+          - mapped_to: product.url
+          - mapped_to: product.description
+        submit_buttons:
+          - selector: button[type="submit"]
+  - id: freemium-target
+    name: Freemium Target
+    domain: freemium.example
+    submit_url: https://freemium.example/submit
+    pricing: unknown
+    submission:
+      mode: assisted
+      reason: auth_or_manual_signal
+  - id: paid-target
+    name: Paid Target
+    domain: paid.example
+    submit_url: https://paid.example/submit
+    pricing: unknown
+    submission:
+      mode: assisted
+      reason: auth_or_manual_signal
+`);
+      writeFileSync(decisions, [
+        'queue_order,target_id,name,domain,mode,submit_url,current_pricing,suggested_pricing,suggested_review_decision,suggestion_confidence,review_decision,reviewed_pricing,reviewer,reviewed_at,review_notes,evidence_url,evidence_matched,http_status,fetch_ok,payment_signal,free_signal,freemium_signal,captcha_signal,cloudflare_signal,suggestion_basis,automation_policy',
+        '1,free-target,Free Target,free.example,auto_safe,https://free.example/submit,unknown,free,mark_free,high,mark_free,free,tester,2026-05-23T00:00:00.000Z,Manual review confirmed a free submission path.,https://free.example/submit,yes,200,yes,no,yes,no,no,no,free signal,pricing_decision_draft_no_registry_write_no_submission',
+        '2,freemium-target,Freemium Target,freemium.example,assisted,https://freemium.example/submit,unknown,freemium,mark_freemium,medium,mark_freemium,freemium,tester,2026-05-23T00:00:00.000Z,Manual review confirmed free basic plus paid featured options.,https://freemium.example/submit,yes,200,yes,yes,yes,yes,no,no,freemium signal,pricing_decision_draft_no_registry_write_no_submission',
+        '3,paid-target,Paid Target,paid.example,assisted,https://paid.example/submit,unknown,paid,mark_paid,high,mark_paid,paid,tester,2026-05-23T00:00:00.000Z,Manual review confirmed only paid listing submissions are available.,https://paid.example/submit,yes,200,yes,yes,no,no,no,no,paid signal,pricing_decision_draft_no_registry_write_no_submission',
+      ].join('\n') + '\n');
+
+      const validation = validatePricingReviewDecisions(decisions);
+      assert.equal(validation.ok, true);
+
+      const preview = applyPricingReviewDecisionPatch(registry, decisions);
+      assert.equal(preview.ok, true);
+      assert.equal(preview.wrote_registry, false);
+      assert.equal(preview.proposals_count, 3);
+      assert.equal(preview.proposals.find(row => row.target_id === 'paid-target').next_mode, 'skip');
+
+      let loaded = loadRegistry(registry);
+      assert.equal(loaded.targets.find(target => target.id === 'free-target').pricing, 'unknown');
+
+      const written = applyPricingReviewDecisionPatch(registry, decisions, { writeRegistry: true });
+      assert.equal(written.wrote_registry, true);
+      assert.equal(written.status, 'registry_written_requires_audit_before_execution');
+
+      loaded = loadRegistry(registry);
+      assert.equal(loaded.targets.find(target => target.id === 'free-target').pricing, 'free');
+      assert.equal(loaded.targets.find(target => target.id === 'free-target').submission.mode, 'auto_safe');
+      assert.equal(loaded.targets.find(target => target.id === 'freemium-target').pricing, 'freemium');
+      assert.equal(loaded.targets.find(target => target.id === 'paid-target').pricing, 'paid');
+      assert.equal(loaded.targets.find(target => target.id === 'paid-target').submission.mode, 'skip');
+      assert.equal(loaded.targets.find(target => target.id === 'paid-target').submission.reason, 'pricing_review_paid_confirmed');
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

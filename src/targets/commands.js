@@ -44,9 +44,14 @@ import {
   writeAuthWorkflowRefresh,
 } from './auth-workflow-refresh.js';
 import {
+  applyPricingReviewDecisionPatch,
+  buildPricingReviewDecisionDraft,
   buildPricingReviewEvidence,
   buildPricingReviewQueue,
   buildPricingReviewSuggestions,
+  validatePricingReviewDecisions,
+  writePricingReviewDecisionDraft,
+  writePricingReviewDecisionPatchReport,
   writePricingReviewEvidence,
   writePricingReviewQueue,
   writePricingReviewSuggestions,
@@ -267,6 +272,102 @@ export async function pricingReviewSuggestCommand(queuePath, evidencePath, opts 
   console.log(`Suggestions summary: ${written.files.suggestions_md}`);
   console.log('Policy: non-binding pricing suggestions only; no registry writes, no submission.');
 
+  return result;
+}
+
+export async function pricingReviewDecisionDraftCommand(suggestionsPath, opts = {}) {
+  const draft = buildPricingReviewDecisionDraft(suggestionsPath);
+  const written = writePricingReviewDecisionDraft(draft, {
+    outputDir: opts.outputDir,
+  });
+  const result = {
+    ...draft.summary,
+    output_dir: written.output_dir,
+    files: written.files,
+  };
+
+  if (opts.json) {
+    console.log(JSON.stringify(result, null, 2));
+    return result;
+  }
+
+  console.log(`Suggestions: ${draft.suggestions}`);
+  console.log(`Output dir: ${written.output_dir}`);
+  console.log(`Rows: ${draft.summary.rows}`);
+  console.log(`Rows requiring human review: ${draft.summary.rows_requiring_human_review}`);
+  console.log(`Suggested decisions: ${JSON.stringify(draft.summary.by_suggested_review_decision)}`);
+  console.log(`Draft CSV: ${written.files.decision_csv}`);
+  console.log(`Draft summary: ${written.files.decision_md}`);
+  console.log('Policy: decision draft only; review_decision remains blank and strict validation must fail until human review is recorded.');
+
+  return result;
+}
+
+export async function validatePricingReviewDecisionsCommand(filePath, opts = {}) {
+  const result = validatePricingReviewDecisions(filePath, {
+    allowUnreviewed: Boolean(opts.allowUnreviewed),
+    requireReviewer: opts.requireReviewer !== false,
+    requireReviewedAt: opts.requireReviewedAt !== false,
+    requireReviewNotes: opts.requireReviewNotes !== false,
+  });
+
+  if (opts.json) {
+    console.log(JSON.stringify(result, null, 2));
+    if (!result.ok && opts.failOnBlockers) process.exitCode = 1;
+    return result;
+  }
+
+  console.log(`Pricing decision validation: ${result.ok ? 'ok' : 'blocked'}`);
+  console.log(`File: ${result.file}`);
+  console.log(`Rows: ${result.rows}`);
+  console.log(`Blockers: ${result.blockers_count}`);
+  console.log(`Warnings: ${result.warnings_count}`);
+  console.log(`By decision: ${JSON.stringify(result.by_decision)}`);
+  const limit = Number.parseInt(opts.limitFindings || 20, 10);
+  for (const item of result.blockers.slice(0, Number.isFinite(limit) ? limit : 20)) {
+    console.log(`BLOCKER ${item.code} line ${item.line}: ${item.target_id || item.domain} - ${item.message}`);
+  }
+  for (const item of result.warnings.slice(0, Number.isFinite(limit) ? limit : 20)) {
+    console.log(`WARNING ${item.code} line ${item.line}: ${item.target_id || item.domain} - ${item.message}`);
+  }
+  if (!result.ok && opts.failOnBlockers) process.exitCode = 1;
+  return result;
+}
+
+export async function applyPricingReviewDecisionsCommand(filePath, opts = {}) {
+  const result = applyPricingReviewDecisionPatch(
+    opts.registry || DEFAULT_REGISTRY_FILE,
+    filePath,
+    {
+      writeRegistry: Boolean(opts.writeRegistry),
+      requireReviewer: opts.requireReviewer !== false,
+      requireReviewedAt: opts.requireReviewedAt !== false,
+      requireReviewNotes: opts.requireReviewNotes !== false,
+    }
+  );
+  if (opts.output) {
+    const written = writePricingReviewDecisionPatchReport(result, opts.output);
+    result.output = written;
+  }
+
+  if (opts.json) {
+    console.log(JSON.stringify(result, null, 2));
+    return result;
+  }
+
+  console.log(`Pricing decision patch: ${result.status}`);
+  console.log(`Registry: ${result.registry}`);
+  console.log(`Decision file: ${result.decision_file}`);
+  console.log(`Rows: ${result.rows}`);
+  console.log(`Proposals: ${result.proposals_count}`);
+  console.log(`Skipped: ${result.skipped_rows}`);
+  console.log(`Blockers: ${result.blockers_count}`);
+  console.log(`Write requested: ${result.write_requested ? 'yes' : 'no'}`);
+  console.log(`Wrote registry: ${result.wrote_registry ? 'yes' : 'no'}`);
+  const preview = Number.parseInt(opts.preview || 10, 10);
+  for (const proposal of result.proposals.slice(0, Number.isFinite(preview) ? preview : 10)) {
+    console.log(`- ${proposal.target_id}: ${proposal.previous_pricing} -> ${proposal.next_pricing}; mode ${proposal.previous_mode} -> ${proposal.next_mode}`);
+  }
   return result;
 }
 

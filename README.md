@@ -176,6 +176,8 @@ node src/cli.js targets coverage-review-manual-pack <queue.csv>  # Generate a ma
 node src/cli.js targets pricing-review-queue       # Queue runnable targets whose pricing is still unknown
 node src/cli.js targets pricing-review-evidence <queue.csv>      # GET-only pricing evidence, no login or submission
 node src/cli.js targets pricing-review-suggest <queue.csv> <evidence.csv>  # Non-binding pricing suggestions
+node src/cli.js targets pricing-review-decision-draft <suggestions.csv>  # Blank human decision draft
+node src/cli.js targets apply-pricing-review-decisions <draft.csv>        # Preview/apply reviewed pricing decisions
 node src/cli.js targets auth-login-next <batch...>  # Select next manual login tasks without executing them
 node src/cli.js targets auth-login-operator-pack <next-login.json>  # Generate a human-only login runbook and PowerShell helper
 node src/cli.js targets auth-workflow-refresh <queue.csv> <batch...>  # Refresh auth workflow artifacts without executing commands

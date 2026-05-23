@@ -1,7 +1,7 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { isRunnableMode } from './classify.js';
-import { DEFAULT_REGISTRY_FILE, loadRegistry } from './registry.js';
+import { DEFAULT_REGISTRY_FILE, loadRegistry, saveRegistry } from './registry.js';
 import { normalizeUrl, stripWww } from './normalize.js';
 import { parseCsv } from './importers/csv.js';
 
@@ -95,6 +95,43 @@ const SUGGESTION_HEADERS = [
   'freemium_signal',
   'pricing_page_signal',
   'checked_at',
+  'automation_policy',
+];
+
+const PRICING_REVIEW_DECISIONS = new Set([
+  'mark_free',
+  'mark_freemium',
+  'mark_paid',
+  'keep_unknown',
+  'needs_manual_check',
+]);
+
+const PRICING_DECISION_HEADERS = [
+  'queue_order',
+  'target_id',
+  'name',
+  'domain',
+  'mode',
+  'submit_url',
+  'current_pricing',
+  'suggested_pricing',
+  'suggested_review_decision',
+  'suggestion_confidence',
+  'review_decision',
+  'reviewed_pricing',
+  'reviewer',
+  'reviewed_at',
+  'review_notes',
+  'evidence_url',
+  'evidence_matched',
+  'http_status',
+  'fetch_ok',
+  'payment_signal',
+  'free_signal',
+  'freemium_signal',
+  'captcha_signal',
+  'cloudflare_signal',
+  'suggestion_basis',
   'automation_policy',
 ];
 
@@ -832,4 +869,430 @@ export function writePricingReviewSuggestions(suggestions = {}, opts = {}) {
   writeFileSync(jsonOutput, JSON.stringify({ ...suggestions, files }, null, 2) + '\n', 'utf-8');
   writeFileSync(markdownOutput, pricingReviewSuggestionsMarkdown(suggestions, files), 'utf-8');
   return { files };
+}
+
+function expectedPricingForDecision(decision = '') {
+  if (decision === 'mark_free') return 'free';
+  if (decision === 'mark_freemium') return 'freemium';
+  if (decision === 'mark_paid') return 'paid';
+  if (decision === 'keep_unknown' || decision === 'needs_manual_check') return 'unknown';
+  return '';
+}
+
+function pricingDecisionDraftRow(row = {}) {
+  const suggestedDecision = PRICING_REVIEW_DECISIONS.has(row.suggested_review_decision)
+    ? row.suggested_review_decision
+    : 'keep_unknown';
+  return {
+    queue_order: row.queue_order || '',
+    target_id: row.target_id || '',
+    name: row.name || '',
+    domain: row.domain || '',
+    mode: row.mode || '',
+    submit_url: row.submit_url || '',
+    current_pricing: row.current_pricing || 'unknown',
+    suggested_pricing: row.suggested_pricing || expectedPricingForDecision(suggestedDecision) || 'unknown',
+    suggested_review_decision: suggestedDecision,
+    suggestion_confidence: row.suggestion_confidence || '',
+    review_decision: '',
+    reviewed_pricing: '',
+    reviewer: '',
+    reviewed_at: '',
+    review_notes: '',
+    evidence_url: row.final_url || row.submit_url || '',
+    evidence_matched: row.evidence_matched || '',
+    http_status: row.http_status || '',
+    fetch_ok: row.fetch_ok || '',
+    payment_signal: row.payment_signal || '',
+    free_signal: row.free_signal || '',
+    freemium_signal: row.freemium_signal || '',
+    captcha_signal: row.captcha_signal || '',
+    cloudflare_signal: row.cloudflare_signal || '',
+    suggestion_basis: row.suggestion_basis || '',
+    automation_policy: 'pricing_decision_draft_no_registry_write_no_submission',
+  };
+}
+
+function pricingDecisionSummary(rows = []) {
+  return {
+    rows: rows.length,
+    rows_requiring_human_review: rows.filter(row => !row.review_decision).length,
+    by_suggested_review_decision: countBy(rows, row => row.suggested_review_decision),
+    by_suggested_pricing: countBy(rows, row => row.suggested_pricing),
+    by_confidence: countBy(rows, row => row.suggestion_confidence),
+  };
+}
+
+export function buildPricingReviewDecisionDraft(suggestionsPath) {
+  const suggestionRows = parseCsv(readFileSync(suggestionsPath, 'utf-8'));
+  const rows = suggestionRows.map(row => pricingDecisionDraftRow(row));
+  return {
+    generated_at: nowIso(),
+    suggestions: normalizePath(suggestionsPath),
+    constraints: {
+      read_only: true,
+      no_registry_writes: true,
+      no_login: true,
+      no_submission: true,
+      no_mode_promotion: true,
+      review_decision_left_blank: true,
+    },
+    rows,
+    summary: pricingDecisionSummary(rows),
+  };
+}
+
+export function pricingReviewDecisionDraftCsv(draft = {}) {
+  const rows = draft.rows || [];
+  return [
+    PRICING_DECISION_HEADERS.join(','),
+    ...rows.map(row => PRICING_DECISION_HEADERS.map(header => csvEscape(row[header])).join(',')),
+  ].join('\n') + '\n';
+}
+
+function pricingDecisionRowsTable(rows = []) {
+  if (!rows.length) return '| - | - | - | - | - | - |';
+  return rows.slice(0, 100).map(row => [
+    row.queue_order,
+    row.target_id,
+    row.domain,
+    row.suggested_review_decision,
+    row.suggested_pricing,
+    row.review_decision || '(blank)',
+  ].map(markdownEscape).join(' | ')).map(line => `| ${line} |`).join('\n');
+}
+
+function pricingReviewDecisionDraftMarkdown(draft = {}, files = {}) {
+  return [
+    '# Pricing Review Decision Draft',
+    '',
+    `Generated: ${draft.generated_at}`,
+    '',
+    'Policy: editable human decision draft only. It does not write the registry, does not approve submissions, and intentionally leaves `review_decision` blank.',
+    '',
+    '## Summary',
+    '',
+    `- Rows: ${draft.summary.rows}`,
+    `- Rows requiring human review: ${draft.summary.rows_requiring_human_review}`,
+    '',
+    '### Suggested Review Decisions',
+    '',
+    '| Decision | Count |',
+    '|---|---:|',
+    countsTable(draft.summary.by_suggested_review_decision),
+    '',
+    '### Suggested Pricing',
+    '',
+    '| Pricing | Count |',
+    '|---|---:|',
+    countsTable(draft.summary.by_suggested_pricing),
+    '',
+    '## Rows',
+    '',
+    '| Order | Target ID | Domain | Suggested Decision | Suggested Pricing | Review Decision |',
+    '|---|---|---|---|---|---|',
+    pricingDecisionRowsTable(draft.rows),
+    '',
+    '## Human Fill Requirements',
+    '',
+    '1. Open each target manually before editing `review_decision`.',
+    '2. Fill `review_decision`, `reviewer`, `reviewed_at`, and substantive `review_notes` before validation can pass.',
+    '3. Use `mark_paid` only when no free submission path exists; it will downgrade the target to `skip` if written.',
+    '4. `mark_free` can make an already `auto_safe` target eligible for future free-only planning after audit; use it only with clear evidence.',
+    '5. `mark_freemium` records a free-plus-paid path but does not count as `free` in the current free-only planner.',
+    '',
+    '## Validation',
+    '',
+    '```powershell',
+    `node src/cli.js targets validate-pricing-review-decisions ${files.decision_csv || 'pricing-review-decision-draft.csv'} --json`,
+    'node src/cli.js targets apply-pricing-review-decisions backlink-url/pricing-review/pricing-review-decision-draft.csv --registry resources/targets.canonical.yaml --json',
+    '```',
+    '',
+    '## Files',
+    '',
+    `- Draft CSV: ${files.decision_csv || 'pricing-review-decision-draft.csv'}`,
+    `- Draft JSON: ${files.decision_json || 'pricing-review-decision-draft.json'}`,
+    '',
+  ].join('\n');
+}
+
+export function writePricingReviewDecisionDraft(draft = {}, opts = {}) {
+  const outputDir = opts.outputDir || 'backlink-url/pricing-review';
+  mkdirSync(outputDir, { recursive: true });
+  const files = {
+    decision_csv: join(outputDir, 'pricing-review-decision-draft.csv'),
+    decision_json: join(outputDir, 'pricing-review-decision-draft.json'),
+    decision_md: join(outputDir, 'pricing-review-decision-draft.md'),
+  };
+  const publicFiles = Object.fromEntries(Object.entries(files).map(([key, value]) => [key, normalizePath(value)]));
+  writeFileSync(files.decision_csv, pricingReviewDecisionDraftCsv(draft), 'utf-8');
+  writeFileSync(files.decision_json, JSON.stringify({ ...draft, files: publicFiles }, null, 2) + '\n', 'utf-8');
+  writeFileSync(files.decision_md, pricingReviewDecisionDraftMarkdown(draft, publicFiles), 'utf-8');
+  return {
+    output_dir: normalizePath(outputDir),
+    files: publicFiles,
+  };
+}
+
+function validationFinding(severity, code, row = {}, line, message) {
+  return {
+    severity,
+    code,
+    line,
+    target_id: row.target_id || '',
+    domain: row.domain || '',
+    review_decision: row.review_decision || '',
+    message,
+  };
+}
+
+function isHttpUrl(value = '') {
+  return Boolean(normalizeUrl(value));
+}
+
+function validatePricingDecisionRow(row = {}, line, opts = {}) {
+  const blockers = [];
+  const warnings = [];
+  const decision = String(row.review_decision || '').trim();
+  const reviewedPricing = String(row.reviewed_pricing || '').trim().toLowerCase();
+  const expectedPricing = expectedPricingForDecision(decision);
+
+  if (!row.target_id) {
+    blockers.push(validationFinding('blocker', 'target_id_missing', row, line, 'target_id is required.'));
+  }
+  if (!row.domain) {
+    blockers.push(validationFinding('blocker', 'domain_missing', row, line, 'domain is required.'));
+  }
+  if (!isHttpUrl(row.submit_url || '')) {
+    blockers.push(validationFinding('blocker', 'submit_url_invalid', row, line, 'submit_url must be HTTP(S).'));
+  }
+  if (row.evidence_url && !isHttpUrl(row.evidence_url)) {
+    blockers.push(validationFinding('blocker', 'evidence_url_invalid', row, line, 'evidence_url must be HTTP(S) when present.'));
+  }
+  if (row.automation_policy !== 'pricing_decision_draft_no_registry_write_no_submission') {
+    blockers.push(validationFinding('blocker', 'automation_policy_modified', row, line, 'automation_policy must remain pricing_decision_draft_no_registry_write_no_submission.'));
+  }
+
+  if (!decision) {
+    const finding = validationFinding('blocker', 'review_decision_missing', row, line, 'review_decision must be filled before this row can affect registry data.');
+    if (opts.allowUnreviewed) warnings.push({ ...finding, severity: 'warning' });
+    else blockers.push(finding);
+    return { blockers, warnings };
+  }
+
+  if (!PRICING_REVIEW_DECISIONS.has(decision)) {
+    blockers.push(validationFinding('blocker', 'review_decision_invalid', row, line, `review_decision must be one of: ${[...PRICING_REVIEW_DECISIONS].join(', ')}.`));
+  }
+
+  if (reviewedPricing && !['free', 'freemium', 'paid', 'unknown'].includes(reviewedPricing)) {
+    blockers.push(validationFinding('blocker', 'reviewed_pricing_invalid', row, line, 'reviewed_pricing must be free, freemium, paid, unknown, or blank.'));
+  }
+  if (expectedPricing && reviewedPricing && reviewedPricing !== expectedPricing) {
+    blockers.push(validationFinding('blocker', 'reviewed_pricing_mismatch', row, line, `reviewed_pricing "${reviewedPricing}" does not match review_decision "${decision}".`));
+  }
+
+  if (opts.requireReviewer !== false && !String(row.reviewer || '').trim()) {
+    blockers.push(validationFinding('blocker', 'reviewer_missing', row, line, 'reviewer is required on reviewed rows.'));
+  }
+  if (opts.requireReviewedAt !== false && !String(row.reviewed_at || '').trim()) {
+    blockers.push(validationFinding('blocker', 'reviewed_at_missing', row, line, 'reviewed_at is required on reviewed rows.'));
+  }
+  if (opts.requireReviewNotes !== false && String(row.review_notes || '').trim().length < 12) {
+    blockers.push(validationFinding('blocker', 'review_notes_insufficient', row, line, 'review_notes must describe the evidence checked.'));
+  }
+
+  if (decision === 'mark_free' && row.fetch_ok !== 'yes') {
+    warnings.push(validationFinding('warning', 'mark_free_without_fetch_ok', row, line, 'mark_free is based on a row without successful GET evidence; manual notes must justify it.'));
+  }
+  if (decision === 'mark_free' && (row.payment_signal === 'yes' || row.captcha_signal === 'yes' || row.cloudflare_signal === 'yes')) {
+    warnings.push(validationFinding('warning', 'mark_free_conflicting_signals', row, line, 'mark_free has payment or challenge signals; verify carefully before writing.'));
+  }
+
+  return { blockers, warnings };
+}
+
+export function validatePricingReviewDecisions(filePath, opts = {}) {
+  const rows = parseCsv(readFileSync(filePath, 'utf-8'));
+  const blockers = [];
+  const warnings = [];
+  rows.forEach((row, index) => {
+    const result = validatePricingDecisionRow(row, index + 2, opts);
+    blockers.push(...result.blockers);
+    warnings.push(...result.warnings);
+  });
+  return {
+    file: normalizePath(filePath),
+    ok: blockers.length === 0,
+    rows: rows.length,
+    blockers,
+    warnings,
+    blockers_count: blockers.length,
+    warnings_count: warnings.length,
+    by_decision: countBy(rows, row => row.review_decision || 'unreviewed'),
+    constraints: {
+      read_only: true,
+      no_network: true,
+      no_login: true,
+      no_submission: true,
+      no_registry_writes_without_explicit_apply: true,
+      allowed_review_decisions: [...PRICING_REVIEW_DECISIONS],
+    },
+  };
+}
+
+function normalizedDedupeKey(value = '') {
+  return normalizeUrl(value)?.dedupeKey || '';
+}
+
+function buildPricingProposal(target = {}, row = {}) {
+  const decision = String(row.review_decision || '').trim();
+  const nextPricing = expectedPricingForDecision(decision);
+  const currentMode = target.submission?.mode || '';
+  const proposal = {
+    target_id: target.id || '',
+    domain: target.domain || '',
+    submit_url: target.submit_url || '',
+    review_decision: decision,
+    previous_pricing: target.pricing || 'unknown',
+    next_pricing: nextPricing,
+    previous_mode: currentMode,
+    next_mode: currentMode,
+    previous_reason: target.submission?.reason || '',
+    next_reason: target.submission?.reason || '',
+    action: 'no_change',
+    write_allowed: false,
+    notes: row.review_notes || '',
+  };
+
+  if (decision === 'keep_unknown' || decision === 'needs_manual_check') {
+    proposal.next_pricing = target.pricing || 'unknown';
+    proposal.action = decision;
+    return proposal;
+  }
+
+  proposal.action = 'update_pricing';
+  proposal.write_allowed = true;
+  if (decision === 'mark_paid') {
+    proposal.next_mode = 'skip';
+    proposal.next_reason = 'pricing_review_paid_confirmed';
+    proposal.action = 'update_pricing_and_skip_paid';
+  }
+  return proposal;
+}
+
+export function buildPricingReviewDecisionPatch(registryPath, decisionFilePath, opts = {}) {
+  const validation = validatePricingReviewDecisions(decisionFilePath, {
+    requireReviewer: opts.requireReviewer,
+    requireReviewedAt: opts.requireReviewedAt,
+    requireReviewNotes: opts.requireReviewNotes,
+  });
+  const report = {
+    generated_at: nowIso(),
+    ok: false,
+    status: 'blocked_decision_validation',
+    registry: normalizePath(registryPath || DEFAULT_REGISTRY_FILE),
+    decision_file: normalizePath(decisionFilePath),
+    dry_run: true,
+    wrote_registry: false,
+    constraints: {
+      no_network: true,
+      no_login: true,
+      no_submission: true,
+      no_mode_promotion: true,
+      explicit_write_required: true,
+    },
+    validation,
+    rows: validation.rows,
+    proposals_count: 0,
+    skipped_rows: 0,
+    blockers_count: validation.blockers_count,
+    blockers: [...validation.blockers],
+    warnings: [...validation.warnings],
+    proposals: [],
+    skipped: [],
+  };
+
+  if (!validation.ok) return report;
+
+  const registry = loadRegistry(registryPath || DEFAULT_REGISTRY_FILE);
+  const targetsById = new Map((registry.targets || []).map(target => [target.id, target]));
+  const decisionRows = parseCsv(readFileSync(decisionFilePath, 'utf-8'));
+
+  for (const row of decisionRows) {
+    const target = targetsById.get(row.target_id);
+    if (!target) {
+      report.blockers.push(validationFinding('blocker', 'target_not_found', row, '', 'Decision target_id does not exist in registry.'));
+      continue;
+    }
+    if (String(target.domain || '') !== String(row.domain || '')) {
+      report.blockers.push(validationFinding('blocker', 'target_domain_changed', row, '', 'Registry target domain no longer matches the decision row.'));
+      continue;
+    }
+    if (normalizedDedupeKey(target.submit_url) !== normalizedDedupeKey(row.submit_url)) {
+      report.blockers.push(validationFinding('blocker', 'target_submit_url_changed', row, '', 'Registry target submit_url no longer matches the decision row.'));
+      continue;
+    }
+    if (String(target.pricing || 'unknown') !== String(row.current_pricing || 'unknown')) {
+      report.blockers.push(validationFinding('blocker', 'target_pricing_changed', row, '', 'Registry target pricing no longer matches current_pricing in the decision row.'));
+      continue;
+    }
+    if (row.mode && String(target.submission?.mode || '') !== String(row.mode || '')) {
+      report.blockers.push(validationFinding('blocker', 'target_mode_changed', row, '', 'Registry target mode no longer matches the decision row.'));
+      continue;
+    }
+
+    const proposal = buildPricingProposal(target, row);
+    if (proposal.write_allowed) report.proposals.push(proposal);
+    else report.skipped.push(proposal);
+  }
+
+  report.proposals_count = report.proposals.length;
+  report.skipped_rows = report.skipped.length;
+  report.blockers_count = report.blockers.length;
+  report.ok = report.blockers_count === 0;
+  report.status = report.ok ? 'preview_ready' : 'blocked_registry_identity';
+  return report;
+}
+
+export function applyPricingReviewDecisionPatch(registryPath, decisionFilePath, opts = {}) {
+  const report = buildPricingReviewDecisionPatch(registryPath, decisionFilePath, opts);
+  report.write_requested = Boolean(opts.writeRegistry);
+  if (!opts.writeRegistry || !report.ok) return report;
+
+  const registry = loadRegistry(registryPath || DEFAULT_REGISTRY_FILE);
+  const proposalsById = new Map(report.proposals.map(proposal => [proposal.target_id, proposal]));
+  const updatedTargets = (registry.targets || []).map(target => {
+    const proposal = proposalsById.get(target.id);
+    if (!proposal) return target;
+    return {
+      ...target,
+      pricing: proposal.next_pricing,
+      submission: {
+        ...(target.submission || {}),
+        mode: proposal.next_mode,
+        reason: proposal.next_reason,
+      },
+      source_meta: {
+        ...(target.source_meta || {}),
+        pricing_review_decision: proposal.review_decision,
+        pricing_reviewed_at: nowIso(),
+      },
+      updated_at: nowIso(),
+    };
+  });
+  const saved = saveRegistry({ ...registry, targets: updatedTargets }, registryPath || DEFAULT_REGISTRY_FILE);
+  return {
+    ...report,
+    dry_run: false,
+    wrote_registry: true,
+    status: 'registry_written_requires_audit_before_execution',
+    updated_targets: report.proposals.length,
+    registry_updated_at: saved.updated_at,
+  };
+}
+
+export function writePricingReviewDecisionPatchReport(report = {}, filePath) {
+  mkdirSync(dirname(filePath), { recursive: true });
+  writeFileSync(filePath, JSON.stringify(report, null, 2) + '\n', 'utf-8');
+  return normalizePath(filePath);
 }
