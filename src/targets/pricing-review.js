@@ -4,6 +4,8 @@ import { isRunnableMode } from './classify.js';
 import { DEFAULT_REGISTRY_FILE, loadRegistry, saveRegistry } from './registry.js';
 import { normalizeUrl, stripWww } from './normalize.js';
 import { parseCsv } from './importers/csv.js';
+import { auditRegistry } from './audit.js';
+import { buildSubmissionPlan } from '../planner/plan.js';
 
 const QUEUE_HEADERS = [
   'queue_order',
@@ -1476,6 +1478,99 @@ export function applyPricingReviewDecisionPatch(registryPath, decisionFilePath, 
 }
 
 export function writePricingReviewDecisionPatchReport(report = {}, filePath) {
+  mkdirSync(dirname(filePath), { recursive: true });
+  writeFileSync(filePath, JSON.stringify(report, null, 2) + '\n', 'utf-8');
+  return normalizePath(filePath);
+}
+
+function postApplyGateBlocker(code, message, details = {}) {
+  return {
+    severity: 'blocker',
+    code,
+    message,
+    ...details,
+  };
+}
+
+export function buildPricingReviewPostApplyGate(opts = {}) {
+  const registryPath = opts.registry || DEFAULT_REGISTRY_FILE;
+  const allowPlanTargets = Boolean(opts.allowPlanTargets);
+  const planLimit = Math.max(1, parseInteger(opts.limit, 30));
+  const audit = auditRegistry(registryPath, { level: 'automation' });
+  const plan = buildSubmissionPlan({
+    registry: registryPath,
+    productConfig: opts.productConfig,
+    freeOnly: true,
+    mode: 'auto_safe',
+    limit: planLimit,
+    allowUnknownPricing: false,
+    includeSubmitted: false,
+    includeRisk: false,
+  });
+  const blockers = [];
+
+  if (!audit.ok) {
+    blockers.push(postApplyGateBlocker(
+      'post_apply_target_audit_blocked',
+      'Registry audit has blockers after pricing review changes.',
+      { audit_blockers: audit.summary?.blockers || 0 }
+    ));
+  }
+
+  if (!allowPlanTargets && plan.targets.length > 0) {
+    blockers.push(postApplyGateBlocker(
+      'post_apply_auto_safe_plan_not_empty',
+      'Strict free-only auto_safe plan is not empty after pricing review changes.',
+      {
+        plan_targets: plan.targets.length,
+        target_ids: plan.targets.map(row => row.id).join(', '),
+      }
+    ));
+  }
+
+  const ok = blockers.length === 0;
+  const report = {
+    generated_at: nowIso(),
+    ok,
+    status: ok ? 'post_apply_gate_passed' : 'post_apply_gate_blocked',
+    registry: normalizePath(registryPath),
+    product_config: normalizePath(opts.productConfig || ''),
+    constraints: {
+      read_only: true,
+      no_network: true,
+      no_login: true,
+      no_submission: true,
+      target_audit_required: true,
+      plan_check_required: true,
+      plan_free_only: true,
+      plan_mode: 'auto_safe',
+      plan_allow_unknown_pricing: false,
+      plan_include_submitted: false,
+      plan_targets_allowed: allowPlanTargets,
+    },
+    audit_summary: {
+      ok: audit.ok,
+      blockers: audit.summary?.blockers || 0,
+      warnings: audit.summary?.warnings || 0,
+      by_code: audit.summary?.by_code || {},
+    },
+    plan_summary: {
+      targets: plan.targets.length,
+      target_ids: plan.targets.map(row => row.id),
+      limit: planLimit,
+      constraints: plan.constraints,
+    },
+    blockers,
+    blockers_count: blockers.length,
+  };
+  if (opts.includeDetails) {
+    report.audit = audit;
+    report.plan = plan;
+  }
+  return report;
+}
+
+export function writePricingReviewPostApplyGateReport(report = {}, filePath) {
   mkdirSync(dirname(filePath), { recursive: true });
   writeFileSync(filePath, JSON.stringify(report, null, 2) + '\n', 'utf-8');
   return normalizePath(filePath);

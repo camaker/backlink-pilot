@@ -40,6 +40,7 @@ import {
   pricingReviewDecisionBatchCommand,
   pricingReviewDecisionDraftCommand,
   pricingReviewEvidenceCommand,
+  pricingReviewPostApplyGateCommand,
   pricingReviewQueueCommand,
   pricingReviewSuggestCommand,
   promoteCoverageReviewBatchCommand,
@@ -423,6 +424,21 @@ targets
   .option('--json', 'Output as JSON')
   .action(async (file, opts) => {
     await applyPricingReviewDecisionsCommand(file, opts);
+  });
+
+targets
+  .command('pricing-review-post-apply-gate')
+  .description('Run the required read-only safety gate after reviewed pricing decisions are written')
+  .option('--registry <path>', 'Canonical registry path')
+  .option('--product-config <path>', 'Product config used for strict free-only auto_safe planning')
+  .option('--limit <n>', 'Maximum auto_safe plan targets to inspect', '30')
+  .option('--allow-plan-targets', 'Do not block when the strict auto_safe plan is non-empty')
+  .option('--include-details', 'Include full target audit and plan details in JSON/report output')
+  .option('--output <path>', 'Write post-apply gate report JSON')
+  .option('--fail-on-blockers', 'Exit non-zero when post-apply blockers are found')
+  .option('--json', 'Output as JSON')
+  .action(async (opts) => {
+    await pricingReviewPostApplyGateCommand(opts);
   });
 
 targets

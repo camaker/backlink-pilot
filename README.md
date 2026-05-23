@@ -179,6 +179,7 @@ node src/cli.js targets pricing-review-suggest <queue.csv> <evidence.csv>  # Non
 node src/cli.js targets pricing-review-decision-draft <suggestions.csv>  # Blank human decision draft
 node src/cli.js targets pricing-review-decision-batch <draft.csv>  # Focused editable pricing decision batch
 node src/cli.js targets apply-pricing-review-decisions <draft.csv>        # Preview/apply reviewed pricing decisions
+node src/cli.js targets pricing-review-post-apply-gate --registry resources/targets.canonical.yaml  # Required read-only safety gate after pricing writes
 node src/cli.js targets auth-login-next <batch...>  # Select next manual login tasks without executing them
 node src/cli.js targets auth-login-operator-pack <next-login.json>  # Generate a human-only login runbook and PowerShell helper
 node src/cli.js targets auth-workflow-refresh <queue.csv> <batch...>  # Refresh auth workflow artifacts without executing commands

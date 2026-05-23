@@ -1,0 +1,45 @@
+{
+  "generated_at": "2026-05-23T11:31:01.331Z",
+  "ok": true,
+  "status": "post_apply_gate_passed",
+  "registry": "resources/targets.canonical.yaml",
+  "product_config": "backlink-url/submission-materials/xtimer.config.yaml",
+  "constraints": {
+    "read_only": true,
+    "no_network": true,
+    "no_login": true,
+    "no_submission": true,
+    "target_audit_required": true,
+    "plan_check_required": true,
+    "plan_free_only": true,
+    "plan_mode": "auto_safe",
+    "plan_allow_unknown_pricing": false,
+    "plan_include_submitted": false,
+    "plan_targets_allowed": false
+  },
+  "audit_summary": {
+    "ok": true,
+    "blockers": 0,
+    "warnings": 75,
+    "by_code": {
+      "runnable_unknown_pricing": 75
+    }
+  },
+  "plan_summary": {
+    "targets": 0,
+    "target_ids": [],
+    "limit": 30,
+    "constraints": {
+      "free_only": true,
+      "mode": "auto_safe",
+      "limit": 30,
+      "lang": "",
+      "source": "",
+      "include_risk": false,
+      "allow_unknown_pricing": false,
+      "include_submitted": false
+    }
+  },
+  "blockers": [],
+  "blockers_count": 0
+}

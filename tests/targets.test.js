@@ -55,6 +55,7 @@ import {
   buildPricingReviewEvidence,
   buildPricingReviewDecisionDraft,
   buildPricingReviewQueue,
+  buildPricingReviewPostApplyGate,
   buildPricingReviewSuggestions,
   pricingReviewDecisionBatchCsv,
   pricingReviewDecisionDraftCsv,
@@ -66,6 +67,7 @@ import {
   writePricingReviewDecisionBatch,
   writePricingReviewDecisionDraft,
   writePricingReviewEvidence,
+  writePricingReviewPostApplyGateReport,
   writePricingReviewQueue,
   writePricingReviewSuggestions,
 } from '../src/targets/pricing-review.js';
@@ -758,6 +760,64 @@ targets:
       assert.equal(loaded.targets.find(target => target.id === 'paid-target').pricing, 'paid');
       assert.equal(loaded.targets.find(target => target.id === 'paid-target').submission.mode, 'skip');
       assert.equal(loaded.targets.find(target => target.id === 'paid-target').submission.reason, 'pricing_review_paid_confirmed');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('requires a post-apply pricing gate and blocks newly opened auto_safe plans by default', () => {
+    const dir = tempDir();
+    try {
+      const registry = join(dir, 'registry.yaml');
+      const reportPath = join(dir, 'pricing-review-post-apply-gate.json');
+      writeFileSync(registry, `
+version: 1
+targets:
+  - id: safe-free-target
+    name: Safe Free Target
+    domain: safe.example
+    submit_url: https://safe.example/submit
+    pricing: free
+    quality:
+      risk: low
+    technical:
+      last_scouted_at: 2026-05-22T00:00:00.000Z
+      auth: none
+      captcha: none
+      reachable: yes
+    forms:
+      - fields:
+          - mapped_to: product.name
+            selector: input[name="name"]
+            required: true
+          - mapped_to: product.url
+            selector: input[name="url"]
+            required: true
+          - mapped_to: product.description
+            selector: textarea[name="description"]
+            required: true
+        submit_buttons:
+          - selector: button[type="submit"]
+    submission:
+      mode: auto_safe
+      status: mapped
+      reason: form_mapped_no_auth_no_captcha
+`);
+
+      const blocked = buildPricingReviewPostApplyGate({ registry });
+      assert.equal(blocked.audit_summary.ok, true);
+      assert.equal(blocked.plan_summary.targets, 1);
+      assert.equal(blocked.ok, false);
+      assert.equal(blocked.blockers[0].code, 'post_apply_auto_safe_plan_not_empty');
+      assert.equal(blocked.constraints.no_submission, true);
+
+      const allowed = buildPricingReviewPostApplyGate({ registry, allowPlanTargets: true });
+      assert.equal(allowed.ok, true);
+      assert.equal(allowed.plan_summary.targets, 1);
+
+      const written = writePricingReviewPostApplyGateReport(blocked, reportPath);
+      assert.equal(written.endsWith('pricing-review-post-apply-gate.json'), true);
+      assert.equal(existsSync(reportPath), true);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

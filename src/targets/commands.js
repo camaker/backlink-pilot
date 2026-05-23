@@ -48,6 +48,7 @@ import {
   buildPricingReviewDecisionBatch,
   buildPricingReviewDecisionDraft,
   buildPricingReviewEvidence,
+  buildPricingReviewPostApplyGate,
   buildPricingReviewQueue,
   buildPricingReviewSuggestions,
   validatePricingReviewDecisions,
@@ -55,6 +56,7 @@ import {
   writePricingReviewDecisionDraft,
   writePricingReviewDecisionPatchReport,
   writePricingReviewEvidence,
+  writePricingReviewPostApplyGateReport,
   writePricingReviewQueue,
   writePricingReviewSuggestions,
 } from './pricing-review.js';
@@ -416,6 +418,42 @@ export async function applyPricingReviewDecisionsCommand(filePath, opts = {}) {
   for (const proposal of result.proposals.slice(0, Number.isFinite(preview) ? preview : 10)) {
     console.log(`- ${proposal.target_id}: ${proposal.previous_pricing} -> ${proposal.next_pricing}; mode ${proposal.previous_mode} -> ${proposal.next_mode}`);
   }
+  return result;
+}
+
+export async function pricingReviewPostApplyGateCommand(opts = {}) {
+  const result = buildPricingReviewPostApplyGate({
+    registry: opts.registry || DEFAULT_REGISTRY_FILE,
+    productConfig: opts.productConfig,
+    limit: opts.limit,
+    allowPlanTargets: Boolean(opts.allowPlanTargets),
+    includeDetails: Boolean(opts.includeDetails),
+  });
+  if (opts.output) {
+    const written = writePricingReviewPostApplyGateReport(result, opts.output);
+    result.output = written;
+  }
+
+  if (opts.json) {
+    console.log(JSON.stringify(result, null, 2));
+    if (!result.ok && opts.failOnBlockers) process.exitCode = 1;
+    return result;
+  }
+
+  console.log(`Pricing post-apply gate: ${result.status}`);
+  console.log(`Registry: ${result.registry}`);
+  if (result.product_config) console.log(`Product config: ${result.product_config}`);
+  console.log(`Audit blockers: ${result.audit_summary.blockers}`);
+  console.log(`Audit warnings: ${result.audit_summary.warnings}`);
+  console.log(`Strict free-only auto_safe plan targets: ${result.plan_summary.targets}`);
+  console.log(`Blockers: ${result.blockers_count}`);
+  for (const blocker of result.blockers) {
+    console.log(`BLOCKER ${blocker.code}: ${blocker.message}`);
+    if (blocker.target_ids) console.log(`  Targets: ${blocker.target_ids}`);
+  }
+  if (opts.output) console.log(`Gate report: ${result.output}`);
+  console.log('Policy: read-only post-apply safety gate; no network, no login, no submission.');
+  if (!result.ok && opts.failOnBlockers) process.exitCode = 1;
   return result;
 }
 
