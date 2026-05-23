@@ -143,6 +143,14 @@ const PRICING_DECISION_BATCH_HEADERS = [
   ...PRICING_DECISION_HEADERS,
 ];
 
+const PRICING_REVIEW_WRITE_FIELDS = [
+  'review_decision',
+  'reviewed_pricing',
+  'reviewer',
+  'reviewed_at',
+  'review_notes',
+];
+
 function nowIso() {
   return new Date().toISOString();
 }
@@ -1218,6 +1226,221 @@ export function writePricingReviewDecisionBatch(batch = {}, opts = {}) {
     output_dir: normalizePath(outputDir),
     files: publicFiles,
   };
+}
+
+function rowByTargetId(rows = []) {
+  const byId = new Map();
+  const duplicates = new Set();
+  for (const row of rows) {
+    const id = String(row.target_id || '').trim();
+    if (!id) continue;
+    if (byId.has(id)) duplicates.add(id);
+    else byId.set(id, row);
+  }
+  return { byId, duplicates: [...duplicates] };
+}
+
+function comparableDecisionValue(header, value = '') {
+  if (header === 'submit_url' || header === 'evidence_url') return normalizedDedupeKey(value);
+  return String(value || '').trim();
+}
+
+function pricingDecisionIdentityBlockers(source = {}, candidate = {}) {
+  const blockers = [];
+  for (const header of PRICING_DECISION_HEADERS) {
+    if (PRICING_REVIEW_WRITE_FIELDS.includes(header)) continue;
+    const sourceValue = comparableDecisionValue(header, source[header]);
+    const candidateValue = comparableDecisionValue(header, candidate[header]);
+    if (sourceValue !== candidateValue) {
+      blockers.push({
+        code: `decision_batch_${header}_changed`,
+        message: `${header} differs between source draft and batch.`,
+        source_value: source[header] || '',
+        batch_value: candidate[header] || '',
+      });
+    }
+  }
+  return blockers;
+}
+
+function pricingDecisionReviewDiff(source = {}, candidate = {}) {
+  return PRICING_REVIEW_WRITE_FIELDS
+    .filter(header => String(source[header] || '') !== String(candidate[header] || ''))
+    .map(header => ({
+      field: header,
+      before: source[header] || '',
+      after: candidate[header] || '',
+    }));
+}
+
+function decisionMergeFinding(code, row = {}, message, details = {}) {
+  return {
+    severity: 'blocker',
+    code,
+    target_id: row.target_id || '',
+    domain: row.domain || '',
+    batch_id: row.batch_id || '',
+    batch_order: row.batch_order || '',
+    message,
+    ...details,
+  };
+}
+
+function decisionDraftRowsWithHeaders(rows = []) {
+  return rows.map(row => PRICING_DECISION_HEADERS.reduce((acc, header) => {
+    acc[header] = row[header] || '';
+    return acc;
+  }, {}));
+}
+
+function decisionDraftMergeSummary(rows = []) {
+  return {
+    rows: rows.length,
+    reviewed_rows: rows.filter(row => row.review_decision).length,
+    unreviewed_rows: rows.filter(row => !row.review_decision).length,
+    by_decision: countBy(rows, row => row.review_decision || 'unreviewed'),
+  };
+}
+
+export function buildPricingReviewDecisionBatchMerge(draftPath, batchPath, opts = {}) {
+  const draftRows = decisionDraftRowsWithHeaders(parseCsv(readFileSync(draftPath, 'utf-8')));
+  const batchRows = parseCsv(readFileSync(batchPath, 'utf-8'));
+  const validation = validatePricingReviewDecisions(batchPath, {
+    requireReviewer: opts.requireReviewer,
+    requireReviewedAt: opts.requireReviewedAt,
+    requireReviewNotes: opts.requireReviewNotes,
+  });
+  const report = {
+    generated_at: nowIso(),
+    ok: false,
+    status: 'blocked_batch_validation',
+    draft: normalizePath(draftPath),
+    batch: normalizePath(batchPath),
+    constraints: {
+      read_only: true,
+      no_network: true,
+      no_login: true,
+      no_submission: true,
+      no_registry_writes: true,
+      merge_only_review_fields: true,
+      explicit_output_required: true,
+      overwrite_reviewed_rows: Boolean(opts.allowOverwrite),
+    },
+    validation,
+    draft_rows: draftRows.length,
+    batch_rows: batchRows.length,
+    proposals_count: 0,
+    unchanged_rows: 0,
+    blockers_count: validation.blockers_count,
+    blockers: [...validation.blockers],
+    proposals: [],
+    unchanged: [],
+    updated_rows: draftRows,
+    updated_summary: decisionDraftMergeSummary(draftRows),
+  };
+
+  if (!validation.ok) return report;
+
+  const blockers = [];
+  const { byId: draftById, duplicates: draftDuplicates } = rowByTargetId(draftRows);
+  const { duplicates: batchDuplicates } = rowByTargetId(batchRows);
+  for (const targetId of draftDuplicates) {
+    blockers.push(decisionMergeFinding('decision_draft_duplicate_target_id', { target_id: targetId }, 'Source decision draft contains a duplicate target_id.'));
+  }
+  for (const targetId of batchDuplicates) {
+    blockers.push(decisionMergeFinding('decision_batch_duplicate_target_id', { target_id: targetId }, 'Decision batch contains a duplicate target_id.'));
+  }
+
+  const updatedById = new Map(draftRows.map(row => [row.target_id, { ...row }]));
+  const proposals = [];
+  const unchanged = [];
+
+  for (const batchRow of batchRows) {
+    const draftRow = draftById.get(batchRow.target_id);
+    if (!draftRow) {
+      blockers.push(decisionMergeFinding('decision_batch_target_not_found', batchRow, 'Batch target_id does not exist in the source decision draft.'));
+      continue;
+    }
+
+    const identityBlockers = pricingDecisionIdentityBlockers(draftRow, batchRow);
+    if (identityBlockers.length) {
+      blockers.push(decisionMergeFinding(
+        'decision_batch_identity_changed',
+        batchRow,
+        'Batch row identity differs from the source decision draft.',
+        { identity_blockers: identityBlockers }
+      ));
+      continue;
+    }
+
+    const diff = pricingDecisionReviewDiff(draftRow, batchRow);
+    if (!diff.length) {
+      unchanged.push({
+        target_id: batchRow.target_id,
+        domain: batchRow.domain,
+        batch_id: batchRow.batch_id || '',
+        batch_order: batchRow.batch_order || '',
+        reason: 'review_fields_unchanged',
+      });
+      continue;
+    }
+
+    if (draftRow.review_decision && !opts.allowOverwrite) {
+      blockers.push(decisionMergeFinding(
+        'decision_draft_row_already_reviewed',
+        batchRow,
+        'Source decision draft row is already reviewed; use allowOverwrite only after resolving the conflict.',
+        { existing_review_decision: draftRow.review_decision, incoming_review_decision: batchRow.review_decision }
+      ));
+      continue;
+    }
+
+    const updatedRow = { ...draftRow };
+    for (const field of PRICING_REVIEW_WRITE_FIELDS) updatedRow[field] = batchRow[field] || '';
+    updatedById.set(batchRow.target_id, updatedRow);
+    proposals.push({
+      target_id: batchRow.target_id,
+      domain: batchRow.domain,
+      batch_id: batchRow.batch_id || '',
+      batch_order: batchRow.batch_order || '',
+      review_decision: batchRow.review_decision || '',
+      reviewed_pricing: batchRow.reviewed_pricing || '',
+      changed_fields: diff.map(item => item.field),
+    });
+  }
+
+  const updatedRows = draftRows.map(row => updatedById.get(row.target_id) || row);
+  report.blockers = blockers;
+  report.blockers_count = blockers.length;
+  report.proposals = proposals;
+  report.proposals_count = proposals.length;
+  report.unchanged = unchanged;
+  report.unchanged_rows = unchanged.length;
+  report.updated_rows = updatedRows;
+  report.updated_summary = decisionDraftMergeSummary(updatedRows);
+  report.ok = blockers.length === 0;
+  report.status = report.ok ? 'merge_preview_ready' : 'blocked_merge_identity';
+  return report;
+}
+
+export function writePricingReviewDecisionBatchMerge(report = {}, opts = {}) {
+  const files = {};
+  if (opts.output && report.ok) {
+    mkdirSync(dirname(opts.output), { recursive: true });
+    writeFileSync(opts.output, pricingReviewDecisionDraftCsv({ rows: report.updated_rows || [] }), 'utf-8');
+    files.updated_draft_csv = normalizePath(opts.output);
+  }
+  if (opts.jsonOutput) {
+    mkdirSync(dirname(opts.jsonOutput), { recursive: true });
+    files.merge_report_json = normalizePath(opts.jsonOutput);
+    const body = {
+      ...report,
+      updated_rows: undefined,
+      files,
+    };
+    writeFileSync(opts.jsonOutput, JSON.stringify(body, null, 2) + '\n', 'utf-8');
+  }
+  return { files };
 }
 
 function validationFinding(severity, code, row = {}, line, message) {

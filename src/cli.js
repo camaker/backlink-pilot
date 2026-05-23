@@ -35,6 +35,7 @@ import {
   dedupeTargetIdsCommand,
   importCoverageReviewCommand,
   listTargetsCommand,
+  mergePricingReviewDecisionBatchCommand,
   normalizeTargetsCommand,
   applyPricingReviewDecisionsCommand,
   pricingReviewDecisionBatchCommand,
@@ -409,6 +410,23 @@ targets
   .option('--json', 'Output as JSON')
   .action(async (file, opts) => {
     await validatePricingReviewDecisionsCommand(file, opts);
+  });
+
+targets
+  .command('merge-pricing-review-decision-batch <draft> <batch>')
+  .description('Validate and merge reviewed pricing decision batch rows into a new decision draft')
+  .option('--output <path>', 'Write updated decision draft CSV when merge is clean')
+  .option('--json-output <path>', 'Write merge report JSON')
+  .option('--allow-overwrite', 'Allow replacing review fields that are already present in the source draft')
+  .option('--no-require-reviewer', 'Do not require reviewer on reviewed rows')
+  .option('--no-require-reviewed-at', 'Do not require reviewed_at on reviewed rows')
+  .option('--no-require-review-notes', 'Do not require substantive review notes on reviewed rows')
+  .option('--preview <n>', 'Maximum blockers and proposal rows to print', '10')
+  .option('--include-rows', 'Include updated draft rows in JSON stdout')
+  .option('--fail-on-blockers', 'Exit non-zero when merge blockers are found')
+  .option('--json', 'Output as JSON')
+  .action(async (draft, batch, opts) => {
+    await mergePricingReviewDecisionBatchCommand(draft, batch, opts);
   });
 
 targets

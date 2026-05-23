@@ -1,0 +1,190 @@
+{
+  "generated_at": "2026-05-23T12:16:19.793Z",
+  "ok": false,
+  "status": "blocked_batch_validation",
+  "draft": "backlink-url/pricing-review/pricing-review-decision-draft.csv",
+  "batch": "backlink-url/pricing-review/decision-batches/pricing-potential-free-001.csv",
+  "constraints": {
+    "read_only": true,
+    "no_network": true,
+    "no_login": true,
+    "no_submission": true,
+    "no_registry_writes": true,
+    "merge_only_review_fields": true,
+    "explicit_output_required": true,
+    "overwrite_reviewed_rows": false
+  },
+  "validation": {
+    "file": "backlink-url/pricing-review/decision-batches/pricing-potential-free-001.csv",
+    "ok": false,
+    "rows": 7,
+    "blockers": [
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 2,
+        "target_id": "changelog",
+        "domain": "changelog.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 3,
+        "target_id": "mergeek",
+        "domain": "mergeek.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 4,
+        "target_id": "sonic-run",
+        "domain": "sonicrun.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 5,
+        "target_id": "top-best-alternatives",
+        "domain": "topbestalternatives.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 6,
+        "target_id": "trustiner-com",
+        "domain": "trustiner.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 7,
+        "target_id": "websitehunt",
+        "domain": "websitehunt.co",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 8,
+        "target_id": "submitdirs-com",
+        "domain": "submitdirs.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      }
+    ],
+    "warnings": [],
+    "blockers_count": 7,
+    "warnings_count": 0,
+    "by_decision": {
+      "unreviewed": 7
+    },
+    "constraints": {
+      "read_only": true,
+      "no_network": true,
+      "no_login": true,
+      "no_submission": true,
+      "no_registry_writes_without_explicit_apply": true,
+      "allowed_review_decisions": [
+        "mark_free",
+        "mark_freemium",
+        "mark_paid",
+        "keep_unknown",
+        "needs_manual_check"
+      ]
+    }
+  },
+  "draft_rows": 75,
+  "batch_rows": 7,
+  "proposals_count": 0,
+  "unchanged_rows": 0,
+  "blockers_count": 7,
+  "blockers": [
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 2,
+      "target_id": "changelog",
+      "domain": "changelog.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 3,
+      "target_id": "mergeek",
+      "domain": "mergeek.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 4,
+      "target_id": "sonic-run",
+      "domain": "sonicrun.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 5,
+      "target_id": "top-best-alternatives",
+      "domain": "topbestalternatives.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 6,
+      "target_id": "trustiner-com",
+      "domain": "trustiner.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 7,
+      "target_id": "websitehunt",
+      "domain": "websitehunt.co",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 8,
+      "target_id": "submitdirs-com",
+      "domain": "submitdirs.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    }
+  ],
+  "proposals": [],
+  "unchanged": [],
+  "updated_summary": {
+    "rows": 75,
+    "reviewed_rows": 0,
+    "unreviewed_rows": 75,
+    "by_decision": {
+      "unreviewed": 75
+    }
+  },
+  "files": {
+    "merge_report_json": "backlink-url/pricing-review/pricing-review-decision-batch-merge-preview.json"
+  }
+}

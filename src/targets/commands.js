@@ -46,6 +46,7 @@ import {
 import {
   applyPricingReviewDecisionPatch,
   buildPricingReviewDecisionBatch,
+  buildPricingReviewDecisionBatchMerge,
   buildPricingReviewDecisionDraft,
   buildPricingReviewEvidence,
   buildPricingReviewPostApplyGate,
@@ -53,6 +54,7 @@ import {
   buildPricingReviewSuggestions,
   validatePricingReviewDecisions,
   writePricingReviewDecisionBatch,
+  writePricingReviewDecisionBatchMerge,
   writePricingReviewDecisionDraft,
   writePricingReviewDecisionPatchReport,
   writePricingReviewEvidence,
@@ -380,6 +382,49 @@ export async function validatePricingReviewDecisionsCommand(filePath, opts = {})
   for (const item of result.warnings.slice(0, Number.isFinite(limit) ? limit : 20)) {
     console.log(`WARNING ${item.code} line ${item.line}: ${item.target_id || item.domain} - ${item.message}`);
   }
+  if (!result.ok && opts.failOnBlockers) process.exitCode = 1;
+  return result;
+}
+
+export async function mergePricingReviewDecisionBatchCommand(draftPath, batchPath, opts = {}) {
+  const result = buildPricingReviewDecisionBatchMerge(draftPath, batchPath, {
+    allowOverwrite: Boolean(opts.allowOverwrite),
+    requireReviewer: opts.requireReviewer !== false,
+    requireReviewedAt: opts.requireReviewedAt !== false,
+    requireReviewNotes: opts.requireReviewNotes !== false,
+  });
+  const written = writePricingReviewDecisionBatchMerge(result, {
+    output: opts.output,
+    jsonOutput: opts.jsonOutput,
+  });
+  result.files = written.files;
+
+  if (opts.json) {
+    const body = opts.includeRows ? result : { ...result, updated_rows: undefined };
+    console.log(JSON.stringify(body, null, 2));
+    if (!result.ok && opts.failOnBlockers) process.exitCode = 1;
+    return result;
+  }
+
+  console.log(`Pricing decision batch merge: ${result.status}`);
+  console.log(`Draft: ${result.draft}`);
+  console.log(`Batch: ${result.batch}`);
+  console.log(`Draft rows: ${result.draft_rows}`);
+  console.log(`Batch rows: ${result.batch_rows}`);
+  console.log(`Proposals: ${result.proposals_count}`);
+  console.log(`Unchanged: ${result.unchanged_rows}`);
+  console.log(`Blockers: ${result.blockers_count}`);
+  console.log(`Updated reviewed rows: ${result.updated_summary.reviewed_rows}`);
+  console.log(`Updated unreviewed rows: ${result.updated_summary.unreviewed_rows}`);
+  if (result.files.updated_draft_csv) console.log(`Updated draft CSV: ${result.files.updated_draft_csv}`);
+  if (result.files.merge_report_json) console.log(`Merge report JSON: ${result.files.merge_report_json}`);
+  for (const blocker of result.blockers.slice(0, Number.parseInt(opts.preview || 10, 10))) {
+    console.log(`BLOCKER ${blocker.code}: ${blocker.target_id || blocker.domain} - ${blocker.message}`);
+  }
+  for (const proposal of result.proposals.slice(0, Number.parseInt(opts.preview || 10, 10))) {
+    console.log(`- ${proposal.target_id}: ${proposal.review_decision}; fields ${proposal.changed_fields.join(', ')}`);
+  }
+  console.log('Policy: local draft merge only; no network, no login, no submission, no registry writes.');
   if (!result.ok && opts.failOnBlockers) process.exitCode = 1;
   return result;
 }

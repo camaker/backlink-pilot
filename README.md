@@ -178,6 +178,7 @@ node src/cli.js targets pricing-review-evidence <queue.csv>      # GET-only pric
 node src/cli.js targets pricing-review-suggest <queue.csv> <evidence.csv>  # Non-binding pricing suggestions
 node src/cli.js targets pricing-review-decision-draft <suggestions.csv>  # Blank human decision draft
 node src/cli.js targets pricing-review-decision-batch <draft.csv>  # Focused editable pricing decision batch
+node src/cli.js targets merge-pricing-review-decision-batch <draft.csv> <batch.csv>  # Merge reviewed batch into a new draft
 node src/cli.js targets apply-pricing-review-decisions <draft.csv>        # Preview/apply reviewed pricing decisions
 node src/cli.js targets pricing-review-post-apply-gate --registry resources/targets.canonical.yaml  # Required read-only safety gate after pricing writes
 node src/cli.js targets auth-login-next <batch...>  # Select next manual login tasks without executing them
