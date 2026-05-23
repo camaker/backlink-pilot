@@ -29,6 +29,7 @@ describe('scout field mapper', () => {
     assert.equal(mapField({ aria_label: 'Contact email' }), 'product.email');
     assert.equal(mapField({ name: 'short_description' }), 'product.description');
     assert.equal(mapField({ name: 'category' }), 'product.category');
+    assert.equal(mapField({ name: 'RECPR_URL' }), '');
   });
 
   it('adds mapped_to to form fields without overwriting explicit mappings', () => {
@@ -221,14 +222,14 @@ describe('scout persistence', () => {
       forms: [],
       classification: {
         mode: 'assisted',
-        status: 'captcha_required',
+        status: 'access_blocked',
         confidence: 0.85,
-        reasons: ['captcha_signal'],
+        reasons: ['http_403'],
       },
     });
 
     assert.equal(resolved.classification.mode, 'assisted');
-    assert.equal(resolved.classification.status, 'captcha_required');
+    assert.equal(resolved.classification.status, 'access_blocked');
     assert.equal(resolved.source, 'provided_explicit_blocker');
     assert.match(resolved.classification.reasons.join('; '), /classification_mismatch:assisted->needs_review/);
   });

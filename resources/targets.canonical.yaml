@@ -1,6 +1,6 @@
 version: 1
 generated_at: 2026-05-21T15:44:34.969Z
-updated_at: 2026-05-23T01:18:01.887Z
+updated_at: 2026-05-23T02:39:13.989Z
 targets:
   - id: 01webdirectory
     name: 01webdirectory
@@ -29033,21 +29033,128 @@ targets:
       - targets.yaml
     source_meta:
       id: techpluto
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T01:57:17.290Z
+      auth: required
+      captcha: none
+      reachable: yes
+      final_url: https://www.techpluto.com/submit-startup/
+      http_status: 200
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.126Z
-    updated_at: 2026-05-21T15:44:39.126Z
+    updated_at: 2026-05-23T01:57:43.718Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: hidden
+            name: post_types
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="post_types"]
+            label: ""
+            required: false
+            mapped_to: product.category
+          - tag: input
+            type: text
+            name: s
+            id: ""
+            placeholder: Type here and hit enter
+            aria_label: ""
+            selector: input[name="s"]
+            label: ""
+            required: false
+            mapped_to: product.category
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: ""
+            value: ""
+            selector: button[type="submit"]
+      - index: 1
+        fields:
+          - tag: input
+            type: hidden
+            name: post_types
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="post_types"]
+            label: ""
+            required: false
+            mapped_to: product.category
+          - tag: input
+            type: text
+            name: s
+            id: ""
+            placeholder: Type here and hit enter
+            aria_label: ""
+            selector: input[name="s"]
+            label: ""
+            required: false
+            mapped_to: product.category
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: ""
+            value: ""
+            selector: button[type="submit"]
+      - index: 2
+        fields:
+          - tag: input
+            type: search
+            name: s
+            id: ""
+            placeholder: Type words and hit enter…
+            aria_label: ""
+            selector: input[name="s"]
+            label: ""
+            required: false
+            mapped_to: product.category
+          - tag: input
+            type: submit
+            name: ""
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[type="submit"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: input
+            type: submit
+            name: ""
+            id: ""
+            text: Search
+            value: Search
+            selector: input[type="submit"]
   - id: techpluto-techpluto-com-submit-startup
     external_id: 14368f41-8f50-8196-949d-e3764f2d1700
     name: TechPluto
@@ -29069,21 +29176,128 @@ targets:
     source_meta:
       id: techpluto
       previous_id: techpluto
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T01:58:16.402Z
+      auth: required
+      captcha: none
+      reachable: yes
+      final_url: https://www.techpluto.com/submit-startup/
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.126Z
-    updated_at: 2026-05-22T00:50:01.370Z
+    updated_at: 2026-05-23T01:58:49.546Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: hidden
+            name: post_types
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="post_types"]
+            label: ""
+            required: false
+            mapped_to: product.category
+          - tag: input
+            type: text
+            name: s
+            id: ""
+            placeholder: Type here and hit enter
+            aria_label: ""
+            selector: input[name="s"]
+            label: ""
+            required: false
+            mapped_to: product.category
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: ""
+            value: ""
+            selector: button[type="submit"]
+      - index: 1
+        fields:
+          - tag: input
+            type: hidden
+            name: post_types
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="post_types"]
+            label: ""
+            required: false
+            mapped_to: product.category
+          - tag: input
+            type: text
+            name: s
+            id: ""
+            placeholder: Type here and hit enter
+            aria_label: ""
+            selector: input[name="s"]
+            label: ""
+            required: false
+            mapped_to: product.category
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: ""
+            value: ""
+            selector: button[type="submit"]
+      - index: 2
+        fields:
+          - tag: input
+            type: search
+            name: s
+            id: ""
+            placeholder: Type words and hit enter…
+            aria_label: ""
+            selector: input[name="s"]
+            label: ""
+            required: false
+            mapped_to: product.category
+          - tag: input
+            type: submit
+            name: ""
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[type="submit"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: input
+            type: submit
+            name: ""
+            id: ""
+            text: Search
+            value: Search
+            selector: input[type="submit"]
   - id: tekpon
     external_id: 14368f41-8f50-8151-b105-dbf0483cb797
     name: Tekpon
@@ -29138,21 +29352,58 @@ targets:
       - targets.yaml
     source_meta:
       id: thales-directory
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: dead
+        confidence: 1
+        reasons:
+          - unreachable_or_404
+      scout_classification_computed:
+        mode: skip
+        status: dead
+        confidence: 1
+        reasons:
+          - unreachable_or_404
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:15:54.991Z
+      auth: none
+      captcha: none
+      reachable: no
+      final_url: https://thalesdirectory.com/submit
+      http_status: 404
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: skip
+      status: dead
+      reason: unreachable_or_404
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.126Z
-    updated_at: 2026-05-21T15:44:39.126Z
+    updated_at: 2026-05-23T02:16:21.144Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: search
+            name: s
+            id: s
+            placeholder: Search here
+            aria_label: ""
+            selector: input[id="s"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Search
+            value: ""
+            selector: button[type="submit"]
   - id: that-ai-collection
     external_id: 14368f41-8f50-811a-9c22-d5a1097eef55
     name: That AI Collection
@@ -29173,21 +29424,38 @@ targets:
       - notion
     source_meta:
       id: that-ai-collection
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:00:16.410Z
+      auth: required
+      captcha: none
+      reachable: yes
+      final_url: https://www.thataicollection.com/submit/details/
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.126Z
-    updated_at: 2026-05-21T15:44:39.126Z
+    updated_at: 2026-05-23T02:00:50.299Z
+    forms: []
   - id: thatappshow-com
     name: https://thatappshow.com
     domain: thatappshow.com
@@ -29207,21 +29475,70 @@ targets:
       - 91wink
     source_meta:
       id: thatappshow-com
+      scout_classification_source: provided_equal
+      scout_classification_mismatch: true
+      scout_classification_provided:
+        mode: needs_review
+        status: scout_failed
+        confidence: 0.55
+        reasons:
+          - scout_failed_network
+      scout_classification_computed:
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
+        reasons:
+          - no_form_detected
+      scout_failure_error: "page.goto: net::ERR_CONNECTION_RESET at
+        https://thatappshow.com/
+
+        Call log:
+
+        \e[2m  - navigating to \"https://thatappshow.com/\", waiting until
+        \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_CONNECTION_RESET at
+        https://thatappshow.com/
+
+        Call log:
+
+        \e[2m  - navigating to \"https://thatappshow.com/\", waiting until
+        \"networkidle\"\e[22m"
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
+      last_scouted_at: 2026-05-23T02:00:53.630Z
+      auth: none
+      captcha: none
       reachable: unknown
+      final_url: https://thatappshow.com/
+      http_status: null
+      last_scout_error: "page.goto: net::ERR_CONNECTION_RESET at
+        https://thatappshow.com/
+
+        Call log:
+
+        \e[2m  - navigating to \"https://thatappshow.com/\", waiting until
+        \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_CONNECTION_RESET at
+        https://thatappshow.com/
+
+        Call log:
+
+        \e[2m  - navigating to \"https://thatappshow.com/\", waiting until
+        \"networkidle\"\e[22m"
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: needs_review
+      status: scout_failed
+      reason: scout_failed_network; classification_mismatch:needs_review->needs_review
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.126Z
-    updated_at: 2026-05-21T15:44:39.126Z
+    updated_at: 2026-05-23T02:00:53.631Z
+    forms: []
   - id: the-ai-generation
     external_id: 14368f41-8f50-81e3-b11b-c1417a5e208d
     name: The ai Generation
@@ -29242,21 +29559,66 @@ targets:
       - notion
     source_meta:
       id: the-ai-generation
+      scout_classification_source: provided_equal
+      scout_classification_mismatch: true
+      scout_classification_provided:
+        mode: needs_review
+        status: scout_failed
+        confidence: 0.55
+        reasons:
+          - scout_failed_network
+      scout_classification_computed:
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
+        reasons:
+          - no_form_detected
+      scout_failure_error: "page.goto: Timeout 15000ms exceeded.
+
+        Call log:
+
+        \e[2m  - navigating to \"https://www.theaigeneration.com/add\", waiting
+        until \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: Timeout 30000ms exceeded.
+
+        Call log:
+
+        \e[2m  - navigating to \"https://www.theaigeneration.com/add\", waiting
+        until \"networkidle\"\e[22m"
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
+      last_scouted_at: 2026-05-23T02:01:40.488Z
+      auth: none
+      captcha: none
       reachable: unknown
+      final_url: https://www.theaigeneration.com/add
+      http_status: null
+      last_scout_error: "page.goto: Timeout 15000ms exceeded.
+
+        Call log:
+
+        \e[2m  - navigating to \"https://www.theaigeneration.com/add\", waiting
+        until \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: Timeout 30000ms exceeded.
+
+        Call log:
+
+        \e[2m  - navigating to \"https://www.theaigeneration.com/add\", waiting
+        until \"networkidle\"\e[22m"
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: needs_review
+      status: scout_failed
+      reason: scout_failed_network; classification_mismatch:needs_review->needs_review
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.127Z
-    updated_at: 2026-05-21T15:44:39.127Z
+    updated_at: 2026-05-23T02:01:40.488Z
+    forms: []
   - id: the-ai-library
     external_id: 14368f41-8f50-81f5-ad6d-fc1e4db8f0a8
     name: The AI Library
@@ -29277,21 +29639,38 @@ targets:
       - notion
     source_meta:
       id: the-ai-library
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:02:14.380Z
+      auth: required
+      captcha: none
+      reachable: yes
+      final_url: https://www.theailibrary.co/submit-tool
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.127Z
-    updated_at: 2026-05-21T15:44:39.127Z
+    updated_at: 2026-05-23T02:02:47.312Z
+    forms: []
   - id: theapptools-com
     name: https://theapptools.com/
     domain: theapptools.com
@@ -29311,21 +29690,78 @@ targets:
       - 91wink
     source_meta:
       id: theapptools-com
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
+      scout_classification_computed:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:02:54.343Z
+      auth: required
+      captcha: none
+      reachable: yes
+      final_url: https://theapptools.com/get-started
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: assisted
+      status: auth_required
+      reason: auth_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.127Z
-    updated_at: 2026-05-21T15:44:39.127Z
+    updated_at: 2026-05-23T02:03:00.327Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: q
+            id: ""
+            placeholder: Search tools...
+            aria_label: ""
+            selector: input[name="q"]
+            label: ""
+            required: true
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Search
+            value: ""
+            selector: button[type="submit"]
+      - index: 1
+        fields:
+          - tag: input
+            type: text
+            name: q
+            id: ""
+            placeholder: Search tools...
+            aria_label: ""
+            selector: input[name="q"]
+            label: ""
+            required: true
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Search
+            value: ""
+            selector: button[type="submit"]
   - id: thecoretools-com
     name: https://thecoretools.com
     domain: thecoretools.com
@@ -29345,21 +29781,71 @@ targets:
       - 91wink
     source_meta:
       id: thecoretools-com
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
+      scout_classification_computed:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:03:07.223Z
+      auth: required
+      captcha: none
+      reachable: yes
+      final_url: https://thecoretools.com/get-started
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: assisted
+      status: auth_required
+      reason: auth_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.127Z
-    updated_at: 2026-05-21T15:44:39.127Z
+    updated_at: 2026-05-23T02:03:13.754Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: q
+            id: ""
+            placeholder: Search tools...
+            aria_label: ""
+            selector: input[name="q"]
+            label: ""
+            required: true
+            mapped_to: ""
+        submit_buttons: []
+      - index: 1
+        fields:
+          - tag: input
+            type: text
+            name: q
+            id: ""
+            placeholder: Search tools...
+            aria_label: ""
+            selector: input[name="q"]
+            label: ""
+            required: true
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Search
+            value: ""
+            selector: button[type="submit"]
   - id: the-hack-stack
     external_id: 14368f41-8f50-812b-be56-f6fdf7a78a79
     name: The Hack Stack
@@ -29380,21 +29866,88 @@ targets:
       - notion
     source_meta:
       id: the-hack-stack
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
+      scout_classification_computed:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:03:25.733Z
+      auth: required
+      captcha: none
+      reachable: yes
+      final_url: https://thehackstack.com/login
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: assisted
+      status: auth_required
+      reason: auth_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.127Z
-    updated_at: 2026-05-21T15:44:39.127Z
+    updated_at: 2026-05-23T02:03:30.086Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: hidden
+            name: _token
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="_token"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: email
+            name: email
+            id: email
+            placeholder: you@example.com
+            aria_label: ""
+            selector: input[id="email"]
+            label: ""
+            required: true
+            mapped_to: product.email
+          - tag: input
+            type: password
+            name: password
+            id: password
+            placeholder: ••••••••
+            aria_label: ""
+            selector: input[id="password"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: remember
+            id: remember
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="remember"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Login
+            value: ""
+            selector: button[type="submit"]
   - id: the-next-ai-tool
     external_id: 14368f41-8f50-810f-8828-ef0307867beb
     name: THE NEXT AI TOOL
@@ -29415,21 +29968,58 @@ targets:
       - notion
     source_meta:
       id: the-next-ai-tool
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:07:45.731Z
+      auth: oauth
+      captcha: none
+      reachable: yes
+      final_url: https://nextaitool.com/
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.127Z
-    updated_at: 2026-05-21T15:44:39.127Z
+    updated_at: 2026-05-23T02:07:47.616Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: email
+            name: emailToSubscribe
+            id: undefined-emailToSubscribe
+            placeholder: Email
+            aria_label: ""
+            selector: input[id="undefined-emailToSubscribe"]
+            label: ""
+            required: false
+            mapped_to: product.email
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Subscribe
+            value: ""
+            selector: button[type="submit"]
   - id: there-is-an-ai-for-that
     external_id: 14368f41-8f50-8134-897c-de54c0149834
     name: There is an AI for that
@@ -29624,21 +30214,148 @@ targets:
       - targets.yaml
     source_meta:
       id: tigg-cc
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:08:16.134Z
+      auth: none
+      captcha: none
+      reachable: yes
+      final_url: https://tigg.cc/share
+      http_status: 200
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.127Z
-    updated_at: 2026-05-21T15:44:39.127Z
+    updated_at: 2026-05-23T02:08:17.458Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: url
+            name: ""
+            id: ""
+            placeholder: https://tigg.cc
+            aria_label: ""
+            selector: input[placeholder="https://tigg.cc"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: input
+            type: checkbox
+            name: ""
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[type="checkbox"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: ""
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[type="checkbox"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: ""
+            id: ""
+            placeholder: 如：挖互联网
+            aria_label: ""
+            selector: input[placeholder="如：挖互联网"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: ""
+            id: ""
+            placeholder: 一句话描述这个网站或服务的亮点
+            aria_label: ""
+            selector: input[placeholder="一句话描述这个网站或服务的亮点"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: textarea
+            type: textarea
+            name: ""
+            id: ""
+            placeholder: 例：一个发现和分享有趣有用互联网资源的网站，致力于帮助用户挖掘互联网的宝藏。
+            aria_label: ""
+            selector: textarea[placeholder="例：一个发现和分享有趣有用互联网资源的网站，致力于帮助用户挖掘互联网的宝藏。"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: input
+            type: text
+            name: ""
+            id: ""
+            placeholder: 您的昵称
+            aria_label: ""
+            selector: input[placeholder="您的昵称"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: ""
+            id: ""
+            placeholder: 按「回车」或「,」逗号添加，长度不超过5个字，最多5个
+            aria_label: ""
+            selector: input[placeholder="按「回车」或「,」逗号添加，长度不超过5个字，最多5个"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: number
+            name: ""
+            id: ""
+            placeholder: 答案
+            aria_label: ""
+            selector: input[placeholder="答案"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: textarea
+            type: textarea
+            name: ""
+            id: ""
+            placeholder: 如有需要补充说明的内容，可以在这里填写
+            aria_label: ""
+            selector: textarea[placeholder="如有需要补充说明的内容，可以在这里填写"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: 好了，分享出去🙆
+            value: ""
+            selector: button[type="submit"]
   - id: tinytoolhub-com
     name: https://tinytoolhub.com
     domain: tinytoolhub.com
@@ -29658,21 +30375,78 @@ targets:
       - 91wink
     source_meta:
       id: tinytoolhub-com
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
+      scout_classification_computed:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:08:24.092Z
+      auth: required
+      captcha: none
+      reachable: yes
+      final_url: https://tinytoolhub.com/get-started
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: assisted
+      status: auth_required
+      reason: auth_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.127Z
-    updated_at: 2026-05-21T15:44:39.127Z
+    updated_at: 2026-05-23T02:08:31.612Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: q
+            id: ""
+            placeholder: Search tools...
+            aria_label: ""
+            selector: input[name="q"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Search
+            value: ""
+            selector: button[type="submit"]
+      - index: 1
+        fields:
+          - tag: input
+            type: text
+            name: q
+            id: ""
+            placeholder: Search tools...
+            aria_label: ""
+            selector: input[name="q"]
+            label: ""
+            required: true
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Search
+            value: ""
+            selector: button[type="submit"]
   - id: tipseason
     external_id: 14368f41-8f50-8147-9583-d032a3089127
     name: TipSeason
@@ -29693,21 +30467,38 @@ targets:
       - notion
     source_meta:
       id: tipseason
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:09:03.139Z
+      auth: required
+      captcha: required
+      reachable: yes
+      final_url: https://www.tipseason.com/ai-tools/submit
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.127Z
-    updated_at: 2026-05-21T15:44:39.127Z
+    updated_at: 2026-05-23T02:09:28.136Z
+    forms: []
   - id: tool-ai
     external_id: 14368f41-8f50-81fc-a126-ec7c2674c989
     name: Tool AI
@@ -29831,21 +30622,78 @@ targets:
       - 91wink
     source_meta:
       id: toolcosmos-com
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
+      scout_classification_computed:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:09:35.261Z
+      auth: required
+      captcha: none
+      reachable: yes
+      final_url: https://toolcosmos.com/get-started
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: assisted
+      status: auth_required
+      reason: auth_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.128Z
-    updated_at: 2026-05-21T15:44:39.128Z
+    updated_at: 2026-05-23T02:09:41.520Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: q
+            id: ""
+            placeholder: Search tools...
+            aria_label: ""
+            selector: input[name="q"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Search
+            value: ""
+            selector: button[type="submit"]
+      - index: 1
+        fields:
+          - tag: input
+            type: text
+            name: q
+            id: ""
+            placeholder: Search tools...
+            aria_label: ""
+            selector: input[name="q"]
+            label: ""
+            required: true
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Search
+            value: ""
+            selector: button[type="submit"]
   - id: tooldirectory-ai
     external_id: 14368f41-8f50-8134-9176-d4bd63bee186
     name: T
@@ -29900,21 +30748,78 @@ targets:
       - 91wink
     source_meta:
       id: toolfinddir-com
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
+      scout_classification_computed:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:09:52.192Z
+      auth: required
+      captcha: none
+      reachable: yes
+      final_url: https://toolfinddir.com/get-started
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: assisted
+      status: auth_required
+      reason: auth_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.128Z
-    updated_at: 2026-05-21T15:44:39.128Z
+    updated_at: 2026-05-23T02:09:57.721Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: q
+            id: ""
+            placeholder: Search AI tools...
+            aria_label: ""
+            selector: input[name="q"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Search
+            value: ""
+            selector: button[type="submit"]
+      - index: 1
+        fields:
+          - tag: input
+            type: text
+            name: q
+            id: ""
+            placeholder: Search AI tools...
+            aria_label: ""
+            selector: input[name="q"]
+            label: ""
+            required: true
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Search
+            value: ""
+            selector: button[type="submit"]
   - id: tool-finder
     name: Tool Finder
     domain: toolfinder.co
@@ -29968,21 +30873,38 @@ targets:
       - targets.yaml
     source_meta:
       id: toolhunter-ai
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:10:31.037Z
+      auth: none
+      captcha: none
+      reachable: yes
+      final_url: https://toolhunter.ai/submit-a-tool
+      http_status: 200
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.128Z
-    updated_at: 2026-05-21T15:44:39.128Z
+    updated_at: 2026-05-23T02:11:04.692Z
+    forms: []
   - id: toolify-ai
     external_id: 14368f41-8f50-81e7-9a05-e5931217c50a
     name: Toolify.ai
@@ -30073,21 +30995,70 @@ targets:
       - targets.yaml
     source_meta:
       id: toolpilot
+      scout_classification_source: provided_equal
+      scout_classification_mismatch: true
+      scout_classification_provided:
+        mode: needs_review
+        status: scout_failed
+        confidence: 0.55
+        reasons:
+          - scout_failed_network
+      scout_classification_computed:
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
+        reasons:
+          - no_form_detected
+      scout_failure_error: "page.goto: Timeout 15000ms exceeded.
+
+        Call log:
+
+        \e[2m  - navigating to
+        \"https://www.toolpilot.ai/pages/submit-your-ai-tool\", waiting until
+        \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: Timeout 30000ms exceeded.
+
+        Call log:
+
+        \e[2m  - navigating to
+        \"https://www.toolpilot.ai/pages/submit-your-ai-tool\", waiting until
+        \"networkidle\"\e[22m"
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
+      last_scouted_at: 2026-05-23T02:11:51.814Z
+      auth: none
+      captcha: none
       reachable: unknown
+      final_url: https://www.toolpilot.ai/pages/submit-your-ai-tool
+      http_status: null
+      last_scout_error: "page.goto: Timeout 15000ms exceeded.
+
+        Call log:
+
+        \e[2m  - navigating to
+        \"https://www.toolpilot.ai/pages/submit-your-ai-tool\", waiting until
+        \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: Timeout 30000ms exceeded.
+
+        Call log:
+
+        \e[2m  - navigating to
+        \"https://www.toolpilot.ai/pages/submit-your-ai-tool\", waiting until
+        \"networkidle\"\e[22m"
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: needs_review
+      status: scout_failed
+      reason: scout_failed_network; classification_mismatch:needs_review->needs_review
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.129Z
-    updated_at: 2026-05-21T15:44:39.129Z
+    updated_at: 2026-05-23T02:11:51.814Z
+    forms: []
   - id: tools-ai-online
     external_id: 14368f41-8f50-81fa-80e8-d83177b68f5b
     name: Tools AI Online
@@ -30108,21 +31079,118 @@ targets:
       - targets.yaml
     source_meta:
       id: tools-ai-online
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:12:23.272Z
+      auth: oauth
+      captcha: required
+      reachable: yes
+      final_url: https://www.tools-ai.online/submit-tool
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.129Z
-    updated_at: 2026-05-21T15:44:39.129Z
+    updated_at: 2026-05-23T02:12:53.335Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: toolName
+            id: toolName
+            placeholder: Enter tool name
+            aria_label: ""
+            selector: input[id="toolName"]
+            label: ""
+            required: false
+            mapped_to: product.name
+          - tag: input
+            type: text
+            name: toolUrl
+            id: toolUrl
+            placeholder: https://example.com
+            aria_label: ""
+            selector: input[id="toolUrl"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: textarea
+            type: textarea
+            name: ""
+            id: toolDescription
+            placeholder: Describe your tool’s purpose, features, and benefits...
+            aria_label: ""
+            selector: textarea[id="toolDescription"]
+            label: ""
+            required: false
+            mapped_to: product.description
+          - tag: select
+            type: select
+            name: pricing
+            id: pricing
+            placeholder: ""
+            aria_label: ""
+            selector: select[id="pricing"]
+            label: ""
+            required: false
+            mapped_to: product.pricing
+          - tag: input
+            type: email
+            name: contactEmail
+            id: contactEmail
+            placeholder: email@example.com
+            aria_label: ""
+            selector: input[id="contactEmail"]
+            label: ""
+            required: false
+            mapped_to: product.email
+          - tag: input
+            type: file
+            name: ""
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[type="file"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: file
+            name: ""
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[type="file"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Submit Tool
+            value: ""
+            selector: button[type="submit"]
   - id: tools-robingood-com
     external_id: 14368f41-8f50-8162-8591-ed3fc5956d5c
     name: tools.robingood.com
@@ -30143,21 +31211,38 @@ targets:
       - notion
     source_meta:
       id: tools-robingood-com
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
+      scout_classification_computed:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:13:26.318Z
+      auth: required
+      captcha: none
+      reachable: yes
+      final_url: https://tools.robingood.com/
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: assisted
+      status: auth_required
+      reason: auth_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.129Z
-    updated_at: 2026-05-21T15:44:39.129Z
+    updated_at: 2026-05-23T02:13:28.063Z
+    forms: []
   - id: tools-so
     external_id: 14368f41-8f50-8174-9261-c263e540b61d
     name: Tools.so
@@ -30178,21 +31263,38 @@ targets:
       - notion
     source_meta:
       id: tools-so
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:17:48.422Z
+      auth: required
+      captcha: required
+      reachable: yes
+      final_url: https://tools.so/submit
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.129Z
-    updated_at: 2026-05-21T15:44:39.129Z
+    updated_at: 2026-05-23T02:17:49.540Z
+    forms: []
   - id: toolsai-net
     name: ToolsAI.net
     domain: toolsai.net
@@ -30212,21 +31314,70 @@ targets:
       - targets.yaml
     source_meta:
       id: toolsai-net
+      scout_classification_source: provided_equal
+      scout_classification_mismatch: true
+      scout_classification_provided:
+        mode: needs_review
+        status: scout_failed
+        confidence: 0.55
+        reasons:
+          - scout_failed_network
+      scout_classification_computed:
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
+        reasons:
+          - no_form_detected
+      scout_failure_error: "page.goto: net::ERR_CERT_DATE_INVALID at
+        https://toolsai.net/add-listing
+
+        Call log:
+
+        \e[2m  - navigating to \"https://toolsai.net/add-listing\", waiting
+        until \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_CERT_DATE_INVALID at
+        https://toolsai.net/add-listing
+
+        Call log:
+
+        \e[2m  - navigating to \"https://toolsai.net/add-listing\", waiting
+        until \"networkidle\"\e[22m"
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
+      last_scouted_at: 2026-05-23T02:17:59.806Z
+      auth: none
+      captcha: none
       reachable: unknown
+      final_url: https://toolsai.net/add-listing
+      http_status: null
+      last_scout_error: "page.goto: net::ERR_CERT_DATE_INVALID at
+        https://toolsai.net/add-listing
+
+        Call log:
+
+        \e[2m  - navigating to \"https://toolsai.net/add-listing\", waiting
+        until \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_CERT_DATE_INVALID at
+        https://toolsai.net/add-listing
+
+        Call log:
+
+        \e[2m  - navigating to \"https://toolsai.net/add-listing\", waiting
+        until \"networkidle\"\e[22m"
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: needs_review
+      status: scout_failed
+      reason: scout_failed_network; classification_mismatch:needs_review->needs_review
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.129Z
-    updated_at: 2026-05-21T15:44:39.129Z
+    updated_at: 2026-05-23T02:17:59.807Z
+    forms: []
   - id: toolscout
     external_id: 14368f41-8f50-81a4-80a9-cae5669ff83f
     name: ToolScout
@@ -30247,21 +31398,38 @@ targets:
       - targets.yaml
     source_meta:
       id: toolscout
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:18:33.283Z
+      auth: required
+      captcha: none
+      reachable: yes
+      final_url: https://toolscout.ai/submit
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.129Z
-    updated_at: 2026-05-21T15:44:39.129Z
+    updated_at: 2026-05-23T02:18:42.755Z
+    forms: []
   - id: toolsdar-mikecrm-com
     name: 工具达人AI导航
     domain: toolsdar.mikecrm.com
@@ -30281,21 +31449,38 @@ targets:
       - targets.yaml
     source_meta:
       id: toolsdar-mikecrm-com
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:18:47.594Z
+      auth: none
+      captcha: none
+      reachable: yes
+      final_url: http://toolsdar.mikecrm.com/nix44in
+      http_status: 200
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.129Z
-    updated_at: 2026-05-21T15:44:39.129Z
+    updated_at: 2026-05-23T02:18:48.727Z
+    forms: []
   - id: toolsignal-com
     name: https://toolsignal.com/
     domain: toolsignal.com
@@ -30315,21 +31500,78 @@ targets:
       - 91wink
     source_meta:
       id: toolsignal-com
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
+      scout_classification_computed:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:18:56.133Z
+      auth: required
+      captcha: none
+      reachable: yes
+      final_url: https://toolsignal.com/get-started
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: assisted
+      status: auth_required
+      reason: auth_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.129Z
-    updated_at: 2026-05-21T15:44:39.129Z
+    updated_at: 2026-05-23T02:19:03.600Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: q
+            id: ""
+            placeholder: Search tools...
+            aria_label: ""
+            selector: input[name="q"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Search
+            value: ""
+            selector: button[type="submit"]
+      - index: 1
+        fields:
+          - tag: input
+            type: text
+            name: q
+            id: ""
+            placeholder: Search tools...
+            aria_label: ""
+            selector: input[name="q"]
+            label: ""
+            required: true
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Search
+            value: ""
+            selector: button[type="submit"]
   - id: toolslisthq-com
     name: https://toolslisthq.com
     domain: toolslisthq.com
@@ -30349,21 +31591,78 @@ targets:
       - 91wink
     source_meta:
       id: toolslisthq-com
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
+      scout_classification_computed:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:19:11.145Z
+      auth: required
+      captcha: none
+      reachable: yes
+      final_url: https://toolslisthq.com/get-started
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: assisted
+      status: auth_required
+      reason: auth_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.129Z
-    updated_at: 2026-05-21T15:44:39.129Z
+    updated_at: 2026-05-23T02:19:18.132Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: q
+            id: ""
+            placeholder: Search tools...
+            aria_label: ""
+            selector: input[name="q"]
+            label: ""
+            required: true
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Search
+            value: ""
+            selector: button[type="submit"]
+      - index: 1
+        fields:
+          - tag: input
+            type: text
+            name: q
+            id: ""
+            placeholder: Search tools...
+            aria_label: ""
+            selector: input[name="q"]
+            label: ""
+            required: true
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Search
+            value: ""
+            selector: button[type="submit"]
   - id: tools-nocode
     external_id: 14368f41-8f50-81ff-b16b-e2a251fb5259
     name: Tools Nocode
@@ -30453,21 +31752,38 @@ targets:
       - targets.yaml
     source_meta:
       id: toolstory-net
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
+        reasons:
+          - no_form_detected
+      scout_classification_computed:
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
+        reasons:
+          - no_form_detected
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:19:51.076Z
+      auth: none
+      captcha: none
+      reachable: yes
+      final_url: https://toolsstory.net/add-listing
+      http_status: 200
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: needs_review
+      status: no_form_detected
+      reason: no_form_detected
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.129Z
-    updated_at: 2026-05-21T15:44:39.129Z
+    updated_at: 2026-05-23T02:19:54.275Z
+    forms: []
   - id: tool-summary
     external_id: 14368f41-8f50-8124-8114-e6a97c972b72
     name: Tool Summary
@@ -30488,21 +31804,182 @@ targets:
       - notion
     source_meta:
       id: tool-summary
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:20:22.816Z
+      auth: oauth
+      captcha: required
+      reachable: yes
+      final_url: https://toolsummary.com/submit-ai-tool/
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.129Z
-    updated_at: 2026-05-21T15:44:39.129Z
+    updated_at: 2026-05-23T02:20:47.657Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: wpforms[fields][0]
+            id: wpforms-148-field_0
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="wpforms-148-field_0"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: input
+            type: email
+            name: wpforms[fields][1]
+            id: wpforms-148-field_1
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="wpforms-148-field_1"]
+            label: ""
+            required: true
+            mapped_to: product.email
+          - tag: input
+            type: text
+            name: wpforms[fields][3]
+            id: wpforms-148-field_3
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="wpforms-148-field_3"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: wpforms[fields][5]
+            id: wpforms-148-field_5
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="wpforms-148-field_5"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: select
+            type: select
+            name: wpforms[fields][4]
+            id: wpforms-148-field_4
+            placeholder: ""
+            aria_label: ""
+            selector: select[id="wpforms-148-field_4"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: textarea
+            type: textarea
+            name: wpforms[fields][2]
+            id: wpforms-148-field_2
+            placeholder: Please provide details about tool, Pricing plan and Features to be
+              added.
+            aria_label: ""
+            selector: textarea[id="wpforms-148-field_2"]
+            label: ""
+            required: true
+            mapped_to: product.description
+          - tag: input
+            type: hidden
+            name: wpforms[recaptcha]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="wpforms[recaptcha]"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: hidden
+            name: wpforms[id]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="wpforms[id]"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: hidden
+            name: page_title
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="page_title"]
+            label: ""
+            required: false
+            mapped_to: product.name
+          - tag: input
+            type: hidden
+            name: page_url
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="page_url"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: input
+            type: hidden
+            name: page_id
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="page_id"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: hidden
+            name: wpforms[post_id]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="wpforms[post_id]"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: wpforms[submit]
+            id: wpforms-submit-148
+            text: Submit
+            value: wpforms-submit
+            selector: button[id="wpforms-submit-148"]
+      - index: 1
+        fields:
+          - tag: input
+            type: search
+            name: s
+            id: search-modal-input
+            placeholder: Search …
+            aria_label: ""
+            selector: input[id="search-modal-input"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons: []
   - id: toolsunderradar-com
     name: https://toolsunderradar.com
     domain: toolsunderradar.com
@@ -30522,21 +31999,71 @@ targets:
       - 91wink
     source_meta:
       id: toolsunderradar-com
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
+      scout_classification_computed:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:20:58.242Z
+      auth: required
+      captcha: none
+      reachable: yes
+      final_url: https://toolsunderradar.com/get-started
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: assisted
+      status: auth_required
+      reason: auth_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.129Z
-    updated_at: 2026-05-21T15:44:39.129Z
+    updated_at: 2026-05-23T02:21:03.496Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: q
+            id: ""
+            placeholder: Search
+            aria_label: ""
+            selector: input[name="q"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons: []
+      - index: 1
+        fields:
+          - tag: input
+            type: text
+            name: q
+            id: ""
+            placeholder: Search tools...
+            aria_label: ""
+            selector: input[name="q"]
+            label: ""
+            required: true
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Search
+            value: ""
+            selector: button[type="submit"]
   - id: toools-design
     name: Toools.design
     domain: toools.design
@@ -30556,21 +32083,70 @@ targets:
       - targets.yaml
     source_meta:
       id: toools-design
+      scout_classification_source: provided_equal
+      scout_classification_mismatch: true
+      scout_classification_provided:
+        mode: needs_review
+        status: scout_failed
+        confidence: 0.55
+        reasons:
+          - scout_failed_network
+      scout_classification_computed:
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
+        reasons:
+          - no_form_detected
+      scout_failure_error: "page.goto: net::ERR_CONNECTION_TIMED_OUT at
+        https://toools.design/
+
+        Call log:
+
+        \e[2m  - navigating to \"https://toools.design/\", waiting until
+        \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_CONNECTION_TIMED_OUT at
+        https://toools.design/
+
+        Call log:
+
+        \e[2m  - navigating to \"https://toools.design/\", waiting until
+        \"networkidle\"\e[22m"
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
+      last_scouted_at: 2026-05-23T02:21:27.307Z
+      auth: none
+      captcha: none
       reachable: unknown
+      final_url: https://toools.design/
+      http_status: null
+      last_scout_error: "page.goto: net::ERR_CONNECTION_TIMED_OUT at
+        https://toools.design/
+
+        Call log:
+
+        \e[2m  - navigating to \"https://toools.design/\", waiting until
+        \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_CONNECTION_TIMED_OUT at
+        https://toools.design/
+
+        Call log:
+
+        \e[2m  - navigating to \"https://toools.design/\", waiting until
+        \"networkidle\"\e[22m"
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: needs_review
+      status: scout_failed
+      reason: scout_failed_network; classification_mismatch:needs_review->needs_review
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.129Z
-    updated_at: 2026-05-21T15:44:39.129Z
+    updated_at: 2026-05-23T02:21:27.307Z
+    forms: []
   - id: top10
     name: Top10
     domain: top10.now
@@ -30659,21 +32235,38 @@ targets:
       - targets.yaml
     source_meta:
       id: topapps-ai
+      scout_classification_source: computed
+      scout_classification_mismatch: true
+      scout_classification_provided:
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
+        reasons:
+          - no_form_detected
+      scout_classification_computed:
+        mode: needs_review
+        status: access_blocked
+        confidence: 0.7
+        reasons:
+          - http_403
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:23:29.241Z
+      auth: none
+      captcha: none
+      reachable: yes
+      final_url: https://topapps.ai/submit
+      http_status: 403
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: needs_review
+      status: access_blocked
+      reason: http_403; classification_mismatch:needs_review->needs_review
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.130Z
-    updated_at: 2026-05-21T15:44:39.130Z
+    updated_at: 2026-05-23T02:31:37.584Z
+    forms: []
   - id: top-best-alternatives
     name: Top Best Alternatives
     domain: topbestalternatives.com
@@ -30693,21 +32286,68 @@ targets:
       - targets.yaml
     source_meta:
       id: top-best-alternatives
+      scout_classification_source: computed
+      scout_classification_mismatch: true
+      scout_classification_provided:
+        mode: assisted
+        status: captcha_required
+        confidence: 0.85
+        reasons:
+          - captcha_signal
+      scout_classification_computed:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:23:36.763Z
+      auth: oauth
+      captcha: none
+      reachable: yes
+      final_url: https://www.topbestalternatives.com/
+      http_status: 200
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: assisted
+      status: auth_required
+      reason: auth_signal; classification_mismatch:assisted->assisted
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.130Z
-    updated_at: 2026-05-21T15:44:39.130Z
+    updated_at: 2026-05-23T02:23:38.343Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: s
+            id: ""
+            placeholder: Find alternatives to...
+            aria_label: ""
+            selector: input[name="s"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: submit
+            name: ""
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[type="submit"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: input
+            type: submit
+            name: ""
+            id: ""
+            text: 
+            value: 
+            selector: input[type="submit"]
   - id: toptrendtools-com
     name: https://toptrendtools.com/
     domain: toptrendtools.com
@@ -30727,21 +32367,78 @@ targets:
       - 91wink
     source_meta:
       id: toptrendtools-com
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
+      scout_classification_computed:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:23:46.572Z
+      auth: required
+      captcha: none
+      reachable: yes
+      final_url: https://toptrendtools.com/get-started
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: assisted
+      status: auth_required
+      reason: auth_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.130Z
-    updated_at: 2026-05-21T15:44:39.130Z
+    updated_at: 2026-05-23T02:23:54.511Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: q
+            id: ""
+            placeholder: Search tools...
+            aria_label: ""
+            selector: input[name="q"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Search
+            value: ""
+            selector: button[type="submit"]
+      - index: 1
+        fields:
+          - tag: input
+            type: text
+            name: q
+            id: ""
+            placeholder: Search tools...
+            aria_label: ""
+            selector: input[name="q"]
+            label: ""
+            required: true
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Search
+            value: ""
+            selector: button[type="submit"]
   - id: toshilist-com
     name: https://toshilist.com
     domain: toshilist.com
@@ -30761,21 +32458,71 @@ targets:
       - 91wink
     source_meta:
       id: toshilist-com
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
+      scout_classification_computed:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:24:01.163Z
+      auth: required
+      captcha: none
+      reachable: yes
+      final_url: https://toshilist.com/get-started
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: assisted
+      status: auth_required
+      reason: auth_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.130Z
-    updated_at: 2026-05-21T15:44:39.130Z
+    updated_at: 2026-05-23T02:24:07.733Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: q
+            id: ""
+            placeholder: Search
+            aria_label: ""
+            selector: input[name="q"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons: []
+      - index: 1
+        fields:
+          - tag: input
+            type: text
+            name: q
+            id: ""
+            placeholder: Search tools...
+            aria_label: ""
+            selector: input[name="q"]
+            label: ""
+            required: true
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Search
+            value: ""
+            selector: button[type="submit"]
   - id: trackbes
     external_id: 14368f41-8f50-811b-a845-d49518ea56b2
     name: T
@@ -30796,21 +32543,38 @@ targets:
       - targets.yaml
     source_meta:
       id: trackbes
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
+        reasons:
+          - no_form_detected
+      scout_classification_computed:
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
+        reasons:
+          - no_form_detected
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:24:40.592Z
+      auth: none
+      captcha: none
+      reachable: yes
+      final_url: https://trackbes.com/lander
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: needs_review
+      status: no_form_detected
+      reason: no_form_detected
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.130Z
-    updated_at: 2026-05-21T15:44:39.130Z
+    updated_at: 2026-05-23T02:25:01.918Z
+    forms: []
   - id: trustiner-com
     name: https://trustiner.com
     domain: trustiner.com
@@ -30830,21 +32594,71 @@ targets:
       - 91wink
     source_meta:
       id: trustiner-com
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
+      scout_classification_computed:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:25:09.066Z
+      auth: required
+      captcha: none
+      reachable: yes
+      final_url: https://trustiner.com/get-started
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: assisted
+      status: auth_required
+      reason: auth_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.130Z
-    updated_at: 2026-05-21T15:44:39.130Z
+    updated_at: 2026-05-23T02:25:14.540Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: q
+            id: ""
+            placeholder: Search products...
+            aria_label: ""
+            selector: input[name="q"]
+            label: ""
+            required: true
+            mapped_to: ""
+        submit_buttons: []
+      - index: 1
+        fields:
+          - tag: input
+            type: text
+            name: q
+            id: ""
+            placeholder: Search products...
+            aria_label: ""
+            selector: input[name="q"]
+            label: ""
+            required: true
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Search
+            value: ""
+            selector: button[type="submit"]
   - id: tsection
     name: Tsection
     domain: tsection.com
@@ -30864,21 +32678,70 @@ targets:
       - targets.yaml
     source_meta:
       id: tsection
+      scout_classification_source: provided_equal
+      scout_classification_mismatch: true
+      scout_classification_provided:
+        mode: needs_review
+        status: scout_failed
+        confidence: 0.55
+        reasons:
+          - scout_failed_network
+      scout_classification_computed:
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
+        reasons:
+          - no_form_detected
+      scout_failure_error: "page.goto: net::ERR_TOO_MANY_REDIRECTS at
+        https://www.tsection.com/submit
+
+        Call log:
+
+        \e[2m  - navigating to \"https://www.tsection.com/submit\", waiting
+        until \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_TOO_MANY_REDIRECTS at
+        https://www.tsection.com/submit
+
+        Call log:
+
+        \e[2m  - navigating to \"https://www.tsection.com/submit\", waiting
+        until \"networkidle\"\e[22m"
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
+      last_scouted_at: 2026-05-23T02:25:22.856Z
+      auth: none
+      captcha: none
       reachable: unknown
+      final_url: https://www.tsection.com/
+      http_status: null
+      last_scout_error: "page.goto: net::ERR_TOO_MANY_REDIRECTS at
+        https://www.tsection.com/submit
+
+        Call log:
+
+        \e[2m  - navigating to \"https://www.tsection.com/submit\", waiting
+        until \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_TOO_MANY_REDIRECTS at
+        https://www.tsection.com/submit
+
+        Call log:
+
+        \e[2m  - navigating to \"https://www.tsection.com/submit\", waiting
+        until \"networkidle\"\e[22m"
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: needs_review
+      status: scout_failed
+      reason: scout_failed_network; classification_mismatch:needs_review->needs_review
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.130Z
-    updated_at: 2026-05-21T15:44:39.130Z
+    updated_at: 2026-05-23T02:25:22.856Z
+    forms: []
   - id: twelve-tools
     name: Twelve.tools
     domain: twelve.tools
@@ -30898,21 +32761,38 @@ targets:
       - targets.yaml
     source_meta:
       id: twelve-tools
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:25:29.548Z
+      auth: oauth
+      captcha: none
+      reachable: yes
+      final_url: https://twelve.tools/submit
+      http_status: 200
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.130Z
-    updated_at: 2026-05-21T15:44:39.130Z
+    updated_at: 2026-05-23T02:25:34.168Z
+    forms: []
   - id: txtlinks
     name: TXTLinks
     domain: txtlinks.com
@@ -30932,21 +32812,318 @@ targets:
       - targets.yaml
     source_meta:
       id: txtlinks
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:25:41.156Z
+      auth: none
+      captcha: none
+      reachable: yes
+      final_url: https://txtlinks.com/support/order-form/
+      http_status: 200
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.130Z
-    updated_at: 2026-05-21T15:44:39.130Z
+    updated_at: 2026-05-23T02:25:51.388Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: wpforms[fields][0]
+            id: wpforms-14-field_0
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="wpforms-14-field_0"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: input
+            type: email
+            name: wpforms[fields][1]
+            id: wpforms-14-field_1
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="wpforms-14-field_1"]
+            label: ""
+            required: true
+            mapped_to: product.email
+          - tag: textarea
+            type: textarea
+            name: wpforms[fields][9]
+            id: wpforms-14-field_9
+            placeholder: ""
+            aria_label: ""
+            selector: textarea[id="wpforms-14-field_9"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: textarea
+            type: textarea
+            name: wpforms[fields][8]
+            id: wpforms-14-field_8
+            placeholder: ""
+            aria_label: ""
+            selector: textarea[id="wpforms-14-field_8"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: textarea
+            type: textarea
+            name: wpforms[fields][10]
+            id: wpforms-14-field_10
+            placeholder: ""
+            aria_label: ""
+            selector: textarea[id="wpforms-14-field_10"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: file
+            name: wpforms_14_13
+            id: wpforms-14-field_13
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="wpforms-14-field_13"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: radio
+            name: wpforms[fields][4]
+            id: wpforms-14-field_4_3
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="wpforms-14-field_4_3"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: input
+            type: radio
+            name: wpforms[fields][4]
+            id: wpforms-14-field_4_2
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="wpforms-14-field_4_2"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: input
+            type: radio
+            name: wpforms[fields][4]
+            id: wpforms-14-field_4_1
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="wpforms-14-field_4_1"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: input
+            type: radio
+            name: wpforms[fields][4]
+            id: wpforms-14-field_4_4
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="wpforms-14-field_4_4"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: input
+            type: hidden
+            name: wpforms[fields][5]
+            id: wpforms-14-field_5
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="wpforms-14-field_5"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: wpf-temp-7154
+            id: wpforms-14-field_12
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="wpforms-14-field_12"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: wpf-temp-9291
+            id: wpforms-14-field_12-cardcvc
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="wpforms-14-field_12-cardcvc"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: wpf-temp-780
+            id: wpforms-14-field_12-cardname
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="wpforms-14-field_12-cardname"]
+            label: ""
+            required: true
+            mapped_to: product.name
+          - tag: select
+            type: select
+            name: wpf-temp-560
+            id: wpforms-14-field_12-cardmonth
+            placeholder: ""
+            aria_label: ""
+            selector: select[id="wpforms-14-field_12-cardmonth"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: select
+            type: select
+            name: wpf-temp-7811
+            id: wpforms-14-field_12-cardyear
+            placeholder: ""
+            aria_label: ""
+            selector: select[id="wpforms-14-field_12-cardyear"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: textarea
+            type: textarea
+            name: wpforms[fields][6]
+            id: wpforms-14-field_6
+            placeholder: ""
+            aria_label: ""
+            selector: textarea[id="wpforms-14-field_6"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: wpforms[hp]
+            id: wpforms-14-field-hp
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="wpforms-14-field-hp"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: hidden
+            name: wpforms[id]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="wpforms[id]"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: hidden
+            name: wpforms[author]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="wpforms[author]"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: hidden
+            name: wpforms[post_id]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="wpforms[post_id]"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: hidden
+            name: ct_checkjs_wpforms
+            id: ct_checkjs_wpforms_274ad4786c3abca69fa097b85867d9a4
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="ct_checkjs_wpforms_274ad4786c3abca69fa097b85867d9a4"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: apbct__email_id__wp_wpforms_93018
+            id: apbct__email_id__wp_wpforms_93018
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="apbct__email_id__wp_wpforms_93018"]
+            label: ""
+            required: false
+            mapped_to: product.email
+          - tag: input
+            type: hidden
+            name: apbct_event_id
+            id: apbct_event_id_wp_wpforms_93018
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="apbct_event_id_wp_wpforms_93018"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: hidden
+            name: apbct_visible_fields
+            id: apbct_visible_fields_0
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="apbct_visible_fields_0"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: hidden
+            name: ct_bot_detector_event_token
+            id: ct_bot_detector_event_token_8060
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="ct_bot_detector_event_token_8060"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: hidden
+            name: ct_no_cookie_hidden_field
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="ct_no_cookie_hidden_field"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: wpforms[submit]
+            id: wpforms-submit-14
+            text: Submit
+            value: wpforms-submit
+            selector: button[id="wpforms-submit-14"]
   - id: uk-internet-directory
     name: UK Internet Directory
     domain: ukinternetdirectory.net
@@ -30966,21 +33143,258 @@ targets:
       - targets.yaml
     source_meta:
       id: uk-internet-directory
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:26:00.522Z
+      auth: oauth
+      captcha: none
+      reachable: yes
+      final_url: https://www.ukinternetdirectory.net/submit.php
+      http_status: 200
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.130Z
-    updated_at: 2026-05-21T15:44:39.130Z
+    updated_at: 2026-05-23T02:31:38.603Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: search
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="search"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: ""
+            value: ""
+            selector: button[type="submit"]
+      - index: 1
+        fields:
+          - tag: input
+            type: radio
+            name: LINK_TYPE
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="LINK_TYPE"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: input
+            type: radio
+            name: LINK_TYPE
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="LINK_TYPE"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: input
+            type: radio
+            name: LINK_TYPE
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="LINK_TYPE"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: input
+            type: text
+            name: TITLE
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="TITLE"]
+            label: ""
+            required: false
+            mapped_to: product.name
+          - tag: input
+            type: text
+            name: URL
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="URL"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: textarea
+            type: textarea
+            name: DESCRIPTION
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: textarea[name="DESCRIPTION"]
+            label: ""
+            required: false
+            mapped_to: product.description
+          - tag: input
+            type: text
+            name: DESCRIPTION_limit
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="DESCRIPTION_limit"]
+            label: ""
+            required: false
+            mapped_to: product.description
+          - tag: input
+            type: text
+            name: META_KEYWORDS
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="META_KEYWORDS"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: textarea
+            type: textarea
+            name: META_DESCRIPTION
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: textarea[name="META_DESCRIPTION"]
+            label: ""
+            required: false
+            mapped_to: product.description
+          - tag: input
+            type: text
+            name: META_DESCRIPTION_limit
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="META_DESCRIPTION_limit"]
+            label: ""
+            required: false
+            mapped_to: product.description
+          - tag: input
+            type: text
+            name: OWNER_NAME
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="OWNER_NAME"]
+            label: ""
+            required: false
+            mapped_to: product.name
+          - tag: input
+            type: text
+            name: OWNER_EMAIL
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="OWNER_EMAIL"]
+            label: ""
+            required: false
+            mapped_to: product.email
+          - tag: select
+            type: select
+            name: CATEGORY_ID
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: select[name="CATEGORY_ID"]
+            label: ""
+            required: false
+            mapped_to: product.category
+          - tag: input
+            type: text
+            name: RECPR_URL
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="RECPR_URL"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: textarea
+            type: textarea
+            name: RECPR_TEXT
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: textarea[name="RECPR_TEXT"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: hidden
+            name: IMAGEHASH
+            id: IMAGEHASH
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="IMAGEHASH"]
+            label: ""
+            required: false
+            mapped_to: product.logo
+          - tag: input
+            type: text
+            name: CAPTCHA
+            id: CAPTCHA
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="CAPTCHA"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: AGREERULES
+            id: AGREERULES
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="AGREERULES"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: submit
+            name: submit
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="submit"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: input
+            type: submit
+            name: submit
+            id: ""
+            text: Continue
+            value: Continue
+            selector: input[name="submit"]
   - id: under1000mrr-tools
     external_id: 14368f41-8f50-812d-9d6e-d2b388b8c51e
     name: Under1000MRR.tools
@@ -31035,21 +33449,38 @@ targets:
       - 91wink
     source_meta:
       id: www-uneed-best
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:34:48.253Z
+      auth: required
+      captcha: required
+      reachable: yes
+      final_url: https://www.uneed.best/submit-a-tool
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.130Z
-    updated_at: 2026-05-21T15:44:39.130Z
+    updated_at: 2026-05-23T02:34:58.293Z
+    forms: []
   - id: uneed
     name: Uneed
     domain: uneed.best
@@ -31069,21 +33500,38 @@ targets:
       - targets.yaml
     source_meta:
       id: uneed
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:35:26.030Z
+      auth: required
+      captcha: required
+      reachable: yes
+      final_url: https://www.uneed.best/submit-a-tool
+      http_status: 200
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.130Z
-    updated_at: 2026-05-21T15:44:39.130Z
+    updated_at: 2026-05-23T02:35:41.637Z
+    forms: []
   - id: uneed-best
     external_id: 14368f41-8f50-81c9-8783-cb90897c1005
     name: Uneed Best
@@ -31140,21 +33588,38 @@ targets:
     source_meta:
       id: uneed
       previous_id: uneed
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:35:58.804Z
+      auth: required
+      captcha: required
+      reachable: yes
+      final_url: https://www.uneed.best/submit-a-tool
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.130Z
-    updated_at: 2026-05-22T00:50:01.370Z
+    updated_at: 2026-05-23T02:36:06.763Z
+    forms: []
   - id: unloc
     external_id: 14368f41-8f50-8108-b398-f7c750c4b7c8
     name: Unloc.tools
@@ -31209,21 +33674,252 @@ targets:
       - targets.yaml
     source_meta:
       id: unmatched-style
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:36:37.450Z
+      auth: oauth
+      captcha: required
+      reachable: yes
+      final_url: https://unmatchedstyle.com/submit
+      http_status: 200
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.131Z
-    updated_at: 2026-05-21T15:44:39.131Z
+    updated_at: 2026-05-23T02:37:03.069Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: search
+            name: s
+            id: ""
+            placeholder: Search …
+            aria_label: ""
+            selector: input[name="s"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons: []
+      - index: 1
+        fields:
+          - tag: input
+            type: text
+            name: wpforms[fields][2][first]
+            id: wpforms-43849-field_2
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="wpforms-43849-field_2"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: wpforms[fields][2][last]
+            id: wpforms-43849-field_2-last
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="wpforms-43849-field_2-last"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: input
+            type: email
+            name: wpforms[fields][3]
+            id: wpforms-43849-field_3
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="wpforms-43849-field_3"]
+            label: ""
+            required: true
+            mapped_to: product.email
+          - tag: textarea
+            type: textarea
+            name: wpforms[fields][4]
+            id: wpforms-43849-field_4
+            placeholder: ""
+            aria_label: ""
+            selector: textarea[id="wpforms-43849-field_4"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: select
+            type: select
+            name: wpforms[fields][11]
+            id: wpforms-43849-field_11
+            placeholder: ""
+            aria_label: ""
+            selector: select[id="wpforms-43849-field_11"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: wpforms[fields][12]
+            id: wpforms-43849-field_12
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="wpforms-43849-field_12"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: wpforms[fields][13]
+            id: wpforms-43849-field_13
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="wpforms-43849-field_13"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: wpforms[fields][6]
+            id: wpforms-43849-field_6
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="wpforms-43849-field_6"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: input
+            type: url
+            name: wpforms[fields][14]
+            id: wpforms-43849-field_14
+            placeholder: https://
+            aria_label: ""
+            selector: input[id="wpforms-43849-field_14"]
+            label: ""
+            required: true
+            mapped_to: product.url
+          - tag: textarea
+            type: textarea
+            name: wpforms[fields][7]
+            id: wpforms-43849-field_7
+            placeholder: Tell us what you think about this submission? We will probably use
+              what you post here in the review, so be nice!
+            aria_label: ""
+            selector: textarea[id="wpforms-43849-field_7"]
+            label: ""
+            required: true
+            mapped_to: product.description
+          - tag: input
+            type: file
+            name: wpforms_43849_8
+            id: wpforms-43849-field_8
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="wpforms-43849-field_8"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: textarea
+            type: textarea
+            name: wpforms[fields][9]
+            id: wpforms-43849-field_9
+            placeholder: ""
+            aria_label: ""
+            selector: textarea[id="wpforms-43849-field_9"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: wpforms[hp]
+            id: wpforms-43849-field-hp
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="wpforms-43849-field-hp"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: hidden
+            name: wpforms[id]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="wpforms[id]"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: hidden
+            name: page_title
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="page_title"]
+            label: ""
+            required: false
+            mapped_to: product.name
+          - tag: input
+            type: hidden
+            name: page_url
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="page_url"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: input
+            type: hidden
+            name: url_referer
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="url_referer"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: input
+            type: hidden
+            name: page_id
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="page_id"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: hidden
+            name: wpforms[post_id]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="wpforms[post_id]"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: wpforms[submit]
+            id: wpforms-submit-43849
+            text: Submit Your Website For Review
+            value: wpforms-submit
+            selector: button[id="wpforms-submit-43849"]
   - id: usa-websites-directory
     name: USA Websites Directory
     domain: usawebsitesdirectory.com
@@ -31243,21 +33939,308 @@ targets:
       - targets.yaml
     source_meta:
       id: usa-websites-directory
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:37:14.195Z
+      auth: required
+      captcha: none
+      reachable: yes
+      final_url: https://www.usawebsitesdirectory.com/submit.php
+      http_status: 200
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.131Z
-    updated_at: 2026-05-21T15:44:39.131Z
+    updated_at: 2026-05-23T02:37:19.317Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: user
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="user"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: password
+            name: pass
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="pass"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: submit
+            name: submit
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="submit"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: rememberMe
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="rememberMe"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: input
+            type: submit
+            name: submit
+            id: ""
+            text: Login
+            value: Login
+            selector: input[name="submit"]
+      - index: 1
+        fields:
+          - tag: input
+            type: text
+            name: search
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="search"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: GO
+            value: ""
+            selector: button[type="submit"]
+      - index: 2
+        fields:
+          - tag: input
+            type: radio
+            name: LINK_TYPE
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="LINK_TYPE"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: input
+            type: radio
+            name: LINK_TYPE
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="LINK_TYPE"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: input
+            type: radio
+            name: LINK_TYPE
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="LINK_TYPE"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: input
+            type: text
+            name: TITLE
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="TITLE"]
+            label: ""
+            required: false
+            mapped_to: product.name
+          - tag: input
+            type: text
+            name: URL
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="URL"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: textarea
+            type: textarea
+            name: DESCRIPTION
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: textarea[name="DESCRIPTION"]
+            label: ""
+            required: false
+            mapped_to: product.description
+          - tag: input
+            type: text
+            name: DESCRIPTION_limit
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="DESCRIPTION_limit"]
+            label: ""
+            required: false
+            mapped_to: product.description
+          - tag: input
+            type: text
+            name: META_KEYWORDS
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="META_KEYWORDS"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: textarea
+            type: textarea
+            name: META_DESCRIPTION
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: textarea[name="META_DESCRIPTION"]
+            label: ""
+            required: false
+            mapped_to: product.description
+          - tag: input
+            type: text
+            name: META_DESCRIPTION_limit
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="META_DESCRIPTION_limit"]
+            label: ""
+            required: false
+            mapped_to: product.description
+          - tag: input
+            type: text
+            name: OWNER_NAME
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="OWNER_NAME"]
+            label: ""
+            required: false
+            mapped_to: product.name
+          - tag: input
+            type: text
+            name: OWNER_EMAIL
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="OWNER_EMAIL"]
+            label: ""
+            required: false
+            mapped_to: product.email
+          - tag: select
+            type: select
+            name: CATEGORY_ID
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: select[name="CATEGORY_ID"]
+            label: ""
+            required: false
+            mapped_to: product.category
+          - tag: input
+            type: text
+            name: RECPR_URL
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="RECPR_URL"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: textarea
+            type: textarea
+            name: RECPR_TEXT
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: textarea[name="RECPR_TEXT"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: hidden
+            name: IMAGEHASH
+            id: IMAGEHASH
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="IMAGEHASH"]
+            label: ""
+            required: false
+            mapped_to: product.logo
+          - tag: input
+            type: text
+            name: CAPTCHA
+            id: CAPTCHA
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="CAPTCHA"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: AGREERULES
+            id: AGREERULES
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="AGREERULES"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: submit
+            name: submit
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="submit"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: input
+            type: submit
+            name: submit
+            id: ""
+            text: Continue
+            value: Continue
+            selector: input[name="submit"]
   - id: usergrowth-link
     name: https://usergrowth.link
     domain: usergrowth.link
@@ -31278,21 +34261,38 @@ targets:
       - 91wink
     source_meta:
       id: usergrowth-link
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:37:28.939Z
+      auth: oauth
+      captcha: none
+      reachable: yes
+      final_url: http://usergrowth.link/?tr_uuid=20260523-1237-20c3-92c6-410a9995b3d6&fp=44bac2ec2f847b1a70c0dcd47e0651d4
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.131Z
-    updated_at: 2026-05-21T15:44:39.131Z
+    updated_at: 2026-05-23T02:37:29.829Z
+    forms: []
   - id: v2ex
     name: V2EX
     domain: v2ex.com
@@ -31381,21 +34381,198 @@ targets:
       - targets.yaml
     source_meta:
       id: viesearch
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:37:39.647Z
+      auth: required
+      captcha: required
+      reachable: yes
+      final_url: https://viesearch.com/submit
+      http_status: 200
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.131Z
-    updated_at: 2026-05-21T15:44:39.131Z
+    updated_at: 2026-05-23T02:37:51.060Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: q
+            id: vie_search
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="vie_search"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: button
+            name: ""
+            id: ""
+            text: Submit
+            value: ""
+            selector: button[type="button"]
+      - index: 1
+        fields:
+          - tag: input
+            type: text
+            name: OWNER_NAME
+            id: OWNER_NAME
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="OWNER_NAME"]
+            label: ""
+            required: false
+            mapped_to: product.name
+          - tag: input
+            type: text
+            name: OWNER_EMAIL
+            id: OWNER_EMAIL
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="OWNER_EMAIL"]
+            label: ""
+            required: false
+            mapped_to: product.email
+          - tag: input
+            type: text
+            name: TITLE
+            id: TITLE
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="TITLE"]
+            label: ""
+            required: false
+            mapped_to: product.name
+          - tag: textarea
+            type: textarea
+            name: DESCRIPTION
+            id: DESCRIPTION
+            placeholder: ""
+            aria_label: ""
+            selector: textarea[id="DESCRIPTION"]
+            label: ""
+            required: false
+            mapped_to: product.description
+          - tag: input
+            type: text
+            name: URL
+            id: URL
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="URL"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: select
+            type: select
+            name: CATEGORY
+            id: CATEGORY
+            placeholder: ""
+            aria_label: ""
+            selector: select[id="CATEGORY"]
+            label: ""
+            required: false
+            mapped_to: product.category
+          - tag: input
+            type: radio
+            name: LINK_TYPE
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="LINK_TYPE"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: input
+            type: radio
+            name: LINK_TYPE
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="LINK_TYPE"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: input
+            type: radio
+            name: LINK_TYPE
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="LINK_TYPE"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: input
+            type: radio
+            name: LINK_TYPE
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="LINK_TYPE"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: input
+            type: text
+            name: LINK_COUPON
+            id: LINK_COUPON
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="LINK_COUPON"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: input
+            type: text
+            name: RECPR_URL
+            id: RECPR_URL
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="RECPR_URL"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: textarea
+            type: textarea
+            name: RECPR_TEXT
+            id: RECPR_TEXT
+            placeholder: ""
+            aria_label: ""
+            selector: textarea[id="RECPR_TEXT"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Submit
+            value: ""
+            selector: button[type="submit"]
   - id: vteam
     name: VTeam
     domain: vteam.ai
@@ -31484,21 +34661,1241 @@ targets:
       - notion
     source_meta:
       id: wailworld
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:38:17.742Z
+      auth: oauth
+      captcha: required
+      reachable: yes
+      final_url: https://waildworld.com/
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.131Z
-    updated_at: 2026-05-21T15:44:39.131Z
+    updated_at: 2026-05-23T02:38:24.474Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: query
+            id: ""
+            placeholder: Search, try ‘Design’ / ‘Video’ / ‘SEO’ etc.
+            aria_label: ""
+            selector: input[name="query"]
+            label: ""
+            required: false
+            mapped_to: product.video_url
+        submit_buttons: []
+      - index: 1
+        fields:
+          - tag: input
+            type: text
+            name: search
+            id: ""
+            placeholder: Search, try ‘Design’ / ‘Video’ / ‘SEO’ etc.
+            aria_label: ""
+            selector: input[name="search"]
+            label: ""
+            required: false
+            mapped_to: product.video_url
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+        submit_buttons: []
+      - index: 2
+        fields:
+          - tag: input
+            type: checkbox
+            name: model[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="model[]"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: model[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="model[]"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: model[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="model[]"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: model[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="model[]"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: model[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="model[]"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: model[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="model[]"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons: []
+      - index: 3
+        fields:
+          - tag: input
+            type: radio
+            name: sortby
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="sortby"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: radio
+            name: sortby
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="sortby"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: radio
+            name: sortby
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="sortby"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: radio
+            name: sortby
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="sortby"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: radio
+            name: sortby
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="sortby"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: radio
+            name: sortby
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="sortby"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: radio
+            name: sortby
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="sortby"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons: []
+      - index: 4
+        fields:
+          - tag: input
+            type: hidden
+            name: secret
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="secret"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: title
+            id: ""
+            placeholder: Tool name
+            aria_label: ""
+            selector: input[name="title"]
+            label: ""
+            required: true
+            mapped_to: product.name
+          - tag: input
+            type: text
+            name: url
+            id: ""
+            placeholder: Tool URL
+            aria_label: ""
+            selector: input[name="url"]
+            label: ""
+            required: true
+            mapped_to: product.url
+          - tag: textarea
+            type: textarea
+            name: desc
+            id: ""
+            placeholder: Tool description
+            aria_label: ""
+            selector: textarea[name="desc"]
+            label: ""
+            required: true
+            mapped_to: product.description
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: tags[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tags[]"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: checkbox
+            name: models[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="models[]"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: models[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="models[]"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: models[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="models[]"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: models[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="models[]"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: models[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="models[]"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: models[]
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="models[]"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: name
+            id: ""
+            placeholder: Your name
+            aria_label: ""
+            selector: input[name="name"]
+            label: ""
+            required: true
+            mapped_to: product.name
+          - tag: input
+            type: email
+            name: email
+            id: ""
+            placeholder: Enter your e-mail
+            aria_label: ""
+            selector: input[name="email"]
+            label: ""
+            required: true
+            mapped_to: product.email
+          - tag: textarea
+            type: textarea
+            name: message
+            id: ""
+            placeholder: Any other details you would like to share? Link to explainer video
+              / Affiliate Program Details / etc
+            aria_label: ""
+            selector: textarea[name="message"]
+            label: ""
+            required: true
+            mapped_to: product.url
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Submit
+            value: ""
+            selector: button[type="submit"]
+      - index: 5
+        fields:
+          - tag: input
+            type: hidden
+            name: secret
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="secret"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: email
+            name: email
+            id: ""
+            placeholder: Enter your e-mail
+            aria_label: ""
+            selector: input[name="email"]
+            label: ""
+            required: true
+            mapped_to: product.email
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Subscribe
+            value: ""
+            selector: button[type="submit"]
   - id: web-okjike-com
     name: 即刻
     domain: web.okjike.com
@@ -31552,21 +35949,118 @@ targets:
       - targets.yaml
     source_meta:
       id: websitehunt
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: assisted
+        status: captcha_required
+        confidence: 0.85
+        reasons:
+          - captcha_signal
+      scout_classification_computed:
+        mode: assisted
+        status: captcha_required
+        confidence: 0.85
+        reasons:
+          - captcha_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:38:35.622Z
+      auth: required
+      captcha: required
+      reachable: yes
+      final_url: https://www.websitehunt.co/accounts/login/?next=/websites/submit/create
+      http_status: 200
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: assisted
+      status: captcha_required
+      reason: captcha_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.131Z
-    updated_at: 2026-05-21T15:44:39.131Z
+    updated_at: 2026-05-23T02:38:40.406Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: hidden
+            name: csrfmiddlewaretoken
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="csrfmiddlewaretoken"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: email
+            name: login
+            id: id_login
+            placeholder: Email address
+            aria_label: ""
+            selector: input[id="id_login"]
+            label: ""
+            required: true
+            mapped_to: product.email
+          - tag: input
+            type: password
+            name: password
+            id: id_password
+            placeholder: Password
+            aria_label: ""
+            selector: input[id="id_password"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: input
+            type: hidden
+            name: next
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="next"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Log in
+            value: ""
+            selector: button[type="submit"]
+      - index: 1
+        fields:
+          - tag: input
+            type: hidden
+            name: csrfmiddlewaretoken
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="csrfmiddlewaretoken"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: email
+            name: email
+            id: ""
+            placeholder: Enter your email
+            aria_label: ""
+            selector: input[name="email"]
+            label: ""
+            required: true
+            mapped_to: product.email
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Subscribe Now
+            value: ""
+            selector: button[type="submit"]
   - id: webwiki
     external_id: 14368f41-8f50-81b9-b7b7-c7d7a331c07b
     name: Webwiki
@@ -31587,21 +36081,38 @@ targets:
       - targets.yaml
     source_meta:
       id: webwiki
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: needs_review
+        status: access_blocked
+        confidence: 0.7
+        reasons:
+          - http_403
+      scout_classification_computed:
+        mode: needs_review
+        status: access_blocked
+        confidence: 0.7
+        reasons:
+          - http_403
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:39:12.866Z
+      auth: none
+      captcha: none
+      reachable: yes
+      final_url: https://www.webwiki.com/info/add-website.html
+      http_status: 403
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: needs_review
+      status: access_blocked
+      reason: http_403
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.131Z
-    updated_at: 2026-05-21T15:44:39.131Z
+    updated_at: 2026-05-23T02:39:13.989Z
+    forms: []
   - id: wechalet-cn
     name: 小木屋
     domain: wechalet.cn

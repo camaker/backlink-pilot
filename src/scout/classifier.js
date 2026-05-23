@@ -86,6 +86,18 @@ function hasFileUploadRequirement(forms = []) {
   return requiredFields(forms).some(isFileUploadField);
 }
 
+function hasCaptchaField(forms = []) {
+  return forms.some(form =>
+    (form.fields || []).some(field => CAPTCHA_RE.test(fieldText(field)))
+  );
+}
+
+function hasReciprocalRequirement(forms = []) {
+  return forms.some(form =>
+    (form.fields || []).some(field => /recipr|recpr|reciprocal|back[-_\s]?link|link[-_\s]?back|return[-_\s]?link|交换链接|反向链接|友情链接/i.test(fieldText(field)))
+  );
+}
+
 function hasSubmitButton(forms = []) {
   return forms.some(form => Array.isArray(form.submit_buttons) && form.submit_buttons.length > 0);
 }
@@ -98,6 +110,10 @@ export function classifyScoutResult(result = {}) {
 
   if (result.reachable === false || [404, 410].includes(Number(result.http_status))) {
     return { mode: 'skip', status: 'dead', confidence: 1, reasons: ['unreachable_or_404'] };
+  }
+
+  if ([401, 403, 429].includes(Number(result.http_status))) {
+    return { mode: 'needs_review', status: 'access_blocked', confidence: 0.7, reasons: [`http_${result.http_status}`] };
   }
 
   if (Number(result.http_status) >= 500) {
@@ -121,6 +137,10 @@ export function classifyScoutResult(result = {}) {
     return { mode: 'assisted', status: 'captcha_required', confidence: 0.85, reasons: ['captcha_signal'] };
   }
 
+  if (hasCaptchaField(forms)) {
+    return { mode: 'assisted', status: 'captcha_required', confidence: 0.85, reasons: ['captcha_field'] };
+  }
+
   if (signals.login_required || signals.oauth_available || LOGIN_RE.test(body)) {
     return { mode: 'assisted', status: 'auth_required', confidence: 0.8, reasons: ['auth_signal'] };
   }
@@ -135,6 +155,15 @@ export function classifyScoutResult(result = {}) {
       status: 'asset_upload_required',
       confidence: 0.75,
       reasons: ['file_upload_required'],
+    };
+  }
+
+  if (hasReciprocalRequirement(forms)) {
+    return {
+      mode: 'assisted',
+      status: 'reciprocal_required',
+      confidence: 0.75,
+      reasons: ['reciprocal_field'],
     };
   }
 

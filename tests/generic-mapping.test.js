@@ -89,6 +89,7 @@ describe('scout selector generation', () => {
       async goto(url, options) {
         calls.push({ url, options });
         if (options.waitUntil === 'networkidle') throw new Error('networkidle timeout');
+        return { status: () => 204 };
       },
     };
 
@@ -96,10 +97,24 @@ describe('scout selector generation', () => {
 
     assert.equal(result.ok, true);
     assert.equal(result.fallback, true);
+    assert.equal(result.status, 204);
     assert.match(result.error, /networkidle timeout/);
     assert.equal(calls.length, 2);
     assert.equal(calls[0].options.waitUntil, 'networkidle');
     assert.equal(calls[1].options.waitUntil, 'domcontentloaded');
+  });
+
+  it('records the HTTP status from successful scout navigation', async () => {
+    const page = {
+      async goto() {
+        return { status: () => 404 };
+      },
+    };
+
+    const result = await gotoScoutPage(page, 'https://example.com/missing');
+
+    assert.equal(result.ok, true);
+    assert.equal(result.status, 404);
   });
 });
 

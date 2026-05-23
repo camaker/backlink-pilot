@@ -153,6 +153,60 @@ describe('scout classifier', () => {
     assert.equal(result.mode, 'assisted');
     assert.equal(result.status, 'asset_upload_required');
   });
+
+  it('does not auto-submit access-blocked pages', () => {
+    const result = classifyScoutResult({
+      reachable: true,
+      http_status: 403,
+      forms: [],
+    });
+
+    assert.equal(result.mode, 'needs_review');
+    assert.equal(result.status, 'access_blocked');
+    assert.deepEqual(result.reasons, ['http_403']);
+  });
+
+  it('keeps captcha fields assisted even when they are not marked required', () => {
+    const result = classifyScoutResult({
+      reachable: true,
+      http_status: 200,
+      forms: [
+        {
+          fields: [
+            { type: 'text', name: 'title', mapped_to: 'product.name' },
+            { type: 'url', name: 'url', mapped_to: 'product.url' },
+            { type: 'textarea', name: 'description', mapped_to: 'product.description' },
+            { type: 'text', name: 'CAPTCHA', mapped_to: '' },
+          ],
+          submit_buttons: [{ text: 'Submit' }],
+        },
+      ],
+    });
+
+    assert.equal(result.mode, 'assisted');
+    assert.equal(result.status, 'captcha_required');
+  });
+
+  it('keeps reciprocal link requirements assisted and non-automatic', () => {
+    const result = classifyScoutResult({
+      reachable: true,
+      http_status: 200,
+      forms: [
+        {
+          fields: [
+            { type: 'text', name: 'TITLE', mapped_to: 'product.name' },
+            { type: 'url', name: 'URL', mapped_to: 'product.url' },
+            { type: 'textarea', name: 'DESCRIPTION', mapped_to: 'product.description' },
+            { type: 'text', name: 'RECPR_URL', mapped_to: '' },
+          ],
+          submit_buttons: [{ text: 'Submit' }],
+        },
+      ],
+    });
+
+    assert.equal(result.mode, 'assisted');
+    assert.equal(result.status, 'reciprocal_required');
+  });
 });
 
 describe('submission result classifier', () => {

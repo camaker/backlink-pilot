@@ -66,6 +66,8 @@ function isExplicitBlocker(classification = {}) {
     'captcha_required',
     'paywalled',
     'asset_upload_required',
+    'access_blocked',
+    'reciprocal_required',
     'dead',
   ].includes(String(classification.status || ''));
 }

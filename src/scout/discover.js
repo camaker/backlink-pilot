@@ -120,12 +120,12 @@ async function readPageUrl(page) {
 export async function gotoScoutPage(page, url, opts = {}) {
   const timeout = opts.timeout || 30000;
   try {
-    await page.goto(url, { waitUntil: 'networkidle', timeout });
-    return { ok: true, fallback: false, error: '' };
+    const response = await page.goto(url, { waitUntil: 'networkidle', timeout });
+    return { ok: true, fallback: false, error: '', status: response?.status?.() || null };
   } catch (error) {
     try {
-      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: Math.min(timeout, 15000) });
-      return { ok: true, fallback: true, error: error.message };
+      const response = await page.goto(url, { waitUntil: 'domcontentloaded', timeout: Math.min(timeout, 15000) });
+      return { ok: true, fallback: true, error: error.message, status: response?.status?.() || null };
     } catch (fallbackError) {
       fallbackError.message = `${fallbackError.message}\nInitial networkidle error: ${error.message}`;
       throw fallbackError;
@@ -237,7 +237,7 @@ export async function scout(url, opts = {}) {
       submit_url: url,
       final_url: await readPageUrl(page),
       reachable: true,
-      http_status: 200,
+      http_status: initialNavigation.status || null,
       submit_links: [],
       signals: {
         login_required: false,
@@ -287,6 +287,7 @@ export async function scout(url, opts = {}) {
       const deepNavigation = await gotoScoutPage(page, target);
       await delay(1000);
       result.final_url = await readPageUrl(page);
+      result.http_status = deepNavigation.status || result.http_status;
       if (deepNavigation.fallback) {
         result.navigation = {
           ...(result.navigation || {}),

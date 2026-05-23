@@ -41,6 +41,8 @@ const FIELD_PATTERNS = [
   },
 ];
 
+const NON_PRODUCT_FIELD_RE = /recipr|recpr|reciprocal|back[-_\s]?link|link[-_\s]?back|return[-_\s]?link|交换链接|反向链接|友情链接/i;
+
 function labelText(field = {}) {
   return [
     field.label,
@@ -54,6 +56,7 @@ function labelText(field = {}) {
 
 export function mapField(field = {}) {
   const text = labelText(field);
+  if (NON_PRODUCT_FIELD_RE.test(text)) return '';
   for (const entry of FIELD_PATTERNS) {
     if (entry.pattern.test(text)) return entry.field;
   }
