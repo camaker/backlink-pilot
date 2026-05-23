@@ -11,8 +11,10 @@ import { auditRegistry, formatAuditReport } from './audit.js';
 import {
   applyCrossDomainFinalUrlDecisionPatch,
   buildAssistedSubmissionPack,
+  buildCrossDomainFinalUrlDecisionDraft,
   buildCrossDomainFinalUrlEvidence,
   buildCrossDomainFinalUrlManualPack,
+  writeCrossDomainFinalUrlDecisionDraft,
   validateCrossDomainFinalUrlDecisions,
   writeCrossDomainFinalUrlEvidence,
   writeCrossDomainFinalUrlDecisionPatchReport,
@@ -347,6 +349,37 @@ export async function crossDomainFinalUrlManualPackCommand(queuePath, opts = {})
   console.log(`Manual review CSV: ${written.files.manual_csv}`);
   console.log(`Summary: ${written.files.manual_md}`);
   console.log('Policy: manual review support only; no login, no submission, no registry write.');
+
+  return result;
+}
+
+export async function crossDomainFinalUrlDecisionDraftCommand(manualReviewPath, opts = {}) {
+  const draft = buildCrossDomainFinalUrlDecisionDraft(manualReviewPath);
+  const written = writeCrossDomainFinalUrlDecisionDraft(draft, {
+    outputDir: opts.outputDir,
+  });
+  const result = {
+    ...draft.summary,
+    output_dir: written.output_dir,
+    files: written.files,
+  };
+
+  if (opts.json) {
+    console.log(JSON.stringify(result, null, 2));
+    return result;
+  }
+
+  console.log(`Manual review CSV: ${draft.manual_review_csv}`);
+  console.log(`Output dir: ${written.output_dir}`);
+  console.log(`Rows: ${draft.summary.rows}`);
+  console.log(`Rows requiring human review: ${draft.summary.rows_requiring_human_review}`);
+  console.log(`Suggested decisions: ${JSON.stringify(draft.summary.by_suggested_decision)}`);
+  console.log(`Manual buckets: ${JSON.stringify(draft.summary.by_manual_bucket)}`);
+  console.log(`Controlled-write possible after review: ${draft.summary.controlled_write_possible_after_review}`);
+  console.log(`Preview-only rows: ${draft.summary.preview_only_rows}`);
+  console.log(`Draft CSV: ${written.files.draft_csv}`);
+  console.log(`Draft summary: ${written.files.draft_md}`);
+  console.log('Policy: decision draft only; review_decision remains blank and strict validation must fail until human review is recorded.');
 
   return result;
 }

@@ -1,6 +1,6 @@
 # Cross-Domain Final URL Review Suggestions
 
-Generated: 2026-05-23T10:23:11.819Z
+Generated: 2026-05-23T10:37:34.246Z
 
 Policy: this file is read-only guidance for human review. It does not approve targets, does not allowlist external hosts, does not log in, and does not authorize real submissions.
 

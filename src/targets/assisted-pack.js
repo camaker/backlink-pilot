@@ -78,6 +78,24 @@ const CROSS_DOMAIN_DECISION_HEADERS = [
   'automation_policy',
 ];
 
+const CROSS_DOMAIN_DECISION_DRAFT_EXTRA_HEADERS = [
+  'manual_recommended_review_decision',
+  'registry_write_allowed_if_reviewed',
+  'write_gate_policy',
+  'manual_bucket',
+  'risk_level',
+  'safety_findings',
+  'human_evidence_url_candidate',
+  'recommended_next_step',
+  'reviewer_action',
+  'draft_policy',
+];
+
+const CROSS_DOMAIN_DECISION_DRAFT_HEADERS = [
+  ...CROSS_DOMAIN_DECISION_HEADERS,
+  ...CROSS_DOMAIN_DECISION_DRAFT_EXTRA_HEADERS,
+];
+
 const CROSS_DOMAIN_EVIDENCE_HEADERS = [
   'target_id',
   'name',
@@ -1422,6 +1440,188 @@ export function writeCrossDomainFinalUrlManualPack(pack, opts = {}) {
   };
 }
 
+function crossDomainDecisionDraftRow(row = {}) {
+  const recommendedDecision = String(row.recommended_review_decision || '').trim();
+  const finalHost = hostFromHostOrUrl(row.final_host || row.persisted_final_url || '');
+  return {
+    target_id: row.target_id || '',
+    name: row.name || '',
+    domain: row.domain || '',
+    submit_url: row.submit_url || '',
+    final_url: row.persisted_final_url || '',
+    final_host: finalHost,
+    classification: row.classification || '',
+    confidence: row.confidence || '',
+    suggested_decision: CROSS_DOMAIN_REVIEW_DECISIONS.has(recommendedDecision)
+      ? recommendedDecision
+      : row.suggested_decision || 'keep_blocked',
+    review_decision: '',
+    allowed_host: recommendedDecision === 'allow_external_host_after_review' ? finalHost : '',
+    replacement_submit_url: '',
+    evidence_url: '',
+    reviewer: '',
+    reviewed_at: '',
+    review_notes: '',
+    automation_policy: 'no_execution_from_decision_file',
+    manual_recommended_review_decision: recommendedDecision,
+    registry_write_allowed_if_reviewed: row.registry_write_allowed_if_reviewed || '',
+    write_gate_policy: row.write_gate_policy || '',
+    manual_bucket: row.manual_bucket || '',
+    risk_level: row.risk_level || '',
+    safety_findings: row.safety_findings || '',
+    human_evidence_url_candidate: row.human_evidence_url_candidate || '',
+    recommended_next_step: row.recommended_next_step || '',
+    reviewer_action: row.reviewer_action || '',
+    draft_policy: 'human_must_fill_review_decision_reviewer_reviewed_at_review_notes_before_validation',
+  };
+}
+
+function crossDomainDecisionDraftSummary(rows = []) {
+  return rows.reduce((acc, row) => {
+    incrementCount(acc.by_suggested_decision, row.suggested_decision || 'unknown');
+    incrementCount(acc.by_manual_bucket, row.manual_bucket || 'unknown');
+    incrementCount(acc.by_risk_level, row.risk_level || 'unknown');
+    if (row.registry_write_allowed_if_reviewed === 'yes') acc.controlled_write_possible_after_review += 1;
+    else acc.preview_only_rows += 1;
+    if (!row.review_decision) acc.rows_requiring_human_review += 1;
+    return acc;
+  }, {
+    rows: rows.length,
+    rows_requiring_human_review: 0,
+    controlled_write_possible_after_review: 0,
+    preview_only_rows: 0,
+    by_suggested_decision: {},
+    by_manual_bucket: {},
+    by_risk_level: {},
+  });
+}
+
+export function buildCrossDomainFinalUrlDecisionDraft(manualReviewCsvPath, opts = {}) {
+  const manualRows = parseCsv(readFileSync(manualReviewCsvPath, 'utf-8'));
+  const rows = manualRows.map(row => crossDomainDecisionDraftRow(row));
+  const validation = opts.validate !== false && opts.validationFilePath
+    ? validateCrossDomainFinalUrlDecisions(opts.validationFilePath, { allowUnreviewed: true })
+    : null;
+
+  return {
+    generated_at: nowIso(),
+    manual_review_csv: normalizePath(manualReviewCsvPath),
+    constraints: {
+      read_only: true,
+      no_registry_writes: true,
+      no_login: true,
+      no_submission: true,
+      no_execution_commands: true,
+      no_auto_safe_promotion: true,
+      review_decision_left_blank: true,
+    },
+    rows,
+    summary: crossDomainDecisionDraftSummary(rows),
+    validation,
+  };
+}
+
+export function crossDomainFinalUrlDecisionDraftCsv(draft = {}) {
+  const rows = draft.rows || [];
+  return [
+    CROSS_DOMAIN_DECISION_DRAFT_HEADERS.join(','),
+    ...rows.map(row => CROSS_DOMAIN_DECISION_DRAFT_HEADERS.map(header => csvEscape(row[header])).join(',')),
+  ].join('\n') + '\n';
+}
+
+function crossDomainDecisionDraftRowsTable(rows = []) {
+  if (!rows.length) return '| - | - | - | - | - | - | - |';
+  return rows.map(row => [
+    row.target_id,
+    row.domain,
+    row.classification,
+    row.suggested_decision,
+    row.review_decision || '(blank)',
+    row.registry_write_allowed_if_reviewed,
+    row.risk_level,
+  ].map(markdownEscape).join(' | ')).map(line => `| ${line} |`).join('\n');
+}
+
+function crossDomainDecisionDraftMarkdown(draft = {}, files = {}) {
+  return [
+    '# Cross-Domain Final URL Decision Draft',
+    '',
+    `Generated: ${draft.generated_at}`,
+    '',
+    'Policy: this is an editable human decision draft. It does not approve targets, does not write the registry, does not log in, does not submit, and intentionally leaves `review_decision` blank.',
+    '',
+    '## Inputs',
+    '',
+    `- Manual review CSV: ${draft.manual_review_csv}`,
+    '',
+    '## Summary',
+    '',
+    `- Rows: ${draft.summary.rows}`,
+    `- Rows requiring human review: ${draft.summary.rows_requiring_human_review}`,
+    `- Controlled-write possible after manual review: ${draft.summary.controlled_write_possible_after_review}`,
+    `- Preview-only rows: ${draft.summary.preview_only_rows}`,
+    '',
+    '### Suggested Decisions',
+    '',
+    '| Decision | Count |',
+    '|---|---:|',
+    countsTable(draft.summary.by_suggested_decision),
+    '',
+    '## Draft Rows',
+    '',
+    '| Target ID | Domain | Classification | Suggested Decision | Review Decision | Write Allowed | Risk |',
+    '|---|---|---|---|---|---|---|',
+    crossDomainDecisionDraftRowsTable(draft.rows),
+    '',
+    '## Human Fill Requirements',
+    '',
+    '1. Open each target manually in a normal browser before editing `review_decision`.',
+    '2. Fill `review_decision`, `reviewer`, `reviewed_at`, and substantive `review_notes` before validation can pass.',
+    '3. Do not copy suggested decisions blindly; they are evidence-guided hints, not approval.',
+    '4. `allow_external_host_after_review` and `replace_submit_url` remain preview-only for registry writes.',
+    '5. After any safe downgrade write, rerun registry audit and rescout before any future runnable promotion.',
+    '',
+    '## Validation',
+    '',
+    'This draft should fail strict validation until a human fills the review fields:',
+    '',
+    '```powershell',
+    `node src/cli.js targets validate-cross-domain-final-url-decisions ${files.draft_csv || 'cross-domain-final-url-decision-draft.csv'} --fail-on-blockers`,
+    '```',
+    '',
+    '## Files',
+    '',
+    `- Draft CSV: ${files.draft_csv || 'cross-domain-final-url-decision-draft.csv'}`,
+    `- Draft JSON: ${files.draft_json || 'cross-domain-final-url-decision-draft.json'}`,
+    '',
+  ].join('\n');
+}
+
+export function writeCrossDomainFinalUrlDecisionDraft(draft, opts = {}) {
+  const outputDir = opts.outputDir || 'backlink-url/assisted-submission-pack';
+  mkdirSync(outputDir, { recursive: true });
+  const files = {
+    draft_csv: join(outputDir, 'cross-domain-final-url-decision-draft.csv'),
+    draft_json: join(outputDir, 'cross-domain-final-url-decision-draft.json'),
+    draft_md: join(outputDir, 'cross-domain-final-url-decision-draft.md'),
+  };
+  const publicFiles = Object.fromEntries(
+    Object.entries(files).map(([key, value]) => [key, normalizePath(value)])
+  );
+
+  writeFileSync(files.draft_csv, crossDomainFinalUrlDecisionDraftCsv(draft), 'utf-8');
+  writeFileSync(files.draft_json, JSON.stringify({
+    ...draft,
+    files: publicFiles,
+  }, null, 2) + '\n', 'utf-8');
+  writeFileSync(files.draft_md, crossDomainDecisionDraftMarkdown(draft, publicFiles), 'utf-8');
+
+  return {
+    output_dir: normalizePath(outputDir),
+    files: publicFiles,
+  };
+}
+
 function isHttpUrl(value = '') {
   try {
     const parsed = new URL(value);
@@ -2104,6 +2304,7 @@ function crossDomainDecisionsMarkdown(pack, files = {}) {
     '```powershell',
     `node src/cli.js targets cross-domain-final-url-evidence ${files.cross_domain_final_url_csv || 'cross-domain-final-url-review.csv'} --output backlink-url/assisted-submission-pack/cross-domain-final-url-evidence.csv --json-output backlink-url/assisted-submission-pack/cross-domain-final-url-evidence.json`,
     `node src/cli.js targets cross-domain-final-url-manual-pack ${files.cross_domain_final_url_csv || 'cross-domain-final-url-review.csv'} --evidence backlink-url/assisted-submission-pack/cross-domain-final-url-evidence.csv --suggestions ${files.cross_domain_final_url_suggestions_csv || 'cross-domain-final-url-suggestions.csv'} --output-dir backlink-url/assisted-submission-pack`,
+    'node src/cli.js targets cross-domain-final-url-decision-draft backlink-url/assisted-submission-pack/cross-domain-final-url-manual-review.csv --output-dir backlink-url/assisted-submission-pack',
     '```',
     '',
     '## Validation Command',

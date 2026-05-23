@@ -20,6 +20,7 @@ import {
   authLoginStatusCommand,
   authRescoutPlanCommand,
   authWorkflowRefreshCommand,
+  crossDomainFinalUrlDecisionDraftCommand,
   crossDomainFinalUrlEvidenceCommand,
   crossDomainFinalUrlManualPackCommand,
   coverageReviewDraftCommand,
@@ -374,6 +375,15 @@ targets
   .option('--json', 'Output summary as JSON')
   .action(async (queue, opts) => {
     await crossDomainFinalUrlManualPackCommand(queue, opts);
+  });
+
+targets
+  .command('cross-domain-final-url-decision-draft <manualReview>')
+  .description('Generate an editable cross-domain decision draft that leaves review_decision blank until human review')
+  .option('--output-dir <path>', 'Directory to write the decision draft')
+  .option('--json', 'Output summary as JSON')
+  .action(async (manualReview, opts) => {
+    await crossDomainFinalUrlDecisionDraftCommand(manualReview, opts);
   });
 
 targets

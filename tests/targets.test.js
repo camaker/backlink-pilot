@@ -9,16 +9,19 @@ import { auditTargets, formatAuditReport } from '../src/targets/audit.js';
 import {
   applyCrossDomainFinalUrlDecisionPatch,
   assistedSubmissionPackCsv,
+  buildCrossDomainFinalUrlDecisionDraft,
   buildCrossDomainFinalUrlEvidence,
   buildCrossDomainFinalUrlDecisionPatch,
   buildCrossDomainFinalUrlManualPack,
   buildAssistedSubmissionPack,
+  crossDomainFinalUrlDecisionDraftCsv,
   crossDomainFinalUrlEvidenceCsv,
   crossDomainFinalUrlDecisionsCsv,
   crossDomainFinalUrlManualPackCsv,
   crossDomainFinalUrlSuggestionsCsv,
   validateCrossDomainFinalUrlDecisions,
   writeAssistedSubmissionPack,
+  writeCrossDomainFinalUrlDecisionDraft,
   writeCrossDomainFinalUrlManualPack,
 } from '../src/targets/assisted-pack.js';
 import {
@@ -2332,6 +2335,45 @@ targets:
       assert.equal(existsSync(written.files.manual_csv), true);
       assert.equal(existsSync(written.files.manual_json), true);
       assert.equal(existsSync(written.files.manual_md), true);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('builds a cross-domain decision draft that remains blocked until human review', () => {
+    const dir = tempDir();
+    try {
+      const manualReview = join(dir, 'cross-domain-final-url-manual-review.csv');
+      writeFileSync(manualReview, [
+        'target_id,name,domain,submit_url,root_url,persisted_final_url,final_host,classification,confidence,suggested_decision,recommended_review_decision,registry_write_allowed_if_reviewed,write_gate_policy,manual_bucket,risk_level,safety_findings,submit_fetch_ok,submit_http_status,submit_final_url,final_fetch_ok,final_http_status,final_observed_url,root_fetch_ok,root_http_status,root_observed_url,forms_detected,auth_or_oauth_signal,captcha_or_cloudflare_signal,payment_signal,human_evidence_url_candidate,recommended_next_step,reviewer_action,automation_policy',
+        'skip-target,Skip Target,skip.example,https://skip.example/submit,https://skip.example/,https://external.example/form,external.example,unrelated_external_submit_endpoint,high,skip,skip,yes,controlled_write_allowed_after_validation_no_runnable_promotion,skip_candidate_after_manual_confirmation,high,fetch_not_ok_or_failed,no,404,https://external.example/form,no,404,https://external.example/form,no,404,https://external.example/,0,no,no,no,https://skip.example/submit,Open manually before review,edit decisions manually,manual_review_pack_only_no_login_no_submission_no_registry_write',
+        'alias-target,Alias Target,jinshuju.net,https://jinshuju.net/f/abc,https://jinshuju.net/,https://jsj.top/f/abc,jsj.top,possible_form_provider_alias,medium,allow_external_host_after_review,allow_external_host_after_review,no,preview_only_no_registry_write,preview_only_external_host_candidate,medium,,yes,200,https://jsj.top/f/abc,yes,200,https://jsj.top/f/abc,yes,200,https://jinshuju.net/,1,no,no,no,https://jsj.top/f/abc,Confirm ownership manually,edit decisions manually,manual_review_pack_only_no_login_no_submission_no_registry_write',
+      ].join('\n') + '\n');
+
+      const draft = buildCrossDomainFinalUrlDecisionDraft(manualReview);
+      assert.equal(draft.constraints.review_decision_left_blank, true);
+      assert.equal(draft.summary.rows, 2);
+      assert.equal(draft.summary.rows_requiring_human_review, 2);
+      assert.equal(draft.summary.controlled_write_possible_after_review, 1);
+      assert.equal(draft.summary.preview_only_rows, 1);
+      assert.equal(draft.rows.every(row => row.review_decision === ''), true);
+      assert.equal(draft.rows.every(row => row.reviewer === ''), true);
+      assert.equal(draft.rows.every(row => row.automation_policy === 'no_execution_from_decision_file'), true);
+
+      const csv = crossDomainFinalUrlDecisionDraftCsv(draft);
+      assert.match(csv, /human_must_fill_review_decision/);
+      assert.match(csv, /allow_external_host_after_review/);
+
+      const draftCsv = join(dir, 'draft.csv');
+      writeFileSync(draftCsv, csv);
+      const validation = validateCrossDomainFinalUrlDecisions(draftCsv);
+      assert.equal(validation.ok, false);
+      assert.equal(validation.blockers.filter(item => item.code === 'review_decision_missing').length, 2);
+
+      const written = writeCrossDomainFinalUrlDecisionDraft(draft, { outputDir: join(dir, 'draft-pack') });
+      assert.equal(existsSync(written.files.draft_csv), true);
+      assert.equal(existsSync(written.files.draft_json), true);
+      assert.equal(existsSync(written.files.draft_md), true);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
