@@ -34,6 +34,7 @@ import {
   normalizeTargetsCommand,
   promoteCoverageReviewBatchCommand,
   statsTargetsCommand,
+  validateCrossDomainFinalUrlDecisionsCommand,
   validateCoverageReviewBatchCommand,
   validateCoverageReviewCommand,
 } from './targets/commands.js';
@@ -317,6 +318,19 @@ targets
   .option('--json', 'Output summary as JSON')
   .action(async (opts) => {
     await assistedSubmissionPackCommand(opts);
+  });
+
+targets
+  .command('validate-cross-domain-final-url-decisions <file>')
+  .description('Validate edited cross-domain final URL decisions without writing the registry')
+  .option('--allow-unreviewed', 'Warn instead of blocking blank review_decision rows')
+  .option('--no-require-reviewer', 'Do not require reviewer on reviewed rows')
+  .option('--no-require-review-notes', 'Do not require substantive review notes on reviewed rows')
+  .option('--limit-findings <n>', 'Maximum blockers and warnings to print', '20')
+  .option('--fail-on-blockers', 'Exit non-zero when blockers are found')
+  .option('--json', 'Output as JSON')
+  .action(async (file, opts) => {
+    await validateCrossDomainFinalUrlDecisionsCommand(file, opts);
   });
 
 targets

@@ -4,6 +4,7 @@ import { parse } from 'yaml';
 import { DEFAULT_REGISTRY_FILE, loadRegistry } from './registry.js';
 import { cleanTrackingUrl } from './normalize.js';
 import { urlDomainBlocker, urlHost } from './auth-login-safety.js';
+import { parseCsv } from './importers/csv.js';
 
 const ASSISTED_PACK_HEADERS = [
   'rank',
@@ -56,6 +57,39 @@ const CROSS_DOMAIN_SUGGESTION_HEADERS = [
   'reason',
   'next_step',
 ];
+
+const CROSS_DOMAIN_DECISION_HEADERS = [
+  'target_id',
+  'name',
+  'domain',
+  'submit_url',
+  'final_url',
+  'final_host',
+  'classification',
+  'confidence',
+  'suggested_decision',
+  'review_decision',
+  'allowed_host',
+  'replacement_submit_url',
+  'evidence_url',
+  'reviewer',
+  'reviewed_at',
+  'review_notes',
+  'automation_policy',
+];
+
+const CROSS_DOMAIN_REVIEW_DECISIONS = new Set([
+  'skip',
+  'rescout_target_domain',
+  'allow_external_host_after_review',
+  'replace_submit_url',
+  'keep_blocked',
+]);
+
+const CROSS_DOMAIN_ALLOWLIST_ELIGIBLE_CLASSIFICATIONS = new Set([
+  'possible_form_provider_alias',
+  'possible_parent_brand_submit_domain',
+]);
 
 function nowIso() {
   return new Date().toISOString();
@@ -651,6 +685,219 @@ export function crossDomainFinalUrlSuggestionsCsv(rows = []) {
   ].join('\n') + '\n';
 }
 
+function decisionFromSuggestion(row = {}) {
+  if (['skip_until_directory_domain_recovers', 'skip_or_replace_source'].includes(row.recommended_decision)) {
+    return 'skip';
+  }
+  if (row.recommended_decision === 'manual_rescout_target_domain_first') return 'rescout_target_domain';
+  if (row.recommended_decision === 'manual_verify_then_allowlist_if_owner_confirmed') {
+    return 'allow_external_host_after_review';
+  }
+  return 'keep_blocked';
+}
+
+export function crossDomainFinalUrlDecisionRows(rows = []) {
+  return crossDomainFinalUrlSuggestions(rows).map(row => ({
+    target_id: row.target_id || '',
+    name: row.name || '',
+    domain: row.domain || '',
+    submit_url: row.submit_url || '',
+    final_url: row.final_url || '',
+    final_host: row.final_host || '',
+    classification: row.classification || '',
+    confidence: row.confidence || '',
+    suggested_decision: decisionFromSuggestion(row),
+    review_decision: '',
+    allowed_host: row.allowed_host_candidate || '',
+    replacement_submit_url: '',
+    evidence_url: '',
+    reviewer: '',
+    reviewed_at: '',
+    review_notes: '',
+    automation_policy: 'no_execution_from_decision_file',
+  }));
+}
+
+export function crossDomainFinalUrlDecisionsCsv(rows = []) {
+  const decisions = crossDomainFinalUrlDecisionRows(rows);
+  return [
+    CROSS_DOMAIN_DECISION_HEADERS.join(','),
+    ...decisions.map(row => CROSS_DOMAIN_DECISION_HEADERS.map(header => csvEscape(row[header])).join(',')),
+  ].join('\n') + '\n';
+}
+
+function isHttpUrl(value = '') {
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
+function hostFromHostOrUrl(value = '') {
+  const text = String(value || '').trim();
+  if (!text) return '';
+  return urlHost(text) || text.toLowerCase().replace(/^www\./, '');
+}
+
+function addDecisionFinding(list, severity, code, row, line, message) {
+  list.push({
+    severity,
+    code,
+    line,
+    target_id: row.target_id || '',
+    domain: row.domain || '',
+    final_host: row.final_host || '',
+    review_decision: row.review_decision || '',
+    message,
+  });
+}
+
+function validateCrossDomainDecisionRow(row = {}, line, opts = {}) {
+  const blockers = [];
+  const warnings = [];
+  const decision = String(row.review_decision || '').trim();
+  const classification = String(row.classification || '').trim();
+  const finalHost = hostFromHostOrUrl(row.final_host || row.final_url || '');
+  const allowedHost = hostFromHostOrUrl(row.allowed_host || '');
+  const notes = String(row.review_notes || '').trim();
+  const reviewer = String(row.reviewer || '').trim();
+  const evidenceUrl = String(row.evidence_url || '').trim();
+  const replacementSubmitUrl = String(row.replacement_submit_url || '').trim();
+  const automationPolicy = String(row.automation_policy || '').trim();
+
+  for (const field of ['target_id', 'domain', 'submit_url', 'final_url', 'classification', 'automation_policy']) {
+    if (!String(row[field] || '').trim()) {
+      addDecisionFinding(blockers, 'blocker', `missing_${field}`, row, line, `Missing required field: ${field}.`);
+    }
+  }
+  if (automationPolicy && automationPolicy !== 'no_execution_from_decision_file') {
+    addDecisionFinding(
+      blockers,
+      'blocker',
+      'automation_policy_must_not_execute',
+      row,
+      line,
+      'automation_policy must remain no_execution_from_decision_file.'
+    );
+  }
+  if (row.submit_url && !isHttpUrl(row.submit_url)) {
+    addDecisionFinding(blockers, 'blocker', 'submit_url_invalid', row, line, 'submit_url must be an http(s) URL.');
+  }
+  if (row.final_url && !isHttpUrl(row.final_url)) {
+    addDecisionFinding(blockers, 'blocker', 'final_url_invalid', row, line, 'final_url must be an http(s) URL.');
+  }
+
+  if (!decision) {
+    const severity = opts.allowUnreviewed ? 'warning' : 'blocker';
+    addDecisionFinding(
+      severity === 'blocker' ? blockers : warnings,
+      severity,
+      'review_decision_missing',
+      row,
+      line,
+      'review_decision must be filled before this row can affect registry data.'
+    );
+    return { blockers, warnings };
+  }
+
+  if (!CROSS_DOMAIN_REVIEW_DECISIONS.has(decision)) {
+    addDecisionFinding(blockers, 'blocker', 'review_decision_unknown', row, line, `Unknown review_decision: ${decision}.`);
+  }
+
+  if (opts.requireReviewer !== false && !reviewer) {
+    addDecisionFinding(blockers, 'blocker', 'reviewer_missing', row, line, 'reviewer is required for reviewed rows.');
+  }
+  if (opts.requireReviewNotes !== false && notes.length < 20) {
+    addDecisionFinding(blockers, 'blocker', 'review_notes_too_short', row, line, 'review_notes must document the human evidence and rationale.');
+  }
+
+  if (decision === 'allow_external_host_after_review') {
+    if (!CROSS_DOMAIN_ALLOWLIST_ELIGIBLE_CLASSIFICATIONS.has(classification)) {
+      addDecisionFinding(
+        blockers,
+        'blocker',
+        'allowlist_classification_not_eligible',
+        row,
+        line,
+        `Classification ${classification || 'unknown'} is not eligible for external-host allowlisting.`
+      );
+    }
+    if (!allowedHost) {
+      addDecisionFinding(blockers, 'blocker', 'allowed_host_missing', row, line, 'allowed_host is required for allowlist decisions.');
+    } else if (finalHost && allowedHost !== finalHost) {
+      addDecisionFinding(
+        blockers,
+        'blocker',
+        'allowed_host_must_match_final_host',
+        row,
+        line,
+        `allowed_host must match final_host (${finalHost}) for this controlled decision file.`
+      );
+    }
+    if (!isHttpUrl(evidenceUrl)) {
+      addDecisionFinding(
+        blockers,
+        'blocker',
+        'allowlist_evidence_url_required',
+        row,
+        line,
+        'allow_external_host_after_review requires an http(s) evidence_url.'
+      );
+    }
+  }
+
+  if (decision === 'replace_submit_url') {
+    if (!isHttpUrl(replacementSubmitUrl)) {
+      addDecisionFinding(blockers, 'blocker', 'replacement_submit_url_required', row, line, 'replace_submit_url requires an http(s) replacement_submit_url.');
+    }
+    if (!isHttpUrl(evidenceUrl)) {
+      addDecisionFinding(blockers, 'blocker', 'replacement_evidence_url_required', row, line, 'replace_submit_url requires an http(s) evidence_url.');
+    }
+  }
+
+  if (['skip', 'rescout_target_domain', 'keep_blocked'].includes(decision) && allowedHost) {
+    addDecisionFinding(warnings, 'warning', 'allowed_host_ignored_for_decision', row, line, 'allowed_host is ignored unless review_decision is allow_external_host_after_review.');
+  }
+
+  return { blockers, warnings };
+}
+
+export function validateCrossDomainFinalUrlDecisions(filePath, opts = {}) {
+  const rows = parseCsv(readFileSync(filePath, 'utf-8'));
+  const blockers = [];
+  const warnings = [];
+  const byDecision = {};
+
+  rows.forEach((row, index) => {
+    const decision = String(row.review_decision || '').trim() || 'unreviewed';
+    incrementCount(byDecision, decision);
+    const result = validateCrossDomainDecisionRow(row, index + 2, opts);
+    blockers.push(...result.blockers);
+    warnings.push(...result.warnings);
+  });
+
+  return {
+    file: normalizePath(filePath),
+    ok: blockers.length === 0,
+    rows: rows.length,
+    blockers,
+    warnings,
+    blockers_count: blockers.length,
+    warnings_count: warnings.length,
+    by_decision: byDecision,
+    constraints: {
+      read_only: true,
+      no_registry_writes: true,
+      no_network: true,
+      no_login: true,
+      no_submission: true,
+      allowed_review_decisions: [...CROSS_DOMAIN_REVIEW_DECISIONS],
+    },
+  };
+}
+
 function markdownEscape(value) {
   return String(value || '').replace(/\|/g, '\\|');
 }
@@ -718,6 +965,45 @@ function crossDomainSuggestionsMarkdown(pack, files = {}) {
   ].join('\n');
 }
 
+function crossDomainDecisionsMarkdown(pack, files = {}) {
+  return [
+    '# Cross-Domain Final URL Decisions',
+    '',
+    `Generated: ${pack.generated_at}`,
+    '',
+    'Policy: this is an editable human decision template. It does not approve automation by itself, does not write the registry, and does not authorize real submissions.',
+    '',
+    '## Allowed Review Decisions',
+    '',
+    '- `skip`: mark the target as not worth pursuing unless a replacement source is found.',
+    '- `rescout_target_domain`: keep blocked and manually re-check the target-domain submit URL first.',
+    '- `allow_external_host_after_review`: only for verified form-provider aliases or parent-brand submit domains.',
+    '- `replace_submit_url`: replace the submit URL after independently verifying a current official submit surface.',
+    '- `keep_blocked`: intentionally leave the row blocked without further action.',
+    '',
+    '## Hard Validation Rules',
+    '',
+    '1. `review_decision`, `reviewer`, and substantive `review_notes` are required for reviewed rows.',
+    '2. `allow_external_host_after_review` requires an eligible classification, matching `allowed_host`, and an `evidence_url`.',
+    '3. Parked domains, platform errors, unrelated redirects, stale scout evidence, and affiliate redirects are not eligible for allowlisting.',
+    '4. `replace_submit_url` requires `replacement_submit_url` and `evidence_url`.',
+    '5. `automation_policy` must remain `no_execution_from_decision_file`.',
+    '6. This decision file is still not an execution plan; it only gates future registry edits.',
+    '',
+    '## Validation Command',
+    '',
+    '```powershell',
+    `node src/cli.js targets validate-cross-domain-final-url-decisions ${files.cross_domain_final_url_decisions_csv || 'cross-domain-final-url-decisions.csv'} --fail-on-blockers`,
+    '```',
+    '',
+    '## Files',
+    '',
+    `- Suggestions: ${files.cross_domain_final_url_suggestions_md || 'cross-domain-final-url-suggestions.md'}`,
+    `- Decision CSV: ${files.cross_domain_final_url_decisions_csv || 'cross-domain-final-url-decisions.csv'}`,
+    '',
+  ].join('\n');
+}
+
 function assistedPackMarkdown(pack, files = {}) {
   return [
     '# Assisted Submission Pack',
@@ -778,6 +1064,7 @@ function assistedPackMarkdown(pack, files = {}) {
     `- Manual review-first queue: ${files.manual_review_first_csv || 'manual-review-first.csv'}`,
     `- Cross-domain final URL review queue: ${files.cross_domain_final_url_csv || 'cross-domain-final-url-review.csv'}`,
     `- Cross-domain final URL suggestions: ${files.cross_domain_final_url_suggestions_md || 'cross-domain-final-url-suggestions.md'}`,
+    `- Cross-domain final URL decisions: ${files.cross_domain_final_url_decisions_md || 'cross-domain-final-url-decisions.md'}`,
     `- Summary JSON: ${files.summary_json || 'assisted-submission-summary.json'}`,
     '',
     '## Safe Next Commands',
@@ -801,6 +1088,8 @@ export function writeAssistedSubmissionPack(pack, opts = {}) {
     cross_domain_final_url_csv: join(outputDir, 'cross-domain-final-url-review.csv'),
     cross_domain_final_url_suggestions_csv: join(outputDir, 'cross-domain-final-url-suggestions.csv'),
     cross_domain_final_url_suggestions_md: join(outputDir, 'cross-domain-final-url-suggestions.md'),
+    cross_domain_final_url_decisions_csv: join(outputDir, 'cross-domain-final-url-decisions.csv'),
+    cross_domain_final_url_decisions_md: join(outputDir, 'cross-domain-final-url-decisions.md'),
   };
   const publicFiles = Object.fromEntries(
     Object.entries(files).map(([key, value]) => [key, normalizePath(value)])
@@ -837,6 +1126,16 @@ export function writeAssistedSubmissionPack(pack, opts = {}) {
   writeFileSync(
     files.cross_domain_final_url_suggestions_md,
     crossDomainSuggestionsMarkdown(pack, publicFiles),
+    'utf-8'
+  );
+  writeFileSync(
+    files.cross_domain_final_url_decisions_csv,
+    crossDomainFinalUrlDecisionsCsv(pack.rows),
+    'utf-8'
+  );
+  writeFileSync(
+    files.cross_domain_final_url_decisions_md,
+    crossDomainDecisionsMarkdown(pack, publicFiles),
     'utf-8'
   );
   writeFileSync(files.summary_json, JSON.stringify({

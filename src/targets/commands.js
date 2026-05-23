@@ -10,6 +10,7 @@ import {
 import { auditRegistry, formatAuditReport } from './audit.js';
 import {
   buildAssistedSubmissionPack,
+  validateCrossDomainFinalUrlDecisions,
   writeAssistedSubmissionPack,
 } from './assisted-pack.js';
 import {
@@ -194,6 +195,36 @@ export async function assistedSubmissionPackCommand(opts = {}) {
   console.log(`Full CSV: ${written.files.full_csv}`);
   console.log(`Next CSV: ${written.files.next_csv}`);
   console.log(`Summary: ${written.files.summary_md}`);
+
+  return result;
+}
+
+export async function validateCrossDomainFinalUrlDecisionsCommand(filePath, opts = {}) {
+  const result = validateCrossDomainFinalUrlDecisions(filePath, {
+    allowUnreviewed: Boolean(opts.allowUnreviewed),
+    requireReviewer: opts.requireReviewer !== false,
+    requireReviewNotes: opts.requireReviewNotes !== false,
+  });
+
+  if (opts.json) {
+    console.log(JSON.stringify(result, null, 2));
+    if (!result.ok && opts.failOnBlockers) process.exitCode = 1;
+    return result;
+  }
+
+  console.log(`Decision file: ${result.file}`);
+  console.log(`Rows: ${result.rows}`);
+  console.log(`OK: ${result.ok}`);
+  console.log(`Blockers: ${result.blockers_count}`);
+  console.log(`Warnings: ${result.warnings_count}`);
+  console.log(`By decision: ${JSON.stringify(result.by_decision)}`);
+  for (const item of result.blockers.slice(0, Number.parseInt(opts.limitFindings || 20, 10))) {
+    console.log(`BLOCKER\tline:${item.line}\t${item.code}\t${item.target_id}\t${item.message}`);
+  }
+  for (const item of result.warnings.slice(0, Number.parseInt(opts.limitFindings || 20, 10))) {
+    console.log(`WARNING\tline:${item.line}\t${item.code}\t${item.target_id}\t${item.message}`);
+  }
+  if (!result.ok && opts.failOnBlockers) process.exitCode = 1;
 
   return result;
 }
