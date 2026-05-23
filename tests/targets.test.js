@@ -12,6 +12,10 @@ import {
   writeAssistedSubmissionPack,
 } from '../src/targets/assisted-pack.js';
 import {
+  buildAuthRescoutPlan,
+  writeAuthRescoutPlan,
+} from '../src/targets/auth-rescout-plan.js';
+import {
   applyCoverageReviewQueue,
   buildCoverageReviewEvidence,
   buildCoverageReviewBatch,
@@ -2162,6 +2166,78 @@ targets:
       assert.equal(explicitPack.rows.length, 2);
       assert.equal(explicitPack.rows.find(row => row.target_id === 'paid').automation_after_human, 'no_paid_or_paywalled');
       assert.equal(explicitPack.rows.find(row => row.target_id === 'submitted').automation_after_human, 'no_verify_existing_submission_first');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe('auth rescout plan', () => {
+  it('queues only assisted auth rows with saved Playwright profiles', () => {
+    const dir = tempDir();
+    try {
+      const queue = join(dir, 'auth-login-rescout-queue.csv');
+      const authDir = join(dir, 'auth');
+      const output = join(dir, 'auth-rescout-plan.json');
+      mkdirSync(authDir, { recursive: true });
+      writeFileSync(join(authDir, 'auth-target.storage-state.json'), JSON.stringify({
+        cookies: [],
+        origins: [],
+      }));
+      writeFileSync(queue, [
+        'rank,priority,priority_score,target_id,name,domain,mode,status,pricing,risk,lang,manual_bucket,automation_after_human,submission_policy,safety_blockers,recommended_next_step,auth_profile,auth_login_command,auth_scout_command,submit_url,final_url,root_url,last_scouted_at,last_submitted_at,form_count,field_count,required_fields,unmapped_required_fields,submit_button_count,source,reason,notes',
+        '1,P0,270,auth-target,Auth Target,auth.example,assisted,auth_required,free,low,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required,login,auth-target,login,scout,https://auth.example/submit,https://auth.example/login,https://auth.example,,,,,,,,test,auth_signal,',
+        '2,P0,260,missing-auth,Missing Auth,missing.example,assisted,auth_required,free,low,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required,login,missing-auth,login,scout,https://missing.example/submit,https://missing.example/login,https://missing.example,,,,,,,,test,auth_signal,',
+        '3,P2,120,captcha,Captcha,captcha.example,assisted,captcha_required,free,low,en,manual_submit_only_captcha,no_captcha_manual_only,no_real_submission_from_pack,captcha_or_turnstile_required,captcha,,,,https://captcha.example/submit,,https://captcha.example,,,,,,,,test,captcha_signal,',
+      ].join('\n'));
+
+      const plan = buildAuthRescoutPlan(queue, {
+        authDir,
+        registry: join(dir, 'registry.yaml'),
+        limit: 10,
+      });
+      const written = writeAuthRescoutPlan(plan, output);
+      const parsed = JSON.parse(readFileSync(output, 'utf-8'));
+
+      assert.equal(plan.targets.length, 1);
+      assert.equal(plan.targets[0].id, 'auth-target');
+      assert.equal(plan.targets[0].auth_profile, 'auth-target');
+      assert.match(plan.targets[0].auth_state_path, /auth-target\.storage-state\.json$/);
+      assert.equal(plan.excluded.length, 2);
+      assert.equal(plan.summary.auth_profiles_found, 1);
+      assert.equal(plan.summary.auth_profiles_missing, 1);
+      assert.equal(plan.summary.by_exclusion_reason.auth_profile_missing, 1);
+      assert.equal(plan.summary.by_exclusion_reason.not_auth_rescout_row, 1);
+      assert.equal(parsed.constraints.no_real_submission, true);
+      assert.equal(parsed.constraints.requires_saved_playwright_auth_profile, true);
+      assert.equal(written.endsWith('auth-rescout-plan.json'), true);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('applies auth rescout plan limits after checking saved profiles', () => {
+    const dir = tempDir();
+    try {
+      const queue = join(dir, 'auth-login-rescout-queue.csv');
+      const authDir = join(dir, 'auth');
+      mkdirSync(authDir, { recursive: true });
+      for (const profile of ['a', 'b']) {
+        writeFileSync(join(authDir, `${profile}.storage-state.json`), JSON.stringify({ cookies: [], origins: [] }));
+      }
+      writeFileSync(queue, [
+        'rank,priority,priority_score,target_id,name,domain,mode,status,pricing,risk,lang,manual_bucket,automation_after_human,submission_policy,safety_blockers,recommended_next_step,auth_profile,auth_login_command,auth_scout_command,submit_url,final_url,root_url,last_scouted_at,last_submitted_at,form_count,field_count,required_fields,unmapped_required_fields,submit_button_count,source,reason,notes',
+        '1,P0,270,a,A,a.example,assisted,auth_required,free,low,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required,login,a,login,scout,https://a.example/submit,,https://a.example,,,,,,,,test,auth_signal,',
+        '2,P0,260,b,B,b.example,assisted,auth_required,free,low,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required,login,b,login,scout,https://b.example/submit,,https://b.example,,,,,,,,test,auth_signal,',
+      ].join('\n'));
+
+      const plan = buildAuthRescoutPlan(queue, { authDir, limit: 1 });
+
+      assert.equal(plan.targets.length, 1);
+      assert.equal(plan.targets[0].id, 'a');
+      assert.equal(plan.excluded.length, 1);
+      assert.equal(plan.excluded[0].target_id, 'b');
+      assert.equal(plan.excluded[0].exclusion_reason, 'over_limit');
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

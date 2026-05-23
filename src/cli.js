@@ -13,6 +13,7 @@ import { runCampaign } from './campaign.js';
 import {
   applyCoverageReviewQueueCommand,
   assistedSubmissionPackCommand,
+  authRescoutPlanCommand,
   coverageReviewDraftCommand,
   coverageReviewEvidenceCommand,
   coverageReviewBatchCommand,
@@ -311,6 +312,20 @@ targets
   .option('--json', 'Output summary as JSON')
   .action(async (opts) => {
     await assistedSubmissionPackCommand(opts);
+  });
+
+targets
+  .command('auth-rescout-plan <queue>')
+  .description('Build a per-target authenticated scout plan from auth-login-rescout-queue.csv')
+  .option('--registry <path>', 'Canonical registry path')
+  .option('--product-config <path>', 'Product config path to include in the plan')
+  .option('--auth-dir <path>', 'Auth profile directory')
+  .option('--limit <n>', 'Maximum targets with saved auth profiles to queue', '100')
+  .option('--output <path>', 'Write authenticated scout plan to JSON/YAML')
+  .option('--preview <n>', 'Rows to preview in text output', '10')
+  .option('--json', 'Output full plan as JSON')
+  .action(async (queue, opts) => {
+    await authRescoutPlanCommand(queue, opts);
   });
 
 targets

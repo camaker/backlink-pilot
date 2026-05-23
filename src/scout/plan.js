@@ -81,10 +81,6 @@ export async function scoutPlan(planPath, opts = {}) {
 
   if (opts.engine) config._engine = opts.engine;
 
-  const executionConfig = opts.authProfile
-    ? configWithAuthProfile(config, opts.authProfile, opts)
-    : config;
-
   const summary = {
     plan: planPath,
     state: statePath,
@@ -110,10 +106,15 @@ export async function scoutPlan(planPath, opts = {}) {
     saveRunnerState(statePath, state);
 
     try {
+      const authProfile = target.auth_profile || opts.authProfile || '';
+      const executionConfig = authProfile
+        ? configWithAuthProfile(config, authProfile, opts)
+        : config;
       const result = await withTimeout(scoutFn(target.submit_url, {
         ...opts,
         config: executionConfig,
         targetId: target.id,
+        authProfile: authProfile || undefined,
         persist: opts.persist !== false,
         updateRegistry: Boolean(opts.updateRegistry),
         deep: opts.deep !== false,

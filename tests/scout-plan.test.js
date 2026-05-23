@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { scoutPlan } from '../src/scout/plan.js';
@@ -182,6 +182,57 @@ targets:
       assert.match(parsedRegistry, /mode: skip/);
       assert.match(parsedRegistry, /status: dead/);
       assert.equal(lines[0].registry_updated, true);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('uses target-level auth profiles from an authenticated rescout plan', async () => {
+    const dir = tempDir();
+    try {
+      const plan = join(dir, 'auth-rescout-plan.json');
+      const state = join(dir, 'scout-state.json');
+      const results = join(dir, 'scout-results.jsonl');
+      const authDir = join(dir, 'auth');
+      mkdirSync(authDir, { recursive: true });
+      writeFileSync(join(authDir, 'a.storage-state.json'), JSON.stringify({ cookies: [], origins: [] }));
+      writeFileSync(join(authDir, 'b.storage-state.json'), JSON.stringify({ cookies: [], origins: [] }));
+      writeFileSync(plan, JSON.stringify({
+        created_at: 'plan-auth',
+        constraints: { purpose: 'auth_rescout_after_saved_login_profile' },
+        targets: [
+          { id: 'a', submit_url: 'https://a.example/submit', mode: 'assisted', auth_profile: 'a' },
+          { id: 'b', submit_url: 'https://b.example/submit', mode: 'assisted', auth_profile: 'b' },
+        ],
+      }));
+
+      const seen = [];
+      const summary = await scoutPlan(plan, {
+        state,
+        results,
+        authDir,
+        delay: '0ms',
+        configObject: { browser: { engine: 'playwright' } },
+        scoutFn: async (url, opts) => {
+          seen.push({
+            targetId: opts.targetId,
+            authProfile: opts.authProfile,
+            authStatePath: opts.config._authStatePath,
+            engine: opts.config.browser.engine,
+          });
+          return {
+            target_id: opts.targetId,
+            submit_url: url,
+            classification: { mode: 'assisted', status: 'auth_required', reasons: ['test'] },
+          };
+        },
+      });
+
+      assert.equal(summary.processed, 2);
+      assert.deepEqual(seen.map(item => item.authProfile), ['a', 'b']);
+      assert.match(seen[0].authStatePath, /a\.storage-state\.json$/);
+      assert.match(seen[1].authStatePath, /b\.storage-state\.json$/);
+      assert.equal(seen[0].engine, 'playwright');
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

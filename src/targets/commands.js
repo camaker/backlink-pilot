@@ -13,6 +13,10 @@ import {
   writeAssistedSubmissionPack,
 } from './assisted-pack.js';
 import {
+  buildAuthRescoutPlan,
+  writeAuthRescoutPlan,
+} from './auth-rescout-plan.js';
+import {
   applyCoverageReviewQueue,
   buildCoverageReviewEvidence,
   buildCoverageReviewBatch,
@@ -174,6 +178,38 @@ export async function assistedSubmissionPackCommand(opts = {}) {
   console.log(`Summary: ${written.files.summary_md}`);
 
   return result;
+}
+
+export async function authRescoutPlanCommand(queuePath, opts = {}) {
+  const plan = buildAuthRescoutPlan(queuePath, {
+    registry: opts.registry || DEFAULT_REGISTRY_FILE,
+    productConfig: opts.productConfig,
+    authDir: opts.authDir,
+    limit: opts.limit,
+  });
+
+  if (opts.output) {
+    writeAuthRescoutPlan(plan, opts.output);
+  }
+
+  if (opts.json) {
+    console.log(JSON.stringify(plan, null, 2));
+    return plan;
+  }
+
+  console.log(`Queue: ${plan.source_queue}`);
+  console.log(`Registry: ${plan.registry}`);
+  console.log(`Targets queued: ${plan.targets.length}`);
+  console.log(`Excluded: ${plan.excluded.length}`);
+  console.log(`Auth profiles found: ${plan.summary.auth_profiles_found}`);
+  console.log(`Auth profiles missing: ${plan.summary.auth_profiles_missing}`);
+  console.log(`Exclusion reasons: ${JSON.stringify(plan.summary.by_exclusion_reason)}`);
+  if (opts.output) console.log(`Plan written: ${opts.output}`);
+  for (const target of plan.targets.slice(0, Number.parseInt(opts.preview || 10, 10))) {
+    console.log(`${target.order}. ${target.id} - ${target.auth_profile} - ${target.submit_url}`);
+  }
+
+  return plan;
 }
 
 export async function coverageTargetsCommand(inputDir, opts = {}) {
