@@ -50,6 +50,7 @@ import {
   buildPricingReviewDecisionDraft,
   buildPricingReviewEvidence,
   buildPricingReviewManualPack,
+  buildPricingReviewManualStatus,
   buildPricingReviewPostApplyGate,
   buildPricingReviewQueue,
   buildPricingReviewSuggestions,
@@ -60,6 +61,7 @@ import {
   writePricingReviewDecisionPatchReport,
   writePricingReviewEvidence,
   writePricingReviewManualPack,
+  writePricingReviewManualStatusReport,
   writePricingReviewPostApplyGateReport,
   writePricingReviewQueue,
   writePricingReviewSuggestions,
@@ -411,6 +413,46 @@ export async function pricingReviewManualPackCommand(draftPath, opts = {}) {
   console.log('Policy: manual review pack only; no network, no login, no submission, no registry writes, no automatic pricing decisions.');
   if (!pack.ok && opts.failOnBlockers) process.exitCode = 1;
   return result;
+}
+
+export async function pricingReviewManualStatusCommand(manualPath, opts = {}) {
+  const report = buildPricingReviewManualStatus(manualPath, {
+    draftPath: opts.draft,
+    allowOverwrite: Boolean(opts.allowOverwrite),
+    nextLimit: opts.nextLimit,
+    requireReviewer: opts.requireReviewer !== false,
+    requireReviewedAt: opts.requireReviewedAt !== false,
+    requireReviewNotes: opts.requireReviewNotes !== false,
+  });
+  const written = writePricingReviewManualStatusReport(report, {
+    jsonOutput: opts.jsonOutput,
+    markdownOutput: opts.markdownOutput,
+  });
+  report.files = written.files;
+
+  if (opts.json) {
+    console.log(JSON.stringify(report, null, 2));
+    if (!report.ok && opts.failOnBlockers) process.exitCode = 1;
+    return report;
+  }
+
+  console.log(`Pricing review manual status: ${report.status}`);
+  console.log(`Manual CSV: ${report.manual}`);
+  if (report.draft) console.log(`Draft: ${report.draft}`);
+  console.log(`Rows: ${report.summary.rows}`);
+  console.log(`Reviewed rows: ${report.summary.reviewed_rows}`);
+  console.log(`Unreviewed rows: ${report.summary.unreviewed_rows}`);
+  console.log(`Validation blockers: ${report.summary.validation_blockers}`);
+  if (report.summary.merge_preview_status) console.log(`Merge preview: ${report.summary.merge_preview_status}`);
+  if (report.summary.merge_blockers !== null) console.log(`Merge blockers: ${report.summary.merge_blockers}`);
+  if (report.files.status_json) console.log(`Status JSON: ${report.files.status_json}`);
+  if (report.files.status_md) console.log(`Status Markdown: ${report.files.status_md}`);
+  for (const row of report.next_rows) {
+    console.log(`NEXT ${row.target_id}: ${row.manual_review_url}`);
+  }
+  console.log('Policy: read-only status only; no network, no login, no submission, no registry writes, no automatic pricing decisions.');
+  if (!report.ok && opts.failOnBlockers) process.exitCode = 1;
+  return report;
 }
 
 export async function validatePricingReviewDecisionsCommand(filePath, opts = {}) {

@@ -180,6 +180,7 @@ node src/cli.js targets pricing-review-suggest <队列CSV> <evidence.csv>  # 生
 node src/cli.js targets pricing-review-decision-draft <suggestions.csv>  # 生成空白人工价格决策草稿
 node src/cli.js targets pricing-review-decision-batch <草稿CSV>  # 生成聚焦的人工价格决策小批次
 node src/cli.js targets pricing-review-manual-pack <草稿CSV> --batch <批次CSV>  # 生成带证据辅助的人工作业包
+node src/cli.js targets pricing-review-manual-status <人工CSV> --draft <草稿CSV>  # 查看人工审核完成度和可合并状态
 node src/cli.js targets merge-pricing-review-decision-batch <草稿CSV> <批次CSV>  # 将已人工审核批次合并到新草稿
 node src/cli.js targets apply-pricing-review-decisions <draft.csv>        # 预览/应用已人工审核的价格决策
 node src/cli.js targets pricing-review-post-apply-gate --registry resources/targets.canonical.yaml  # 价格写入后的只读安全复核门禁

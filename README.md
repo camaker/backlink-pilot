@@ -179,6 +179,7 @@ node src/cli.js targets pricing-review-suggest <queue.csv> <evidence.csv>  # Non
 node src/cli.js targets pricing-review-decision-draft <suggestions.csv>  # Blank human decision draft
 node src/cli.js targets pricing-review-decision-batch <draft.csv>  # Focused editable pricing decision batch
 node src/cli.js targets pricing-review-manual-pack <draft.csv> --batch <batch.csv>  # Manual review pack with evidence helpers
+node src/cli.js targets pricing-review-manual-status <manual.csv> --draft <draft.csv>  # Manual review completion and merge readiness
 node src/cli.js targets merge-pricing-review-decision-batch <draft.csv> <batch.csv>  # Merge reviewed batch into a new draft
 node src/cli.js targets apply-pricing-review-decisions <draft.csv>        # Preview/apply reviewed pricing decisions
 node src/cli.js targets pricing-review-post-apply-gate --registry resources/targets.canonical.yaml  # Required read-only safety gate after pricing writes

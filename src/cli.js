@@ -42,6 +42,7 @@ import {
   pricingReviewDecisionDraftCommand,
   pricingReviewEvidenceCommand,
   pricingReviewManualPackCommand,
+  pricingReviewManualStatusCommand,
   pricingReviewPostApplyGateCommand,
   pricingReviewQueueCommand,
   pricingReviewSuggestCommand,
@@ -418,6 +419,23 @@ targets
   .option('--json', 'Output summary as JSON')
   .action(async (draft, opts) => {
     await pricingReviewManualPackCommand(draft, opts);
+  });
+
+targets
+  .command('pricing-review-manual-status <manual>')
+  .description('Report manual pricing review completion and merge readiness without writing registry')
+  .option('--draft <path>', 'Source pricing decision draft used for read-only merge preview')
+  .option('--json-output <path>', 'Write status report JSON')
+  .option('--markdown-output <path>', 'Write status report Markdown')
+  .option('--next-limit <n>', 'Maximum next unreviewed rows to print', '5')
+  .option('--allow-overwrite', 'Allow merge preview to replace already reviewed draft rows')
+  .option('--no-require-reviewer', 'Do not require reviewer in strict validation')
+  .option('--no-require-reviewed-at', 'Do not require reviewed_at in strict validation')
+  .option('--no-require-review-notes', 'Do not require substantive review notes in strict validation')
+  .option('--fail-on-blockers', 'Exit non-zero when status is not ready for the next gate')
+  .option('--json', 'Output full status as JSON')
+  .action(async (manual, opts) => {
+    await pricingReviewManualStatusCommand(manual, opts);
   });
 
 targets

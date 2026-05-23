@@ -1,0 +1,385 @@
+{
+  "generated_at": "2026-05-23T12:42:22.366Z",
+  "ok": false,
+  "status": "blocked_review_required",
+  "manual": "backlink-url/pricing-review/manual-review/pricing-potential-free-001-manual-review.csv",
+  "draft": "backlink-url/pricing-review/pricing-review-decision-draft.csv",
+  "constraints": {
+    "read_only": true,
+    "no_network": true,
+    "no_login": true,
+    "no_submission": true,
+    "no_registry_writes": true,
+    "no_auto_decisions": true
+  },
+  "summary": {
+    "rows": 7,
+    "reviewed_rows": 0,
+    "unreviewed_rows": 7,
+    "validation_ok": false,
+    "validation_blockers": 7,
+    "validation_warnings": 0,
+    "merge_preview_ok": false,
+    "merge_preview_status": "blocked_batch_validation",
+    "merge_blockers": 7,
+    "merge_proposals": 0,
+    "by_review_decision": {
+      "unreviewed": 7
+    },
+    "by_suggested_review_decision": {
+      "mark_freemium": 5,
+      "mark_free": 2
+    },
+    "by_suggested_pricing": {
+      "freemium": 5,
+      "free": 2
+    },
+    "by_payment_signal": {
+      "no": 5,
+      "yes": 2
+    },
+    "by_free_signal": {
+      "no": 5,
+      "yes": 2
+    }
+  },
+  "next_rows": [
+    {
+      "batch_order": "1",
+      "queue_order": "9",
+      "target_id": "changelog",
+      "domain": "changelog.com",
+      "suggested_review_decision": "mark_freemium",
+      "suggestion_confidence": "medium",
+      "payment_signal": "no",
+      "free_signal": "no",
+      "freemium_signal": "yes",
+      "manual_review_url": "https://changelog.com/news/submit"
+    },
+    {
+      "batch_order": "2",
+      "queue_order": "17",
+      "target_id": "mergeek",
+      "domain": "mergeek.com",
+      "suggested_review_decision": "mark_free",
+      "suggestion_confidence": "high",
+      "payment_signal": "no",
+      "free_signal": "yes",
+      "freemium_signal": "no",
+      "manual_review_url": "https://mergeek.com/publish_project"
+    },
+    {
+      "batch_order": "3",
+      "queue_order": "29",
+      "target_id": "sonic-run",
+      "domain": "sonicrun.com",
+      "suggested_review_decision": "mark_free",
+      "suggestion_confidence": "high",
+      "payment_signal": "no",
+      "free_signal": "yes",
+      "freemium_signal": "no",
+      "manual_review_url": "https://www.sonicrun.com/freelisting.html"
+    },
+    {
+      "batch_order": "4",
+      "queue_order": "41",
+      "target_id": "top-best-alternatives",
+      "domain": "topbestalternatives.com",
+      "suggested_review_decision": "mark_freemium",
+      "suggestion_confidence": "medium",
+      "payment_signal": "no",
+      "free_signal": "no",
+      "freemium_signal": "yes",
+      "manual_review_url": "https://www.topbestalternatives.com/"
+    },
+    {
+      "batch_order": "5",
+      "queue_order": "44",
+      "target_id": "trustiner-com",
+      "domain": "trustiner.com",
+      "suggested_review_decision": "mark_freemium",
+      "suggestion_confidence": "medium",
+      "payment_signal": "yes",
+      "free_signal": "no",
+      "freemium_signal": "yes",
+      "manual_review_url": "https://trustiner.com/"
+    }
+  ],
+  "validation": {
+    "file": "backlink-url/pricing-review/manual-review/pricing-potential-free-001-manual-review.csv",
+    "ok": false,
+    "rows": 7,
+    "blockers": [
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 2,
+        "target_id": "changelog",
+        "domain": "changelog.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 3,
+        "target_id": "mergeek",
+        "domain": "mergeek.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 4,
+        "target_id": "sonic-run",
+        "domain": "sonicrun.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 5,
+        "target_id": "top-best-alternatives",
+        "domain": "topbestalternatives.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 6,
+        "target_id": "trustiner-com",
+        "domain": "trustiner.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 7,
+        "target_id": "websitehunt",
+        "domain": "websitehunt.co",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 8,
+        "target_id": "submitdirs-com",
+        "domain": "submitdirs.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      }
+    ],
+    "warnings": [],
+    "blockers_count": 7,
+    "warnings_count": 0,
+    "by_decision": {
+      "unreviewed": 7
+    },
+    "constraints": {
+      "read_only": true,
+      "no_network": true,
+      "no_login": true,
+      "no_submission": true,
+      "no_registry_writes_without_explicit_apply": true,
+      "allowed_review_decisions": [
+        "mark_free",
+        "mark_freemium",
+        "mark_paid",
+        "keep_unknown",
+        "needs_manual_check"
+      ]
+    }
+  },
+  "merge_preview": {
+    "generated_at": "2026-05-23T12:42:22.364Z",
+    "ok": false,
+    "status": "blocked_batch_validation",
+    "draft": "backlink-url/pricing-review/pricing-review-decision-draft.csv",
+    "batch": "backlink-url/pricing-review/manual-review/pricing-potential-free-001-manual-review.csv",
+    "constraints": {
+      "read_only": true,
+      "no_network": true,
+      "no_login": true,
+      "no_submission": true,
+      "no_registry_writes": true,
+      "merge_only_review_fields": true,
+      "explicit_output_required": true,
+      "overwrite_reviewed_rows": false
+    },
+    "validation": {
+      "file": "backlink-url/pricing-review/manual-review/pricing-potential-free-001-manual-review.csv",
+      "ok": false,
+      "rows": 7,
+      "blockers": [
+        {
+          "severity": "blocker",
+          "code": "review_decision_missing",
+          "line": 2,
+          "target_id": "changelog",
+          "domain": "changelog.com",
+          "review_decision": "",
+          "message": "review_decision must be filled before this row can affect registry data."
+        },
+        {
+          "severity": "blocker",
+          "code": "review_decision_missing",
+          "line": 3,
+          "target_id": "mergeek",
+          "domain": "mergeek.com",
+          "review_decision": "",
+          "message": "review_decision must be filled before this row can affect registry data."
+        },
+        {
+          "severity": "blocker",
+          "code": "review_decision_missing",
+          "line": 4,
+          "target_id": "sonic-run",
+          "domain": "sonicrun.com",
+          "review_decision": "",
+          "message": "review_decision must be filled before this row can affect registry data."
+        },
+        {
+          "severity": "blocker",
+          "code": "review_decision_missing",
+          "line": 5,
+          "target_id": "top-best-alternatives",
+          "domain": "topbestalternatives.com",
+          "review_decision": "",
+          "message": "review_decision must be filled before this row can affect registry data."
+        },
+        {
+          "severity": "blocker",
+          "code": "review_decision_missing",
+          "line": 6,
+          "target_id": "trustiner-com",
+          "domain": "trustiner.com",
+          "review_decision": "",
+          "message": "review_decision must be filled before this row can affect registry data."
+        },
+        {
+          "severity": "blocker",
+          "code": "review_decision_missing",
+          "line": 7,
+          "target_id": "websitehunt",
+          "domain": "websitehunt.co",
+          "review_decision": "",
+          "message": "review_decision must be filled before this row can affect registry data."
+        },
+        {
+          "severity": "blocker",
+          "code": "review_decision_missing",
+          "line": 8,
+          "target_id": "submitdirs-com",
+          "domain": "submitdirs.com",
+          "review_decision": "",
+          "message": "review_decision must be filled before this row can affect registry data."
+        }
+      ],
+      "warnings": [],
+      "blockers_count": 7,
+      "warnings_count": 0,
+      "by_decision": {
+        "unreviewed": 7
+      },
+      "constraints": {
+        "read_only": true,
+        "no_network": true,
+        "no_login": true,
+        "no_submission": true,
+        "no_registry_writes_without_explicit_apply": true,
+        "allowed_review_decisions": [
+          "mark_free",
+          "mark_freemium",
+          "mark_paid",
+          "keep_unknown",
+          "needs_manual_check"
+        ]
+      }
+    },
+    "draft_rows": 75,
+    "batch_rows": 7,
+    "proposals_count": 0,
+    "unchanged_rows": 0,
+    "blockers_count": 7,
+    "blockers": [
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 2,
+        "target_id": "changelog",
+        "domain": "changelog.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 3,
+        "target_id": "mergeek",
+        "domain": "mergeek.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 4,
+        "target_id": "sonic-run",
+        "domain": "sonicrun.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 5,
+        "target_id": "top-best-alternatives",
+        "domain": "topbestalternatives.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 6,
+        "target_id": "trustiner-com",
+        "domain": "trustiner.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 7,
+        "target_id": "websitehunt",
+        "domain": "websitehunt.co",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 8,
+        "target_id": "submitdirs-com",
+        "domain": "submitdirs.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      }
+    ],
+    "proposals": [],
+    "unchanged": [],
+    "updated_summary": {
+      "rows": 75,
+      "reviewed_rows": 0,
+      "unreviewed_rows": 75,
+      "by_decision": {
+        "unreviewed": 75
+      }
+    }
+  }
+}

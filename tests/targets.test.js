@@ -56,6 +56,7 @@ import {
   buildPricingReviewEvidence,
   buildPricingReviewDecisionDraft,
   buildPricingReviewManualPack,
+  buildPricingReviewManualStatus,
   buildPricingReviewQueue,
   buildPricingReviewPostApplyGate,
   buildPricingReviewSuggestions,
@@ -72,6 +73,7 @@ import {
   writePricingReviewDecisionDraft,
   writePricingReviewEvidence,
   writePricingReviewManualPack,
+  writePricingReviewManualStatusReport,
   writePricingReviewPostApplyGateReport,
   writePricingReviewQueue,
   writePricingReviewSuggestions,
@@ -744,6 +746,67 @@ targets:
       const blockedPack = buildPricingReviewManualPack(draftCsv, { batchPath: changedIdentityCsv });
       assert.equal(blockedPack.ok, false);
       assert.equal(blockedPack.blockers.some(item => item.code === 'decision_batch_identity_changed'), true);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('reports manual pricing review status and merge readiness without writes', () => {
+    const dir = tempDir();
+    try {
+      const suggestionsPath = join(dir, 'pricing-review-suggestions.csv');
+      writeFileSync(suggestionsPath, [
+        'queue_order,target_id,name,domain,mode,submit_url,current_pricing,suggested_pricing,suggested_review_decision,suggestion_confidence,reviewer_action,suggested_review_notes,suggestion_basis,evidence_matched,http_status,fetch_ok,final_url,final_domain,submit_button_signal,submit_path_signal,directory_signal,auth_signal,oauth_signal,captcha_signal,cloudflare_signal,payment_signal,free_signal,freemium_signal,pricing_page_signal,checked_at,automation_policy',
+        '1,free-target,Free Target,free.example,auto_safe,https://free.example/submit,unknown,free,mark_free,high,confirm,evidence free,basis free,yes,200,yes,https://free.example/submit,free.example,yes,yes,yes,no,no,no,no,no,yes,no,no,2026-05-23T00:00:00.000Z,non_binding_suggestion_no_registry_write_no_submission',
+        '2,paid-target,Paid Target,paid.example,assisted,https://paid.example/submit,unknown,paid,mark_paid,high,confirm,evidence paid,basis paid,yes,200,yes,https://paid.example/submit,paid.example,yes,yes,yes,no,no,no,no,yes,no,no,yes,2026-05-23T00:00:00.000Z,non_binding_suggestion_no_registry_write_no_submission',
+      ].join('\n') + '\n');
+      const draft = buildPricingReviewDecisionDraft(suggestionsPath);
+      const draftCsv = join(dir, 'pricing-review-decision-draft.csv');
+      writeFileSync(draftCsv, pricingReviewDecisionDraftCsv(draft));
+
+      const batch = buildPricingReviewDecisionBatch(draftCsv, {
+        batchId: 'pricing-free-001',
+        suggestedDecision: 'mark_free',
+        limit: 10,
+      });
+      const batchCsv = join(dir, 'pricing-free-001.csv');
+      writeFileSync(batchCsv, pricingReviewDecisionBatchCsv(batch));
+
+      const blocked = buildPricingReviewManualStatus(batchCsv, { draftPath: draftCsv });
+      assert.equal(blocked.ok, false);
+      assert.equal(blocked.status, 'blocked_review_required');
+      assert.equal(blocked.summary.unreviewed_rows, 1);
+      assert.equal(blocked.summary.validation_blockers, 1);
+      assert.equal(blocked.summary.merge_preview_status, 'blocked_batch_validation');
+      assert.equal(blocked.next_rows[0].target_id, 'free-target');
+
+      const reviewedBatch = {
+        ...batch,
+        rows: batch.rows.map(row => ({
+          ...row,
+          review_decision: 'mark_free',
+          reviewed_pricing: 'free',
+          reviewer: 'tester',
+          reviewed_at: '2026-05-23T00:00:00.000Z',
+          review_notes: 'Manual browser review confirmed a free submission path.',
+        })),
+      };
+      const reviewedBatchCsv = join(dir, 'pricing-free-001.reviewed.csv');
+      writeFileSync(reviewedBatchCsv, pricingReviewDecisionBatchCsv(reviewedBatch));
+      const ready = buildPricingReviewManualStatus(reviewedBatchCsv, { draftPath: draftCsv });
+      assert.equal(ready.ok, true);
+      assert.equal(ready.status, 'ready_for_next_gate');
+      assert.equal(ready.summary.reviewed_rows, 1);
+      assert.equal(ready.summary.merge_preview_ok, true);
+      assert.equal(ready.summary.merge_proposals, 1);
+      assert.deepEqual(ready.next_rows, []);
+
+      const jsonOutput = join(dir, 'manual-status.json');
+      const markdownOutput = join(dir, 'manual-status.md');
+      const written = writePricingReviewManualStatusReport(blocked, { jsonOutput, markdownOutput });
+      assert.equal(existsSync(written.files.status_json), true);
+      assert.equal(existsSync(written.files.status_md), true);
+      assert.match(readFileSync(markdownOutput, 'utf-8'), /Pricing Review Manual Status/);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

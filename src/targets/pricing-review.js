@@ -1598,6 +1598,151 @@ export function writePricingReviewManualPack(pack = {}, opts = {}) {
   };
 }
 
+function pricingReviewManualNextRows(rows = [], limit = 5) {
+  return rows
+    .filter(row => !String(row.review_decision || '').trim())
+    .slice(0, Math.max(0, parseInteger(limit, 5)))
+    .map(row => ({
+      batch_order: row.batch_order || '',
+      queue_order: row.queue_order || '',
+      target_id: row.target_id || '',
+      domain: row.domain || '',
+      suggested_review_decision: row.suggested_review_decision || '',
+      suggestion_confidence: row.suggestion_confidence || '',
+      payment_signal: row.payment_signal || '',
+      free_signal: row.free_signal || '',
+      freemium_signal: row.freemium_signal || '',
+      manual_review_url: pricingManualReviewUrl(row),
+    }));
+}
+
+function pricingReviewManualStatusValue(validation = {}, mergePreview = null) {
+  if (validation.ok && (!mergePreview || mergePreview.ok)) return 'ready_for_next_gate';
+  const validationCodes = new Set((validation.blockers || []).map(item => item.code));
+  if (validationCodes.has('review_decision_missing')) return 'blocked_review_required';
+  if (mergePreview && !mergePreview.ok && mergePreview.status !== 'blocked_batch_validation') return 'blocked_merge_identity';
+  return 'blocked_validation';
+}
+
+export function buildPricingReviewManualStatus(manualPath, opts = {}) {
+  const rows = parseCsv(readFileSync(manualPath, 'utf-8'));
+  const validation = validatePricingReviewDecisions(manualPath, {
+    requireReviewer: opts.requireReviewer,
+    requireReviewedAt: opts.requireReviewedAt,
+    requireReviewNotes: opts.requireReviewNotes,
+  });
+  const mergePreview = opts.draftPath || opts.draft
+    ? buildPricingReviewDecisionBatchMerge(opts.draftPath || opts.draft, manualPath, {
+      allowOverwrite: Boolean(opts.allowOverwrite),
+      requireReviewer: opts.requireReviewer,
+      requireReviewedAt: opts.requireReviewedAt,
+      requireReviewNotes: opts.requireReviewNotes,
+    })
+    : null;
+  const summary = {
+    rows: rows.length,
+    reviewed_rows: rows.filter(row => row.review_decision).length,
+    unreviewed_rows: rows.filter(row => !row.review_decision).length,
+    validation_ok: validation.ok,
+    validation_blockers: validation.blockers_count,
+    validation_warnings: validation.warnings_count,
+    merge_preview_ok: mergePreview ? mergePreview.ok : null,
+    merge_preview_status: mergePreview ? mergePreview.status : '',
+    merge_blockers: mergePreview ? mergePreview.blockers_count : null,
+    merge_proposals: mergePreview ? mergePreview.proposals_count : null,
+    by_review_decision: countBy(rows, row => row.review_decision || 'unreviewed'),
+    by_suggested_review_decision: countBy(rows, row => row.suggested_review_decision || 'unknown'),
+    by_suggested_pricing: countBy(rows, row => row.suggested_pricing || 'unknown'),
+    by_payment_signal: countBy(rows, row => row.payment_signal || 'unknown'),
+    by_free_signal: countBy(rows, row => row.free_signal || 'unknown'),
+  };
+  return {
+    generated_at: nowIso(),
+    ok: validation.ok && (!mergePreview || mergePreview.ok),
+    status: pricingReviewManualStatusValue(validation, mergePreview),
+    manual: normalizePath(manualPath),
+    draft: opts.draftPath || opts.draft ? normalizePath(opts.draftPath || opts.draft) : '',
+    constraints: {
+      read_only: true,
+      no_network: true,
+      no_login: true,
+      no_submission: true,
+      no_registry_writes: true,
+      no_auto_decisions: true,
+    },
+    summary,
+    next_rows: pricingReviewManualNextRows(rows, opts.nextLimit || 5),
+    validation,
+    merge_preview: mergePreview ? { ...mergePreview, updated_rows: undefined } : null,
+  };
+}
+
+function pricingReviewManualStatusMarkdown(report = {}) {
+  const nextRows = report.next_rows || [];
+  const nextTable = nextRows.length
+    ? nextRows.map(row => [
+      row.batch_order || row.queue_order,
+      row.target_id,
+      row.domain,
+      row.suggested_review_decision,
+      row.suggestion_confidence,
+      row.payment_signal,
+      row.free_signal,
+      row.manual_review_url,
+    ].map(markdownEscape).join(' | ')).map(line => `| ${line} |`).join('\n')
+    : '| - | - | - | - | - | - | - | - |';
+  return [
+    '# Pricing Review Manual Status',
+    '',
+    `Generated: ${report.generated_at}`,
+    `Status: ${report.status}`,
+    `Manual CSV: ${report.manual}`,
+    report.draft ? `Draft: ${report.draft}` : '',
+    '',
+    'Policy: read-only status report. No network, no login, no submission, no registry writes, and no automatic pricing decisions.',
+    '',
+    '## Summary',
+    '',
+    `- Rows: ${report.summary.rows}`,
+    `- Reviewed rows: ${report.summary.reviewed_rows}`,
+    `- Unreviewed rows: ${report.summary.unreviewed_rows}`,
+    `- Validation ok: ${report.summary.validation_ok ? 'yes' : 'no'}`,
+    `- Validation blockers: ${report.summary.validation_blockers}`,
+    `- Validation warnings: ${report.summary.validation_warnings}`,
+    report.summary.merge_preview_ok === null ? '- Merge preview: not run' : `- Merge preview: ${report.summary.merge_preview_status}`,
+    report.summary.merge_blockers === null ? '' : `- Merge blockers: ${report.summary.merge_blockers}`,
+    report.summary.merge_proposals === null ? '' : `- Merge proposals: ${report.summary.merge_proposals}`,
+    '',
+    '### Review Decisions',
+    '',
+    '| Decision | Count |',
+    '|---|---:|',
+    countsTable(report.summary.by_review_decision),
+    '',
+    '## Next Rows',
+    '',
+    '| Order | Target ID | Domain | Suggested Decision | Confidence | Payment | Free | Review URL |',
+    '|---|---|---|---|---|---|---|---|',
+    nextTable,
+    '',
+  ].filter(line => line !== '').join('\n');
+}
+
+export function writePricingReviewManualStatusReport(report = {}, opts = {}) {
+  const files = {};
+  if (opts.jsonOutput) {
+    mkdirSync(dirname(opts.jsonOutput), { recursive: true });
+    writeFileSync(opts.jsonOutput, JSON.stringify(report, null, 2) + '\n', 'utf-8');
+    files.status_json = normalizePath(opts.jsonOutput);
+  }
+  if (opts.markdownOutput) {
+    mkdirSync(dirname(opts.markdownOutput), { recursive: true });
+    writeFileSync(opts.markdownOutput, pricingReviewManualStatusMarkdown(report), 'utf-8');
+    files.status_md = normalizePath(opts.markdownOutput);
+  }
+  return { files };
+}
+
 export function buildPricingReviewDecisionBatchMerge(draftPath, batchPath, opts = {}) {
   const draftRows = decisionDraftRowsWithHeaders(parseCsv(readFileSync(draftPath, 'utf-8')));
   const batchRows = parseCsv(readFileSync(batchPath, 'utf-8'));
