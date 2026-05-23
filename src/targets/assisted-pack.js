@@ -2,8 +2,8 @@ import { mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { parse } from 'yaml';
 import { DEFAULT_REGISTRY_FILE, loadRegistry } from './registry.js';
-import { cleanTrackingUrl } from './normalize.js';
-import { urlDomainBlocker, urlHost } from './auth-login-safety.js';
+import { cleanTrackingUrl, normalizeUrl } from './normalize.js';
+import { sameSite, urlDomainBlocker, urlHost } from './auth-login-safety.js';
 import { parseCsv } from './importers/csv.js';
 
 const ASSISTED_PACK_HEADERS = [
@@ -898,6 +898,313 @@ export function validateCrossDomainFinalUrlDecisions(filePath, opts = {}) {
   };
 }
 
+function cloneJson(value) {
+  return JSON.parse(JSON.stringify(value ?? null));
+}
+
+function compactTargetSummary(target = {}) {
+  return {
+    id: target.id || '',
+    name: target.name || '',
+    domain: target.domain || '',
+    root_url: target.root_url || '',
+    submit_url: target.submit_url || '',
+    normalized_key: target.normalized_key || '',
+    technical: {
+      final_url: target.technical?.final_url || '',
+      allowed_final_hosts: Array.isArray(target.technical?.allowed_final_hosts)
+        ? target.technical.allowed_final_hosts
+        : [],
+    },
+    submission: {
+      mode: target.submission?.mode || '',
+      status: target.submission?.status || '',
+      reason: target.submission?.reason || '',
+      last_submitted_at: target.submission?.last_submitted_at || '',
+    },
+    quality: {
+      risk: target.quality?.risk || '',
+    },
+    source_meta: {
+      cross_domain_final_url_decision: target.source_meta?.cross_domain_final_url_decision || null,
+    },
+  };
+}
+
+function setNestedValue(target, path, value) {
+  const parts = path.split('.');
+  let cursor = target;
+  for (const part of parts.slice(0, -1)) {
+    if (!cursor[part] || typeof cursor[part] !== 'object') cursor[part] = {};
+    cursor = cursor[part];
+  }
+  cursor[parts.at(-1)] = value;
+}
+
+function getNestedValue(target, path) {
+  return path.split('.').reduce((cursor, part) => cursor?.[part], target);
+}
+
+function proposeChange(changes, target, path, value) {
+  const from = getNestedValue(target, path);
+  if (JSON.stringify(from ?? '') === JSON.stringify(value ?? '')) return;
+  changes[path] = { from: from ?? '', to: value ?? '' };
+  setNestedValue(target, path, value);
+}
+
+function decisionMetadata(row = {}) {
+  return {
+    review_decision: row.review_decision || '',
+    suggested_decision: row.suggested_decision || '',
+    classification: row.classification || '',
+    confidence: row.confidence || '',
+    original_submit_url: row.submit_url || '',
+    final_url: row.final_url || '',
+    final_host: row.final_host || '',
+    allowed_host: row.allowed_host || '',
+    replacement_submit_url: row.replacement_submit_url || '',
+    evidence_url: row.evidence_url || '',
+    reviewer: row.reviewer || '',
+    reviewed_at: row.reviewed_at || '',
+    review_notes: row.review_notes || '',
+    automation_policy: 'no_execution_from_decision_file',
+  };
+}
+
+function normalizeComparableUrl(value = '') {
+  return cleanTrackingUrl(value).replace(/\/+$/, '');
+}
+
+function addPatchBlocker(list, code, row, line, message, extra = {}) {
+  list.push({
+    severity: 'blocker',
+    code,
+    line,
+    target_id: row.target_id || '',
+    domain: row.domain || '',
+    review_decision: row.review_decision || '',
+    message,
+    ...extra,
+  });
+}
+
+function assertDecisionTargetIdentity(row = {}, target = null, line, blockers) {
+  if (!target) {
+    addPatchBlocker(blockers, 'target_not_found', row, line, 'Decision row target_id was not found in the registry.');
+    return false;
+  }
+
+  const rowDomain = String(row.domain || '').toLowerCase();
+  const targetDomain = String(target.domain || '').toLowerCase();
+  if (rowDomain && targetDomain && rowDomain !== targetDomain) {
+    addPatchBlocker(blockers, 'target_domain_mismatch', row, line, 'Decision row domain no longer matches the registry target.', {
+      registry_domain: target.domain || '',
+    });
+  }
+
+  const rowSubmitUrl = normalizeComparableUrl(row.submit_url || '');
+  const targetSubmitUrl = normalizeComparableUrl(target.submit_url || '');
+  if (rowSubmitUrl && targetSubmitUrl && rowSubmitUrl !== targetSubmitUrl) {
+    addPatchBlocker(blockers, 'target_submit_url_mismatch', row, line, 'Decision row submit_url no longer matches the registry target.', {
+      registry_submit_url: target.submit_url || '',
+    });
+  }
+
+  const rowFinalUrl = normalizeComparableUrl(row.final_url || '');
+  const targetFinalUrl = normalizeComparableUrl(target.technical?.final_url || '');
+  if (rowFinalUrl && targetFinalUrl && rowFinalUrl !== targetFinalUrl) {
+    addPatchBlocker(blockers, 'target_final_url_mismatch', row, line, 'Decision row final_url no longer matches persisted scout evidence.', {
+      registry_final_url: target.technical?.final_url || '',
+    });
+  }
+
+  if (target.submission?.last_submitted_at) {
+    addPatchBlocker(blockers, 'target_already_submitted', row, line, 'Already-submitted targets require backlink verification, not cross-domain decision patching.', {
+      last_submitted_at: target.submission.last_submitted_at,
+    });
+  }
+
+  return blockers.length === 0;
+}
+
+function applyReviewedBlockedState(changes, nextTarget, row, reason, status = 'cross_domain_reviewed_blocked') {
+  proposeChange(changes, nextTarget, 'submission.mode', 'needs_review');
+  proposeChange(changes, nextTarget, 'submission.status', status);
+  proposeChange(changes, nextTarget, 'submission.reason', reason);
+  proposeChange(changes, nextTarget, 'source_meta.cross_domain_final_url_decision', decisionMetadata(row));
+}
+
+function proposalFromDecisionRow(row = {}, target = {}, line, blockers) {
+  const decision = String(row.review_decision || '').trim();
+  const nextTarget = cloneJson(target);
+  const changes = {};
+  let action = 'keep_blocked';
+
+  if (decision === 'skip') {
+    action = 'mark_skip';
+    proposeChange(changes, nextTarget, 'submission.mode', 'skip');
+    proposeChange(changes, nextTarget, 'submission.status', 'skipped');
+    proposeChange(changes, nextTarget, 'submission.reason', 'cross_domain_final_url_review_skip');
+    proposeChange(changes, nextTarget, 'source_meta.cross_domain_final_url_decision', decisionMetadata(row));
+  } else if (decision === 'rescout_target_domain') {
+    action = 'keep_blocked_for_target_domain_rescout';
+    applyReviewedBlockedState(changes, nextTarget, row, 'cross_domain_final_url_rescout_target_domain_required', 'needs_rescout');
+  } else if (decision === 'keep_blocked') {
+    action = 'keep_blocked_after_review';
+    applyReviewedBlockedState(changes, nextTarget, row, 'cross_domain_final_url_review_keep_blocked');
+  } else if (decision === 'allow_external_host_after_review') {
+    action = 'record_allowed_final_host_but_keep_blocked';
+    const allowedHost = hostFromHostOrUrl(row.allowed_host || '');
+    const allowedHosts = new Set([
+      ...(Array.isArray(nextTarget.technical?.allowed_final_hosts) ? nextTarget.technical.allowed_final_hosts : []),
+      allowedHost,
+    ].filter(Boolean));
+    applyReviewedBlockedState(changes, nextTarget, row, 'cross_domain_allowed_final_host_requires_rescout', 'external_host_reviewed');
+    proposeChange(changes, nextTarget, 'technical.allowed_final_hosts', [...allowedHosts].sort());
+  } else if (decision === 'replace_submit_url') {
+    action = 'replace_submit_url_but_keep_blocked';
+    const replacement = normalizeUrl(row.replacement_submit_url || '');
+    const targetDomain = String(target.domain || row.domain || '').toLowerCase();
+    if (!replacement) {
+      addPatchBlocker(blockers, 'replacement_submit_url_invalid', row, line, 'replacement_submit_url could not be normalized.');
+      return null;
+    }
+    if (targetDomain && !sameSite(replacement.domain, targetDomain)) {
+      addPatchBlocker(blockers, 'replacement_submit_url_domain_mismatch', row, line, 'replacement_submit_url must stay on the reviewed target domain for this dry-run patch.', {
+        replacement_domain: replacement.domain,
+      });
+      return null;
+    }
+    applyReviewedBlockedState(changes, nextTarget, row, 'cross_domain_submit_url_replaced_requires_rescout', 'submit_url_replaced_needs_rescout');
+    proposeChange(changes, nextTarget, 'submit_url', replacement.url);
+    proposeChange(changes, nextTarget, 'domain', replacement.domain);
+    proposeChange(changes, nextTarget, 'root_url', replacement.rootUrl);
+    proposeChange(changes, nextTarget, 'normalized_key', replacement.dedupeKey);
+  }
+
+  if (['auto_safe', 'auto_candidate', 'assisted'].includes(nextTarget.submission?.mode || '')) {
+    addPatchBlocker(blockers, 'patch_would_leave_target_runnable', row, line, 'Decision patch must not leave the target in a runnable mode.');
+    return null;
+  }
+
+  return {
+    line,
+    target_id: target.id || row.target_id || '',
+    name: target.name || row.name || '',
+    decision,
+    action,
+    dry_run_only: true,
+    changes,
+    before: compactTargetSummary(target),
+    after: compactTargetSummary(nextTarget),
+    required_after_any_future_write: [
+      'run target registry audit',
+      'manual rescout before runnable promotion',
+      'do not execute from this decision file',
+    ],
+  };
+}
+
+export function buildCrossDomainFinalUrlDecisionPatch(registryPath, decisionFilePath, opts = {}) {
+  const validation = validateCrossDomainFinalUrlDecisions(decisionFilePath, {
+    requireReviewer: opts.requireReviewer !== false,
+    requireReviewNotes: opts.requireReviewNotes !== false,
+  });
+  const rows = parseCsv(readFileSync(decisionFilePath, 'utf-8'));
+  const registry = loadRegistry(registryPath || DEFAULT_REGISTRY_FILE);
+  const targetsById = new Map((registry.targets || []).map(target => [target.id, target]));
+  const blockers = [];
+  const proposals = [];
+  const skipped = [];
+
+  if (!validation.ok) {
+    return {
+      generated_at: nowIso(),
+      ok: false,
+      status: 'blocked_decision_validation',
+      registry: normalizePath(registryPath || DEFAULT_REGISTRY_FILE),
+      decision_file: normalizePath(decisionFilePath),
+      dry_run: true,
+      wrote_registry: false,
+      patch_policy: 'dry_run_only_no_registry_writes_no_mode_promotion_no_submission',
+      constraints: {
+        no_registry_writes: true,
+        no_network: true,
+        no_login: true,
+        no_submission: true,
+        no_auto_safe_promotion: true,
+      },
+      validation,
+      rows: rows.length,
+      proposals_count: 0,
+      skipped_rows: 0,
+      blockers_count: validation.blockers_count,
+      blockers: validation.blockers,
+      proposals: [],
+      skipped: [],
+    };
+  }
+
+  rows.forEach((row, index) => {
+    const line = index + 2;
+    const target = targetsById.get(row.target_id);
+    const rowBlockers = [];
+    assertDecisionTargetIdentity(row, target, line, rowBlockers);
+    if (rowBlockers.length) {
+      blockers.push(...rowBlockers);
+      return;
+    }
+
+    const proposal = proposalFromDecisionRow(row, target, line, rowBlockers);
+    if (rowBlockers.length) {
+      blockers.push(...rowBlockers);
+      return;
+    }
+    if (!proposal || !Object.keys(proposal.changes || {}).length) {
+      skipped.push({
+        line,
+        target_id: row.target_id || '',
+        reason: 'no_registry_changes_proposed',
+      });
+      return;
+    }
+    proposals.push(proposal);
+  });
+
+  const ok = blockers.length === 0;
+  return {
+    generated_at: nowIso(),
+    ok,
+    status: ok ? 'dry_run_patch_ready' : 'blocked_registry_patch_preview',
+    registry: normalizePath(registryPath || DEFAULT_REGISTRY_FILE),
+    decision_file: normalizePath(decisionFilePath),
+    dry_run: true,
+    wrote_registry: false,
+    patch_policy: 'dry_run_only_no_registry_writes_no_mode_promotion_no_submission',
+    constraints: {
+      no_registry_writes: true,
+      no_network: true,
+      no_login: true,
+      no_submission: true,
+      no_auto_safe_promotion: true,
+    },
+    validation,
+    rows: rows.length,
+    proposals_count: ok ? proposals.length : 0,
+    skipped_rows: skipped.length,
+    blockers_count: blockers.length,
+    blockers,
+    proposals: ok ? proposals : [],
+    skipped,
+  };
+}
+
+export function writeCrossDomainFinalUrlDecisionPatchReport(report, filePath) {
+  mkdirSync(dirname(filePath), { recursive: true });
+  writeFileSync(filePath, JSON.stringify(report, null, 2) + '\n', 'utf-8');
+  return normalizePath(filePath);
+}
+
 function markdownEscape(value) {
   return String(value || '').replace(/\|/g, '\\|');
 }
@@ -994,6 +1301,14 @@ function crossDomainDecisionsMarkdown(pack, files = {}) {
     '',
     '```powershell',
     `node src/cli.js targets validate-cross-domain-final-url-decisions ${files.cross_domain_final_url_decisions_csv || 'cross-domain-final-url-decisions.csv'} --fail-on-blockers`,
+    '```',
+    '',
+    '## Dry-Run Patch Preview',
+    '',
+    'Only after validation passes, generate a registry patch preview. This command still does not write the registry and does not authorize submission:',
+    '',
+    '```powershell',
+    `node src/cli.js targets apply-cross-domain-final-url-decisions ${files.cross_domain_final_url_decisions_csv || 'cross-domain-final-url-decisions.csv'} --registry resources/targets.canonical.yaml --output backlink-url/assisted-submission-pack/cross-domain-final-url-patch-preview.json`,
     '```',
     '',
     '## Files',

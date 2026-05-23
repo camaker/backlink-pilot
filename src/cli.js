@@ -11,6 +11,7 @@ import { showStatus } from './tracker.js';
 import { forceUpdate } from './bb-update.js';
 import { runCampaign } from './campaign.js';
 import {
+  applyCrossDomainFinalUrlDecisionsCommand,
   applyCoverageReviewQueueCommand,
   assistedSubmissionPackCommand,
   authLoginNextCommand,
@@ -331,6 +332,20 @@ targets
   .option('--json', 'Output as JSON')
   .action(async (file, opts) => {
     await validateCrossDomainFinalUrlDecisionsCommand(file, opts);
+  });
+
+targets
+  .command('apply-cross-domain-final-url-decisions <file>')
+  .description('Dry-run a registry patch preview from reviewed cross-domain final URL decisions')
+  .option('--registry <path>', 'Canonical registry path')
+  .option('--no-require-reviewer', 'Do not require reviewer on reviewed rows')
+  .option('--no-require-review-notes', 'Do not require substantive review notes on reviewed rows')
+  .option('--output <path>', 'Write dry-run patch report JSON')
+  .option('--preview <n>', 'Maximum proposal rows to print', '10')
+  .option('--limit-findings <n>', 'Maximum blockers to print', '20')
+  .option('--json', 'Output as JSON')
+  .action(async (file, opts) => {
+    await applyCrossDomainFinalUrlDecisionsCommand(file, opts);
   });
 
 targets

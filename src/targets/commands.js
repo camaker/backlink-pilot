@@ -10,7 +10,9 @@ import {
 import { auditRegistry, formatAuditReport } from './audit.js';
 import {
   buildAssistedSubmissionPack,
+  buildCrossDomainFinalUrlDecisionPatch,
   validateCrossDomainFinalUrlDecisions,
+  writeCrossDomainFinalUrlDecisionPatchReport,
   writeAssistedSubmissionPack,
 } from './assisted-pack.js';
 import {
@@ -225,6 +227,51 @@ export async function validateCrossDomainFinalUrlDecisionsCommand(filePath, opts
     console.log(`WARNING\tline:${item.line}\t${item.code}\t${item.target_id}\t${item.message}`);
   }
   if (!result.ok && opts.failOnBlockers) process.exitCode = 1;
+
+  return result;
+}
+
+export async function applyCrossDomainFinalUrlDecisionsCommand(filePath, opts = {}) {
+  const result = buildCrossDomainFinalUrlDecisionPatch(
+    opts.registry || DEFAULT_REGISTRY_FILE,
+    filePath,
+    {
+      requireReviewer: opts.requireReviewer !== false,
+      requireReviewNotes: opts.requireReviewNotes !== false,
+    }
+  );
+
+  if (opts.output) {
+    result.output = opts.output;
+    const written = writeCrossDomainFinalUrlDecisionPatchReport(result, opts.output);
+    result.output = written;
+  }
+
+  if (opts.json) {
+    console.log(JSON.stringify(result, null, 2));
+    if (!result.ok) process.exitCode = 1;
+    return result;
+  }
+
+  console.log(`Decision file: ${result.decision_file}`);
+  console.log(`Registry: ${result.registry}`);
+  console.log(`Dry run: ${result.dry_run}`);
+  console.log(`Wrote registry: ${result.wrote_registry}`);
+  console.log(`OK: ${result.ok}`);
+  console.log(`Status: ${result.status}`);
+  console.log(`Rows: ${result.rows}`);
+  console.log(`Proposals: ${result.proposals_count}`);
+  console.log(`Skipped: ${result.skipped_rows}`);
+  console.log(`Blockers: ${result.blockers_count}`);
+  if (result.output) console.log(`Patch report: ${result.output}`);
+
+  for (const item of result.blockers.slice(0, Number.parseInt(opts.limitFindings || 20, 10))) {
+    console.log(`BLOCKER\tline:${item.line}\t${item.code}\t${item.target_id}\t${item.message}`);
+  }
+  for (const item of result.proposals.slice(0, Number.parseInt(opts.preview || 10, 10))) {
+    console.log(`PROPOSAL\tline:${item.line}\t${item.target_id}\t${item.action}\tchanges:${Object.keys(item.changes || {}).length}`);
+  }
+  if (!result.ok) process.exitCode = 1;
 
   return result;
 }

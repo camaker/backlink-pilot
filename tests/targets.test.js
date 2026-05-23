@@ -8,6 +8,7 @@ import { normalizeUrl } from '../src/targets/normalize.js';
 import { auditTargets, formatAuditReport } from '../src/targets/audit.js';
 import {
   assistedSubmissionPackCsv,
+  buildCrossDomainFinalUrlDecisionPatch,
   buildAssistedSubmissionPack,
   crossDomainFinalUrlDecisionsCsv,
   crossDomainFinalUrlSuggestionsCsv,
@@ -2269,6 +2270,112 @@ targets:
       const validReport = validateCrossDomainFinalUrlDecisions(valid);
       assert.equal(validReport.ok, true);
       assert.equal(validReport.blockers_count, 0);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('builds a dry-run registry patch preview from reviewed cross-domain final URL decisions', () => {
+    const dir = tempDir();
+    try {
+      const registry = join(dir, 'registry.yaml');
+      writeFileSync(registry, [
+        'version: 1',
+        'targets:',
+        '  - id: skip-target',
+        '    name: Skip Target',
+        '    domain: skip.example',
+        '    root_url: https://skip.example/',
+        '    submit_url: https://skip.example/submit',
+        '    normalized_key: skip.example/submit',
+        '    pricing: free',
+        '    technical:',
+        '      final_url: https://external.example/form',
+        '    submission:',
+        '      mode: assisted',
+        '      status: new',
+        '      reason: ""',
+        '      last_submitted_at: null',
+        '    quality:',
+        '      risk: low',
+        '  - id: alias-target',
+        '    name: Alias Target',
+        '    domain: jinshuju.net',
+        '    root_url: https://jinshuju.net/',
+        '    submit_url: https://jinshuju.net/f/abc',
+        '    normalized_key: jinshuju.net/f/abc',
+        '    pricing: free',
+        '    technical:',
+        '      final_url: https://jsj.top/f/abc',
+        '    submission:',
+        '      mode: assisted',
+        '      status: new',
+        '      reason: ""',
+        '      last_submitted_at: null',
+        '    quality:',
+        '      risk: low',
+      ].join('\n') + '\n');
+
+      const decisions = join(dir, 'decisions.csv');
+      writeFileSync(decisions, [
+        'target_id,name,domain,submit_url,final_url,final_host,classification,confidence,suggested_decision,review_decision,allowed_host,replacement_submit_url,evidence_url,reviewer,reviewed_at,review_notes,automation_policy',
+        'skip-target,Skip Target,skip.example,https://skip.example/submit,https://external.example/form,external.example,unrelated_external_submit_endpoint,high,skip,skip,,,https://evidence.example/skip,qa,2026-05-23T00:00:00.000Z,Verified manually that this external endpoint is unrelated and must be skipped,no_execution_from_decision_file',
+        'alias-target,Alias Target,jinshuju.net,https://jinshuju.net/f/abc,https://jsj.top/f/abc,jsj.top,possible_form_provider_alias,medium,allow_external_host_after_review,allow_external_host_after_review,jsj.top,,https://evidence.example/alias,qa,2026-05-23T00:00:00.000Z,Verified manually that the provider alias belongs to this submit form,no_execution_from_decision_file',
+      ].join('\n') + '\n');
+
+      const report = buildCrossDomainFinalUrlDecisionPatch(registry, decisions);
+      assert.equal(report.ok, true);
+      assert.equal(report.dry_run, true);
+      assert.equal(report.wrote_registry, false);
+      assert.equal(report.proposals_count, 2);
+      assert.equal(report.proposals.every(item => !['auto_safe', 'auto_candidate', 'assisted'].includes(item.after.submission.mode)), true);
+      assert.equal(report.proposals.find(item => item.target_id === 'skip-target').after.submission.mode, 'skip');
+      assert.equal(report.proposals.find(item => item.target_id === 'alias-target').after.submission.mode, 'needs_review');
+      assert.deepEqual(report.proposals.find(item => item.target_id === 'alias-target').after.technical.allowed_final_hosts, ['jsj.top']);
+      assert.equal(existsSync(registry), true);
+      assert.match(readFileSync(registry, 'utf-8'), /mode: assisted/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('blocks cross-domain decision patch previews when registry identity or replacement host is unsafe', () => {
+    const dir = tempDir();
+    try {
+      const registry = join(dir, 'registry.yaml');
+      writeFileSync(registry, [
+        'version: 1',
+        'targets:',
+        '  - id: replace-target',
+        '    name: Replace Target',
+        '    domain: replace.example',
+        '    root_url: https://replace.example/',
+        '    submit_url: https://replace.example/old-submit',
+        '    normalized_key: replace.example/old-submit',
+        '    pricing: free',
+        '    technical:',
+        '      final_url: https://external.example/old-form',
+        '    submission:',
+        '      mode: assisted',
+        '      status: new',
+        '      reason: ""',
+        '      last_submitted_at: null',
+        '    quality:',
+        '      risk: low',
+      ].join('\n') + '\n');
+
+      const decisions = join(dir, 'decisions.csv');
+      writeFileSync(decisions, [
+        'target_id,name,domain,submit_url,final_url,final_host,classification,confidence,suggested_decision,review_decision,allowed_host,replacement_submit_url,evidence_url,reviewer,reviewed_at,review_notes,automation_policy',
+        'replace-target,Replace Target,replace.example,https://replace.example/old-submit,https://external.example/old-form,external.example,unknown_cross_domain,medium,keep_blocked,replace_submit_url,,https://other.example/new-submit,https://evidence.example/replace,qa,2026-05-23T00:00:00.000Z,Verified manually but replacement host must still be blocked by dry-run preview,no_execution_from_decision_file',
+        'missing-target,Missing Target,missing.example,https://missing.example/submit,https://external.example/form,external.example,unknown_cross_domain,medium,keep_blocked,keep_blocked,,,https://evidence.example/missing,qa,2026-05-23T00:00:00.000Z,Verified manually but registry identity is missing and must be blocked,no_execution_from_decision_file',
+      ].join('\n') + '\n');
+
+      const report = buildCrossDomainFinalUrlDecisionPatch(registry, decisions);
+      assert.equal(report.ok, false);
+      assert.equal(report.proposals_count, 0);
+      assert.ok(report.blockers.some(item => item.code === 'replacement_submit_url_domain_mismatch'));
+      assert.ok(report.blockers.some(item => item.code === 'target_not_found'));
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

@@ -1,6 +1,6 @@
 # Cross-Domain Final URL Decisions
 
-Generated: 2026-05-23T09:35:35.131Z
+Generated: 2026-05-23T09:50:24.997Z
 
 Policy: this is an editable human decision template. It does not approve automation by itself, does not write the registry, and does not authorize real submissions.
 
@@ -25,6 +25,14 @@ Policy: this is an editable human decision template. It does not approve automat
 
 ```powershell
 node src/cli.js targets validate-cross-domain-final-url-decisions backlink-url/assisted-submission-pack/cross-domain-final-url-decisions.csv --fail-on-blockers
+```
+
+## Dry-Run Patch Preview
+
+Only after validation passes, generate a registry patch preview. This command still does not write the registry and does not authorize submission:
+
+```powershell
+node src/cli.js targets apply-cross-domain-final-url-decisions backlink-url/assisted-submission-pack/cross-domain-final-url-decisions.csv --registry resources/targets.canonical.yaml --output backlink-url/assisted-submission-pack/cross-domain-final-url-patch-preview.json
 ```
 
 ## Files
