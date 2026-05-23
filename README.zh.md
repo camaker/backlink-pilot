@@ -178,6 +178,7 @@ node src/cli.js targets pricing-review-queue       # 排队 pricing 仍 unknown 
 node src/cli.js targets pricing-review-evidence <队列CSV>      # GET-only 价格证据，不登录不提交
 node src/cli.js targets pricing-review-suggest <队列CSV> <evidence.csv>  # 生成非绑定价格建议
 node src/cli.js targets pricing-review-decision-draft <suggestions.csv>  # 生成空白人工价格决策草稿
+node src/cli.js targets pricing-review-decision-batch <草稿CSV>  # 生成聚焦的人工价格决策小批次
 node src/cli.js targets apply-pricing-review-decisions <draft.csv>        # 预览/应用已人工审核的价格决策
 node src/cli.js targets auth-login-next <批次...>  # 只挑选下一批人工登录任务，不执行
 node src/cli.js targets auth-login-operator-pack <next-login.json>  # 生成人工登录 runbook 和 PowerShell 辅助脚本

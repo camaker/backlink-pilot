@@ -37,6 +37,7 @@ import {
   listTargetsCommand,
   normalizeTargetsCommand,
   applyPricingReviewDecisionsCommand,
+  pricingReviewDecisionBatchCommand,
   pricingReviewDecisionDraftCommand,
   pricingReviewEvidenceCommand,
   pricingReviewQueueCommand,
@@ -375,6 +376,24 @@ targets
   .option('--json', 'Output summary as JSON')
   .action(async (suggestions, opts) => {
     await pricingReviewDecisionDraftCommand(suggestions, opts);
+  });
+
+targets
+  .command('pricing-review-decision-batch <draft>')
+  .description('Create a focused editable batch from a pricing review decision draft')
+  .option('--output-dir <path>', 'Directory to write batch files', 'backlink-url/pricing-review/decision-batches')
+  .option('--output <path>', 'Write batch CSV')
+  .option('--json-output <path>', 'Write batch JSON')
+  .option('--markdown-output <path>', 'Write batch Markdown')
+  .option('--batch-id <id>', 'Stable batch identifier')
+  .option('--offset <n>', 'Zero-based offset within matching draft rows', '0')
+  .option('--limit <n>', 'Maximum batch rows', '20')
+  .option('--suggested-decision <list>', 'Comma-separated suggested_review_decision filter')
+  .option('--confidence <list>', 'Comma-separated suggestion_confidence filter')
+  .option('--include-reviewed', 'Include rows that already have review_decision')
+  .option('--json', 'Output summary as JSON')
+  .action(async (draft, opts) => {
+    await pricingReviewDecisionBatchCommand(draft, opts);
   });
 
 targets

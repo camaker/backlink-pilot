@@ -51,15 +51,19 @@ import {
 } from '../src/targets/auth-workflow-refresh.js';
 import {
   applyPricingReviewDecisionPatch,
+  buildPricingReviewDecisionBatch,
   buildPricingReviewEvidence,
   buildPricingReviewDecisionDraft,
   buildPricingReviewQueue,
   buildPricingReviewSuggestions,
+  pricingReviewDecisionBatchCsv,
   pricingReviewDecisionDraftCsv,
+  pricingReviewDecisionBatchMarkdown,
   pricingReviewEvidenceCsv,
   pricingReviewQueueCsv,
   pricingReviewSuggestionsCsv,
   validatePricingReviewDecisions,
+  writePricingReviewDecisionBatch,
   writePricingReviewDecisionDraft,
   writePricingReviewEvidence,
   writePricingReviewQueue,
@@ -623,6 +627,56 @@ targets:
       assert.equal(existsSync(written.files.decision_csv), true);
       assert.equal(existsSync(written.files.decision_json), true);
       assert.equal(existsSync(written.files.decision_md), true);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('creates focused pricing decision batches that still fail closed until reviewed', () => {
+    const dir = tempDir();
+    try {
+      const suggestionsPath = join(dir, 'pricing-review-suggestions.csv');
+      writeFileSync(suggestionsPath, [
+        'queue_order,target_id,name,domain,mode,submit_url,current_pricing,suggested_pricing,suggested_review_decision,suggestion_confidence,reviewer_action,suggested_review_notes,suggestion_basis,evidence_matched,http_status,fetch_ok,final_url,final_domain,submit_button_signal,submit_path_signal,directory_signal,auth_signal,oauth_signal,captcha_signal,cloudflare_signal,payment_signal,free_signal,freemium_signal,pricing_page_signal,checked_at,automation_policy',
+        '1,free-target,Free Target,free.example,auto_safe,https://free.example/submit,unknown,free,mark_free,high,confirm,evidence free,basis free,yes,200,yes,https://free.example/submit,free.example,yes,yes,yes,no,no,no,no,no,yes,no,no,2026-05-23T00:00:00.000Z,non_binding_suggestion_no_registry_write_no_submission',
+        '2,paid-target,Paid Target,paid.example,assisted,https://paid.example/submit,unknown,paid,mark_paid,high,confirm,evidence paid,basis paid,yes,200,yes,https://paid.example/submit,paid.example,yes,yes,yes,no,no,no,no,yes,no,no,yes,2026-05-23T00:00:00.000Z,non_binding_suggestion_no_registry_write_no_submission',
+        '3,freemium-target,Freemium Target,freemium.example,assisted,https://freemium.example/submit,unknown,freemium,mark_freemium,medium,confirm,evidence freemium,basis freemium,yes,200,yes,https://freemium.example/submit,freemium.example,yes,yes,yes,no,no,no,no,yes,yes,yes,yes,2026-05-23T00:00:00.000Z,non_binding_suggestion_no_registry_write_no_submission',
+        '4,unknown-target,Unknown Target,unknown.example,assisted,https://unknown.example/submit,unknown,unknown,keep_unknown,low,review,evidence weak,basis weak,no,200,yes,https://unknown.example/submit,unknown.example,no,no,yes,no,no,no,no,no,no,no,no,2026-05-23T00:00:00.000Z,non_binding_suggestion_no_registry_write_no_submission',
+      ].join('\n') + '\n');
+
+      const draft = buildPricingReviewDecisionDraft(suggestionsPath);
+      const draftCsv = join(dir, 'pricing-review-decision-draft.csv');
+      writeFileSync(draftCsv, pricingReviewDecisionDraftCsv(draft));
+
+      const batch = buildPricingReviewDecisionBatch(draftCsv, {
+        batchId: 'pricing-potential-free-001',
+        suggestedDecision: 'mark_free,mark_freemium',
+        limit: 10,
+      });
+      assert.equal(batch.batch_id, 'pricing-potential-free-001');
+      assert.equal(batch.total_draft_rows, 4);
+      assert.equal(batch.matching_rows, 2);
+      assert.equal(batch.summary.rows, 2);
+      assert.equal(batch.remaining_after_batch, 0);
+      assert.deepEqual(batch.rows.map(row => row.target_id), ['free-target', 'freemium-target']);
+      assert.equal(batch.rows.every(row => row.batch_id === 'pricing-potential-free-001'), true);
+      assert.equal(batch.rows.every(row => row.review_decision === ''), true);
+
+      const csv = pricingReviewDecisionBatchCsv(batch);
+      assert.match(csv, /^batch_id,batch_order,queue_order,target_id/);
+      assert.match(csv, /pricing_decision_draft_no_registry_write_no_submission/);
+      assert.match(pricingReviewDecisionBatchMarkdown(batch), /validate-pricing-review-decisions/);
+
+      const batchCsv = join(dir, 'pricing-potential-free-001.csv');
+      writeFileSync(batchCsv, csv);
+      const validation = validatePricingReviewDecisions(batchCsv);
+      assert.equal(validation.ok, false);
+      assert.equal(validation.blockers.filter(item => item.code === 'review_decision_missing').length, 2);
+
+      const written = writePricingReviewDecisionBatch(batch, { outputDir: join(dir, 'decision-batches') });
+      assert.equal(existsSync(written.files.batch_csv), true);
+      assert.equal(existsSync(written.files.batch_json), true);
+      assert.equal(existsSync(written.files.batch_md), true);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

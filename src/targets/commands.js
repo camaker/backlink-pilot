@@ -45,11 +45,13 @@ import {
 } from './auth-workflow-refresh.js';
 import {
   applyPricingReviewDecisionPatch,
+  buildPricingReviewDecisionBatch,
   buildPricingReviewDecisionDraft,
   buildPricingReviewEvidence,
   buildPricingReviewQueue,
   buildPricingReviewSuggestions,
   validatePricingReviewDecisions,
+  writePricingReviewDecisionBatch,
   writePricingReviewDecisionDraft,
   writePricingReviewDecisionPatchReport,
   writePricingReviewEvidence,
@@ -299,6 +301,52 @@ export async function pricingReviewDecisionDraftCommand(suggestionsPath, opts = 
   console.log(`Draft CSV: ${written.files.decision_csv}`);
   console.log(`Draft summary: ${written.files.decision_md}`);
   console.log('Policy: decision draft only; review_decision remains blank and strict validation must fail until human review is recorded.');
+
+  return result;
+}
+
+export async function pricingReviewDecisionBatchCommand(draftPath, opts = {}) {
+  const batch = buildPricingReviewDecisionBatch(draftPath, {
+    batchId: opts.batchId,
+    offset: opts.offset,
+    limit: opts.limit,
+    suggestedDecision: opts.suggestedDecision,
+    confidence: opts.confidence,
+    includeReviewed: Boolean(opts.includeReviewed),
+  });
+  const written = writePricingReviewDecisionBatch(batch, {
+    outputDir: opts.outputDir,
+    output: opts.output,
+    jsonOutput: opts.jsonOutput,
+    markdownOutput: opts.markdownOutput,
+  });
+  const result = {
+    batch_id: batch.batch_id,
+    total_draft_rows: batch.total_draft_rows,
+    matching_rows: batch.matching_rows,
+    remaining_after_batch: batch.remaining_after_batch,
+    ...batch.summary,
+    output_dir: written.output_dir,
+    files: written.files,
+  };
+
+  if (opts.json) {
+    console.log(JSON.stringify(result, null, 2));
+    return result;
+  }
+
+  console.log(`Draft: ${batch.draft}`);
+  console.log(`Batch: ${batch.batch_id}`);
+  console.log(`Output dir: ${written.output_dir}`);
+  console.log(`Total draft rows: ${batch.total_draft_rows}`);
+  console.log(`Matching rows: ${batch.matching_rows}`);
+  console.log(`Batch rows: ${batch.summary.rows}`);
+  console.log(`Remaining after batch: ${batch.remaining_after_batch}`);
+  console.log(`Suggested decisions: ${JSON.stringify(batch.summary.by_suggested_review_decision)}`);
+  console.log(`Confidence: ${JSON.stringify(batch.summary.by_confidence)}`);
+  console.log(`Batch CSV: ${written.files.batch_csv}`);
+  console.log(`Batch summary: ${written.files.batch_md}`);
+  console.log('Policy: pricing decision batch only; no network, no registry writes, no login, no submission.');
 
   return result;
 }

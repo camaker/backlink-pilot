@@ -135,6 +135,12 @@ const PRICING_DECISION_HEADERS = [
   'automation_policy',
 ];
 
+const PRICING_DECISION_BATCH_HEADERS = [
+  'batch_id',
+  'batch_order',
+  ...PRICING_DECISION_HEADERS,
+];
+
 function nowIso() {
   return new Date().toISOString();
 }
@@ -184,6 +190,14 @@ function selectedSlice(rows = [], opts = {}) {
 }
 
 function modeSet(value = '') {
+  const items = String(value || '')
+    .split(',')
+    .map(item => item.trim())
+    .filter(Boolean);
+  return items.length ? new Set(items) : null;
+}
+
+function commaSet(value = '') {
   const items = String(value || '')
     .split(',')
     .map(item => item.trim())
@@ -1028,6 +1042,176 @@ export function writePricingReviewDecisionDraft(draft = {}, opts = {}) {
   writeFileSync(files.decision_csv, pricingReviewDecisionDraftCsv(draft), 'utf-8');
   writeFileSync(files.decision_json, JSON.stringify({ ...draft, files: publicFiles }, null, 2) + '\n', 'utf-8');
   writeFileSync(files.decision_md, pricingReviewDecisionDraftMarkdown(draft, publicFiles), 'utf-8');
+  return {
+    output_dir: normalizePath(outputDir),
+    files: publicFiles,
+  };
+}
+
+function pricingDecisionBatchId(opts = {}) {
+  if (opts.batchId) return String(opts.batchId).trim();
+  const offset = Math.max(0, parseInteger(opts.offset, 0));
+  const limit = opts.limit === undefined || opts.limit === ''
+    ? 'all'
+    : String(Math.max(0, parseInteger(opts.limit, 20)));
+  return `pricing-decision-${String(offset + 1).padStart(3, '0')}-${limit}`;
+}
+
+function pricingDecisionBatchSummary(rows = [], totalMatchingRows = 0) {
+  return {
+    rows: rows.length,
+    matching_rows: totalMatchingRows,
+    rows_requiring_human_review: rows.filter(row => !row.review_decision).length,
+    by_suggested_review_decision: countBy(rows, row => row.suggested_review_decision),
+    by_suggested_pricing: countBy(rows, row => row.suggested_pricing),
+    by_confidence: countBy(rows, row => row.suggestion_confidence),
+  };
+}
+
+export function buildPricingReviewDecisionBatch(draftPath, opts = {}) {
+  const draftRows = parseCsv(readFileSync(draftPath, 'utf-8'));
+  const suggestedDecisions = commaSet(opts.suggestedDecision || opts.suggestedDecisions);
+  const confidences = commaSet(opts.confidence || opts.confidences);
+  const includeReviewed = Boolean(opts.includeReviewed);
+  const filtered = draftRows
+    .filter(row => includeReviewed || !String(row.review_decision || '').trim())
+    .filter(row => !suggestedDecisions || suggestedDecisions.has(row.suggested_review_decision || ''))
+    .filter(row => !confidences || confidences.has(row.suggestion_confidence || ''));
+  const offset = Math.max(0, parseInteger(opts.offset, 0));
+  const limit = opts.limit === undefined || opts.limit === ''
+    ? filtered.length
+    : Math.max(0, parseInteger(opts.limit, 20));
+  const selected = filtered.slice(offset, offset + limit);
+  const batchId = pricingDecisionBatchId({ ...opts, offset, limit });
+  const rows = selected.map((row, index) => ({
+    batch_id: batchId,
+    batch_order: String(offset + index + 1),
+    ...PRICING_DECISION_HEADERS.reduce((acc, header) => {
+      acc[header] = row[header] || '';
+      return acc;
+    }, {}),
+  }));
+
+  return {
+    generated_at: nowIso(),
+    draft: normalizePath(draftPath),
+    batch_id: batchId,
+    offset,
+    limit: opts.limit === undefined || opts.limit === '' ? '' : String(limit),
+    filters: {
+      suggested_decision: suggestedDecisions ? [...suggestedDecisions] : [],
+      confidence: confidences ? [...confidences] : [],
+      include_reviewed: includeReviewed,
+    },
+    constraints: {
+      read_only: true,
+      no_network: true,
+      no_registry_writes: true,
+      no_login: true,
+      no_submission: true,
+      no_mode_promotion: true,
+      review_decision_left_as_source: true,
+    },
+    total_draft_rows: draftRows.length,
+    matching_rows: filtered.length,
+    remaining_after_batch: Math.max(0, filtered.length - offset - selected.length),
+    rows,
+    summary: pricingDecisionBatchSummary(rows, filtered.length),
+  };
+}
+
+export function pricingReviewDecisionBatchCsv(batch = {}) {
+  const rows = batch.rows || [];
+  return [
+    PRICING_DECISION_BATCH_HEADERS.join(','),
+    ...rows.map(row => PRICING_DECISION_BATCH_HEADERS.map(header => csvEscape(row[header])).join(',')),
+  ].join('\n') + '\n';
+}
+
+function pricingDecisionBatchRowsTable(rows = []) {
+  if (!rows.length) return '| - | - | - | - | - | - | - |';
+  return rows.map(row => [
+    row.batch_order,
+    row.queue_order,
+    row.target_id,
+    row.domain,
+    row.suggested_review_decision,
+    row.suggested_pricing,
+    row.review_decision || '(blank)',
+  ].map(markdownEscape).join(' | ')).map(line => `| ${line} |`).join('\n');
+}
+
+export function pricingReviewDecisionBatchMarkdown(batch = {}, files = {}) {
+  return [
+    `# Pricing Review Decision Batch: ${batch.batch_id}`,
+    '',
+    `Generated: ${batch.generated_at}`,
+    `Draft: ${batch.draft}`,
+    `Offset: ${batch.offset}`,
+    `Limit: ${batch.limit || '(all)'}`,
+    `Matching rows: ${batch.matching_rows}`,
+    `Batch rows: ${batch.summary.rows}`,
+    `Remaining after batch: ${batch.remaining_after_batch}`,
+    '',
+    'Policy: editable human decision batch only. It does not write the registry, does not approve submissions, and must be validated before any apply step.',
+    '',
+    '## Summary',
+    '',
+    `- Rows requiring human review: ${batch.summary.rows_requiring_human_review}`,
+    '',
+    '### Suggested Review Decisions',
+    '',
+    '| Decision | Count |',
+    '|---|---:|',
+    countsTable(batch.summary.by_suggested_review_decision),
+    '',
+    '### Confidence',
+    '',
+    '| Confidence | Count |',
+    '|---|---:|',
+    countsTable(batch.summary.by_confidence),
+    '',
+    '## Rows',
+    '',
+    '| Batch Order | Queue Order | Target ID | Domain | Suggested Decision | Suggested Pricing | Review Decision |',
+    '|---|---|---|---|---|---|---|',
+    pricingDecisionBatchRowsTable(batch.rows),
+    '',
+    '## Human Fill Requirements',
+    '',
+    '1. Open each target manually before editing `review_decision`.',
+    '2. Fill `review_decision`, `reviewed_pricing`, `reviewer`, `reviewed_at`, and substantive `review_notes` before validation can pass.',
+    '3. Run validation on this batch before any apply command.',
+    '4. Run apply without `--write-registry` first; only use `--write-registry` after reviewing the preview and then rerun target audit.',
+    '',
+    '## Validation',
+    '',
+    '```powershell',
+    `node src/cli.js targets validate-pricing-review-decisions ${files.batch_csv || '<edited-batch.csv>'} --fail-on-blockers`,
+    `node src/cli.js targets apply-pricing-review-decisions ${files.batch_csv || '<edited-batch.csv>'} --registry resources/targets.canonical.yaml --json`,
+    '```',
+    '',
+    '## Files',
+    '',
+    `- Batch CSV: ${files.batch_csv || ''}`,
+    `- Batch JSON: ${files.batch_json || ''}`,
+    '',
+  ].join('\n');
+}
+
+export function writePricingReviewDecisionBatch(batch = {}, opts = {}) {
+  const outputDir = opts.outputDir || 'backlink-url/pricing-review/decision-batches';
+  mkdirSync(outputDir, { recursive: true });
+  const baseName = batch.batch_id || pricingDecisionBatchId(opts);
+  const files = {
+    batch_csv: opts.output || join(outputDir, `${baseName}.csv`),
+    batch_json: opts.jsonOutput || join(outputDir, `${baseName}.json`),
+    batch_md: opts.markdownOutput || join(outputDir, `${baseName}.md`),
+  };
+  const publicFiles = Object.fromEntries(Object.entries(files).map(([key, value]) => [key, normalizePath(value)]));
+  writeFileSync(files.batch_csv, pricingReviewDecisionBatchCsv(batch), 'utf-8');
+  writeFileSync(files.batch_json, JSON.stringify({ ...batch, files: publicFiles }, null, 2) + '\n', 'utf-8');
+  writeFileSync(files.batch_md, pricingReviewDecisionBatchMarkdown(batch, publicFiles), 'utf-8');
   return {
     output_dir: normalizePath(outputDir),
     files: publicFiles,
