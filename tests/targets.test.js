@@ -2028,6 +2028,24 @@ targets:
       reason: scout_failed_network
     quality:
       risk: unknown
+  - id: manual-target
+    name: Manual Target
+    domain: manual.example
+    root_url: https://manual.example
+    submit_url: https://manual.example/post
+    pricing: free
+    auto: manual
+    type: article
+    technical:
+      auth: unknown
+      captcha: unknown
+      reachable: unknown
+    submission:
+      mode: assisted
+      status: new
+      reason: auth_or_manual_signal
+    quality:
+      risk: medium
   - id: paid-target
     name: Paid Target
     domain: paid.example
@@ -2060,9 +2078,12 @@ targets:
       const written = writeAssistedSubmissionPack(pack, { outputDir });
       const fullRows = parseCsv(readFileSync(written.files.full_csv, 'utf-8'));
       const nextRows = parseCsv(readFileSync(written.files.next_csv, 'utf-8'));
+      const authRows = parseCsv(readFileSync(written.files.auth_login_rescout_csv, 'utf-8'));
+      const manualSurfaceRows = parseCsv(readFileSync(written.files.manual_surface_review_csv, 'utf-8'));
+      const manualReviewRows = parseCsv(readFileSync(written.files.manual_review_first_csv, 'utf-8'));
       const summary = JSON.parse(readFileSync(written.files.summary_json, 'utf-8'));
 
-      assert.equal(pack.rows.length, 3);
+      assert.equal(pack.rows.length, 4);
       assert.equal(pack.excluded.length, 2);
       assert.equal(pack.rows[0].target_id, 'auth-target');
       assert.equal(pack.rows[0].manual_bucket, 'manual_login_then_rescout');
@@ -2070,16 +2091,28 @@ targets:
       assert.match(pack.rows[0].auth_login_command, /auth login --profile "auth-target"/);
       assert.match(pack.rows[0].auth_scout_command, /--update-registry --engine playwright/);
       assert.match(pack.rows[0].auth_scout_command, /--persist --scout-dir "resources\/scout-results"/);
+      assert.equal(pack.rows.find(row => row.target_id === 'manual-target').manual_bucket, 'manual_surface_review');
+      assert.equal(pack.rows.find(row => row.target_id === 'manual-target').automation_after_human, 'no_manual_surface_review_required_first');
+      assert.equal(pack.rows.find(row => row.target_id === 'manual-target').auth_login_command, '');
       assert.equal(pack.rows.find(row => row.target_id === 'captcha-target').automation_after_human, 'no_captcha_manual_only');
       assert.equal(pack.rows.find(row => row.target_id === 'captcha-target').auth_login_command, '');
       assert.equal(pack.rows.find(row => row.target_id === 'review-target').auth_scout_command, '');
       assert.equal(pack.rows.find(row => row.target_id === 'review-target').automation_after_human, 'no_manual_review_required_first');
       assert.equal(nextRows.length, 2);
-      assert.equal(fullRows.length, 3);
+      assert.equal(fullRows.length, 4);
+      assert.equal(authRows.length, 1);
+      assert.equal(authRows[0].target_id, 'auth-target');
+      assert.equal(manualSurfaceRows.length, 1);
+      assert.equal(manualSurfaceRows[0].target_id, 'manual-target');
+      assert.equal(manualReviewRows.length, 1);
+      assert.equal(manualReviewRows[0].target_id, 'review-target');
       assert.equal(summary.policy, 'manual_assisted_pack_only_no_registry_changes_no_real_submissions');
       assert.equal(summary.by_exclusion_reason.paid_excluded_by_default, 1);
       assert.equal(summary.by_exclusion_reason.already_submitted, 1);
       assert.equal(existsSync(written.files.summary_md), true);
+      assert.equal(existsSync(written.files.auth_login_rescout_csv), true);
+      assert.equal(existsSync(written.files.manual_surface_review_csv), true);
+      assert.equal(existsSync(written.files.manual_review_first_csv), true);
       assert.match(assistedSubmissionPackCsv(pack.rows), /no_real_submission_from_pack/);
     } finally {
       rmSync(dir, { recursive: true, force: true });

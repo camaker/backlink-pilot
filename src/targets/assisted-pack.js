@@ -129,6 +129,24 @@ function hasReason(target, pattern) {
   return pattern.test(`${reasonText(target)} ${statusText(target)} ${target.notes || ''}`);
 }
 
+function hasAuthSignal(target = {}) {
+  return /login|sign-?in|register|oauth|account|needs account|requires account|需要登录/i.test([
+    target.submit_url,
+    target.technical?.final_url,
+    target.notes,
+    reasonText(target),
+    statusText(target),
+  ].join(' '));
+}
+
+function hasManualSurfaceSignal(target = {}) {
+  const type = String(target.type || '').toLowerCase();
+  const auto = String(target.auto || target.original_auto || '').toLowerCase();
+  return auto === 'manual' ||
+    ['article', 'community', 'forum', 'profile', 'discussion'].includes(type) ||
+    /manual|community|article|discussion|forum|post/i.test(`${reasonText(target)} ${target.notes || ''}`);
+}
+
 function targetBlockers(target = {}) {
   const blockers = [];
   const technical = target.technical || {};
@@ -144,9 +162,10 @@ function targetBlockers(target = {}) {
   if (risk === 'high') blockers.push('high_risk_target');
   if (pricing === 'paid') blockers.push('paid_or_paywalled');
   if (pricing === 'unknown') blockers.push('pricing_unknown_verify_free_path');
-  if (technical.auth === 'required' || technical.auth === 'oauth' || status === 'auth_required') {
+  if (technical.auth === 'required' || technical.auth === 'oauth' || status === 'auth_required' || hasAuthSignal(target)) {
     blockers.push('auth_or_oauth_required');
   }
+  if (hasManualSurfaceSignal(target)) blockers.push('manual_surface_review_required');
   if (technical.captcha === 'required' || status === 'captcha_required' || hasReason(target, /captcha|recaptcha|turnstile/i)) {
     blockers.push('captcha_or_turnstile_required');
   }
@@ -184,6 +203,7 @@ function manualBucket(blockers = [], target = {}) {
   if (blockers.includes('reciprocal_link_required')) return 'reciprocal_policy_review';
   if (blockers.includes('auth_or_oauth_required')) return 'manual_login_then_rescout';
   if (mode === 'needs_review') return 'manual_review_first';
+  if (blockers.includes('manual_surface_review_required')) return 'manual_surface_review';
   if (
     blockers.includes('required_fields_unmapped') ||
     blockers.includes('unsupported_or_dynamic_form') ||
@@ -205,6 +225,7 @@ function automationAfterHuman(blockers = [], target = {}) {
   if (blockers.includes('captcha_or_turnstile_required')) return 'no_captcha_manual_only';
   if (blockers.includes('reciprocal_link_required')) return 'no_reciprocal_policy_required';
   if (blockers.includes('auth_or_oauth_required')) return 'rescout_after_saved_login_profile';
+  if (blockers.includes('manual_surface_review_required')) return 'no_manual_surface_review_required_first';
   if (blockers.includes('required_fields_unmapped')) return 'no_unmapped_required_fields';
   if (blockers.includes('unsupported_or_dynamic_form')) return 'no_dynamic_form_manual_only';
   return 'manual_confirmation_then_dry_run_only';
@@ -229,6 +250,9 @@ function recommendedNextStep(blockers = [], target = {}) {
   }
   if (blockers.includes('auth_or_oauth_required')) {
     return `Create/login manually, save auth profile "${profile}", then re-scout with that profile before any execution.`;
+  }
+  if (blockers.includes('manual_surface_review_required')) {
+    return 'Review platform/community rules and confirm this is a valid product submission surface; do not automate posts, articles, or community submissions.';
   }
   if (target.submission?.mode === 'needs_review') {
     return 'Open manually or collect fresh scout evidence; only promote after visible free submit path and blockers are clear.';
@@ -258,6 +282,7 @@ function scoreTarget(target = {}, blockers = []) {
   if (target.lang === 'en' || target.lang === 'zh') score += 5;
 
   if (blockers.includes('auth_or_oauth_required')) score += 10;
+  if (blockers.includes('manual_surface_review_required')) score -= 35;
   if (blockers.includes('captcha_or_turnstile_required')) score -= 60;
   if (blockers.includes('reciprocal_link_required')) score -= 45;
   if (blockers.includes('required_fields_unmapped')) score -= 25;
@@ -551,6 +576,9 @@ function assistedPackMarkdown(pack, files = {}) {
     '',
     `- Full CSV: ${files.full_csv || 'assisted-submission-pack.csv'}`,
     `- Next CSV: ${files.next_csv || `next-${pack.summary.limit}-assisted-submission-pack.csv`}`,
+    `- Auth login/rescout queue: ${files.auth_login_rescout_csv || 'auth-login-rescout-queue.csv'}`,
+    `- Manual surface review queue: ${files.manual_surface_review_csv || 'manual-surface-review.csv'}`,
+    `- Manual review-first queue: ${files.manual_review_first_csv || 'manual-review-first.csv'}`,
     `- Summary JSON: ${files.summary_json || 'assisted-submission-summary.json'}`,
     '',
     '## Safe Next Commands',
@@ -568,6 +596,9 @@ export function writeAssistedSubmissionPack(pack, opts = {}) {
     next_csv: join(outputDir, `next-${pack.summary.limit}-assisted-submission-pack.csv`),
     summary_json: join(outputDir, 'assisted-submission-summary.json'),
     summary_md: join(outputDir, 'assisted-submission-summary.md'),
+    auth_login_rescout_csv: join(outputDir, 'auth-login-rescout-queue.csv'),
+    manual_surface_review_csv: join(outputDir, 'manual-surface-review.csv'),
+    manual_review_first_csv: join(outputDir, 'manual-review-first.csv'),
   };
   const publicFiles = Object.fromEntries(
     Object.entries(files).map(([key, value]) => [key, normalizePath(value)])
@@ -576,6 +607,21 @@ export function writeAssistedSubmissionPack(pack, opts = {}) {
   ensureParent(files.full_csv);
   writeFileSync(files.full_csv, assistedSubmissionPackCsv(pack.rows), 'utf-8');
   writeFileSync(files.next_csv, assistedSubmissionPackCsv(pack.next_rows), 'utf-8');
+  writeFileSync(
+    files.auth_login_rescout_csv,
+    assistedSubmissionPackCsv(pack.rows.filter(row => row.automation_after_human === 'rescout_after_saved_login_profile')),
+    'utf-8'
+  );
+  writeFileSync(
+    files.manual_surface_review_csv,
+    assistedSubmissionPackCsv(pack.rows.filter(row => row.manual_bucket === 'manual_surface_review')),
+    'utf-8'
+  );
+  writeFileSync(
+    files.manual_review_first_csv,
+    assistedSubmissionPackCsv(pack.rows.filter(row => row.manual_bucket === 'manual_review_first')),
+    'utf-8'
+  );
   writeFileSync(files.summary_json, JSON.stringify({
     ...pack.summary,
     files: publicFiles,

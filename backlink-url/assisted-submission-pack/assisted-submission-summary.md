@@ -1,6 +1,6 @@
 # Assisted Submission Pack
 
-Generated: 2026-05-23T04:13:36.986Z
+Generated: 2026-05-23T04:37:06.443Z
 
 ## Scope
 
@@ -19,19 +19,19 @@ Policy: this pack is manual/assisted preparation only. It does not approve targe
 
 | Priority | Count |
 |---|---:|
-| P2 | 87 |
-| P0 | 69 |
-| P1 | 37 |
-| P3 | 29 |
+| P2 | 93 |
+| P0 | 66 |
+| P1 | 33 |
+| P3 | 30 |
 
 ## By Manual Bucket
 
 | Bucket | Count |
 |---|---:|
 | manual_review_first | 118 |
-| manual_login_then_rescout | 65 |
-| assisted_manual_confirmation | 22 |
+| manual_login_then_rescout | 71 |
 | manual_submit_only_captcha | 16 |
+| manual_surface_review | 16 |
 | form_mapping_or_dynamic_form_review | 1 |
 
 ## By Automation After Human
@@ -39,9 +39,9 @@ Policy: this pack is manual/assisted preparation only. It does not approve targe
 | Status | Count |
 |---|---:|
 | no_manual_review_required_first | 118 |
-| rescout_after_saved_login_profile | 65 |
-| manual_confirmation_then_dry_run_only | 22 |
+| rescout_after_saved_login_profile | 71 |
 | no_captcha_manual_only | 16 |
+| no_manual_surface_review_required_first | 16 |
 | no_unmapped_required_fields | 1 |
 
 ## Top Next Rows
@@ -91,6 +91,9 @@ Policy: this pack is manual/assisted preparation only. It does not approve targe
 
 - Full CSV: backlink-url/assisted-submission-pack/assisted-submission-pack.csv
 - Next CSV: backlink-url/assisted-submission-pack/next-100-assisted-submission-pack.csv
+- Auth login/rescout queue: backlink-url/assisted-submission-pack/auth-login-rescout-queue.csv
+- Manual surface review queue: backlink-url/assisted-submission-pack/manual-surface-review.csv
+- Manual review-first queue: backlink-url/assisted-submission-pack/manual-review-first.csv
 - Summary JSON: backlink-url/assisted-submission-pack/assisted-submission-summary.json
 
 ## Safe Next Commands
