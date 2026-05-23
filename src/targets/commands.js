@@ -49,6 +49,7 @@ import {
   buildPricingReviewDecisionBatchMerge,
   buildPricingReviewDecisionDraft,
   buildPricingReviewEvidence,
+  buildPricingReviewManualPack,
   buildPricingReviewPostApplyGate,
   buildPricingReviewQueue,
   buildPricingReviewSuggestions,
@@ -58,6 +59,7 @@ import {
   writePricingReviewDecisionDraft,
   writePricingReviewDecisionPatchReport,
   writePricingReviewEvidence,
+  writePricingReviewManualPack,
   writePricingReviewPostApplyGateReport,
   writePricingReviewQueue,
   writePricingReviewSuggestions,
@@ -352,6 +354,62 @@ export async function pricingReviewDecisionBatchCommand(draftPath, opts = {}) {
   console.log(`Batch summary: ${written.files.batch_md}`);
   console.log('Policy: pricing decision batch only; no network, no registry writes, no login, no submission.');
 
+  return result;
+}
+
+export async function pricingReviewManualPackCommand(draftPath, opts = {}) {
+  const pack = buildPricingReviewManualPack(draftPath, {
+    batchPath: opts.batch,
+    outputDir: opts.outputDir,
+    name: opts.name,
+    offset: opts.offset,
+    limit: opts.limit,
+    suggestedDecision: opts.suggestedDecision,
+    confidence: opts.confidence,
+    includeReviewed: Boolean(opts.includeReviewed),
+    requireReviewer: opts.requireReviewer !== false,
+    requireReviewedAt: opts.requireReviewedAt !== false,
+    requireReviewNotes: opts.requireReviewNotes !== false,
+  });
+  const written = writePricingReviewManualPack(pack, {
+    outputDir: opts.outputDir,
+    name: opts.name,
+  });
+  const result = {
+    ok: pack.ok,
+    status: pack.status,
+    draft: pack.draft,
+    source: pack.source,
+    blockers_count: pack.blockers_count,
+    blockers: pack.blockers,
+    strict_validation_ok: pack.strict_validation.ok,
+    strict_validation_blockers: pack.strict_validation.blockers_count,
+    summary: pack.summary,
+    output_dir: written.output_dir,
+    files: written.files,
+  };
+
+  if (opts.json) {
+    console.log(JSON.stringify(result, null, 2));
+    if (!pack.ok && opts.failOnBlockers) process.exitCode = 1;
+    return result;
+  }
+
+  console.log(`Pricing review manual pack: ${pack.status}`);
+  console.log(`Draft: ${pack.draft}`);
+  if (pack.source.batch) console.log(`Batch: ${pack.source.batch}`);
+  console.log(`Rows: ${pack.summary.rows}`);
+  console.log(`Unreviewed rows: ${pack.summary.unreviewed_rows}`);
+  console.log(`Strict validation blockers: ${pack.strict_validation.blockers_count}`);
+  console.log(`Source identity blockers: ${pack.blockers_count}`);
+  console.log(`Output dir: ${written.output_dir}`);
+  console.log(`Manual CSV: ${written.files.manual_csv}`);
+  console.log(`Manual runbook: ${written.files.manual_md}`);
+  for (const blocker of pack.blockers.slice(0, Number.parseInt(opts.preview || 10, 10))) {
+    console.log(`BLOCKER ${blocker.code}: ${blocker.target_id || blocker.domain} - ${blocker.message}`);
+  }
+  console.log('Policy: manual review pack only; no network, no login, no submission, no registry writes, no automatic pricing decisions.');
+  if (!pack.ok && opts.failOnBlockers) process.exitCode = 1;
   return result;
 }
 

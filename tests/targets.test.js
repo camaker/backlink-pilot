@@ -55,12 +55,14 @@ import {
   buildPricingReviewDecisionBatchMerge,
   buildPricingReviewEvidence,
   buildPricingReviewDecisionDraft,
+  buildPricingReviewManualPack,
   buildPricingReviewQueue,
   buildPricingReviewPostApplyGate,
   buildPricingReviewSuggestions,
   pricingReviewDecisionBatchCsv,
   pricingReviewDecisionDraftCsv,
   pricingReviewDecisionBatchMarkdown,
+  pricingReviewManualPackCsv,
   pricingReviewEvidenceCsv,
   pricingReviewQueueCsv,
   pricingReviewSuggestionsCsv,
@@ -69,6 +71,7 @@ import {
   writePricingReviewDecisionBatchMerge,
   writePricingReviewDecisionDraft,
   writePricingReviewEvidence,
+  writePricingReviewManualPack,
   writePricingReviewPostApplyGateReport,
   writePricingReviewQueue,
   writePricingReviewSuggestions,
@@ -681,6 +684,66 @@ targets:
       assert.equal(existsSync(written.files.batch_csv), true);
       assert.equal(existsSync(written.files.batch_json), true);
       assert.equal(existsSync(written.files.batch_md), true);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('builds a manual pricing review pack without making decisions or registry writes', () => {
+    const dir = tempDir();
+    try {
+      const suggestionsPath = join(dir, 'pricing-review-suggestions.csv');
+      writeFileSync(suggestionsPath, [
+        'queue_order,target_id,name,domain,mode,submit_url,current_pricing,suggested_pricing,suggested_review_decision,suggestion_confidence,reviewer_action,suggested_review_notes,suggestion_basis,evidence_matched,http_status,fetch_ok,final_url,final_domain,submit_button_signal,submit_path_signal,directory_signal,auth_signal,oauth_signal,captcha_signal,cloudflare_signal,payment_signal,free_signal,freemium_signal,pricing_page_signal,checked_at,automation_policy',
+        '1,free-target,Free Target,free.example,auto_safe,https://free.example/submit,unknown,free,mark_free,high,confirm,evidence free,basis free,yes,200,yes,https://free.example/submit,free.example,yes,yes,yes,no,no,no,no,no,yes,no,no,2026-05-23T00:00:00.000Z,non_binding_suggestion_no_registry_write_no_submission',
+        '2,paid-target,Paid Target,paid.example,assisted,https://paid.example/submit,unknown,paid,mark_paid,high,confirm,evidence paid,basis paid,yes,200,yes,https://paid.example/submit,paid.example,yes,yes,yes,no,no,no,no,yes,no,no,yes,2026-05-23T00:00:00.000Z,non_binding_suggestion_no_registry_write_no_submission',
+      ].join('\n') + '\n');
+      const draft = buildPricingReviewDecisionDraft(suggestionsPath);
+      const draftCsv = join(dir, 'pricing-review-decision-draft.csv');
+      writeFileSync(draftCsv, pricingReviewDecisionDraftCsv(draft));
+
+      const batch = buildPricingReviewDecisionBatch(draftCsv, {
+        batchId: 'pricing-free-001',
+        suggestedDecision: 'mark_free',
+        limit: 10,
+      });
+      const batchCsv = join(dir, 'pricing-free-001.csv');
+      writeFileSync(batchCsv, pricingReviewDecisionBatchCsv(batch));
+
+      const pack = buildPricingReviewManualPack(draftCsv, { batchPath: batchCsv });
+      assert.equal(pack.ok, true);
+      assert.equal(pack.status, 'manual_pack_ready');
+      assert.equal(pack.constraints.no_auto_decisions, true);
+      assert.equal(pack.constraints.no_registry_writes, true);
+      assert.equal(pack.source.kind, 'batch');
+      assert.equal(pack.summary.rows, 1);
+      assert.equal(pack.summary.unreviewed_rows, 1);
+      assert.equal(pack.summary.strict_validation_ok, false);
+      assert.equal(pack.summary.strict_validation_blockers, 1);
+      assert.equal(pack.rows[0].review_decision, '');
+      assert.equal(pack.rows[0].manual_review_url, 'https://free.example/submit');
+      assert.match(pack.rows[0].review_notes_template, /Manual browser review checked/);
+
+      const csv = pricingReviewManualPackCsv(pack);
+      assert.match(csv, /^batch_id,batch_order,queue_order,target_id/);
+      assert.match(csv, /manual_review_checklist/);
+      assert.match(csv, /allowed_review_decisions/);
+
+      const written = writePricingReviewManualPack(pack, { outputDir: join(dir, 'manual-review') });
+      assert.equal(existsSync(written.files.manual_csv), true);
+      assert.equal(existsSync(written.files.manual_json), true);
+      assert.equal(existsSync(written.files.manual_md), true);
+      assert.match(readFileSync(written.files.manual_md, 'utf-8'), /merge-pricing-review-decision-batch/);
+
+      const changedIdentity = {
+        ...batch,
+        rows: batch.rows.map(row => ({ ...row, submit_url: 'https://changed.example/submit' })),
+      };
+      const changedIdentityCsv = join(dir, 'pricing-free-001.changed.csv');
+      writeFileSync(changedIdentityCsv, pricingReviewDecisionBatchCsv(changedIdentity));
+      const blockedPack = buildPricingReviewManualPack(draftCsv, { batchPath: changedIdentityCsv });
+      assert.equal(blockedPack.ok, false);
+      assert.equal(blockedPack.blockers.some(item => item.code === 'decision_batch_identity_changed'), true);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

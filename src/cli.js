@@ -41,6 +41,7 @@ import {
   pricingReviewDecisionBatchCommand,
   pricingReviewDecisionDraftCommand,
   pricingReviewEvidenceCommand,
+  pricingReviewManualPackCommand,
   pricingReviewPostApplyGateCommand,
   pricingReviewQueueCommand,
   pricingReviewSuggestCommand,
@@ -396,6 +397,27 @@ targets
   .option('--json', 'Output summary as JSON')
   .action(async (draft, opts) => {
     await pricingReviewDecisionBatchCommand(draft, opts);
+  });
+
+targets
+  .command('pricing-review-manual-pack <draft>')
+  .description('Generate a manual pricing review pack from a decision draft or focused batch')
+  .option('--batch <path>', 'Focused pricing decision batch to review')
+  .option('--output-dir <path>', 'Directory to write the manual review pack')
+  .option('--name <name>', 'Base filename for generated manual review pack files')
+  .option('--offset <n>', 'Zero-based offset within draft rows when no batch is provided', '0')
+  .option('--limit <n>', 'Maximum draft rows when no batch is provided')
+  .option('--suggested-decision <list>', 'Comma-separated suggested_review_decision filter when no batch is provided')
+  .option('--confidence <list>', 'Comma-separated suggestion_confidence filter when no batch is provided')
+  .option('--include-reviewed', 'Include already reviewed draft rows when no batch is provided')
+  .option('--no-require-reviewer', 'Do not require reviewer in strict validation summary')
+  .option('--no-require-reviewed-at', 'Do not require reviewed_at in strict validation summary')
+  .option('--no-require-review-notes', 'Do not require substantive review notes in strict validation summary')
+  .option('--preview <n>', 'Maximum source identity blockers to print', '10')
+  .option('--fail-on-blockers', 'Exit non-zero when source identity blockers are found')
+  .option('--json', 'Output summary as JSON')
+  .action(async (draft, opts) => {
+    await pricingReviewManualPackCommand(draft, opts);
   });
 
 targets

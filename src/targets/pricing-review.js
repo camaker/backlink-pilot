@@ -1,5 +1,5 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'fs';
-import { dirname, join } from 'path';
+import { basename, dirname, join } from 'path';
 import { isRunnableMode } from './classify.js';
 import { DEFAULT_REGISTRY_FILE, loadRegistry, saveRegistry } from './registry.js';
 import { normalizeUrl, stripWww } from './normalize.js';
@@ -149,6 +149,15 @@ const PRICING_REVIEW_WRITE_FIELDS = [
   'reviewer',
   'reviewed_at',
   'review_notes',
+];
+
+const PRICING_MANUAL_REVIEW_HELPER_HEADERS = [
+  'manual_review_status',
+  'manual_review_url',
+  'reviewed_pricing_hint',
+  'allowed_review_decisions',
+  'manual_review_checklist',
+  'review_notes_template',
 ];
 
 function nowIso() {
@@ -1299,6 +1308,293 @@ function decisionDraftMergeSummary(rows = []) {
     reviewed_rows: rows.filter(row => row.review_decision).length,
     unreviewed_rows: rows.filter(row => !row.review_decision).length,
     by_decision: countBy(rows, row => row.review_decision || 'unreviewed'),
+  };
+}
+
+function pricingManualReviewBaseName(pack = {}) {
+  if (pack.name) return pack.name;
+  if (pack.source?.batch) {
+    return basename(pack.source.batch).replace(/\.[^.]+$/, '') + '-manual-review';
+  }
+  return 'pricing-review-manual-current';
+}
+
+function pricingManualReviewUrl(row = {}) {
+  return row.evidence_url || row.submit_url || '';
+}
+
+function pricingManualReviewChecklist(row = {}) {
+  const checks = [
+    'open URL in a normal browser',
+    'verify visible directory or submission fit',
+    'verify whether a free/basic path exists',
+    'verify whether payment is mandatory',
+    'verify no CAPTCHA/Cloudflare/OAuth/login is required for auto treatment',
+    'record exact evidence in review_notes',
+  ];
+  if (signalTrue(row.payment_signal)) checks.push('payment signal was detected; do not mark free unless a free path is visible');
+  if (signalTrue(row.captcha_signal) || signalTrue(row.cloudflare_signal)) checks.push('challenge signal was detected; keep manual/unknown unless resolved by human review');
+  return checks.join('; ');
+}
+
+function pricingManualReviewNotesTemplate(row = {}) {
+  return [
+    `Manual browser review checked ${pricingManualReviewUrl(row) || row.domain || row.target_id}.`,
+    `Suggested decision: ${row.suggested_review_decision || 'unknown'} (${row.suggestion_confidence || 'unknown'} confidence).`,
+    `Signals: payment=${row.payment_signal || 'unknown'}, free=${row.free_signal || 'unknown'}, freemium=${row.freemium_signal || 'unknown'}, captcha=${row.captcha_signal || 'unknown'}, cloudflare=${row.cloudflare_signal || 'unknown'}.`,
+    'Conclusion: <explain free/freemium/paid/unknown evidence checked>.',
+  ].join(' ');
+}
+
+function pricingManualReviewRow(row = {}) {
+  const suggestedDecision = row.suggested_review_decision || '';
+  return {
+    ...row,
+    manual_review_status: row.review_decision ? 'reviewed' : 'needs_human_review',
+    manual_review_url: pricingManualReviewUrl(row),
+    reviewed_pricing_hint: expectedPricingForDecision(suggestedDecision) || row.suggested_pricing || '',
+    allowed_review_decisions: [...PRICING_REVIEW_DECISIONS].join(' | '),
+    manual_review_checklist: pricingManualReviewChecklist(row),
+    review_notes_template: pricingManualReviewNotesTemplate(row),
+  };
+}
+
+function pricingManualReviewSummary(rows = [], strictValidation = {}, identityBlockers = []) {
+  return {
+    rows: rows.length,
+    reviewed_rows: rows.filter(row => row.review_decision).length,
+    unreviewed_rows: rows.filter(row => !row.review_decision).length,
+    strict_validation_ok: Boolean(strictValidation.ok),
+    strict_validation_blockers: strictValidation.blockers_count || 0,
+    identity_blockers: identityBlockers.length,
+    by_mode: countBy(rows, row => row.mode),
+    by_suggested_review_decision: countBy(rows, row => row.suggested_review_decision),
+    by_suggested_pricing: countBy(rows, row => row.suggested_pricing),
+    by_confidence: countBy(rows, row => row.suggestion_confidence),
+    by_review_decision: countBy(rows, row => row.review_decision || 'unreviewed'),
+    by_payment_signal: countBy(rows, row => row.payment_signal || 'unknown'),
+    by_free_signal: countBy(rows, row => row.free_signal || 'unknown'),
+    by_freemium_signal: countBy(rows, row => row.freemium_signal || 'unknown'),
+    by_captcha_signal: countBy(rows, row => row.captcha_signal || 'unknown'),
+    by_cloudflare_signal: countBy(rows, row => row.cloudflare_signal || 'unknown'),
+  };
+}
+
+function pricingManualReviewTable(rows = []) {
+  if (!rows.length) return '| - | - | - | - | - | - | - | - |';
+  return rows.slice(0, 100).map(row => [
+    row.batch_order || row.queue_order,
+    row.target_id,
+    row.domain,
+    row.suggested_review_decision,
+    row.suggestion_confidence,
+    row.payment_signal || 'unknown',
+    row.free_signal || 'unknown',
+    row.manual_review_url,
+  ].map(markdownEscape).join(' | ')).map(line => `| ${line} |`).join('\n');
+}
+
+export function buildPricingReviewManualPack(draftPath, opts = {}) {
+  const draftRows = decisionDraftRowsWithHeaders(parseCsv(readFileSync(draftPath, 'utf-8')));
+  const { byId: draftById, duplicates: draftDuplicates } = rowByTargetId(draftRows);
+  const blockers = [];
+  for (const targetId of draftDuplicates) {
+    blockers.push(decisionMergeFinding('decision_draft_duplicate_target_id', { target_id: targetId }, 'Source decision draft contains a duplicate target_id.'));
+  }
+
+  let sourceRows = draftRows;
+  let sourceKind = 'draft';
+  let strictValidationPath = draftPath;
+  let sourceHeaders = PRICING_DECISION_HEADERS;
+  const batchPath = opts.batchPath || opts.batch;
+
+  if (batchPath) {
+    sourceKind = 'batch';
+    strictValidationPath = batchPath;
+    sourceHeaders = PRICING_DECISION_BATCH_HEADERS;
+    sourceRows = parseCsv(readFileSync(batchPath, 'utf-8'));
+    const { duplicates: batchDuplicates } = rowByTargetId(sourceRows);
+    for (const targetId of batchDuplicates) {
+      blockers.push(decisionMergeFinding('decision_batch_duplicate_target_id', { target_id: targetId }, 'Decision batch contains a duplicate target_id.'));
+    }
+    for (const row of sourceRows) {
+      const draftRow = draftById.get(row.target_id);
+      if (!draftRow) {
+        blockers.push(decisionMergeFinding('decision_batch_target_not_found', row, 'Batch target_id does not exist in the source decision draft.'));
+        continue;
+      }
+      const identityBlockers = pricingDecisionIdentityBlockers(draftRow, row);
+      if (identityBlockers.length) {
+        blockers.push(decisionMergeFinding(
+          'decision_batch_identity_changed',
+          row,
+          'Batch row identity differs from the source decision draft.',
+          { identity_blockers: identityBlockers }
+        ));
+      }
+    }
+  } else {
+    const suggestedDecisions = commaSet(opts.suggestedDecision || opts.suggestedDecisions);
+    const confidences = commaSet(opts.confidence || opts.confidences);
+    const includeReviewed = Boolean(opts.includeReviewed);
+    sourceRows = sourceRows
+      .filter(row => includeReviewed || !String(row.review_decision || '').trim())
+      .filter(row => !suggestedDecisions || suggestedDecisions.has(row.suggested_review_decision || ''))
+      .filter(row => !confidences || confidences.has(row.suggestion_confidence || ''));
+    sourceRows = selectedSlice(sourceRows, opts);
+  }
+
+  const strictValidation = validatePricingReviewDecisions(strictValidationPath, {
+    requireReviewer: opts.requireReviewer,
+    requireReviewedAt: opts.requireReviewedAt,
+    requireReviewNotes: opts.requireReviewNotes,
+  });
+  const rows = sourceRows.map(pricingManualReviewRow);
+  const editableHeaders = [
+    ...sourceHeaders,
+    ...PRICING_MANUAL_REVIEW_HELPER_HEADERS,
+  ];
+
+  return {
+    generated_at: nowIso(),
+    name: opts.name || '',
+    ok: blockers.length === 0,
+    status: blockers.length ? 'blocked_source_identity' : 'manual_pack_ready',
+    draft: normalizePath(draftPath),
+    source: {
+      kind: sourceKind,
+      draft: normalizePath(draftPath),
+      batch: batchPath ? normalizePath(batchPath) : '',
+    },
+    constraints: {
+      read_only: true,
+      no_network: true,
+      no_login: true,
+      no_submission: true,
+      no_registry_writes: true,
+      no_auto_decisions: true,
+      helper_columns_ignored_by_validation: true,
+    },
+    strict_validation: strictValidation,
+    blockers,
+    blockers_count: blockers.length,
+    editable_headers: editableHeaders,
+    rows,
+    summary: pricingManualReviewSummary(rows, strictValidation, blockers),
+  };
+}
+
+export function pricingReviewManualPackCsv(pack = {}) {
+  const headers = pack.editable_headers || [...PRICING_DECISION_HEADERS, ...PRICING_MANUAL_REVIEW_HELPER_HEADERS];
+  const rows = pack.rows || [];
+  return [
+    headers.join(','),
+    ...rows.map(row => headers.map(header => csvEscape(row[header])).join(',')),
+  ].join('\n') + '\n';
+}
+
+function pricingReviewManualPackMarkdown(pack = {}, files = {}) {
+  const validationStatus = pack.strict_validation?.ok ? 'currently passes' : 'currently blocked';
+  const reviewedDraftPath = 'backlink-url/pricing-review/pricing-review-decision-draft.reviewed.csv';
+  const applyDecisionFile = pack.source?.kind === 'batch'
+    ? reviewedDraftPath
+    : (files.manual_csv || '<edited-manual-review.csv>');
+  const mergeCommand = pack.source?.kind === 'batch'
+    ? `node src/cli.js targets merge-pricing-review-decision-batch ${pack.draft} ${files.manual_csv || '<edited-manual-review.csv>'} --output ${reviewedDraftPath} --json-output backlink-url/pricing-review/pricing-review-decision-batch-merge-reviewed.json --fail-on-blockers`
+    : '';
+  const sourceLines = pack.source?.batch ? [`Batch: ${pack.source.batch}`] : [];
+  const validationCommands = [
+    `node src/cli.js targets validate-pricing-review-decisions ${files.manual_csv || '<edited-manual-review.csv>'} --fail-on-blockers`,
+    ...(mergeCommand ? [mergeCommand] : []),
+    `node src/cli.js targets apply-pricing-review-decisions ${applyDecisionFile} --registry resources/targets.canonical.yaml --output backlink-url/pricing-review/pricing-review-decision-apply-preview.json --json`,
+    'node src/cli.js targets pricing-review-post-apply-gate --registry resources/targets.canonical.yaml --product-config backlink-url/submission-materials/xtimer.config.yaml --output backlink-url/pricing-review/pricing-review-post-apply-gate.json --json',
+  ];
+  return [
+    '# Pricing Review Manual Pack',
+    '',
+    `Generated: ${pack.generated_at}`,
+    `Status: ${pack.status}`,
+    `Draft: ${pack.draft}`,
+    ...sourceLines,
+    '',
+    'Policy: manual review only. No approvals, no registry writes, no real submissions, no login, and no CAPTCHA/Cloudflare bypass. Suggestions are non-binding.',
+    '',
+    '## Summary',
+    '',
+    `- Rows: ${pack.summary.rows}`,
+    `- Unreviewed rows: ${pack.summary.unreviewed_rows}`,
+    `- Strict validation: ${validationStatus}`,
+    `- Strict validation blockers: ${pack.summary.strict_validation_blockers}`,
+    `- Source identity blockers: ${pack.blockers_count}`,
+    '',
+    '### Suggested Review Decisions',
+    '',
+    '| Decision | Count |',
+    '|---|---:|',
+    countsTable(pack.summary.by_suggested_review_decision),
+    '',
+    '### Suggested Pricing',
+    '',
+    '| Pricing | Count |',
+    '|---|---:|',
+    countsTable(pack.summary.by_suggested_pricing),
+    '',
+    '### Payment Signals',
+    '',
+    '| Signal | Count |',
+    '|---|---:|',
+    countsTable(pack.summary.by_payment_signal),
+    '',
+    '## Review Rows',
+    '',
+    '| Order | Target ID | Domain | Suggested Decision | Confidence | Payment | Free | Review URL |',
+    '|---|---|---|---|---|---|---|---|',
+    pricingManualReviewTable(pack.rows),
+    '',
+    '## Required Human Edits',
+    '',
+    '1. Open `manual_review_url` in a normal browser before changing any decision.',
+    '2. Fill only `review_decision`, `reviewed_pricing`, `reviewer`, `reviewed_at`, and `review_notes`.',
+    '3. Do not change `target_id`, `domain`, `submit_url`, evidence fields, suggested fields, or automation policy.',
+    '4. Use `mark_free` only when a visible free submission/listing path exists and no hard blocker is present.',
+    '5. Use `mark_freemium` when a free/basic path exists but paid/featured upgrades are also offered.',
+    '6. Use `mark_paid` when submission is paid-only; registry apply will downgrade that target to `skip`.',
+    '7. Use `keep_unknown` or `needs_manual_check` when evidence is ambiguous, blocked, login-gated, CAPTCHA-gated, or Cloudflare-gated.',
+    '',
+    '## Validation Flow',
+    '',
+    '```powershell',
+    ...validationCommands,
+    '```',
+    '',
+    'Do not run an apply step with `--write-registry` until validation, merge preview, and apply preview have been reviewed.',
+    '',
+    '## Files',
+    '',
+    `- Editable manual CSV: ${files.manual_csv || ''}`,
+    `- Machine-readable JSON: ${files.manual_json || ''}`,
+    `- Runbook Markdown: ${files.manual_md || ''}`,
+    '',
+  ].join('\n');
+}
+
+export function writePricingReviewManualPack(pack = {}, opts = {}) {
+  const outputDir = opts.outputDir || join(dirname(pack.source?.batch || pack.draft || 'backlink-url/pricing-review'), 'manual-review');
+  mkdirSync(outputDir, { recursive: true });
+  const baseName = opts.name || pricingManualReviewBaseName(pack);
+  const files = {
+    manual_csv: join(outputDir, `${baseName}.csv`),
+    manual_json: join(outputDir, `${baseName}.json`),
+    manual_md: join(outputDir, `${baseName}.md`),
+  };
+  const publicFiles = Object.fromEntries(Object.entries(files).map(([key, value]) => [key, normalizePath(value)]));
+  const body = { ...pack, files: publicFiles };
+  writeFileSync(files.manual_csv, pricingReviewManualPackCsv(pack), 'utf-8');
+  writeFileSync(files.manual_json, JSON.stringify(body, null, 2) + '\n', 'utf-8');
+  writeFileSync(files.manual_md, pricingReviewManualPackMarkdown(pack, publicFiles), 'utf-8');
+  return {
+    output_dir: normalizePath(outputDir),
+    files: publicFiles,
   };
 }
 
