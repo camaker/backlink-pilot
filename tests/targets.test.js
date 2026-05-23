@@ -9,12 +9,17 @@ import { auditTargets, formatAuditReport } from '../src/targets/audit.js';
 import {
   applyCrossDomainFinalUrlDecisionPatch,
   assistedSubmissionPackCsv,
+  buildCrossDomainFinalUrlEvidence,
   buildCrossDomainFinalUrlDecisionPatch,
+  buildCrossDomainFinalUrlManualPack,
   buildAssistedSubmissionPack,
+  crossDomainFinalUrlEvidenceCsv,
   crossDomainFinalUrlDecisionsCsv,
+  crossDomainFinalUrlManualPackCsv,
   crossDomainFinalUrlSuggestionsCsv,
   validateCrossDomainFinalUrlDecisions,
   writeAssistedSubmissionPack,
+  writeCrossDomainFinalUrlManualPack,
 } from '../src/targets/assisted-pack.js';
 import {
   buildAuthLoginPlan,
@@ -2241,6 +2246,92 @@ targets:
       assert.match(crossDomainFinalUrlSuggestionsCsv(pack.rows), /unknown_cross_domain/);
       assert.match(crossDomainFinalUrlDecisionsCsv(pack.rows), /no_execution_from_decision_file/);
       assert.match(assistedSubmissionPackCsv(pack.rows), /no_real_submission_from_pack/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('collects read-only cross-domain final URL evidence without submitting', async () => {
+    const dir = tempDir();
+    try {
+      const review = join(dir, 'cross-domain-final-url-review.csv');
+      writeFileSync(review, [
+        'rank,target_id,name,domain,submit_url,final_url,root_url',
+        '1,alias-target,Alias Target,jinshuju.net,https://jinshuju.net/f/abc?ref=partner,https://jsj.top/f/abc,https://jinshuju.net/',
+      ].join('\n') + '\n');
+
+      const calls = [];
+      const fetchFn = async (url, options) => {
+        calls.push({ url, options });
+        const html = url.includes('jsj.top')
+          ? '<html><title>Submit AI Tool</title><form><input name="url"><button type="submit">Submit</button></form></html>'
+          : '<html><title>AI Directory</title><p>Submit your AI tool to this directory.</p></html>';
+        return {
+          ok: true,
+          status: 200,
+          url,
+          headers: { get: () => 'text/html; charset=utf-8' },
+          text: async () => html,
+        };
+      };
+
+      const evidence = await buildCrossDomainFinalUrlEvidence(review, { fetchFn });
+      assert.equal(evidence.constraints.read_only_http_get, true);
+      assert.equal(evidence.constraints.no_registry_writes, true);
+      assert.equal(evidence.constraints.no_submission, true);
+      assert.equal(evidence.total_targets, 1);
+      assert.equal(evidence.total_checks, 3);
+      assert.equal(evidence.checked_urls, 3);
+      assert.equal(calls.length, 3);
+      assert.equal(calls.every(call => call.options.method === 'GET'), true);
+      assert.equal(calls.every(call => call.options.body === undefined), true);
+      assert.equal(evidence.evidence_rows.some(row => row.check_url.includes('ref=')), false);
+
+      const finalRow = evidence.evidence_rows.find(row => row.check_type === 'final_url');
+      assert.equal(finalRow.evidence_classification, 'possible_submit_form');
+      assert.equal(finalRow.form_count, 1);
+      assert.equal(finalRow.submit_button_signal, 'yes');
+      assert.match(crossDomainFinalUrlEvidenceCsv(evidence), /possible_submit_form/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('builds a cross-domain manual review pack without allowing preview-only registry writes', () => {
+    const dir = tempDir();
+    try {
+      const review = join(dir, 'cross-domain-final-url-review.csv');
+      writeFileSync(review, [
+        'rank,target_id,name,domain,submit_url,final_url,root_url',
+        '1,alias-target,Alias Target,jinshuju.net,https://jinshuju.net/f/abc,https://jsj.top/f/abc,https://jinshuju.net/',
+        '2,parked-target,Parked Target,parked.example,https://parked.example/submit,https://www.afternic.com/forsale/parked.example,https://parked.example/',
+      ].join('\n') + '\n');
+
+      const evidence = join(dir, 'cross-domain-final-url-evidence.csv');
+      writeFileSync(evidence, [
+        'target_id,name,domain,source_rank,check_type,check_url,check_host,expected_host,expected_relation,classification,suggested_decision,http_status,fetch_ok,final_url,final_host,domain_changed,same_as_target_domain,same_as_submit_domain,content_type,title,form_count,input_count,submit_button_signal,submit_path_signal,directory_signal,auth_signal,oauth_signal,captcha_signal,cloudflare_signal,payment_signal,platform_error_signal,domain_for_sale_signal,commerce_or_affiliate_signal,evidence_classification,evidence_notes,fetch_error,checked_at',
+        'alias-target,Alias Target,jinshuju.net,1,final_url,https://jsj.top/f/abc,jsj.top,jsj.top,persisted_scout_final_url,possible_form_provider_alias,allow_external_host_after_review,200,yes,https://jsj.top/f/abc,jsj.top,no,no,no,text/html,Submit AI Tool,1,1,yes,yes,yes,no,no,no,no,no,no,no,no,possible_submit_form,form evidence,,2026-05-23T00:00:00.000Z',
+        'parked-target,Parked Target,parked.example,2,final_url,https://www.afternic.com/forsale/parked.example,afternic.com,afternic.com,persisted_scout_final_url,domain_for_sale_or_parked,skip,200,yes,https://www.afternic.com/forsale/parked.example,afternic.com,no,no,no,text/html,Domain For Sale,0,0,no,no,no,no,no,no,no,no,no,yes,no,domain_for_sale_or_parked,domain for sale evidence,,2026-05-23T00:00:00.000Z',
+      ].join('\n') + '\n');
+
+      const pack = buildCrossDomainFinalUrlManualPack(review, { evidencePath: evidence });
+      const alias = pack.rows.find(row => row.target_id === 'alias-target');
+      const parked = pack.rows.find(row => row.target_id === 'parked-target');
+      assert.equal(pack.constraints.no_registry_writes, true);
+      assert.equal(pack.constraints.no_submission, true);
+      assert.equal(alias.recommended_review_decision, 'allow_external_host_after_review');
+      assert.equal(alias.registry_write_allowed_if_reviewed, 'no');
+      assert.equal(alias.write_gate_policy, 'preview_only_no_registry_write');
+      assert.equal(parked.recommended_review_decision, 'skip');
+      assert.equal(parked.registry_write_allowed_if_reviewed, 'yes');
+      assert.equal(pack.summary.preview_only_rows, 1);
+      assert.equal(pack.summary.controlled_write_possible_after_review, 1);
+      assert.match(crossDomainFinalUrlManualPackCsv(pack), /manual_review_pack_only_no_login_no_submission_no_registry_write/);
+
+      const written = writeCrossDomainFinalUrlManualPack(pack, { outputDir: join(dir, 'manual-pack') });
+      assert.equal(existsSync(written.files.manual_csv), true);
+      assert.equal(existsSync(written.files.manual_json), true);
+      assert.equal(existsSync(written.files.manual_md), true);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

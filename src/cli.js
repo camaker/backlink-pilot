@@ -20,6 +20,8 @@ import {
   authLoginStatusCommand,
   authRescoutPlanCommand,
   authWorkflowRefreshCommand,
+  crossDomainFinalUrlEvidenceCommand,
+  crossDomainFinalUrlManualPackCommand,
   coverageReviewDraftCommand,
   coverageReviewEvidenceCommand,
   coverageReviewBatchCommand,
@@ -347,6 +349,31 @@ targets
   .option('--json', 'Output as JSON')
   .action(async (file, opts) => {
     await applyCrossDomainFinalUrlDecisionsCommand(file, opts);
+  });
+
+targets
+  .command('cross-domain-final-url-evidence <queue>')
+  .description('Collect read-only HTTP/HTML evidence for cross-domain final URL review rows without submitting')
+  .option('--output <path>', 'Write evidence CSV')
+  .option('--json-output <path>', 'Write full evidence JSON')
+  .option('--offset <n>', 'Zero-based offset within evidence URL checks', '0')
+  .option('--limit <n>', 'Maximum URL checks to fetch')
+  .option('--timeout-ms <n>', 'Per-URL fetch timeout in milliseconds', '15000')
+  .option('--user-agent <value>', 'HTTP user-agent for read-only evidence fetches')
+  .option('--json', 'Output as JSON')
+  .action(async (queue, opts) => {
+    await crossDomainFinalUrlEvidenceCommand(queue, opts);
+  });
+
+targets
+  .command('cross-domain-final-url-manual-pack <queue>')
+  .description('Generate a manual review pack from cross-domain final URL evidence without approving or writing registry')
+  .option('--evidence <path>', 'Read cross-domain final URL evidence CSV')
+  .option('--suggestions <path>', 'Read cross-domain final URL suggestions CSV')
+  .option('--output-dir <path>', 'Directory to write the manual review pack')
+  .option('--json', 'Output summary as JSON')
+  .action(async (queue, opts) => {
+    await crossDomainFinalUrlManualPackCommand(queue, opts);
   });
 
 targets

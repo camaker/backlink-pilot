@@ -78,6 +78,82 @@ const CROSS_DOMAIN_DECISION_HEADERS = [
   'automation_policy',
 ];
 
+const CROSS_DOMAIN_EVIDENCE_HEADERS = [
+  'target_id',
+  'name',
+  'domain',
+  'source_rank',
+  'check_type',
+  'check_url',
+  'check_host',
+  'expected_host',
+  'expected_relation',
+  'classification',
+  'suggested_decision',
+  'http_status',
+  'fetch_ok',
+  'final_url',
+  'final_host',
+  'domain_changed',
+  'same_as_target_domain',
+  'same_as_submit_domain',
+  'content_type',
+  'title',
+  'form_count',
+  'input_count',
+  'submit_button_signal',
+  'submit_path_signal',
+  'directory_signal',
+  'auth_signal',
+  'oauth_signal',
+  'captcha_signal',
+  'cloudflare_signal',
+  'payment_signal',
+  'platform_error_signal',
+  'domain_for_sale_signal',
+  'commerce_or_affiliate_signal',
+  'evidence_classification',
+  'evidence_notes',
+  'fetch_error',
+  'checked_at',
+];
+
+const CROSS_DOMAIN_MANUAL_REVIEW_HEADERS = [
+  'target_id',
+  'name',
+  'domain',
+  'submit_url',
+  'root_url',
+  'persisted_final_url',
+  'final_host',
+  'classification',
+  'confidence',
+  'suggested_decision',
+  'recommended_review_decision',
+  'registry_write_allowed_if_reviewed',
+  'write_gate_policy',
+  'manual_bucket',
+  'risk_level',
+  'safety_findings',
+  'submit_fetch_ok',
+  'submit_http_status',
+  'submit_final_url',
+  'final_fetch_ok',
+  'final_http_status',
+  'final_observed_url',
+  'root_fetch_ok',
+  'root_http_status',
+  'root_observed_url',
+  'forms_detected',
+  'auth_or_oauth_signal',
+  'captcha_or_cloudflare_signal',
+  'payment_signal',
+  'human_evidence_url_candidate',
+  'recommended_next_step',
+  'reviewer_action',
+  'automation_policy',
+];
+
 const CROSS_DOMAIN_REVIEW_DECISIONS = new Set([
   'skip',
   'rescout_target_domain',
@@ -730,6 +806,620 @@ export function crossDomainFinalUrlDecisionsCsv(rows = []) {
     CROSS_DOMAIN_DECISION_HEADERS.join(','),
     ...decisions.map(row => CROSS_DOMAIN_DECISION_HEADERS.map(header => csvEscape(row[header])).join(',')),
   ].join('\n') + '\n';
+}
+
+function boolText(value) {
+  return value ? 'yes' : 'no';
+}
+
+function stripHtml(value) {
+  return String(value || '')
+    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function htmlTitle(html) {
+  const match = String(html || '').match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+  return stripHtml(match?.[1] || '').slice(0, 180);
+}
+
+function signalTrue(value) {
+  return value === true || value === 'yes';
+}
+
+function crossDomainHtmlSignals(html, url = '') {
+  const raw = String(html || '');
+  const lower = raw.toLowerCase();
+  const text = stripHtml(raw).toLowerCase();
+  const combined = `${url}\n${text}`;
+  const formCount = (raw.match(/<form\b/gi) || []).length;
+  const inputCount = (raw.match(/<(input|textarea|select)\b/gi) || []).length;
+
+  return {
+    title: htmlTitle(raw),
+    form_count: formCount,
+    input_count: inputCount,
+    submit_button_signal: /type=["']?submit|>\s*(submit|add (tool|product|startup|site|app)|list (your|my)|send|publish|launch|提交|发布|收录)\b/i.test(raw),
+    submit_path_signal: /submit|submission|add[-_/]?(tool|product|site|startup|app)|products\/new|submissions\/new|vendors\/new|claim|showcase/i.test(url),
+    directory_signal: /directory|tools?|startup|submit your|add your|list your|product|saas|ai tool|marketplace|catalog|目录|导航|收录/i.test(combined),
+    auth_signal: /sign\s?in|log\s?in|login|create account|register|authentication|required account|登录|注册/i.test(text),
+    oauth_signal: /continue with (google|github|twitter|x)|sign in with (google|github)|oauth|google-oauth/i.test(text),
+    captcha_signal: /captcha|recaptcha|hcaptcha|turnstile|verify you are human|robot|验证码|人机验证/i.test(lower),
+    cloudflare_signal: /cloudflare|cf-browser-verification|checking your browser|just a moment|cf-turnstile/i.test(lower),
+    payment_signal: /stripe|checkout|payment|pricing|buy now|paid listing|\$\s?\d+|付费|收费|付款|购买/i.test(text),
+    platform_error_signal: /domain_not_supported|domain not supported|not configured|custom domain|bubble/i.test(combined),
+    domain_for_sale_signal: /domain is for sale|buy this domain|afternic|sedo|dan\.com|parking|parked domain/i.test(combined),
+    commerce_or_affiliate_signal: /affiliate|custlinkid|banggood|shopping cart|add to cart|coupon|deal|ecommerce/i.test(combined),
+  };
+}
+
+function crossDomainEvidenceNotes(evidence = {}) {
+  const notes = [];
+  if (signalTrue(evidence.platform_error_signal)) notes.push('platform/custom-domain error signal found');
+  if (signalTrue(evidence.domain_for_sale_signal)) notes.push('domain sale or parked-domain signal found');
+  if (signalTrue(evidence.commerce_or_affiliate_signal)) notes.push('commerce or affiliate destination signal found');
+  if (signalTrue(evidence.auth_signal)) notes.push('login/register signal found');
+  if (signalTrue(evidence.oauth_signal)) notes.push('OAuth signal found');
+  if (signalTrue(evidence.captcha_signal)) notes.push('CAPTCHA signal found');
+  if (signalTrue(evidence.cloudflare_signal)) notes.push('Cloudflare/human verification signal found');
+  if (signalTrue(evidence.payment_signal)) notes.push('payment/pricing signal found');
+  if (Number(evidence.form_count || 0) > 0) notes.push(`${evidence.form_count} form(s), ${evidence.input_count} input/select/textarea fields`);
+  if (signalTrue(evidence.submit_button_signal)) notes.push('submit/add/list/publish button text signal found');
+  if (signalTrue(evidence.submit_path_signal)) notes.push('URL path looks like a submission endpoint');
+  if (signalTrue(evidence.directory_signal)) notes.push('directory/listing text signal found');
+  if (signalTrue(evidence.domain_changed)) notes.push(`final host changed to ${evidence.final_host}`);
+  if (evidence.fetch_error) notes.push(evidence.fetch_error);
+  return notes.join('; ');
+}
+
+function crossDomainEvidenceClassification(evidence = {}) {
+  if (signalTrue(evidence.platform_error_signal)) return 'platform_or_custom_domain_error';
+  if (signalTrue(evidence.domain_for_sale_signal)) return 'domain_for_sale_or_parked';
+  if (signalTrue(evidence.commerce_or_affiliate_signal)) return 'commerce_or_affiliate_destination';
+  if (signalTrue(evidence.auth_signal) || signalTrue(evidence.oauth_signal)) return 'auth_or_oauth_required';
+  if (signalTrue(evidence.captcha_signal) || signalTrue(evidence.cloudflare_signal)) return 'captcha_or_cloudflare_required';
+  if (signalTrue(evidence.payment_signal)) return 'payment_signal_detected';
+  if (evidence.fetch_error) return 'fetch_failed';
+  if (Number(evidence.form_count || 0) > 0 && (signalTrue(evidence.submit_button_signal) || signalTrue(evidence.submit_path_signal))) {
+    return 'possible_submit_form';
+  }
+  if (!signalTrue(evidence.submit_button_signal) && !signalTrue(evidence.submit_path_signal)) return 'not_obvious_submit_surface';
+  return 'manual_review_required';
+}
+
+function crossDomainCheckRows(rows = []) {
+  const checks = [];
+  for (const row of rows) {
+    const seen = new Map();
+    const candidates = [
+      ['submit_url', row.submit_url || '', row.domain || '', 'target_submit_url'],
+      ['final_url', row.final_url || '', row.final_host || urlHost(row.final_url || ''), 'persisted_scout_final_url'],
+      ['root_url', row.root_url || '', row.domain || '', 'target_root_url'],
+    ];
+
+    for (const [type, rawUrl, expectedHost, relation] of candidates) {
+      const normalized = normalizeUrl(cleanTrackingUrl(rawUrl));
+      if (!normalized) continue;
+      const existing = seen.get(normalized.dedupeKey);
+      if (existing) {
+        existing.check_type = `${existing.check_type};${type}`;
+        existing.expected_relation = `${existing.expected_relation};${relation}`;
+        continue;
+      }
+
+      const check = {
+        target_id: row.target_id || '',
+        name: row.name || '',
+        domain: row.domain || '',
+        source_rank: row.rank || '',
+        check_type: type,
+        check_url: normalized.url,
+        check_host: normalized.domain,
+        expected_host: hostFromHostOrUrl(expectedHost || rawUrl),
+        expected_relation: relation,
+        classification: row.classification || '',
+        suggested_decision: row.suggested_decision || '',
+        submit_host: urlHost(row.submit_url || ''),
+      };
+      seen.set(normalized.dedupeKey, check);
+      checks.push(check);
+    }
+  }
+  return checks;
+}
+
+async function fetchCrossDomainTextEvidence(url, opts = {}) {
+  const fetchFn = opts.fetchFn || fetch;
+  const timeoutMs = Math.max(1000, numericValue(opts.timeoutMs, 15000));
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetchFn(url, {
+      method: 'GET',
+      redirect: 'follow',
+      signal: controller.signal,
+      headers: {
+        'user-agent': opts.userAgent || 'BacklinkPilotCrossDomainReview/2.1',
+        accept: 'text/html,application/xhtml+xml,text/plain;q=0.9,*/*;q=0.5',
+      },
+    });
+    const text = await response.text();
+    return {
+      ok: response.ok,
+      status: response.status,
+      final_url: response.url || url,
+      content_type: response.headers?.get?.('content-type') || '',
+      text,
+    };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function crossDomainEvidenceRowFromFailure(check = {}, error, checkedAt) {
+  const evidence = {
+    ...check,
+    http_status: '',
+    fetch_ok: 'no',
+    final_url: '',
+    final_host: '',
+    domain_changed: 'unknown',
+    same_as_target_domain: 'unknown',
+    same_as_submit_domain: 'unknown',
+    content_type: '',
+    title: '',
+    form_count: 0,
+    input_count: 0,
+    submit_button_signal: 'unknown',
+    submit_path_signal: boolText(/submit|submission|add[-_/]?(tool|product|site|startup|app)|products\/new|submissions\/new|vendors\/new|claim|showcase/i.test(check.check_url || '')),
+    directory_signal: 'unknown',
+    auth_signal: 'unknown',
+    oauth_signal: 'unknown',
+    captcha_signal: 'unknown',
+    cloudflare_signal: 'unknown',
+    payment_signal: 'unknown',
+    platform_error_signal: 'unknown',
+    domain_for_sale_signal: 'unknown',
+    commerce_or_affiliate_signal: 'unknown',
+    evidence_classification: 'fetch_failed',
+    fetch_error: error?.message || String(error || 'fetch_failed'),
+    checked_at: checkedAt,
+  };
+  evidence.evidence_notes = crossDomainEvidenceNotes(evidence);
+  return evidence;
+}
+
+function crossDomainEvidenceRowFromResponse(check = {}, fetched, checkedAt) {
+  const normalized = normalizeUrl(check.check_url || '');
+  const finalNormalized = normalizeUrl(fetched.final_url) || normalized;
+  const finalHost = finalNormalized?.domain || '';
+  const signals = crossDomainHtmlSignals(fetched.text, fetched.final_url || check.check_url || '');
+  const domainChanged = Boolean(normalized?.domain && finalHost && normalized.domain !== finalHost);
+  const sameAsTargetDomain = Boolean(check.domain && finalHost && sameSite(finalHost, check.domain));
+  const sameAsSubmitDomain = Boolean(check.submit_host && finalHost && sameSite(finalHost, check.submit_host));
+  const fetchError = fetched.ok ? '' : `HTTP ${fetched.status}`;
+  const evidence = {
+    ...check,
+    http_status: fetched.status,
+    fetch_ok: boolText(fetched.ok),
+    final_url: fetched.final_url || '',
+    final_host: finalHost,
+    domain_changed: boolText(domainChanged),
+    same_as_target_domain: boolText(sameAsTargetDomain),
+    same_as_submit_domain: boolText(sameAsSubmitDomain),
+    content_type: fetched.content_type,
+    title: signals.title,
+    form_count: signals.form_count,
+    input_count: signals.input_count,
+    submit_button_signal: boolText(signals.submit_button_signal),
+    submit_path_signal: boolText(signals.submit_path_signal),
+    directory_signal: boolText(signals.directory_signal),
+    auth_signal: boolText(signals.auth_signal),
+    oauth_signal: boolText(signals.oauth_signal),
+    captcha_signal: boolText(signals.captcha_signal),
+    cloudflare_signal: boolText(signals.cloudflare_signal),
+    payment_signal: boolText(signals.payment_signal),
+    platform_error_signal: boolText(signals.platform_error_signal),
+    domain_for_sale_signal: boolText(signals.domain_for_sale_signal),
+    commerce_or_affiliate_signal: boolText(signals.commerce_or_affiliate_signal),
+    fetch_error: fetchError,
+    checked_at: checkedAt,
+  };
+  evidence.evidence_classification = crossDomainEvidenceClassification(evidence);
+  evidence.evidence_notes = crossDomainEvidenceNotes(evidence);
+  return evidence;
+}
+
+export async function buildCrossDomainFinalUrlEvidence(reviewCsvPath, opts = {}) {
+  const rows = parseCsv(readFileSync(reviewCsvPath, 'utf-8'));
+  const checks = crossDomainCheckRows(rows);
+  const offset = Math.max(0, numericValue(opts.offset, 0));
+  const limit = opts.limit === undefined || opts.limit === null || opts.limit === ''
+    ? checks.length
+    : Math.max(1, numericValue(opts.limit, checks.length));
+  const selected = checks.slice(offset, offset + limit);
+  const evidenceRows = [];
+
+  for (const check of selected) {
+    const checkedAt = nowIso();
+    try {
+      const fetched = await fetchCrossDomainTextEvidence(check.check_url, opts);
+      evidenceRows.push(crossDomainEvidenceRowFromResponse(check, fetched, checkedAt));
+    } catch (error) {
+      evidenceRows.push(crossDomainEvidenceRowFromFailure(check, error, checkedAt));
+    }
+  }
+
+  return {
+    generated_at: nowIso(),
+    review_csv: normalizePath(reviewCsvPath),
+    offset,
+    limit,
+    total_targets: rows.length,
+    total_checks: checks.length,
+    checked_urls: evidenceRows.length,
+    constraints: {
+      read_only_http_get: true,
+      no_registry_writes: true,
+      no_login: true,
+      no_submission: true,
+      no_browser_execution: true,
+    },
+    summary: evidenceRows.reduce((acc, row) => {
+      incrementCount(acc.by_evidence_classification, row.evidence_classification || 'unknown');
+      if (row.fetch_ok === 'yes') acc.fetch_ok += 1;
+      if (row.form_count > 0) acc.rows_with_forms += 1;
+      if (row.auth_signal === 'yes' || row.oauth_signal === 'yes') acc.auth_or_oauth_signals += 1;
+      if (row.captcha_signal === 'yes' || row.cloudflare_signal === 'yes') acc.captcha_or_cloudflare_signals += 1;
+      if (row.payment_signal === 'yes') acc.payment_signals += 1;
+      if (row.platform_error_signal === 'yes') acc.platform_error_signals += 1;
+      if (row.domain_for_sale_signal === 'yes') acc.domain_for_sale_signals += 1;
+      if (row.commerce_or_affiliate_signal === 'yes') acc.commerce_or_affiliate_signals += 1;
+      return acc;
+    }, {
+      by_evidence_classification: {},
+      fetch_ok: 0,
+      rows_with_forms: 0,
+      auth_or_oauth_signals: 0,
+      captcha_or_cloudflare_signals: 0,
+      payment_signals: 0,
+      platform_error_signals: 0,
+      domain_for_sale_signals: 0,
+      commerce_or_affiliate_signals: 0,
+    }),
+    evidence_rows: evidenceRows,
+  };
+}
+
+export function crossDomainFinalUrlEvidenceCsv(evidence = {}) {
+  const rows = evidence.evidence_rows || [];
+  return [
+    CROSS_DOMAIN_EVIDENCE_HEADERS.join(','),
+    ...rows.map(row => CROSS_DOMAIN_EVIDENCE_HEADERS.map(header => csvEscape(row[header])).join(',')),
+  ].join('\n') + '\n';
+}
+
+export function writeCrossDomainFinalUrlEvidence(evidence, opts = {}) {
+  const written = {};
+  if (opts.output) {
+    ensureParent(opts.output);
+    writeFileSync(opts.output, crossDomainFinalUrlEvidenceCsv(evidence), 'utf-8');
+    written.output = normalizePath(opts.output);
+  }
+  if (opts.jsonOutput) {
+    ensureParent(opts.jsonOutput);
+    writeFileSync(opts.jsonOutput, JSON.stringify(evidence, null, 2) + '\n', 'utf-8');
+    written.json_output = normalizePath(opts.jsonOutput);
+  }
+  return written;
+}
+
+function evidenceTypeMatches(row = {}, type) {
+  return String(row.check_type || '').split(';').includes(type);
+}
+
+function evidenceForTarget(evidenceRows = [], targetId = '') {
+  const rows = evidenceRows.filter(row => row.target_id === targetId);
+  return {
+    all: rows,
+    submit: rows.find(row => evidenceTypeMatches(row, 'submit_url')) || null,
+    final: rows.find(row => evidenceTypeMatches(row, 'final_url')) || null,
+    root: rows.find(row => evidenceTypeMatches(row, 'root_url')) || null,
+  };
+}
+
+function anyEvidenceSignal(rows = [], fields = []) {
+  return rows.some(row => fields.some(field => row[field] === 'yes'));
+}
+
+function sumEvidenceNumber(rows = [], field) {
+  return rows.reduce((sum, row) => sum + (Number.parseInt(row[field] || 0, 10) || 0), 0);
+}
+
+function crossDomainRecommendedReviewDecision(row = {}, suggestion = {}, evidence = {}) {
+  const classification = suggestion.classification || row.classification || '';
+  const rows = evidence.all || [];
+  if ([
+    'platform_custom_domain_error',
+    'domain_for_sale_or_parked',
+    'affiliate_or_unrelated_redirect',
+  ].includes(classification)) {
+    return 'skip';
+  }
+  if ([
+    'stale_scout_evidence_from_other_directory',
+    'unrelated_external_submit_endpoint',
+  ].includes(classification)) {
+    return 'rescout_target_domain';
+  }
+  if ([
+    'possible_form_provider_alias',
+    'possible_parent_brand_submit_domain',
+  ].includes(classification)) {
+    const unsafeSignals = anyEvidenceSignal(rows, ['auth_signal', 'oauth_signal', 'captcha_signal', 'cloudflare_signal', 'payment_signal']);
+    const submitOrFinalEvidence = [evidence.submit, evidence.final].filter(Boolean);
+    const completeSubmitOrFinalEvidence = submitOrFinalEvidence.length > 0 &&
+      submitOrFinalEvidence.every(item => item.fetch_ok === 'yes') &&
+      submitOrFinalEvidence.some(item =>
+        Number(item.form_count || 0) > 0 ||
+        item.submit_button_signal === 'yes' ||
+        item.submit_path_signal === 'yes'
+      );
+    return !unsafeSignals && completeSubmitOrFinalEvidence
+      ? 'allow_external_host_after_review'
+      : 'keep_blocked';
+  }
+  return 'keep_blocked';
+}
+
+function crossDomainManualBucket(recommendedDecision, evidence = {}) {
+  const rows = evidence.all || [];
+  if (!rows.length) return 'no_read_only_evidence_yet';
+  if (recommendedDecision === 'skip') return 'skip_candidate_after_manual_confirmation';
+  if (recommendedDecision === 'rescout_target_domain') return 'target_domain_rescout_required';
+  if (recommendedDecision === 'allow_external_host_after_review') return 'preview_only_external_host_candidate';
+  return 'keep_blocked_manual_review';
+}
+
+function crossDomainManualRisk(recommendedDecision, evidence = {}) {
+  const rows = evidence.all || [];
+  if (recommendedDecision === 'skip') return 'high';
+  if (anyEvidenceSignal(rows, ['captcha_signal', 'cloudflare_signal', 'payment_signal', 'domain_for_sale_signal', 'commerce_or_affiliate_signal'])) return 'high';
+  if (anyEvidenceSignal(rows, ['auth_signal', 'oauth_signal', 'platform_error_signal']) || rows.some(row => row.fetch_ok !== 'yes')) return 'medium';
+  return recommendedDecision === 'allow_external_host_after_review' ? 'medium' : 'unknown';
+}
+
+function crossDomainSafetyFindings(evidence = {}) {
+  const rows = evidence.all || [];
+  const findings = [];
+  if (!rows.length) findings.push('no_read_only_evidence');
+  if (rows.some(row => row.fetch_ok !== 'yes')) findings.push('fetch_not_ok_or_failed');
+  if (anyEvidenceSignal(rows, ['platform_error_signal'])) findings.push('platform_error');
+  if (anyEvidenceSignal(rows, ['domain_for_sale_signal'])) findings.push('domain_for_sale_or_parked');
+  if (anyEvidenceSignal(rows, ['commerce_or_affiliate_signal'])) findings.push('commerce_or_affiliate_destination');
+  if (anyEvidenceSignal(rows, ['auth_signal', 'oauth_signal'])) findings.push('auth_or_oauth_required');
+  if (anyEvidenceSignal(rows, ['captcha_signal', 'cloudflare_signal'])) findings.push('captcha_or_cloudflare_required');
+  if (anyEvidenceSignal(rows, ['payment_signal'])) findings.push('payment_signal');
+  if (sumEvidenceNumber(rows, 'form_count') > 0) findings.push('forms_detected');
+  if (anyEvidenceSignal(rows, ['submit_button_signal', 'submit_path_signal'])) findings.push('submit_surface_signal');
+  return findings.join('; ');
+}
+
+function crossDomainNextStep(recommendedDecision, row = {}, evidence = {}) {
+  if (recommendedDecision === 'skip') {
+    return 'Open manually once, confirm this is still a platform error, parked domain, or unrelated destination, then record skip with reviewer notes.';
+  }
+  if (recommendedDecision === 'rescout_target_domain') {
+    return 'Open the target-domain submit/root URL manually, then perform a fresh target-domain scout only after the correct official submit surface is confirmed.';
+  }
+  if (recommendedDecision === 'allow_external_host_after_review') {
+    return 'Confirm ownership/brand relationship in a normal browser and record an http(s) evidence_url; registry write remains preview-only and must not execute.';
+  }
+  if (!(evidence.all || []).length) return 'Collect read-only evidence before editing the decision CSV.';
+  return 'Keep blocked unless a human can document stronger evidence; do not promote to runnable mode from this pack.';
+}
+
+function crossDomainManualRow(row = {}, suggestion = {}, evidence = {}) {
+  const recommendedDecision = crossDomainRecommendedReviewDecision(row, suggestion, evidence);
+  const writeAllowed = CROSS_DOMAIN_WRITE_ALLOWED_DECISIONS.has(recommendedDecision);
+  const rows = evidence.all || [];
+  const authOrOauth = anyEvidenceSignal(rows, ['auth_signal', 'oauth_signal']);
+  const captchaOrCloudflare = anyEvidenceSignal(rows, ['captcha_signal', 'cloudflare_signal']);
+  const payment = anyEvidenceSignal(rows, ['payment_signal']);
+  const evidenceUrlCandidate = recommendedDecision === 'allow_external_host_after_review'
+    ? row.final_url || evidence.final?.final_url || row.submit_url || ''
+    : row.submit_url || row.final_url || '';
+
+  return {
+    target_id: row.target_id || '',
+    name: row.name || '',
+    domain: row.domain || '',
+    submit_url: row.submit_url || '',
+    root_url: row.root_url || '',
+    persisted_final_url: row.final_url || '',
+    final_host: row.final_host || urlHost(row.final_url || ''),
+    classification: suggestion.classification || row.classification || '',
+    confidence: suggestion.confidence || row.confidence || '',
+    suggested_decision: row.suggested_decision || decisionFromSuggestion(suggestion),
+    recommended_review_decision: recommendedDecision,
+    registry_write_allowed_if_reviewed: boolText(writeAllowed),
+    write_gate_policy: writeAllowed
+      ? 'controlled_write_allowed_after_validation_no_runnable_promotion'
+      : 'preview_only_no_registry_write',
+    manual_bucket: crossDomainManualBucket(recommendedDecision, evidence),
+    risk_level: crossDomainManualRisk(recommendedDecision, evidence),
+    safety_findings: crossDomainSafetyFindings(evidence),
+    submit_fetch_ok: evidence.submit?.fetch_ok || '',
+    submit_http_status: evidence.submit?.http_status || '',
+    submit_final_url: evidence.submit?.final_url || '',
+    final_fetch_ok: evidence.final?.fetch_ok || '',
+    final_http_status: evidence.final?.http_status || '',
+    final_observed_url: evidence.final?.final_url || '',
+    root_fetch_ok: evidence.root?.fetch_ok || '',
+    root_http_status: evidence.root?.http_status || '',
+    root_observed_url: evidence.root?.final_url || '',
+    forms_detected: sumEvidenceNumber(rows, 'form_count'),
+    auth_or_oauth_signal: boolText(authOrOauth),
+    captcha_or_cloudflare_signal: boolText(captchaOrCloudflare),
+    payment_signal: boolText(payment),
+    human_evidence_url_candidate: evidenceUrlCandidate,
+    recommended_next_step: crossDomainNextStep(recommendedDecision, row, evidence),
+    reviewer_action: 'edit cross-domain-final-url-decisions.csv only after manual browser confirmation and substantive notes',
+    automation_policy: 'manual_review_pack_only_no_login_no_submission_no_registry_write',
+  };
+}
+
+function crossDomainManualSummary(rows = []) {
+  return rows.reduce((acc, row) => {
+    incrementCount(acc.by_recommended_decision, row.recommended_review_decision || 'unknown');
+    incrementCount(acc.by_manual_bucket, row.manual_bucket || 'unknown');
+    incrementCount(acc.by_risk_level, row.risk_level || 'unknown');
+    if (row.registry_write_allowed_if_reviewed === 'yes') acc.controlled_write_possible_after_review += 1;
+    else acc.preview_only_rows += 1;
+    return acc;
+  }, {
+    rows: rows.length,
+    controlled_write_possible_after_review: 0,
+    preview_only_rows: 0,
+    by_recommended_decision: {},
+    by_manual_bucket: {},
+    by_risk_level: {},
+  });
+}
+
+export function buildCrossDomainFinalUrlManualPack(reviewCsvPath, opts = {}) {
+  const reviewRows = parseCsv(readFileSync(reviewCsvPath, 'utf-8'));
+  const suggestions = opts.suggestionsPath
+    ? parseCsv(readFileSync(opts.suggestionsPath, 'utf-8'))
+    : crossDomainFinalUrlSuggestions(reviewRows);
+  const evidenceRows = opts.evidencePath
+    ? parseCsv(readFileSync(opts.evidencePath, 'utf-8'))
+    : [];
+  const suggestionsById = new Map(suggestions.map(row => [row.target_id, row]));
+  const manualRows = reviewRows.map(row => {
+    const suggestion = suggestionsById.get(row.target_id) || crossDomainSuggestion(row);
+    return crossDomainManualRow(row, suggestion, evidenceForTarget(evidenceRows, row.target_id));
+  });
+
+  return {
+    generated_at: nowIso(),
+    review_csv: normalizePath(reviewCsvPath),
+    suggestions_csv: opts.suggestionsPath ? normalizePath(opts.suggestionsPath) : '',
+    evidence_csv: opts.evidencePath ? normalizePath(opts.evidencePath) : '',
+    constraints: {
+      read_only: true,
+      no_registry_writes: true,
+      no_login: true,
+      no_submission: true,
+      no_execution_commands: true,
+      no_auto_safe_promotion: true,
+    },
+    rows: manualRows,
+    summary: crossDomainManualSummary(manualRows),
+  };
+}
+
+export function crossDomainFinalUrlManualPackCsv(pack = {}) {
+  const rows = pack.rows || [];
+  return [
+    CROSS_DOMAIN_MANUAL_REVIEW_HEADERS.join(','),
+    ...rows.map(row => CROSS_DOMAIN_MANUAL_REVIEW_HEADERS.map(header => csvEscape(row[header])).join(',')),
+  ].join('\n') + '\n';
+}
+
+function crossDomainManualRowsTable(rows = []) {
+  if (!rows.length) return '| - | - | - | - | - | - | - |';
+  return rows.map(row => [
+    row.target_id,
+    row.domain,
+    row.classification,
+    row.recommended_review_decision,
+    row.registry_write_allowed_if_reviewed,
+    row.risk_level,
+    row.manual_bucket,
+  ].map(markdownEscape).join(' | ')).map(line => `| ${line} |`).join('\n');
+}
+
+function crossDomainManualPackMarkdown(pack = {}, files = {}) {
+  return [
+    '# Cross-Domain Final URL Manual Review Pack',
+    '',
+    `Generated: ${pack.generated_at}`,
+    '',
+    'Policy: this pack is read-only human review support. It does not approve targets, does not write the registry, does not log in, does not submit, and does not promote anything to runnable automation.',
+    '',
+    '## Inputs',
+    '',
+    `- Review queue: ${pack.review_csv}`,
+    `- Suggestions: ${pack.suggestions_csv || 'generated from review queue'}`,
+    `- Evidence: ${pack.evidence_csv || 'not provided'}`,
+    '',
+    '## Summary',
+    '',
+    `- Rows: ${pack.summary.rows}`,
+    `- Controlled-write possible after manual review: ${pack.summary.controlled_write_possible_after_review}`,
+    `- Preview-only rows: ${pack.summary.preview_only_rows}`,
+    '',
+    '### Recommended Decisions',
+    '',
+    '| Decision | Count |',
+    '|---|---:|',
+    countsTable(pack.summary.by_recommended_decision),
+    '',
+    '### Manual Buckets',
+    '',
+    '| Bucket | Count |',
+    '|---|---:|',
+    countsTable(pack.summary.by_manual_bucket),
+    '',
+    '## Review Rows',
+    '',
+    '| Target ID | Domain | Classification | Recommended Review Decision | Write Allowed | Risk | Manual Bucket |',
+    '|---|---|---|---|---|---|---|',
+    crossDomainManualRowsTable(pack.rows),
+    '',
+    '## Hard Rules',
+    '',
+    '1. Use this pack only to guide manual review; do not execute submissions from it.',
+    '2. `allow_external_host_after_review` and `replace_submit_url` remain preview-only and cannot be written by the controlled registry gate.',
+    '3. Only `skip`, `rescout_target_domain`, and `keep_blocked` can be written after the decision CSV passes validation with reviewer notes.',
+    '4. Any future runnable promotion still requires fresh scout evidence, registry audit, product readiness, and target audit.',
+    '5. Login, OAuth, CAPTCHA, Cloudflare, payment, reciprocal-link, file-upload, and dynamic ambiguity remain blockers.',
+    '',
+    '## Files',
+    '',
+    `- Manual review CSV: ${files.manual_csv || 'cross-domain-final-url-manual-review.csv'}`,
+    `- Manual review JSON: ${files.manual_json || 'cross-domain-final-url-manual-review.json'}`,
+    '',
+  ].join('\n');
+}
+
+export function writeCrossDomainFinalUrlManualPack(pack, opts = {}) {
+  const outputDir = opts.outputDir || 'backlink-url/assisted-submission-pack';
+  mkdirSync(outputDir, { recursive: true });
+  const files = {
+    manual_csv: join(outputDir, 'cross-domain-final-url-manual-review.csv'),
+    manual_json: join(outputDir, 'cross-domain-final-url-manual-review.json'),
+    manual_md: join(outputDir, 'cross-domain-final-url-manual-review.md'),
+  };
+  const publicFiles = Object.fromEntries(
+    Object.entries(files).map(([key, value]) => [key, normalizePath(value)])
+  );
+
+  writeFileSync(files.manual_csv, crossDomainFinalUrlManualPackCsv(pack), 'utf-8');
+  writeFileSync(files.manual_json, JSON.stringify({
+    ...pack,
+    files: publicFiles,
+  }, null, 2) + '\n', 'utf-8');
+  writeFileSync(files.manual_md, crossDomainManualPackMarkdown(pack, publicFiles), 'utf-8');
+
+  return {
+    output_dir: normalizePath(outputDir),
+    files: publicFiles,
+  };
 }
 
 function isHttpUrl(value = '') {
@@ -1406,6 +2096,15 @@ function crossDomainDecisionsMarkdown(pack, files = {}) {
     '4. `replace_submit_url` requires `replacement_submit_url` and `evidence_url`.',
     '5. `automation_policy` must remain `no_execution_from_decision_file`.',
     '6. This decision file is still not an execution plan; it only gates future registry edits.',
+    '',
+    '## Read-Only Evidence Pack',
+    '',
+    'Before editing decisions, collect GET-only evidence and generate the manual review pack. These commands do not log in, submit, or write the registry:',
+    '',
+    '```powershell',
+    `node src/cli.js targets cross-domain-final-url-evidence ${files.cross_domain_final_url_csv || 'cross-domain-final-url-review.csv'} --output backlink-url/assisted-submission-pack/cross-domain-final-url-evidence.csv --json-output backlink-url/assisted-submission-pack/cross-domain-final-url-evidence.json`,
+    `node src/cli.js targets cross-domain-final-url-manual-pack ${files.cross_domain_final_url_csv || 'cross-domain-final-url-review.csv'} --evidence backlink-url/assisted-submission-pack/cross-domain-final-url-evidence.csv --suggestions ${files.cross_domain_final_url_suggestions_csv || 'cross-domain-final-url-suggestions.csv'} --output-dir backlink-url/assisted-submission-pack`,
+    '```',
     '',
     '## Validation Command',
     '',

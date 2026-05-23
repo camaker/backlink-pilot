@@ -11,8 +11,12 @@ import { auditRegistry, formatAuditReport } from './audit.js';
 import {
   applyCrossDomainFinalUrlDecisionPatch,
   buildAssistedSubmissionPack,
+  buildCrossDomainFinalUrlEvidence,
+  buildCrossDomainFinalUrlManualPack,
   validateCrossDomainFinalUrlDecisions,
+  writeCrossDomainFinalUrlEvidence,
   writeCrossDomainFinalUrlDecisionPatchReport,
+  writeCrossDomainFinalUrlManualPack,
   writeAssistedSubmissionPack,
 } from './assisted-pack.js';
 import {
@@ -275,6 +279,74 @@ export async function applyCrossDomainFinalUrlDecisionsCommand(filePath, opts = 
     console.log(`PROPOSAL\tline:${item.line}\t${item.target_id}\t${item.action}\tchanges:${Object.keys(item.changes || {}).length}`);
   }
   if (!result.ok) process.exitCode = 1;
+
+  return result;
+}
+
+export async function crossDomainFinalUrlEvidenceCommand(queuePath, opts = {}) {
+  const evidence = await buildCrossDomainFinalUrlEvidence(queuePath, {
+    offset: opts.offset,
+    limit: opts.limit,
+    timeoutMs: opts.timeoutMs,
+    userAgent: opts.userAgent,
+  });
+  const written = writeCrossDomainFinalUrlEvidence(evidence, {
+    output: opts.output,
+    jsonOutput: opts.jsonOutput,
+  });
+  const result = {
+    ...evidence,
+    files: written,
+  };
+
+  if (opts.json) {
+    console.log(JSON.stringify(result, null, 2));
+    return result;
+  }
+
+  console.log(`Review queue: ${evidence.review_csv}`);
+  console.log(`Targets: ${evidence.total_targets}`);
+  console.log(`Checks: ${evidence.total_checks}`);
+  console.log(`Checked URLs: ${evidence.checked_urls}`);
+  console.log(`Summary: ${JSON.stringify(evidence.summary)}`);
+  if (written.output) console.log(`Evidence CSV: ${written.output}`);
+  if (written.json_output) console.log(`Evidence JSON: ${written.json_output}`);
+  console.log('Policy: read-only HTTP GET only; no login, no submission, no registry write.');
+
+  return result;
+}
+
+export async function crossDomainFinalUrlManualPackCommand(queuePath, opts = {}) {
+  const pack = buildCrossDomainFinalUrlManualPack(queuePath, {
+    evidencePath: opts.evidence,
+    suggestionsPath: opts.suggestions,
+  });
+  const written = writeCrossDomainFinalUrlManualPack(pack, {
+    outputDir: opts.outputDir,
+  });
+  const result = {
+    ...pack.summary,
+    output_dir: written.output_dir,
+    files: written.files,
+  };
+
+  if (opts.json) {
+    console.log(JSON.stringify(result, null, 2));
+    return result;
+  }
+
+  console.log(`Review queue: ${pack.review_csv}`);
+  console.log(`Evidence: ${pack.evidence_csv || 'not provided'}`);
+  console.log(`Output dir: ${written.output_dir}`);
+  console.log(`Rows: ${pack.summary.rows}`);
+  console.log(`Recommended decisions: ${JSON.stringify(pack.summary.by_recommended_decision)}`);
+  console.log(`Manual buckets: ${JSON.stringify(pack.summary.by_manual_bucket)}`);
+  console.log(`Risk levels: ${JSON.stringify(pack.summary.by_risk_level)}`);
+  console.log(`Controlled-write possible after review: ${pack.summary.controlled_write_possible_after_review}`);
+  console.log(`Preview-only rows: ${pack.summary.preview_only_rows}`);
+  console.log(`Manual review CSV: ${written.files.manual_csv}`);
+  console.log(`Summary: ${written.files.manual_md}`);
+  console.log('Policy: manual review support only; no login, no submission, no registry write.');
 
   return result;
 }

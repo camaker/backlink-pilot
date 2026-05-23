@@ -1,6 +1,6 @@
 # Cross-Domain Final URL Decisions
 
-Generated: 2026-05-23T10:03:15.435Z
+Generated: 2026-05-23T10:23:11.819Z
 
 Policy: this is an editable human decision template. It does not approve automation by itself, does not write the registry, and does not authorize real submissions.
 
@@ -20,6 +20,15 @@ Policy: this is an editable human decision template. It does not approve automat
 4. `replace_submit_url` requires `replacement_submit_url` and `evidence_url`.
 5. `automation_policy` must remain `no_execution_from_decision_file`.
 6. This decision file is still not an execution plan; it only gates future registry edits.
+
+## Read-Only Evidence Pack
+
+Before editing decisions, collect GET-only evidence and generate the manual review pack. These commands do not log in, submit, or write the registry:
+
+```powershell
+node src/cli.js targets cross-domain-final-url-evidence backlink-url/assisted-submission-pack/cross-domain-final-url-review.csv --output backlink-url/assisted-submission-pack/cross-domain-final-url-evidence.csv --json-output backlink-url/assisted-submission-pack/cross-domain-final-url-evidence.json
+node src/cli.js targets cross-domain-final-url-manual-pack backlink-url/assisted-submission-pack/cross-domain-final-url-review.csv --evidence backlink-url/assisted-submission-pack/cross-domain-final-url-evidence.csv --suggestions backlink-url/assisted-submission-pack/cross-domain-final-url-suggestions.csv --output-dir backlink-url/assisted-submission-pack
+```
 
 ## Validation Command
 
