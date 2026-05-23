@@ -7,6 +7,7 @@ import { inferTargetMode } from '../src/targets/classify.js';
 import { normalizeUrl } from '../src/targets/normalize.js';
 import { auditTargets, formatAuditReport } from '../src/targets/audit.js';
 import {
+  applyCrossDomainFinalUrlDecisionPatch,
   assistedSubmissionPackCsv,
   buildCrossDomainFinalUrlDecisionPatch,
   buildAssistedSubmissionPack,
@@ -2376,6 +2377,161 @@ targets:
       assert.equal(report.proposals_count, 0);
       assert.ok(report.blockers.some(item => item.code === 'replacement_submit_url_domain_mismatch'));
       assert.ok(report.blockers.some(item => item.code === 'target_not_found'));
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('writes only safe cross-domain downgrade decisions when explicitly requested', () => {
+    const dir = tempDir();
+    try {
+      const registry = join(dir, 'registry.yaml');
+      writeFileSync(registry, [
+        'version: 1',
+        'targets:',
+        '  - id: skip-target',
+        '    name: Skip Target',
+        '    domain: skip.example',
+        '    root_url: https://skip.example/',
+        '    submit_url: https://skip.example/submit',
+        '    normalized_key: skip.example/submit',
+        '    pricing: free',
+        '    technical:',
+        '      final_url: https://external.example/form',
+        '    submission:',
+        '      mode: assisted',
+        '      status: new',
+        '      reason: ""',
+        '      last_submitted_at: null',
+        '    quality:',
+        '      risk: low',
+        '  - id: rescout-target',
+        '    name: Rescout Target',
+        '    domain: rescout.example',
+        '    root_url: https://rescout.example/',
+        '    submit_url: https://rescout.example/submit',
+        '    normalized_key: rescout.example/submit',
+        '    pricing: free',
+        '    technical:',
+        '      final_url: https://external.example/form',
+        '    submission:',
+        '      mode: assisted',
+        '      status: new',
+        '      reason: ""',
+        '      last_submitted_at: null',
+        '    quality:',
+        '      risk: low',
+        '  - id: blocked-target',
+        '    name: Blocked Target',
+        '    domain: blocked.example',
+        '    root_url: https://blocked.example/',
+        '    submit_url: https://blocked.example/submit',
+        '    normalized_key: blocked.example/submit',
+        '    pricing: free',
+        '    technical:',
+        '      final_url: https://external.example/form',
+        '    submission:',
+        '      mode: assisted',
+        '      status: new',
+        '      reason: ""',
+        '      last_submitted_at: null',
+        '    quality:',
+        '      risk: low',
+      ].join('\n') + '\n');
+
+      const decisions = join(dir, 'decisions.csv');
+      writeFileSync(decisions, [
+        'target_id,name,domain,submit_url,final_url,final_host,classification,confidence,suggested_decision,review_decision,allowed_host,replacement_submit_url,evidence_url,reviewer,reviewed_at,review_notes,automation_policy',
+        'skip-target,Skip Target,skip.example,https://skip.example/submit,https://external.example/form,external.example,unrelated_external_submit_endpoint,high,skip,skip,,,https://evidence.example/skip,qa,2026-05-23T00:00:00.000Z,Verified manually that this target should be skipped after cross-domain review,no_execution_from_decision_file',
+        'rescout-target,Rescout Target,rescout.example,https://rescout.example/submit,https://external.example/form,external.example,unknown_cross_domain,medium,rescout_target_domain,rescout_target_domain,,,https://evidence.example/rescout,qa,2026-05-23T00:00:00.000Z,Verified manually that the target domain must be rescouter before any automation,no_execution_from_decision_file',
+        'blocked-target,Blocked Target,blocked.example,https://blocked.example/submit,https://external.example/form,external.example,unknown_cross_domain,medium,keep_blocked,keep_blocked,,,https://evidence.example/blocked,qa,2026-05-23T00:00:00.000Z,Verified manually that this target should remain blocked after review,no_execution_from_decision_file',
+      ].join('\n') + '\n');
+
+      const report = applyCrossDomainFinalUrlDecisionPatch(registry, decisions, { writeRegistry: true });
+      assert.equal(report.ok, true);
+      assert.equal(report.write_requested, true);
+      assert.equal(report.dry_run, false);
+      assert.equal(report.wrote_registry, true);
+      assert.equal(report.written_targets, 3);
+
+      const loaded = loadRegistry(registry);
+      const skip = loaded.targets.find(target => target.id === 'skip-target');
+      const rescout = loaded.targets.find(target => target.id === 'rescout-target');
+      const blocked = loaded.targets.find(target => target.id === 'blocked-target');
+      assert.equal(skip.submission.mode, 'skip');
+      assert.equal(skip.submission.status, 'skipped');
+      assert.equal(rescout.submission.mode, 'needs_review');
+      assert.equal(rescout.submission.status, 'needs_rescout');
+      assert.equal(blocked.submission.mode, 'needs_review');
+      assert.equal(blocked.submission.status, 'cross_domain_reviewed_blocked');
+      assert.equal(loaded.targets.some(target => ['auto_safe', 'auto_candidate', 'assisted'].includes(target.submission?.mode)), false);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('blocks controlled registry writes for allowlist and replacement decisions', () => {
+    const dir = tempDir();
+    try {
+      const registry = join(dir, 'registry.yaml');
+      writeFileSync(registry, [
+        'version: 1',
+        'targets:',
+        '  - id: alias-target',
+        '    name: Alias Target',
+        '    domain: jinshuju.net',
+        '    root_url: https://jinshuju.net/',
+        '    submit_url: https://jinshuju.net/f/abc',
+        '    normalized_key: jinshuju.net/f/abc',
+        '    pricing: free',
+        '    technical:',
+        '      final_url: https://jsj.top/f/abc',
+        '    submission:',
+        '      mode: assisted',
+        '      status: new',
+        '      reason: ""',
+        '      last_submitted_at: null',
+        '    quality:',
+        '      risk: low',
+        '  - id: replace-target',
+        '    name: Replace Target',
+        '    domain: replace.example',
+        '    root_url: https://replace.example/',
+        '    submit_url: https://replace.example/old-submit',
+        '    normalized_key: replace.example/old-submit',
+        '    pricing: free',
+        '    technical:',
+        '      final_url: https://external.example/old-form',
+        '    submission:',
+        '      mode: assisted',
+        '      status: new',
+        '      reason: ""',
+        '      last_submitted_at: null',
+        '    quality:',
+        '      risk: low',
+      ].join('\n') + '\n');
+
+      const decisions = join(dir, 'decisions.csv');
+      writeFileSync(decisions, [
+        'target_id,name,domain,submit_url,final_url,final_host,classification,confidence,suggested_decision,review_decision,allowed_host,replacement_submit_url,evidence_url,reviewer,reviewed_at,review_notes,automation_policy',
+        'alias-target,Alias Target,jinshuju.net,https://jinshuju.net/f/abc,https://jsj.top/f/abc,jsj.top,possible_form_provider_alias,medium,allow_external_host_after_review,allow_external_host_after_review,jsj.top,,https://evidence.example/alias,qa,2026-05-23T00:00:00.000Z,Verified manually that the alias still needs preview-only handling,no_execution_from_decision_file',
+        'replace-target,Replace Target,replace.example,https://replace.example/old-submit,https://external.example/old-form,external.example,unknown_cross_domain,medium,replace_submit_url,replace_submit_url,,https://replace.example/new-submit,https://evidence.example/replace,qa,2026-05-23T00:00:00.000Z,Verified manually that replacement still needs preview-only handling,no_execution_from_decision_file',
+      ].join('\n') + '\n');
+
+      const preview = buildCrossDomainFinalUrlDecisionPatch(registry, decisions);
+      assert.equal(preview.ok, true);
+      assert.equal(preview.proposals_count, 2);
+
+      const report = applyCrossDomainFinalUrlDecisionPatch(registry, decisions, { writeRegistry: true });
+      assert.equal(report.ok, false);
+      assert.equal(report.status, 'blocked_write_gate');
+      assert.equal(report.wrote_registry, false);
+      assert.equal(report.blockers.filter(item => item.code === 'write_decision_preview_only').length, 2);
+
+      const loaded = loadRegistry(registry);
+      assert.equal(loaded.targets.find(target => target.id === 'alias-target').submission.mode, 'assisted');
+      assert.equal(loaded.targets.find(target => target.id === 'replace-target').submit_url, 'https://replace.example/old-submit');
+      assert.equal(loaded.targets.find(target => target.id === 'alias-target').technical.allowed_final_hosts, undefined);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

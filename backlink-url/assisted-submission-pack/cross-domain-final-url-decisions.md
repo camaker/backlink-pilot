@@ -1,6 +1,6 @@
 # Cross-Domain Final URL Decisions
 
-Generated: 2026-05-23T09:50:24.997Z
+Generated: 2026-05-23T10:03:15.435Z
 
 Policy: this is an editable human decision template. It does not approve automation by itself, does not write the registry, and does not authorize real submissions.
 
@@ -33,6 +33,14 @@ Only after validation passes, generate a registry patch preview. This command st
 
 ```powershell
 node src/cli.js targets apply-cross-domain-final-url-decisions backlink-url/assisted-submission-pack/cross-domain-final-url-decisions.csv --registry resources/targets.canonical.yaml --output backlink-url/assisted-submission-pack/cross-domain-final-url-patch-preview.json
+```
+
+## Controlled Registry Write
+
+Only `skip`, `rescout_target_domain`, and `keep_blocked` can be written by the controlled gate. `allow_external_host_after_review` and `replace_submit_url` remain preview-only until separate evidence and rescout steps pass.
+
+```powershell
+node src/cli.js targets apply-cross-domain-final-url-decisions backlink-url/assisted-submission-pack/cross-domain-final-url-decisions.csv --registry resources/targets.canonical.yaml --write-registry --output backlink-url/assisted-submission-pack/cross-domain-final-url-write-report.json
 ```
 
 ## Files

@@ -9,8 +9,8 @@ import {
 } from './registry.js';
 import { auditRegistry, formatAuditReport } from './audit.js';
 import {
+  applyCrossDomainFinalUrlDecisionPatch,
   buildAssistedSubmissionPack,
-  buildCrossDomainFinalUrlDecisionPatch,
   validateCrossDomainFinalUrlDecisions,
   writeCrossDomainFinalUrlDecisionPatchReport,
   writeAssistedSubmissionPack,
@@ -232,10 +232,11 @@ export async function validateCrossDomainFinalUrlDecisionsCommand(filePath, opts
 }
 
 export async function applyCrossDomainFinalUrlDecisionsCommand(filePath, opts = {}) {
-  const result = buildCrossDomainFinalUrlDecisionPatch(
+  const result = applyCrossDomainFinalUrlDecisionPatch(
     opts.registry || DEFAULT_REGISTRY_FILE,
     filePath,
     {
+      writeRegistry: Boolean(opts.writeRegistry),
       requireReviewer: opts.requireReviewer !== false,
       requireReviewNotes: opts.requireReviewNotes !== false,
     }
@@ -256,11 +257,13 @@ export async function applyCrossDomainFinalUrlDecisionsCommand(filePath, opts = 
   console.log(`Decision file: ${result.decision_file}`);
   console.log(`Registry: ${result.registry}`);
   console.log(`Dry run: ${result.dry_run}`);
+  console.log(`Write requested: ${Boolean(result.write_requested)}`);
   console.log(`Wrote registry: ${result.wrote_registry}`);
   console.log(`OK: ${result.ok}`);
   console.log(`Status: ${result.status}`);
   console.log(`Rows: ${result.rows}`);
   console.log(`Proposals: ${result.proposals_count}`);
+  if (result.written_targets !== undefined) console.log(`Written targets: ${result.written_targets}`);
   console.log(`Skipped: ${result.skipped_rows}`);
   console.log(`Blockers: ${result.blockers_count}`);
   if (result.output) console.log(`Patch report: ${result.output}`);

@@ -338,6 +338,7 @@ targets
   .command('apply-cross-domain-final-url-decisions <file>')
   .description('Dry-run a registry patch preview from reviewed cross-domain final URL decisions')
   .option('--registry <path>', 'Canonical registry path')
+  .option('--write-registry', 'Write only safe downgrade decisions to the registry; allowlist and replacement decisions remain blocked')
   .option('--no-require-reviewer', 'Do not require reviewer on reviewed rows')
   .option('--no-require-review-notes', 'Do not require substantive review notes on reviewed rows')
   .option('--output <path>', 'Write dry-run patch report JSON')

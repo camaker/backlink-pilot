@@ -1,7 +1,7 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { parse } from 'yaml';
-import { DEFAULT_REGISTRY_FILE, loadRegistry } from './registry.js';
+import { DEFAULT_REGISTRY_FILE, loadRegistry, saveRegistry } from './registry.js';
 import { cleanTrackingUrl, normalizeUrl } from './normalize.js';
 import { sameSite, urlDomainBlocker, urlHost } from './auth-login-safety.js';
 import { parseCsv } from './importers/csv.js';
@@ -89,6 +89,12 @@ const CROSS_DOMAIN_REVIEW_DECISIONS = new Set([
 const CROSS_DOMAIN_ALLOWLIST_ELIGIBLE_CLASSIFICATIONS = new Set([
   'possible_form_provider_alias',
   'possible_parent_brand_submit_domain',
+]);
+
+const CROSS_DOMAIN_WRITE_ALLOWED_DECISIONS = new Set([
+  'skip',
+  'rescout_target_domain',
+  'keep_blocked',
 ]);
 
 function nowIso() {
@@ -1199,6 +1205,110 @@ export function buildCrossDomainFinalUrlDecisionPatch(registryPath, decisionFile
   };
 }
 
+function writeGateBlockers(proposals = []) {
+  const blockers = [];
+  for (const proposal of proposals) {
+    if (!CROSS_DOMAIN_WRITE_ALLOWED_DECISIONS.has(proposal.decision)) {
+      blockers.push({
+        severity: 'blocker',
+        code: 'write_decision_preview_only',
+        line: proposal.line,
+        target_id: proposal.target_id,
+        domain: proposal.before?.domain || '',
+        review_decision: proposal.decision,
+        message: 'This review_decision is preview-only and cannot be written by the controlled registry write gate.',
+      });
+    }
+    if (['auto_safe', 'auto_candidate', 'assisted'].includes(proposal.after?.submission?.mode || '')) {
+      blockers.push({
+        severity: 'blocker',
+        code: 'write_would_leave_target_runnable',
+        line: proposal.line,
+        target_id: proposal.target_id,
+        domain: proposal.before?.domain || '',
+        review_decision: proposal.decision,
+        message: 'Controlled registry writes must not leave changed targets in runnable modes.',
+      });
+    }
+  }
+  return blockers;
+}
+
+function applyProposalChangesToTargets(targets = [], proposals = []) {
+  const proposalById = new Map(proposals.map(proposal => [proposal.target_id, proposal]));
+  let applied = 0;
+  const nextTargets = targets.map(target => {
+    const proposal = proposalById.get(target.id);
+    if (!proposal) return target;
+    const nextTarget = cloneJson(target);
+    for (const [path, change] of Object.entries(proposal.changes || {})) {
+      setNestedValue(nextTarget, path, change.to);
+    }
+    applied++;
+    return nextTarget;
+  });
+  return { targets: nextTargets, applied };
+}
+
+export function applyCrossDomainFinalUrlDecisionPatch(registryPath, decisionFilePath, opts = {}) {
+  const writeRegistry = Boolean(opts.writeRegistry);
+  const preview = buildCrossDomainFinalUrlDecisionPatch(registryPath, decisionFilePath, opts);
+  if (!writeRegistry) return preview;
+
+  if (!preview.ok) {
+    return {
+      ...preview,
+      status: preview.status === 'blocked_decision_validation'
+        ? 'blocked_decision_validation'
+        : 'blocked_registry_patch_preview',
+      write_requested: true,
+      dry_run: false,
+      wrote_registry: false,
+    };
+  }
+
+  const writeBlockers = writeGateBlockers(preview.proposals);
+  if (writeBlockers.length) {
+    return {
+      ...preview,
+      ok: false,
+      status: 'blocked_write_gate',
+      write_requested: true,
+      dry_run: false,
+      wrote_registry: false,
+      blockers: writeBlockers,
+      blockers_count: writeBlockers.length,
+      proposals_count: 0,
+      proposals: [],
+      write_policy: 'only_skip_rescout_target_domain_keep_blocked_can_write_no_runnable_promotion',
+    };
+  }
+
+  const registry = loadRegistry(registryPath || DEFAULT_REGISTRY_FILE);
+  const updated = applyProposalChangesToTargets(registry.targets || [], preview.proposals);
+  const saved = saveRegistry({
+    ...registry,
+    targets: updated.targets,
+  }, registryPath || DEFAULT_REGISTRY_FILE);
+
+  return {
+    ...preview,
+    ok: true,
+    status: 'registry_written_requires_audit_and_rescout',
+    write_requested: true,
+    dry_run: false,
+    wrote_registry: true,
+    written_targets: updated.applied,
+    registry_total: saved.targets.length,
+    write_policy: 'only_skip_rescout_target_domain_keep_blocked_can_write_no_runnable_promotion',
+    required_next_steps: [
+      'run target registry audit',
+      'manual rescout before any runnable promotion',
+      'do not execute from this decision file',
+    ],
+  };
+}
+
 export function writeCrossDomainFinalUrlDecisionPatchReport(report, filePath) {
   mkdirSync(dirname(filePath), { recursive: true });
   writeFileSync(filePath, JSON.stringify(report, null, 2) + '\n', 'utf-8');
@@ -1309,6 +1419,14 @@ function crossDomainDecisionsMarkdown(pack, files = {}) {
     '',
     '```powershell',
     `node src/cli.js targets apply-cross-domain-final-url-decisions ${files.cross_domain_final_url_decisions_csv || 'cross-domain-final-url-decisions.csv'} --registry resources/targets.canonical.yaml --output backlink-url/assisted-submission-pack/cross-domain-final-url-patch-preview.json`,
+    '```',
+    '',
+    '## Controlled Registry Write',
+    '',
+    'Only `skip`, `rescout_target_domain`, and `keep_blocked` can be written by the controlled gate. `allow_external_host_after_review` and `replace_submit_url` remain preview-only until separate evidence and rescout steps pass.',
+    '',
+    '```powershell',
+    `node src/cli.js targets apply-cross-domain-final-url-decisions ${files.cross_domain_final_url_decisions_csv || 'cross-domain-final-url-decisions.csv'} --registry resources/targets.canonical.yaml --write-registry --output backlink-url/assisted-submission-pack/cross-domain-final-url-write-report.json`,
     '```',
     '',
     '## Files',
