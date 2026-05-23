@@ -64,6 +64,7 @@ function planOptions(opts, registry, productConfig, limit) {
     source: opts.source,
     limit,
     includeRisk: Boolean(opts.includeRisk),
+    includeScouted: Boolean(opts.includeScouted),
   };
 }
 
@@ -78,6 +79,7 @@ function scoutQueueOptions(opts, registry, productConfig, limit) {
     source: opts.source,
     limit,
     includeRisk: Boolean(opts.includeRisk),
+    includeScouted: Boolean(opts.includeScouted),
   };
 }
 

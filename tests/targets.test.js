@@ -2176,6 +2176,50 @@ targets:
       rmSync(dir, { recursive: true, force: true });
     }
   });
+
+  it('can explicitly include already scouted targets for retry passes', () => {
+    const dir = tempDir();
+    try {
+      const registry = join(dir, 'registry.yaml');
+      writeFileSync(registry, `
+version: 1
+targets:
+  - id: retry
+    submit_url: https://retry.example/submit
+    pricing: free
+    submission:
+      mode: needs_scout
+      status: retry_after_browser_fix
+    technical:
+      last_scouted_at: 2026-05-22T00:00:00.000Z
+    quality:
+      risk: unknown
+  - id: fresh
+    submit_url: https://fresh.example/submit
+    pricing: free
+    submission:
+      mode: needs_scout
+    technical:
+      last_scouted_at: null
+    quality:
+      risk: unknown
+`);
+
+      const strict = buildScoutQueuePlan({ registry, modes: 'needs_scout', limit: 10 });
+      const retry = buildScoutQueuePlan({
+        registry,
+        modes: 'needs_scout',
+        includeScouted: true,
+        limit: 10,
+      });
+
+      assert.deepEqual(strict.targets.map(target => target.id), ['fresh']);
+      assert.deepEqual(retry.targets.map(target => target.id), ['retry', 'fresh']);
+      assert.equal(retry.constraints.include_scouted, true);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
 });
 
 function loadTargetsFromFileFromRows(rows) {

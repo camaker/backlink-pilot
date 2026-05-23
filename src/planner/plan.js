@@ -110,7 +110,7 @@ export function buildScoutQueuePlan(opts = {}) {
 
   const candidates = registry.targets
     .filter(target => modes.has(target.submission?.mode || ''))
-    .filter(target => !target.technical?.last_scouted_at)
+    .filter(target => opts.includeScouted || !target.technical?.last_scouted_at)
     .filter(target => {
       if (!opts.freeOnly) return true;
       if (target.pricing === 'free') return true;
@@ -135,6 +135,7 @@ export function buildScoutQueuePlan(opts = {}) {
       lang: opts.lang || '',
       source: opts.source || '',
       include_risk: Boolean(opts.includeRisk),
+      include_scouted: Boolean(opts.includeScouted),
     },
     targets: candidates.map((target, index) => ({
       order: index + 1,

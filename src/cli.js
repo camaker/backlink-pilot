@@ -507,6 +507,7 @@ program
   .option('--source <name>', 'Filter by source')
   .option('--limit <n>', 'Maximum target count', '30')
   .option('--include-risk', 'Allow high-risk targets in the scout queue')
+  .option('--include-scouted', 'Include targets that already have scout evidence, for explicit retry passes')
   .option('--output <path>', 'Write scout queue plan to JSON/YAML file')
   .option('--json', 'Print JSON to stdout')
   .action(async (opts) => {
@@ -648,6 +649,7 @@ program
   .option('--scout-queue', 'Build the scout plan from unscouted auto_candidate/needs_scout targets, then refresh the run plan')
   .option('--scout-modes <items>', 'Comma-separated target modes for --scout-queue', 'auto_candidate,needs_scout')
   .option('--scout-delay <duration>', 'Delay between scouts, e.g. 10s or 1m', '10s')
+  .option('--include-scouted', 'Include targets that already have scout evidence when building --scout-queue')
   .option('--no-persist', 'Do not persist per-target scout JSON files')
   .option('--execute', 'Actually submit targets; without this flag the pipeline only dry-runs')
   .option('--delay <duration>', 'Delay between run-plan targets, e.g. 90s or 2m')

@@ -1,6 +1,6 @@
 version: 1
 generated_at: 2026-05-21T15:44:34.969Z
-updated_at: 2026-05-23T02:39:13.989Z
+updated_at: 2026-05-23T03:08:43.191Z
 targets:
   - id: 01webdirectory
     name: 01webdirectory
@@ -368,35 +368,48 @@ targets:
       scout_classification_source: computed
       scout_classification_mismatch: false
       scout_classification_provided:
-        mode: needs_review
-        status: no_form_detected
-        confidence: 0.55
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
         reasons:
-          - no_form_detected
+          - auth_signal
       scout_classification_computed:
-        mode: needs_review
-        status: no_form_detected
-        confidence: 0.55
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
         reasons:
-          - no_form_detected
+          - auth_signal
     technical:
-      last_scouted_at: 2026-05-22T13:40:30.623Z
-      auth: none
+      last_scouted_at: 2026-05-23T02:58:33.976Z
+      auth: oauth
       captcha: none
       reachable: yes
       final_url: https://www.247webdirectory.com/
       http_status: 200
     submission:
-      mode: needs_scout
-      status: retry_after_browser_fix
-      reason: no_form_detected; retry_after_bb_tab_binding_fix
+      mode: assisted
+      status: auth_required
+      reason: auth_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.085Z
-    updated_at: 2026-05-22T14:35:32.147Z
-    forms: []
+    updated_at: 2026-05-23T02:58:35.694Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: search
+            name: searchfield
+            id: searchfield
+            placeholder: Search
+            aria_label: ""
+            selector: input[id="searchfield"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons: []
   - id: 2agi
     name: 2AGI
     domain: 2agi.net
@@ -416,37 +429,69 @@ targets:
       - targets.yaml
     source_meta:
       id: 2agi
-      scout_classification_source: computed
-      scout_classification_mismatch: false
+      scout_classification_source: provided_equal
+      scout_classification_mismatch: true
       scout_classification_provided:
-        mode: assisted
-        status: auth_required
-        confidence: 0.8
+        mode: needs_review
+        status: scout_failed
+        confidence: 0.55
         reasons:
-          - auth_signal
+          - scout_failed_network
       scout_classification_computed:
-        mode: assisted
-        status: auth_required
-        confidence: 0.8
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
         reasons:
-          - auth_signal
+          - no_form_detected
+      scout_failure_error: "page.goto: net::ERR_CERT_DATE_INVALID at
+        https://2agi.net/zh/submit
+
+        Call log:
+
+        \e[2m  - navigating to \"https://2agi.net/zh/submit\", waiting until
+        \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_CERT_DATE_INVALID at
+        https://2agi.net/zh/submit
+
+        Call log:
+
+        \e[2m  - navigating to \"https://2agi.net/zh/submit\", waiting until
+        \"networkidle\"\e[22m"
     technical:
-      last_scouted_at: 2026-05-22T13:44:49.587Z
-      auth: oauth
+      last_scouted_at: 2026-05-23T02:58:44.708Z
+      auth: none
       captcha: none
-      reachable: yes
+      reachable: unknown
       final_url: https://2agi.net/zh/submit
-      http_status: 200
+      http_status: null
+      last_scout_error: "page.goto: net::ERR_CERT_DATE_INVALID at
+        https://2agi.net/zh/submit
+
+        Call log:
+
+        \e[2m  - navigating to \"https://2agi.net/zh/submit\", waiting until
+        \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_CERT_DATE_INVALID at
+        https://2agi.net/zh/submit
+
+        Call log:
+
+        \e[2m  - navigating to \"https://2agi.net/zh/submit\", waiting until
+        \"networkidle\"\e[22m"
     submission:
-      mode: needs_scout
-      status: retry_after_browser_fix
-      reason: auth_signal; retry_after_bb_tab_binding_fix
+      mode: needs_review
+      status: scout_failed
+      reason: scout_failed_network; classification_mismatch:needs_review->needs_review
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.085Z
-    updated_at: 2026-05-22T14:35:32.148Z
+    updated_at: 2026-05-23T02:58:44.708Z
     forms: []
   - id: 5118-link
     name: 5118.link
@@ -467,37 +512,69 @@ targets:
       - targets.yaml
     source_meta:
       id: 5118-link
-      scout_classification_source: computed
+      scout_classification_source: provided_equal
       scout_classification_mismatch: false
       scout_classification_provided:
-        mode: needs_review
-        status: no_form_detected
-        confidence: 0.55
+        mode: skip
+        status: dead
+        confidence: 0.9
         reasons:
-          - no_form_detected
+          - scout_failed_dns
       scout_classification_computed:
-        mode: needs_review
-        status: no_form_detected
-        confidence: 0.55
+        mode: skip
+        status: dead
+        confidence: 1
         reasons:
-          - no_form_detected
+          - unreachable_or_404
+      scout_failure_error: "page.goto: net::ERR_NAME_NOT_RESOLVED at
+        http://www.5118.link/article/22.html
+
+        Call log:
+
+        \e[2m  - navigating to \"http://www.5118.link/article/22.html\", waiting
+        until \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_NAME_NOT_RESOLVED at
+        http://www.5118.link/article/22.html
+
+        Call log:
+
+        \e[2m  - navigating to \"http://www.5118.link/article/22.html\", waiting
+        until \"networkidle\"\e[22m"
     technical:
-      last_scouted_at: 2026-05-22T13:44:55.740Z
+      last_scouted_at: 2026-05-23T02:58:48.582Z
       auth: none
       captcha: none
-      reachable: yes
+      reachable: no
       final_url: http://www.5118.link/article/22.html
-      http_status: 200
+      http_status: null
+      last_scout_error: "page.goto: net::ERR_NAME_NOT_RESOLVED at
+        http://www.5118.link/article/22.html
+
+        Call log:
+
+        \e[2m  - navigating to \"http://www.5118.link/article/22.html\", waiting
+        until \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_NAME_NOT_RESOLVED at
+        http://www.5118.link/article/22.html
+
+        Call log:
+
+        \e[2m  - navigating to \"http://www.5118.link/article/22.html\", waiting
+        until \"networkidle\"\e[22m"
     submission:
-      mode: needs_scout
-      status: retry_after_browser_fix
-      reason: no_form_detected; retry_after_bb_tab_binding_fix
+      mode: skip
+      status: dead
+      reason: scout_failed_dns
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.085Z
-    updated_at: 2026-05-22T14:35:32.148Z
+    updated_at: 2026-05-23T02:58:48.582Z
     forms: []
   - id: 51aiyz-com
     name: AI驿站
@@ -803,37 +880,69 @@ targets:
       - targets.yaml
     source_meta:
       id: 700-tools
-      scout_classification_source: computed
+      scout_classification_source: provided_equal
       scout_classification_mismatch: false
       scout_classification_provided:
-        mode: needs_review
-        status: no_form_detected
-        confidence: 0.55
+        mode: skip
+        status: dead
+        confidence: 0.9
         reasons:
-          - no_form_detected
+          - scout_failed_dns
       scout_classification_computed:
-        mode: needs_review
-        status: no_form_detected
-        confidence: 0.55
+        mode: skip
+        status: dead
+        confidence: 1
         reasons:
-          - no_form_detected
+          - unreachable_or_404
+      scout_failure_error: "page.goto: net::ERR_NAME_NOT_RESOLVED at
+        https://700.tools/add
+
+        Call log:
+
+        \e[2m  - navigating to \"https://700.tools/add\", waiting until
+        \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_NAME_NOT_RESOLVED at
+        https://700.tools/add
+
+        Call log:
+
+        \e[2m  - navigating to \"https://700.tools/add\", waiting until
+        \"networkidle\"\e[22m"
     technical:
-      last_scouted_at: 2026-05-22T13:45:16.491Z
+      last_scouted_at: 2026-05-23T02:58:54.327Z
       auth: none
       captcha: none
-      reachable: yes
+      reachable: no
       final_url: https://700.tools/add
-      http_status: 200
+      http_status: null
+      last_scout_error: "page.goto: net::ERR_NAME_NOT_RESOLVED at
+        https://700.tools/add
+
+        Call log:
+
+        \e[2m  - navigating to \"https://700.tools/add\", waiting until
+        \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_NAME_NOT_RESOLVED at
+        https://700.tools/add
+
+        Call log:
+
+        \e[2m  - navigating to \"https://700.tools/add\", waiting until
+        \"networkidle\"\e[22m"
     submission:
-      mode: needs_scout
-      status: retry_after_browser_fix
-      reason: no_form_detected; retry_after_bb_tab_binding_fix
+      mode: skip
+      status: dead
+      reason: scout_failed_dns
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.086Z
-    updated_at: 2026-05-22T14:35:32.148Z
+    updated_at: 2026-05-23T02:58:54.327Z
     forms: []
   - id: 9sites-net
     name: 9Sites.net
@@ -1206,35 +1315,109 @@ targets:
       scout_classification_source: computed
       scout_classification_mismatch: false
       scout_classification_provided:
-        mode: needs_review
-        status: no_form_detected
-        confidence: 0.55
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
         reasons:
-          - no_form_detected
+          - auth_signal
       scout_classification_computed:
-        mode: needs_review
-        status: no_form_detected
-        confidence: 0.55
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
         reasons:
-          - no_form_detected
+          - auth_signal
     technical:
-      last_scouted_at: 2026-05-22T13:47:23.110Z
-      auth: none
+      last_scouted_at: 2026-05-23T02:59:26.877Z
+      auth: required
       captcha: none
       reachable: yes
       final_url: https://www.activesearchresults.com/addwebsite.php
       http_status: 200
     submission:
-      mode: needs_scout
-      status: retry_after_browser_fix
-      reason: no_form_detected; retry_after_bb_tab_binding_fix
+      mode: assisted
+      status: auth_required
+      reason: auth_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.086Z
-    updated_at: 2026-05-22T14:35:32.148Z
-    forms: []
+    updated_at: 2026-05-23T02:59:28.412Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: url
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="url"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: input
+            type: text
+            name: email
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="email"]
+            label: ""
+            required: false
+            mapped_to: product.email
+          - tag: input
+            type: submit
+            name: submiturl
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="submiturl"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: input
+            type: submit
+            name: clear
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="clear"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: submit
+            name: cancel
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="cancel"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: input
+            type: submit
+            name: submiturl
+            id: ""
+            text: Submit
+            value: Submit
+            selector: input[name="submiturl"]
+          - tag: input
+            type: submit
+            name: clear
+            id: ""
+            text: Clear
+            value: Clear
+            selector: input[name="clear"]
+          - tag: input
+            type: submit
+            name: cancel
+            id: ""
+            text: Cancel
+            value: Cancel
+            selector: input[name="cancel"]
   - id: addictivetips
     name: AddictiveTips
     domain: addictivetips.com
@@ -1426,37 +1609,67 @@ targets:
       - targets.yaml
     source_meta:
       id: ai-finder
-      scout_classification_source: computed
-      scout_classification_mismatch: false
+      scout_classification_source: provided_equal
+      scout_classification_mismatch: true
       scout_classification_provided:
         mode: needs_review
-        status: no_form_detected
+        status: scout_failed
         confidence: 0.55
         reasons:
-          - no_form_detected
+          - scout_failed_network
       scout_classification_computed:
         mode: needs_review
         status: no_form_detected
         confidence: 0.55
         reasons:
           - no_form_detected
+      scout_failure_error: "page.goto: net::ERR_CONNECTION_TIMED_OUT at
+        https://ai-finder.net/
+
+        Call log:
+
+        \e[2m  - navigating to \"https://ai-finder.net/\", waiting until
+        \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: Timeout 30000ms exceeded.
+
+        Call log:
+
+        \e[2m  - navigating to \"https://ai-finder.net/\", waiting until
+        \"networkidle\"\e[22m"
     technical:
-      last_scouted_at: 2026-05-22T13:53:41.652Z
+      last_scouted_at: 2026-05-23T03:00:13.030Z
       auth: none
       captcha: none
-      reachable: yes
+      reachable: unknown
       final_url: https://ai-finder.net/
-      http_status: 200
+      http_status: null
+      last_scout_error: "page.goto: net::ERR_CONNECTION_TIMED_OUT at
+        https://ai-finder.net/
+
+        Call log:
+
+        \e[2m  - navigating to \"https://ai-finder.net/\", waiting until
+        \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: Timeout 30000ms exceeded.
+
+        Call log:
+
+        \e[2m  - navigating to \"https://ai-finder.net/\", waiting until
+        \"networkidle\"\e[22m"
     submission:
-      mode: needs_scout
-      status: retry_after_browser_fix
-      reason: no_form_detected; retry_after_bb_tab_binding_fix
+      mode: needs_review
+      status: scout_failed
+      reason: scout_failed_network; classification_mismatch:needs_review->needs_review
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.087Z
-    updated_at: 2026-05-22T14:35:32.148Z
+    updated_at: 2026-05-23T03:00:13.030Z
     forms: []
   - id: ai-hunter-io
     external_id: 14368f41-8f50-8110-a99b-cdc5230ee609
@@ -1564,37 +1777,69 @@ targets:
       - 91wink
     source_meta:
       id: ai-submit-com
-      scout_classification_source: computed
+      scout_classification_source: provided_equal
       scout_classification_mismatch: false
       scout_classification_provided:
-        mode: needs_review
-        status: no_form_detected
-        confidence: 0.55
+        mode: skip
+        status: dead
+        confidence: 0.9
         reasons:
-          - no_form_detected
+          - scout_failed_dns
       scout_classification_computed:
-        mode: needs_review
-        status: no_form_detected
-        confidence: 0.55
+        mode: skip
+        status: dead
+        confidence: 1
         reasons:
-          - no_form_detected
+          - unreachable_or_404
+      scout_failure_error: "page.goto: net::ERR_NAME_NOT_RESOLVED at
+        https://ai-submit.com/
+
+        Call log:
+
+        \e[2m  - navigating to \"https://ai-submit.com/\", waiting until
+        \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_NAME_NOT_RESOLVED at
+        https://ai-submit.com/
+
+        Call log:
+
+        \e[2m  - navigating to \"https://ai-submit.com/\", waiting until
+        \"networkidle\"\e[22m"
     technical:
-      last_scouted_at: 2026-05-22T13:53:54.197Z
+      last_scouted_at: 2026-05-23T03:00:16.808Z
       auth: none
       captcha: none
-      reachable: yes
+      reachable: no
       final_url: https://ai-submit.com/
-      http_status: 200
+      http_status: null
+      last_scout_error: "page.goto: net::ERR_NAME_NOT_RESOLVED at
+        https://ai-submit.com/
+
+        Call log:
+
+        \e[2m  - navigating to \"https://ai-submit.com/\", waiting until
+        \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_NAME_NOT_RESOLVED at
+        https://ai-submit.com/
+
+        Call log:
+
+        \e[2m  - navigating to \"https://ai-submit.com/\", waiting until
+        \"networkidle\"\e[22m"
     submission:
-      mode: needs_scout
-      status: retry_after_browser_fix
-      reason: no_form_detected; retry_after_bb_tab_binding_fix
+      mode: skip
+      status: dead
+      reason: scout_failed_dns
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.087Z
-    updated_at: 2026-05-22T14:35:32.148Z
+    updated_at: 2026-05-23T03:00:16.808Z
     forms: []
   - id: ai-submit-com-zh-cn
     name: https://ai-submit.com/zh-CN
@@ -1615,37 +1860,69 @@ targets:
       - 91wink
     source_meta:
       id: ai-submit-com-zh-cn
-      scout_classification_source: computed
+      scout_classification_source: provided_equal
       scout_classification_mismatch: false
       scout_classification_provided:
-        mode: needs_review
-        status: no_form_detected
-        confidence: 0.55
+        mode: skip
+        status: dead
+        confidence: 0.9
         reasons:
-          - no_form_detected
+          - scout_failed_dns
       scout_classification_computed:
-        mode: needs_review
-        status: no_form_detected
-        confidence: 0.55
+        mode: skip
+        status: dead
+        confidence: 1
         reasons:
-          - no_form_detected
+          - unreachable_or_404
+      scout_failure_error: "page.goto: net::ERR_NAME_NOT_RESOLVED at
+        https://ai-submit.com/zh-CN
+
+        Call log:
+
+        \e[2m  - navigating to \"https://ai-submit.com/zh-CN\", waiting until
+        \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_NAME_NOT_RESOLVED at
+        https://ai-submit.com/zh-CN
+
+        Call log:
+
+        \e[2m  - navigating to \"https://ai-submit.com/zh-CN\", waiting until
+        \"networkidle\"\e[22m"
     technical:
-      last_scouted_at: 2026-05-22T13:54:00.517Z
+      last_scouted_at: 2026-05-23T03:00:20.116Z
       auth: none
       captcha: none
-      reachable: yes
+      reachable: no
       final_url: https://ai-submit.com/zh-CN
-      http_status: 200
+      http_status: null
+      last_scout_error: "page.goto: net::ERR_NAME_NOT_RESOLVED at
+        https://ai-submit.com/zh-CN
+
+        Call log:
+
+        \e[2m  - navigating to \"https://ai-submit.com/zh-CN\", waiting until
+        \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_NAME_NOT_RESOLVED at
+        https://ai-submit.com/zh-CN
+
+        Call log:
+
+        \e[2m  - navigating to \"https://ai-submit.com/zh-CN\", waiting until
+        \"networkidle\"\e[22m"
     submission:
-      mode: needs_scout
-      status: retry_after_browser_fix
-      reason: no_form_detected; retry_after_bb_tab_binding_fix
+      mode: skip
+      status: dead
+      reason: scout_failed_dns
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.087Z
-    updated_at: 2026-05-22T14:35:32.148Z
+    updated_at: 2026-05-23T03:00:20.116Z
     forms: []
   - id: ai-94kan
     name: AI导航网 (94kan)
@@ -1666,37 +1943,69 @@ targets:
       - targets.yaml
     source_meta:
       id: ai-94kan
-      scout_classification_source: computed
-      scout_classification_mismatch: false
+      scout_classification_source: provided_equal
+      scout_classification_mismatch: true
       scout_classification_provided:
-        mode: assisted
-        status: auth_required
-        confidence: 0.8
+        mode: needs_review
+        status: scout_failed
+        confidence: 0.55
         reasons:
-          - auth_signal
+          - scout_failed_network
       scout_classification_computed:
-        mode: assisted
-        status: auth_required
-        confidence: 0.8
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
         reasons:
-          - auth_signal
+          - no_form_detected
+      scout_failure_error: "page.goto: net::ERR_CERT_AUTHORITY_INVALID at
+        https://ai.94kan.cn/submit
+
+        Call log:
+
+        \e[2m  - navigating to \"https://ai.94kan.cn/submit\", waiting until
+        \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_CERT_AUTHORITY_INVALID at
+        https://ai.94kan.cn/submit
+
+        Call log:
+
+        \e[2m  - navigating to \"https://ai.94kan.cn/submit\", waiting until
+        \"networkidle\"\e[22m"
     technical:
-      last_scouted_at: 2026-05-22T13:54:06.852Z
-      auth: oauth
+      last_scouted_at: 2026-05-23T03:00:22.900Z
+      auth: none
       captcha: none
-      reachable: yes
+      reachable: unknown
       final_url: https://ai.94kan.cn/submit
-      http_status: 200
+      http_status: null
+      last_scout_error: "page.goto: net::ERR_CERT_AUTHORITY_INVALID at
+        https://ai.94kan.cn/submit
+
+        Call log:
+
+        \e[2m  - navigating to \"https://ai.94kan.cn/submit\", waiting until
+        \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_CERT_AUTHORITY_INVALID at
+        https://ai.94kan.cn/submit
+
+        Call log:
+
+        \e[2m  - navigating to \"https://ai.94kan.cn/submit\", waiting until
+        \"networkidle\"\e[22m"
     submission:
-      mode: needs_scout
-      status: retry_after_browser_fix
-      reason: auth_signal; retry_after_bb_tab_binding_fix
+      mode: needs_review
+      status: scout_failed
+      reason: scout_failed_network; classification_mismatch:needs_review->needs_review
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.087Z
-    updated_at: 2026-05-22T14:35:32.148Z
+    updated_at: 2026-05-23T03:00:22.900Z
     forms: []
   - id: ai-business-tool
     name: Ai Business Tool
@@ -1803,37 +2112,69 @@ targets:
       - targets.yaml
     source_meta:
       id: aidashi-cn
-      scout_classification_source: computed
-      scout_classification_mismatch: false
+      scout_classification_source: provided_equal
+      scout_classification_mismatch: true
       scout_classification_provided:
         mode: needs_review
-        status: no_form_detected
+        status: scout_failed
         confidence: 0.55
         reasons:
-          - no_form_detected
+          - scout_failed_network
       scout_classification_computed:
         mode: needs_review
         status: no_form_detected
         confidence: 0.55
         reasons:
           - no_form_detected
+      scout_failure_error: "page.goto: net::ERR_CONNECTION_TIMED_OUT at
+        https://www.aidashi.cn/sl
+
+        Call log:
+
+        \e[2m  - navigating to \"https://www.aidashi.cn/sl\", waiting until
+        \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_CONNECTION_TIMED_OUT at
+        https://www.aidashi.cn/sl
+
+        Call log:
+
+        \e[2m  - navigating to \"https://www.aidashi.cn/sl\", waiting until
+        \"networkidle\"\e[22m"
     technical:
-      last_scouted_at: 2026-05-22T13:54:21.232Z
+      last_scouted_at: 2026-05-23T03:00:46.145Z
       auth: none
       captcha: none
-      reachable: yes
+      reachable: unknown
       final_url: https://www.aidashi.cn/sl
-      http_status: 200
+      http_status: null
+      last_scout_error: "page.goto: net::ERR_CONNECTION_TIMED_OUT at
+        https://www.aidashi.cn/sl
+
+        Call log:
+
+        \e[2m  - navigating to \"https://www.aidashi.cn/sl\", waiting until
+        \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_CONNECTION_TIMED_OUT at
+        https://www.aidashi.cn/sl
+
+        Call log:
+
+        \e[2m  - navigating to \"https://www.aidashi.cn/sl\", waiting until
+        \"networkidle\"\e[22m"
     submission:
-      mode: needs_scout
-      status: retry_after_browser_fix
-      reason: no_form_detected; retry_after_bb_tab_binding_fix
+      mode: needs_review
+      status: scout_failed
+      reason: scout_failed_network; classification_mismatch:needs_review->needs_review
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.087Z
-    updated_at: 2026-05-22T14:35:32.148Z
+    updated_at: 2026-05-23T03:00:46.145Z
     forms: []
   - id: ai-depot
     external_id: 14368f41-8f50-81ea-8efa-ff082b149a7c
@@ -1858,34 +2199,34 @@ targets:
       scout_classification_source: computed
       scout_classification_mismatch: false
       scout_classification_provided:
-        mode: needs_review
-        status: no_form_detected
-        confidence: 0.55
+        mode: skip
+        status: paywalled
+        confidence: 0.8
         reasons:
-          - no_form_detected
+          - payment_signal
       scout_classification_computed:
-        mode: needs_review
-        status: no_form_detected
-        confidence: 0.55
+        mode: skip
+        status: paywalled
+        confidence: 0.8
         reasons:
-          - no_form_detected
+          - payment_signal
     technical:
-      last_scouted_at: 2026-05-22T13:54:27.823Z
-      auth: none
-      captcha: none
+      last_scouted_at: 2026-05-23T03:02:36.742Z
+      auth: oauth
+      captcha: required
       reachable: yes
-      final_url: https://aidepot.co/
+      final_url: https://checkout.stripe.com/c/pay/cs_live_a1mmDxjDvOKNGWcmc5UqWbphvf2jbFqQIxLv513lWs75zoWSnIBHwdSvYg#fidnandhYHdWcXxpYCc%2FJ2FgY2RwaXEnKSdicGRmZGhqaWBTZHdsZGtxJz8nZmprcXdqaScpJ2R1bE5gfCc%2FJ3VuWmlsc2BaMkd9UmtTQ29BQElpYVxtXXBrckNfNG5WJyknY3dqaFZgd3Ngdyc%2FcXdwYCknZ2RmbmJ3anBrYUZqaWp3Jz8nJmNjY2NjYycpJ2lkfGpwcVF8dWAnPyd2bGtiaWBabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl
       http_status: 200
     submission:
-      mode: needs_scout
-      status: retry_after_browser_fix
-      reason: no_form_detected; retry_after_bb_tab_binding_fix
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.087Z
-    updated_at: 2026-05-22T14:35:32.148Z
+    updated_at: 2026-05-23T03:03:10.636Z
     forms: []
   - id: ai-directory
     external_id: 14368f41-8f50-81fd-b5cd-e96b7fb57bbd
@@ -1993,37 +2334,67 @@ targets:
       - targets.yaml
     source_meta:
       id: aidude
-      scout_classification_source: computed
+      scout_classification_source: provided_equal
       scout_classification_mismatch: false
       scout_classification_provided:
-        mode: needs_review
-        status: no_form_detected
-        confidence: 0.55
+        mode: skip
+        status: dead
+        confidence: 0.9
         reasons:
-          - no_form_detected
+          - scout_failed_dns
       scout_classification_computed:
-        mode: needs_review
-        status: no_form_detected
-        confidence: 0.55
+        mode: skip
+        status: dead
+        confidence: 1
         reasons:
-          - no_form_detected
+          - unreachable_or_404
+      scout_failure_error: "page.goto: net::ERR_NAME_NOT_RESOLVED at
+        https://aidude.pro/submit-your-tool
+
+        Call log:
+
+        \e[2m  - navigating to \"https://aidude.pro/submit-your-tool\", waiting
+        until \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: Timeout 30000ms exceeded.
+
+        Call log:
+
+        \e[2m  - navigating to \"https://aidude.pro/submit-your-tool\", waiting
+        until \"networkidle\"\e[22m"
     technical:
-      last_scouted_at: 2026-05-22T13:54:39.799Z
+      last_scouted_at: 2026-05-23T03:03:47.160Z
       auth: none
       captcha: none
-      reachable: yes
+      reachable: no
       final_url: https://aidude.pro/submit-your-tool
-      http_status: 200
+      http_status: null
+      last_scout_error: "page.goto: net::ERR_NAME_NOT_RESOLVED at
+        https://aidude.pro/submit-your-tool
+
+        Call log:
+
+        \e[2m  - navigating to \"https://aidude.pro/submit-your-tool\", waiting
+        until \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: Timeout 30000ms exceeded.
+
+        Call log:
+
+        \e[2m  - navigating to \"https://aidude.pro/submit-your-tool\", waiting
+        until \"networkidle\"\e[22m"
     submission:
-      mode: needs_scout
-      status: retry_after_browser_fix
-      reason: no_form_detected; retry_after_bb_tab_binding_fix
+      mode: skip
+      status: dead
+      reason: scout_failed_dns
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.087Z
-    updated_at: 2026-05-22T14:35:32.148Z
+    updated_at: 2026-05-23T03:03:47.160Z
     forms: []
   - id: aifindy
     name: AIFINDY
@@ -2872,37 +3243,69 @@ targets:
       - targets.yaml
     source_meta:
       id: ai-homes
-      scout_classification_source: computed
-      scout_classification_mismatch: false
+      scout_classification_source: provided_equal
+      scout_classification_mismatch: true
       scout_classification_provided:
         mode: needs_review
-        status: no_form_detected
+        status: scout_failed
         confidence: 0.55
         reasons:
-          - no_form_detected
+          - scout_failed_network
       scout_classification_computed:
         mode: needs_review
         status: no_form_detected
         confidence: 0.55
         reasons:
           - no_form_detected
+      scout_failure_error: "page.goto: net::ERR_CONNECTION_TIMED_OUT at
+        https://aihomes.io/submit/submit-tool
+
+        Call log:
+
+        \e[2m  - navigating to \"https://aihomes.io/submit/submit-tool\",
+        waiting until \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_CONNECTION_TIMED_OUT at
+        https://aihomes.io/submit/submit-tool
+
+        Call log:
+
+        \e[2m  - navigating to \"https://aihomes.io/submit/submit-tool\",
+        waiting until \"networkidle\"\e[22m"
     technical:
-      last_scouted_at: 2026-05-22T13:59:39.787Z
+      last_scouted_at: 2026-05-23T03:04:11.036Z
       auth: none
       captcha: none
-      reachable: yes
+      reachable: unknown
       final_url: https://aihomes.io/submit/submit-tool
-      http_status: 200
+      http_status: null
+      last_scout_error: "page.goto: net::ERR_CONNECTION_TIMED_OUT at
+        https://aihomes.io/submit/submit-tool
+
+        Call log:
+
+        \e[2m  - navigating to \"https://aihomes.io/submit/submit-tool\",
+        waiting until \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_CONNECTION_TIMED_OUT at
+        https://aihomes.io/submit/submit-tool
+
+        Call log:
+
+        \e[2m  - navigating to \"https://aihomes.io/submit/submit-tool\",
+        waiting until \"networkidle\"\e[22m"
     submission:
-      mode: needs_scout
-      status: retry_after_browser_fix
-      reason: no_form_detected; retry_after_bb_tab_binding_fix
+      mode: needs_review
+      status: scout_failed
+      reason: scout_failed_network; classification_mismatch:needs_review->needs_review
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.088Z
-    updated_at: 2026-05-22T14:35:32.148Z
+    updated_at: 2026-05-23T03:04:11.036Z
     forms: []
   - id: aihub
     name: AIHub
@@ -3221,35 +3624,468 @@ targets:
       scout_classification_source: computed
       scout_classification_mismatch: false
       scout_classification_provided:
-        mode: needs_scout
-        status: browser_error
-        confidence: 0.5
+        mode: assisted
+        status: captcha_required
+        confidence: 0.85
         reasons:
-          - browser_error_final_url
+          - captcha_field
       scout_classification_computed:
-        mode: needs_scout
-        status: browser_error
-        confidence: 0.5
+        mode: assisted
+        status: captcha_required
+        confidence: 0.85
         reasons:
-          - browser_error_final_url
+          - captcha_field
     technical:
-      last_scouted_at: 2026-05-22T14:14:24.672Z
-      auth: none
-      captcha: none
+      last_scouted_at: 2026-05-23T03:04:52.076Z
+      auth: oauth
+      captcha: required
       reachable: yes
-      final_url: https://aimojo.io/submit
+      final_url: https://aimojo.io/ar/submit/
       http_status: 200
     submission:
-      mode: needs_scout
-      status: retry_after_browser_fix
-      reason: browser_error_final_url; retry_after_bb_tab_binding_fix
+      mode: assisted
+      status: captcha_required
+      reason: captcha_field
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.088Z
-    updated_at: 2026-05-22T14:35:32.148Z
-    forms: []
+    updated_at: 2026-05-23T03:05:05.653Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: search
+            name: s
+            id: ""
+            placeholder: أدخل الكلمة ...
+            aria_label: ""
+            selector: input[name="s"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons: []
+      - index: 1
+        fields:
+          - tag: input
+            type: hidden
+            name: _wpcf7
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="_wpcf7"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: hidden
+            name: _wpcf7_version
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="_wpcf7_version"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: hidden
+            name: _wpcf7_locale
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="_wpcf7_locale"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: hidden
+            name: _wpcf7_unit_tag
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="_wpcf7_unit_tag"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: hidden
+            name: _wpcf7_container_post
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="_wpcf7_container_post"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: hidden
+            name: _wpcf7_posted_data_hash
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="_wpcf7_posted_data_hash"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: hidden
+            name: _wpcf7_recaptcha_response
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="_wpcf7_recaptcha_response"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: tool-name
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tool-name"]
+            label: ""
+            required: true
+            mapped_to: product.name
+          - tag: textarea
+            type: textarea
+            name: description
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: textarea[name="description"]
+            label: ""
+            required: true
+            mapped_to: product.description
+          - tag: select
+            type: select
+            name: category
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: select[name="category"]
+            label: ""
+            required: true
+            mapped_to: product.category
+          - tag: input
+            type: text
+            name: Tool-URL
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="Tool-URL"]
+            label: ""
+            required: true
+            mapped_to: product.url
+          - tag: input
+            type: file
+            name: Image
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="Image"]
+            label: ""
+            required: false
+            mapped_to: product.logo
+          - tag: textarea
+            type: textarea
+            name: any-specific-requirements
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: textarea[name="any-specific-requirements"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: your-name
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="your-name"]
+            label: ""
+            required: true
+            mapped_to: product.name
+          - tag: input
+            type: email
+            name: your-email
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="your-email"]
+            label: ""
+            required: true
+            mapped_to: product.email
+          - tag: input
+            type: tel
+            name: Phone-number
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="Phone-number"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: select
+            type: select
+            name: Payment
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: select[name="Payment"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: submit
+            name: ""
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[type="submit"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: textarea
+            type: textarea
+            name: _wpcf7_ak_hp_textarea
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: textarea[name="_wpcf7_ak_hp_textarea"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: hidden
+            name: _wpcf7_ak_js
+            id: ak_js_1
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="ak_js_1"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: input
+            type: submit
+            name: ""
+            id: ""
+            text: إرسال
+            value: إرسال
+            selector: input[type="submit"]
+      - index: 2
+        fields:
+          - tag: input
+            type: hidden
+            name: _wpcf7
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="_wpcf7"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: hidden
+            name: _wpcf7_version
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="_wpcf7_version"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: hidden
+            name: _wpcf7_locale
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="_wpcf7_locale"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: hidden
+            name: _wpcf7_unit_tag
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="_wpcf7_unit_tag"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: hidden
+            name: _wpcf7_container_post
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="_wpcf7_container_post"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: hidden
+            name: _wpcf7_posted_data_hash
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="_wpcf7_posted_data_hash"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: hidden
+            name: _wpcf7_recaptcha_response
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="_wpcf7_recaptcha_response"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: tool-name
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="tool-name"]
+            label: ""
+            required: true
+            mapped_to: product.name
+          - tag: textarea
+            type: textarea
+            name: description
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: textarea[name="description"]
+            label: ""
+            required: true
+            mapped_to: product.description
+          - tag: select
+            type: select
+            name: category
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: select[name="category"]
+            label: ""
+            required: true
+            mapped_to: product.category
+          - tag: input
+            type: text
+            name: Tool-URL
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="Tool-URL"]
+            label: ""
+            required: true
+            mapped_to: product.url
+          - tag: input
+            type: file
+            name: Image
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="Image"]
+            label: ""
+            required: false
+            mapped_to: product.logo
+          - tag: textarea
+            type: textarea
+            name: any-specific-requirements
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: textarea[name="any-specific-requirements"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: your-name
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="your-name"]
+            label: ""
+            required: true
+            mapped_to: product.name
+          - tag: input
+            type: email
+            name: your-email
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="your-email"]
+            label: ""
+            required: true
+            mapped_to: product.email
+          - tag: input
+            type: tel
+            name: Phone-number
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="Phone-number"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: select
+            type: select
+            name: Payment
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: select[name="Payment"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: submit
+            name: ""
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[type="submit"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: textarea
+            type: textarea
+            name: _wpcf7_ak_hp_textarea
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: textarea[name="_wpcf7_ak_hp_textarea"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: hidden
+            name: _wpcf7_ak_js
+            id: ak_js_2
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="ak_js_2"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: input
+            type: submit
+            name: ""
+            id: ""
+            text: إرسال
+            value: إرسال
+            selector: input[type="submit"]
   - id: ai-mojo-aimojo-pro-submit
     name: AI Mojo
     domain: aimojo.pro
@@ -3814,37 +4650,65 @@ targets:
       - targets.yaml
     source_meta:
       id: aisupersmart
-      scout_classification_source: computed
-      scout_classification_mismatch: false
+      scout_classification_source: provided_equal
+      scout_classification_mismatch: true
       scout_classification_provided:
-        mode: needs_scout
-        status: browser_error
-        confidence: 0.5
+        mode: needs_review
+        status: scout_failed
+        confidence: 0.55
         reasons:
-          - browser_error_final_url
+          - scout_failed_network
       scout_classification_computed:
-        mode: needs_scout
-        status: browser_error
-        confidence: 0.5
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
         reasons:
-          - browser_error_final_url
+          - no_form_detected
+      scout_failure_error: "page.goto: Timeout 15000ms exceeded.
+
+        Call log:
+
+        \e[2m  - navigating to \"https://www.aisupersmart.com/submit-tool/\",
+        waiting until \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: Timeout 30000ms exceeded.
+
+        Call log:
+
+        \e[2m  - navigating to \"https://www.aisupersmart.com/submit-tool/\",
+        waiting until \"networkidle\"\e[22m"
     technical:
-      last_scouted_at: 2026-05-22T14:15:38.076Z
+      last_scouted_at: 2026-05-23T03:06:33.492Z
       auth: none
       captcha: none
-      reachable: yes
+      reachable: unknown
       final_url: https://www.aisupersmart.com/submit-tool
-      http_status: 200
+      http_status: null
+      last_scout_error: "page.goto: Timeout 15000ms exceeded.
+
+        Call log:
+
+        \e[2m  - navigating to \"https://www.aisupersmart.com/submit-tool/\",
+        waiting until \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: Timeout 30000ms exceeded.
+
+        Call log:
+
+        \e[2m  - navigating to \"https://www.aisupersmart.com/submit-tool/\",
+        waiting until \"networkidle\"\e[22m"
     submission:
-      mode: needs_scout
-      status: retry_after_browser_fix
-      reason: browser_error_final_url; retry_after_bb_tab_binding_fix
+      mode: needs_review
+      status: scout_failed
+      reason: scout_failed_network; classification_mismatch:needs_review->needs_review
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.089Z
-    updated_at: 2026-05-22T14:35:32.148Z
+    updated_at: 2026-05-23T03:06:33.493Z
     forms: []
   - id: aitechviral-com
     name: https://aitechviral.com
@@ -3985,37 +4849,69 @@ targets:
       - targets.yaml
     source_meta:
       id: ai-aitool123
-      scout_classification_source: computed
-      scout_classification_mismatch: false
+      scout_classification_source: provided_equal
+      scout_classification_mismatch: true
       scout_classification_provided:
-        mode: needs_scout
-        status: browser_error
-        confidence: 0.5
+        mode: needs_review
+        status: scout_failed
+        confidence: 0.55
         reasons:
-          - browser_error_final_url
+          - scout_failed_network
       scout_classification_computed:
-        mode: needs_scout
-        status: browser_error
-        confidence: 0.5
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
         reasons:
-          - browser_error_final_url
+          - no_form_detected
+      scout_failure_error: "page.goto: Timeout 15000ms exceeded.
+
+        Call log:
+
+        \e[2m  - navigating to
+        \"https://www.aitool123.cc/%E6%8F%90%E4%BA%A4%E6%94%B6%E5%BD%95\",
+        waiting until \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: Timeout 30000ms exceeded.
+
+        Call log:
+
+        \e[2m  - navigating to
+        \"https://www.aitool123.cc/%E6%8F%90%E4%BA%A4%E6%94%B6%E5%BD%95\",
+        waiting until \"networkidle\"\e[22m"
     technical:
-      last_scouted_at: 2026-05-22T14:15:50.321Z
+      last_scouted_at: 2026-05-23T03:07:20.554Z
       auth: none
       captcha: none
-      reachable: yes
+      reachable: unknown
       final_url: https://www.aitool123.cc/%E6%8F%90%E4%BA%A4%E6%94%B6%E5%BD%95
-      http_status: 200
+      http_status: null
+      last_scout_error: "page.goto: Timeout 15000ms exceeded.
+
+        Call log:
+
+        \e[2m  - navigating to
+        \"https://www.aitool123.cc/%E6%8F%90%E4%BA%A4%E6%94%B6%E5%BD%95\",
+        waiting until \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: Timeout 30000ms exceeded.
+
+        Call log:
+
+        \e[2m  - navigating to
+        \"https://www.aitool123.cc/%E6%8F%90%E4%BA%A4%E6%94%B6%E5%BD%95\",
+        waiting until \"networkidle\"\e[22m"
     submission:
-      mode: needs_scout
-      status: retry_after_browser_fix
-      reason: browser_error_final_url; retry_after_bb_tab_binding_fix
+      mode: needs_review
+      status: scout_failed
+      reason: scout_failed_network; classification_mismatch:needs_review->needs_review
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.089Z
-    updated_at: 2026-05-22T14:35:32.148Z
+    updated_at: 2026-05-23T03:07:20.554Z
     forms: []
   - id: ai-tool-board
     external_id: 14368f41-8f50-8184-9cd8-ec2814704d4a
@@ -4071,37 +4967,69 @@ targets:
       - targets.yaml
     source_meta:
       id: ai-tool-for-business
-      scout_classification_source: computed
-      scout_classification_mismatch: false
+      scout_classification_source: provided_equal
+      scout_classification_mismatch: true
       scout_classification_provided:
-        mode: needs_scout
-        status: browser_error
-        confidence: 0.5
+        mode: needs_review
+        status: scout_failed
+        confidence: 0.55
         reasons:
-          - browser_error_final_url
+          - scout_failed_network
       scout_classification_computed:
-        mode: needs_scout
-        status: browser_error
-        confidence: 0.5
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
         reasons:
-          - browser_error_final_url
+          - no_form_detected
+      scout_failure_error: "page.goto: net::ERR_CONNECTION_CLOSED at
+        https://aitoolforbusiness.com/submit-ai-tool
+
+        Call log:
+
+        \e[2m  - navigating to \"https://aitoolforbusiness.com/submit-ai-tool\",
+        waiting until \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_CONNECTION_CLOSED at
+        https://aitoolforbusiness.com/submit-ai-tool
+
+        Call log:
+
+        \e[2m  - navigating to \"https://aitoolforbusiness.com/submit-ai-tool\",
+        waiting until \"networkidle\"\e[22m"
     technical:
-      last_scouted_at: 2026-05-22T14:15:56.358Z
+      last_scouted_at: 2026-05-23T03:07:24.328Z
       auth: none
       captcha: none
-      reachable: yes
+      reachable: unknown
       final_url: https://aitoolforbusiness.com/submit-ai-tool
-      http_status: 200
+      http_status: null
+      last_scout_error: "page.goto: net::ERR_CONNECTION_CLOSED at
+        https://aitoolforbusiness.com/submit-ai-tool
+
+        Call log:
+
+        \e[2m  - navigating to \"https://aitoolforbusiness.com/submit-ai-tool\",
+        waiting until \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_CONNECTION_CLOSED at
+        https://aitoolforbusiness.com/submit-ai-tool
+
+        Call log:
+
+        \e[2m  - navigating to \"https://aitoolforbusiness.com/submit-ai-tool\",
+        waiting until \"networkidle\"\e[22m"
     submission:
-      mode: needs_scout
-      status: retry_after_browser_fix
-      reason: browser_error_final_url; retry_after_bb_tab_binding_fix
+      mode: needs_review
+      status: scout_failed
+      reason: scout_failed_network; classification_mismatch:needs_review->needs_review
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.089Z
-    updated_at: 2026-05-22T14:35:32.148Z
+    updated_at: 2026-05-23T03:07:24.328Z
     forms: []
   - id: aitoolguru
     name: AIToolGuru
@@ -5355,37 +6283,67 @@ targets:
       - targets.yaml
     source_meta:
       id: aitoolsdirectory
-      scout_classification_source: computed
-      scout_classification_mismatch: false
+      scout_classification_source: provided_equal
+      scout_classification_mismatch: true
       scout_classification_provided:
-        mode: needs_scout
-        status: browser_error
-        confidence: 0.5
+        mode: needs_review
+        status: scout_failed
+        confidence: 0.55
         reasons:
-          - browser_error_final_url
+          - scout_failed_network
       scout_classification_computed:
-        mode: needs_scout
-        status: browser_error
-        confidence: 0.5
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
         reasons:
-          - browser_error_final_url
+          - no_form_detected
+      scout_failure_error: "page.goto: net::ERR_TIMED_OUT at
+        https://aitoolsdirectory.com/submit-tool
+
+        Call log:
+
+        \e[2m  - navigating to \"https://aitoolsdirectory.com/submit-tool\",
+        waiting until \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: Timeout 30000ms exceeded.
+
+        Call log:
+
+        \e[2m  - navigating to \"https://aitoolsdirectory.com/submit-tool\",
+        waiting until \"networkidle\"\e[22m"
     technical:
-      last_scouted_at: 2026-05-22T14:19:35.388Z
+      last_scouted_at: 2026-05-23T03:07:56.675Z
       auth: none
       captcha: none
-      reachable: yes
+      reachable: unknown
       final_url: https://aitoolsdirectory.com/submit-tool
-      http_status: 200
+      http_status: null
+      last_scout_error: "page.goto: net::ERR_TIMED_OUT at
+        https://aitoolsdirectory.com/submit-tool
+
+        Call log:
+
+        \e[2m  - navigating to \"https://aitoolsdirectory.com/submit-tool\",
+        waiting until \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: Timeout 30000ms exceeded.
+
+        Call log:
+
+        \e[2m  - navigating to \"https://aitoolsdirectory.com/submit-tool\",
+        waiting until \"networkidle\"\e[22m"
     submission:
-      mode: needs_scout
-      status: retry_after_browser_fix
-      reason: browser_error_final_url; retry_after_bb_tab_binding_fix
+      mode: needs_review
+      status: scout_failed
+      reason: scout_failed_network; classification_mismatch:needs_review->needs_review
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.090Z
-    updated_at: 2026-05-22T14:35:32.148Z
+    updated_at: 2026-05-23T03:07:56.675Z
     forms: []
   - id: aitoolslist-io
     name: aitoolslist.io
@@ -5803,37 +6761,73 @@ targets:
       - targets.yaml
     source_meta:
       id: aiwaytools-com
-      scout_classification_source: computed
+      scout_classification_source: provided_equal
       scout_classification_mismatch: false
       scout_classification_provided:
-        mode: needs_scout
-        status: browser_error
-        confidence: 0.5
+        mode: skip
+        status: dead
+        confidence: 0.9
         reasons:
-          - browser_error_final_url
+          - scout_failed_dns
       scout_classification_computed:
-        mode: needs_scout
-        status: browser_error
-        confidence: 0.5
+        mode: skip
+        status: dead
+        confidence: 1
         reasons:
-          - browser_error_final_url
+          - unreachable_or_404
+      scout_failure_error: "page.goto: net::ERR_NAME_NOT_RESOLVED at
+        https://aiwaytools.com/%e7%bd%91%e5%9d%80%e6%8f%90%e4%ba%a4
+
+        Call log:
+
+        \e[2m  - navigating to
+        \"https://aiwaytools.com/%e7%bd%91%e5%9d%80%e6%8f%90%e4%ba%a4\", waiting
+        until \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_NAME_NOT_RESOLVED at
+        https://aiwaytools.com/%e7%bd%91%e5%9d%80%e6%8f%90%e4%ba%a4
+
+        Call log:
+
+        \e[2m  - navigating to
+        \"https://aiwaytools.com/%e7%bd%91%e5%9d%80%e6%8f%90%e4%ba%a4\", waiting
+        until \"networkidle\"\e[22m"
     technical:
-      last_scouted_at: 2026-05-22T14:20:12.282Z
+      last_scouted_at: 2026-05-23T03:08:00.477Z
       auth: none
       captcha: none
-      reachable: yes
+      reachable: no
       final_url: https://aiwaytools.com/%e7%bd%91%e5%9d%80%e6%8f%90%e4%ba%a4
-      http_status: 200
+      http_status: null
+      last_scout_error: "page.goto: net::ERR_NAME_NOT_RESOLVED at
+        https://aiwaytools.com/%e7%bd%91%e5%9d%80%e6%8f%90%e4%ba%a4
+
+        Call log:
+
+        \e[2m  - navigating to
+        \"https://aiwaytools.com/%e7%bd%91%e5%9d%80%e6%8f%90%e4%ba%a4\", waiting
+        until \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_NAME_NOT_RESOLVED at
+        https://aiwaytools.com/%e7%bd%91%e5%9d%80%e6%8f%90%e4%ba%a4
+
+        Call log:
+
+        \e[2m  - navigating to
+        \"https://aiwaytools.com/%e7%bd%91%e5%9d%80%e6%8f%90%e4%ba%a4\", waiting
+        until \"networkidle\"\e[22m"
     submission:
-      mode: needs_scout
-      status: retry_after_browser_fix
-      reason: browser_error_final_url; retry_after_bb_tab_binding_fix
+      mode: skip
+      status: dead
+      reason: scout_failed_dns
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.091Z
-    updated_at: 2026-05-22T14:35:32.148Z
+    updated_at: 2026-05-23T03:08:00.477Z
     forms: []
   - id: aiwikitools
     name: AIWikiTools
@@ -6020,35 +7014,95 @@ targets:
       scout_classification_source: computed
       scout_classification_mismatch: false
       scout_classification_provided:
-        mode: needs_scout
-        status: browser_error
-        confidence: 0.5
+        mode: skip
+        status: paywalled
+        confidence: 0.8
         reasons:
-          - browser_error_final_url
+          - payment_signal
       scout_classification_computed:
-        mode: needs_scout
-        status: browser_error
-        confidence: 0.5
+        mode: skip
+        status: paywalled
+        confidence: 0.8
         reasons:
-          - browser_error_final_url
+          - payment_signal
     technical:
-      last_scouted_at: 2026-05-22T14:22:30.870Z
-      auth: none
+      last_scouted_at: 2026-05-23T03:08:33.476Z
+      auth: oauth
       captcha: none
       reachable: yes
-      final_url: https://aiwith.me/zh/submit
+      final_url: https://aiwith.me/zh/submit/
       http_status: 200
     submission:
-      mode: needs_scout
-      status: retry_after_browser_fix
-      reason: browser_error_final_url; retry_after_bb_tab_binding_fix
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.091Z
-    updated_at: 2026-05-22T14:35:32.148Z
-    forms: []
+    updated_at: 2026-05-23T03:08:43.191Z
+    forms:
+      - index: 0
+        fields:
+          - tag: textarea
+            type: textarea
+            name: name
+            id: name
+            placeholder: e.g. AI With Me
+            aria_label: ""
+            selector: textarea[id="name"]
+            label: ""
+            required: true
+            mapped_to: product.name
+          - tag: textarea
+            type: textarea
+            name: url
+            id: url
+            placeholder: e.g. https://aiwith.me/
+            aria_label: ""
+            selector: textarea[id="url"]
+            label: ""
+            required: true
+            mapped_to: product.url
+          - tag: input
+            type: radio
+            name: type
+            id: radio-type-1
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="radio-type-1"]
+            label: ""
+            required: false
+            mapped_to: product.category
+          - tag: input
+            type: radio
+            name: type
+            id: radio-type-2
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="radio-type-2"]
+            label: ""
+            required: false
+            mapped_to: product.category
+          - tag: input
+            type: submit
+            name: ""
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[type="submit"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: input
+            type: submit
+            name: ""
+            id: ""
+            text: 付款，然后提交
+            value: 付款，然后提交
+            selector: input[type="submit"]
   - id: ai-wizard
     external_id: 14368f41-8f50-8149-b31a-e2baea804ce7
     name: AI Wizard
@@ -36132,21 +37186,38 @@ targets:
       - targets.yaml
     source_meta:
       id: wechalet-cn
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
+      scout_classification_computed:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:44:59.195Z
+      auth: oauth
+      captcha: none
+      reachable: yes
+      final_url: https://wechalet.cn/appstore/user-submit
+      http_status: 200
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: assisted
+      status: auth_required
+      reason: auth_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.131Z
-    updated_at: 2026-05-21T15:44:39.131Z
+    updated_at: 2026-05-23T02:45:03.608Z
+    forms: []
   - id: weliketools-com
     name: https://weliketools.com
     domain: weliketools.com
@@ -36166,21 +37237,71 @@ targets:
       - 91wink
     source_meta:
       id: weliketools-com
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
+      scout_classification_computed:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:45:11.019Z
+      auth: required
+      captcha: none
+      reachable: yes
+      final_url: https://weliketools.com/get-started
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: assisted
+      status: auth_required
+      reason: auth_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.131Z
-    updated_at: 2026-05-21T15:44:39.131Z
+    updated_at: 2026-05-23T02:45:16.487Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: q
+            id: ""
+            placeholder: Search tools...
+            aria_label: ""
+            selector: input[name="q"]
+            label: ""
+            required: true
+            mapped_to: ""
+        submit_buttons: []
+      - index: 1
+        fields:
+          - tag: input
+            type: text
+            name: q
+            id: ""
+            placeholder: Search tools...
+            aria_label: ""
+            selector: input[name="q"]
+            label: ""
+            required: true
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Search
+            value: ""
+            selector: button[type="submit"]
   - id: wewaat
     name: Wewaat
     domain: wewaat.com
@@ -36200,21 +37321,38 @@ targets:
       - targets.yaml
     source_meta:
       id: wewaat
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: dead
+        confidence: 1
+        reasons:
+          - unreachable_or_404
+      scout_classification_computed:
+        mode: skip
+        status: dead
+        confidence: 1
+        reasons:
+          - unreachable_or_404
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:45:22.495Z
+      auth: none
+      captcha: none
+      reachable: no
+      final_url: https://www.wewaat.com/submitnewtool
+      http_status: 404
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: skip
+      status: dead
+      reason: unreachable_or_404
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.131Z
-    updated_at: 2026-05-21T15:44:39.131Z
+    updated_at: 2026-05-23T02:45:23.493Z
+    forms: []
   - id: whatlaunched-today
     name: WhatLaunched.Today
     domain: whatlaunched.today
@@ -36234,21 +37372,68 @@ targets:
       - targets.yaml
     source_meta:
       id: whatlaunched-today
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:45:36.757Z
+      auth: required
+      captcha: required
+      reachable: yes
+      final_url: https://whatlaunched.today/auth/signup?returnUrl=%2Fdashboard%2Fsubmit
+      http_status: 200
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.131Z
-    updated_at: 2026-05-21T15:44:39.131Z
+    updated_at: 2026-05-23T02:45:42.990Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: email
+            name: ""
+            id: email
+            placeholder: your@email.com
+            aria_label: ""
+            selector: input[id="email"]
+            label: ""
+            required: true
+            mapped_to: product.email
+          - tag: input
+            type: password
+            name: ""
+            id: password
+            placeholder: Create a password
+            aria_label: ""
+            selector: input[id="password"]
+            label: ""
+            required: true
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Create Account
+            value: ""
+            selector: button[type="submit"]
   - id: whatsthebigdata
     external_id: 14368f41-8f50-810b-8599-e579517beb38
     name: Whatsthebigdata
@@ -36304,21 +37489,58 @@ targets:
       - notion
     source_meta:
       id: what-the-ai
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:45:52.456Z
+      auth: required
+      captcha: required
+      reachable: yes
+      final_url: https://whattheai.tech/login
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.131Z
-    updated_at: 2026-05-21T15:44:39.131Z
+    updated_at: 2026-05-23T02:45:57.854Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: email
+            name: email
+            id: email
+            placeholder: Enter your email
+            aria_label: ""
+            selector: input[id="email"]
+            label: ""
+            required: true
+            mapped_to: product.email
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Send Magic Link
+            value: ""
+            selector: button[type="submit"]
   - id: world-web-directory
     name: World Web Directory
     domain: worldweb-directory.com
@@ -36338,21 +37560,68 @@ targets:
       - targets.yaml
     source_meta:
       id: world-web-directory
+      scout_classification_source: provided_equal
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: dead
+        confidence: 0.9
+        reasons:
+          - scout_failed_dns
+      scout_classification_computed:
+        mode: skip
+        status: dead
+        confidence: 1
+        reasons:
+          - unreachable_or_404
+      scout_failure_error: "page.goto: Timeout 15000ms exceeded.
+
+        Call log:
+
+        \e[2m  - navigating to \"https://www.worldweb-directory.com/add.php\",
+        waiting until \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_NAME_NOT_RESOLVED at
+        https://www.worldweb-directory.com/add.php
+
+        Call log:
+
+        \e[2m  - navigating to \"https://www.worldweb-directory.com/add.php\",
+        waiting until \"networkidle\"\e[22m"
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:46:42.335Z
+      auth: none
+      captcha: none
+      reachable: no
+      final_url: https://www.worldweb-directory.com/add.php
+      http_status: null
+      last_scout_error: "page.goto: Timeout 15000ms exceeded.
+
+        Call log:
+
+        \e[2m  - navigating to \"https://www.worldweb-directory.com/add.php\",
+        waiting until \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_NAME_NOT_RESOLVED at
+        https://www.worldweb-directory.com/add.php
+
+        Call log:
+
+        \e[2m  - navigating to \"https://www.worldweb-directory.com/add.php\",
+        waiting until \"networkidle\"\e[22m"
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: skip
+      status: dead
+      reason: scout_failed_dns
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.131Z
-    updated_at: 2026-05-21T15:44:39.131Z
+    updated_at: 2026-05-23T02:46:42.335Z
+    forms: []
   - id: xinquji-com
     name: 新趣集
     domain: xinquji.com
@@ -36372,21 +37641,148 @@ targets:
       - targets.yaml
     source_meta:
       id: xinquji-com
+      scout_classification_source: provided_conservative
+      scout_classification_mismatch: true
+      scout_classification_provided:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
+      scout_classification_computed:
+        mode: auto_safe
+        status: mapped
+        confidence: 0.9
+        reasons:
+          - form_mapped_no_auth_no_captcha
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:46:50.430Z
+      auth: required
+      captcha: none
+      reachable: yes
+      final_url: https://xinquji.com/submit
+      http_status: 200
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: assisted
+      status: auth_required
+      reason: auth_signal; classification_mismatch:assisted->auto_safe
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.131Z
-    updated_at: 2026-05-21T15:44:39.131Z
+    updated_at: 2026-05-23T02:46:58.642Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: ""
+            id: ""
+            placeholder: 搜索产品...
+            aria_label: ""
+            selector: input[placeholder="搜索产品..."]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: ""
+            value: ""
+            selector: button[type="submit"]
+      - index: 1
+        fields:
+          - tag: input
+            type: text
+            name: ""
+            id: name
+            placeholder: 例如：新趣集
+            aria_label: ""
+            selector: input[id="name"]
+            label: ""
+            required: true
+            mapped_to: product.name
+          - tag: textarea
+            type: textarea
+            name: ""
+            id: description
+            placeholder: 用一句话描述你的产品，例如：发现有趣的独立产品
+            aria_label: ""
+            selector: textarea[id="description"]
+            label: ""
+            required: true
+            mapped_to: product.description
+          - tag: input
+            type: url
+            name: ""
+            id: website
+            placeholder: https://example.com
+            aria_label: ""
+            selector: input[id="website"]
+            label: ""
+            required: true
+            mapped_to: product.url
+          - tag: input
+            type: file
+            name: ""
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[type="file"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: file
+            name: ""
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[type="file"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: textarea
+            type: textarea
+            name: ""
+            id: content
+            placeholder: 讲讲产品背后的故事，主要功能，以及解决了什么问题...
+            aria_label: ""
+            selector: textarea[id="content"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: ""
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[type="checkbox"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: ""
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[type="checkbox"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: 立即发布
+            value: ""
+            selector: button[type="submit"]
   - id: xquan-net
     name: 线圈
     domain: xquan.net
@@ -36406,21 +37802,38 @@ targets:
       - targets.yaml
     source_meta:
       id: xquan-net
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
+        reasons:
+          - no_form_detected
+      scout_classification_computed:
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
+        reasons:
+          - no_form_detected
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:47:20.818Z
+      auth: none
+      captcha: none
+      reachable: yes
+      final_url: http://www.xquan.net/
+      http_status: 200
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: needs_review
+      status: no_form_detected
+      reason: no_form_detected
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.132Z
-    updated_at: 2026-05-21T15:44:39.132Z
+    updated_at: 2026-05-23T02:47:22.224Z
+    forms: []
   - id: yjpoo-com
     name: 映技派
     domain: yjpoo.com
@@ -36440,21 +37853,244 @@ targets:
       - targets.yaml
     source_meta:
       id: yjpoo-com
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T02:47:27.040Z
+      auth: none
+      captcha: required
+      reachable: yes
+      final_url: https://www.yjpoo.com/submit-ai-tool/
+      http_status: 200
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.132Z
-    updated_at: 2026-05-21T15:44:39.132Z
+    updated_at: 2026-05-23T02:47:30.942Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: keywords
+            id: keywords
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="keywords"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: hidden
+            name: method
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="method"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: submit
+            id: ""
+            text: ""
+            value: ""
+            selector: button[name="submit"]
+      - index: 1
+        fields:
+          - tag: input
+            type: text
+            name: attr_28
+            id: attr_28
+            placeholder: 网站名称
+            aria_label: ""
+            selector: input[id="attr_28"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: input
+            type: text
+            name: attr_30
+            id: attr_30
+            placeholder: 网站链接
+            aria_label: ""
+            selector: input[id="attr_30"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: textarea
+            type: textarea
+            name: attr_38
+            id: attr_38
+            placeholder: 请详细介绍你的AI产品，包括功能特色、应用等，字数太少一般不收录。
+            aria_label: ""
+            selector: textarea[id="attr_38"]
+            label: ""
+            required: false
+            mapped_to: product.description
+          - tag: input
+            type: submit
+            name: ""
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[type="submit"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: hidden
+            name: gourl
+            id: gourl_caf875867c8db5f8c391cc0f402a9450
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="gourl_caf875867c8db5f8c391cc0f402a9450"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: input
+            type: hidden
+            name: typeid
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="typeid"]
+            label: ""
+            required: false
+            mapped_to: product.category
+          - tag: input
+            type: hidden
+            name: __token__caf875867c8db5f8c391cc0f402a9450
+            id: caf875867c8db5f8c391cc0f402a9450
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="caf875867c8db5f8c391cc0f402a9450"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: hidden
+            name: form_type
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="form_type"]
+            label: ""
+            required: false
+            mapped_to: product.category
+        submit_buttons:
+          - tag: input
+            type: submit
+            name: ""
+            id: ""
+            text: 提交
+            value: 提交
+            selector: input[type="submit"]
+      - index: 2
+        fields:
+          - tag: input
+            type: text
+            name: keywords
+            id: keywords
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="keywords"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: submit
+            id: ""
+            text: Search
+            value: Search
+            selector: button[name="submit"]
+      - index: 3
+        fields:
+          - tag: input
+            type: text
+            name: username
+            id: username
+            placeholder: 用户名
+            aria_label: ""
+            selector: input[id="username"]
+            label: ""
+            required: false
+            mapped_to: product.name
+          - tag: input
+            type: password
+            name: password
+            id: password
+            placeholder: 密码
+            aria_label: ""
+            selector: input[id="password"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: hidden
+            name: referurl
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="referurl"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: input
+            type: hidden
+            name: website
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="website"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: input
+            type: button
+            name: submit
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="submit"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons: []
+      - index: 4
+        fields:
+          - tag: input
+            type: checkbox
+            name: ""
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[type="checkbox"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons: []
   - id: youraitool
     name: YourAITool
     domain: youraitool.com
@@ -36508,21 +38144,69 @@ targets:
       - targets.yaml
     source_meta:
       id: ywyj-cn
+      scout_classification_source: provided_equal
+      scout_classification_mismatch: true
+      scout_classification_provided:
+        mode: needs_review
+        status: scout_failed
+        confidence: 0.55
+        reasons:
+          - scout_failed_network
+      scout_classification_computed:
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
+        reasons:
+          - no_form_detected
+      scout_failure_error: "page.goto: net::ERR_CONNECTION_TIMED_OUT at
+        https://ywyj.cn/
+
+        Call log:
+
+        \e[2m  - navigating to \"https://ywyj.cn/\", waiting until
+        \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_CONNECTION_TIMED_OUT at
+        https://ywyj.cn/
+
+        Call log:
+
+        \e[2m  - navigating to \"https://ywyj.cn/\", waiting until
+        \"networkidle\"\e[22m"
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
+      last_scouted_at: 2026-05-23T02:47:54.430Z
+      auth: none
+      captcha: none
       reachable: unknown
+      final_url: https://ywyj.cn/
+      http_status: null
+      last_scout_error: "page.goto: net::ERR_CONNECTION_TIMED_OUT at https://ywyj.cn/
+
+        Call log:
+
+        \e[2m  - navigating to \"https://ywyj.cn/\", waiting until
+        \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_CONNECTION_TIMED_OUT at
+        https://ywyj.cn/
+
+        Call log:
+
+        \e[2m  - navigating to \"https://ywyj.cn/\", waiting until
+        \"networkidle\"\e[22m"
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: needs_review
+      status: scout_failed
+      reason: scout_failed_network; classification_mismatch:needs_review->needs_review
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.132Z
-    updated_at: 2026-05-21T15:44:39.132Z
+    updated_at: 2026-05-23T02:47:54.431Z
+    forms: []
   - id: zhexieai
     name: zhexieai
     domain: zhexieai.com
@@ -36542,21 +38226,74 @@ targets:
       - targets.yaml
     source_meta:
       id: zhexieai
+      scout_classification_source: provided_equal
+      scout_classification_mismatch: true
+      scout_classification_provided:
+        mode: needs_review
+        status: scout_failed
+        confidence: 0.55
+        reasons:
+          - scout_failed_network
+      scout_classification_computed:
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
+        reasons:
+          - no_form_detected
+      scout_failure_error: "page.goto: net::ERR_CONNECTION_REFUSED at
+        https://zhexieai.com/%e6%8f%90%e4%ba%a4%e7%bd%91%e5%9d%80
+
+        Call log:
+
+        \e[2m  - navigating to
+        \"https://zhexieai.com/%e6%8f%90%e4%ba%a4%e7%bd%91%e5%9d%80\", waiting
+        until \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_CONNECTION_REFUSED at
+        https://zhexieai.com/%e6%8f%90%e4%ba%a4%e7%bd%91%e5%9d%80
+
+        Call log:
+
+        \e[2m  - navigating to
+        \"https://zhexieai.com/%e6%8f%90%e4%ba%a4%e7%bd%91%e5%9d%80\", waiting
+        until \"networkidle\"\e[22m"
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
+      last_scouted_at: 2026-05-23T02:51:27.436Z
+      auth: none
+      captcha: none
       reachable: unknown
+      final_url: https://zhexieai.com/%e6%8f%90%e4%ba%a4%e7%bd%91%e5%9d%80
+      http_status: null
+      last_scout_error: "page.goto: net::ERR_CONNECTION_REFUSED at
+        https://zhexieai.com/%e6%8f%90%e4%ba%a4%e7%bd%91%e5%9d%80
+
+        Call log:
+
+        \e[2m  - navigating to
+        \"https://zhexieai.com/%e6%8f%90%e4%ba%a4%e7%bd%91%e5%9d%80\", waiting
+        until \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_CONNECTION_REFUSED at
+        https://zhexieai.com/%e6%8f%90%e4%ba%a4%e7%bd%91%e5%9d%80
+
+        Call log:
+
+        \e[2m  - navigating to
+        \"https://zhexieai.com/%e6%8f%90%e4%ba%a4%e7%bd%91%e5%9d%80\", waiting
+        until \"networkidle\"\e[22m"
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: needs_review
+      status: scout_failed
+      reason: scout_failed_network; classification_mismatch:needs_review->needs_review
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.132Z
-    updated_at: 2026-05-21T15:44:39.132Z
+    updated_at: 2026-05-23T02:51:27.437Z
+    forms: []
   - id: box-ai
     name: 知否Box AI导航
     domain: zhifoubox.com
@@ -36576,18 +38313,67 @@ targets:
       - targets.yaml
     source_meta:
       id: box-ai
+      scout_classification_source: provided_equal
+      scout_classification_mismatch: true
+      scout_classification_provided:
+        mode: needs_review
+        status: scout_failed
+        confidence: 0.55
+        reasons:
+          - scout_failed_network
+      scout_classification_computed:
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
+        reasons:
+          - no_form_detected
+      scout_failure_error: "page.goto: net::ERR_HTTP2_PROTOCOL_ERROR at
+        https://www.zhifoubox.com/submission
+
+        Call log:
+
+        \e[2m  - navigating to \"https://www.zhifoubox.com/submission\", waiting
+        until \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_HTTP2_PROTOCOL_ERROR at
+        https://www.zhifoubox.com/submission
+
+        Call log:
+
+        \e[2m  - navigating to \"https://www.zhifoubox.com/submission\", waiting
+        until \"networkidle\"\e[22m"
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
+      last_scouted_at: 2026-05-23T02:51:30.983Z
+      auth: none
+      captcha: none
       reachable: unknown
+      final_url: https://www.zhifoubox.com/submission
+      http_status: null
+      last_scout_error: "page.goto: net::ERR_HTTP2_PROTOCOL_ERROR at
+        https://www.zhifoubox.com/submission
+
+        Call log:
+
+        \e[2m  - navigating to \"https://www.zhifoubox.com/submission\", waiting
+        until \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_HTTP2_PROTOCOL_ERROR at
+        https://www.zhifoubox.com/submission
+
+        Call log:
+
+        \e[2m  - navigating to \"https://www.zhifoubox.com/submission\", waiting
+        until \"networkidle\"\e[22m"
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: needs_review
+      status: scout_failed
+      reason: scout_failed_network; classification_mismatch:needs_review->needs_review
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.132Z
-    updated_at: 2026-05-21T15:44:39.132Z
+    updated_at: 2026-05-23T02:51:30.983Z
+    forms: []

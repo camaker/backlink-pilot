@@ -234,9 +234,10 @@ describe('pipeline runner', () => {
         freeOnly: true,
         allowUnknownPricing: true,
         scoutModes: 'needs_scout',
+        includeScouted: true,
         limit: 3,
         buildScoutQueueFn: (opts) => {
-          calls.push(['buildScoutQueue', opts.modes, opts.limit, opts.freeOnly, opts.allowUnknownPricing]);
+          calls.push(['buildScoutQueue', opts.modes, opts.limit, opts.freeOnly, opts.allowUnknownPricing, opts.includeScouted]);
           return {
             version: 1,
             constraints: { purpose: 'scout_queue' },
@@ -276,7 +277,7 @@ describe('pipeline runner', () => {
 
       assert.deepEqual(savedPlans.map(plan => plan.ids), [['candidate'], ['safe']]);
       assert.deepEqual(calls.map(call => call[0]), ['buildScoutQueue', 'scoutPlan', 'buildPlan', 'runPlan']);
-      assert.deepEqual(calls[0], ['buildScoutQueue', 'needs_scout', 3, true, true]);
+      assert.deepEqual(calls[0], ['buildScoutQueue', 'needs_scout', 3, true, true, true]);
       assert.equal(calls[1][2], true);
       assert.equal(calls[1][4], undefined);
       assert.equal(summary.steps.scout_plan.source, 'scout_queue');
