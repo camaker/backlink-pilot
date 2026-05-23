@@ -234,6 +234,38 @@ describe('scout persistence', () => {
     assert.match(resolved.classification.reasons.join('; '), /classification_mismatch:assisted->needs_review/);
   });
 
+  it('finalizes repeated weak scout results into manual review instead of requeueing', () => {
+    const updated = applyScoutResultToTarget({
+      id: 'retry',
+      submit_url: 'https://retry.example/submit',
+      technical: {
+        last_scouted_at: '2026-05-22T00:00:00.000Z',
+        auth: 'unknown',
+        captcha: 'unknown',
+        reachable: 'unknown',
+      },
+      submission: { mode: 'needs_scout', status: 'browser_error' },
+    }, {
+      checked_at: '2026-05-23T00:00:00.000Z',
+      final_url: 'chrome-error://chromewebdata/',
+      reachable: true,
+      http_status: 200,
+      signals: { login_required: false, oauth_available: false, captcha: false },
+      forms: [],
+      classification: {
+        mode: 'needs_scout',
+        status: 'browser_error',
+        confidence: 0.5,
+        reasons: ['browser_error_final_url'],
+      },
+    });
+
+    assert.equal(updated.submission.mode, 'needs_review');
+    assert.equal(updated.submission.status, 'browser_error');
+    assert.match(updated.submission.reason, /scout_retry_exhausted_manual_review/);
+    assert.equal(updated.source_meta.scout_retry_finalized, true);
+  });
+
   it('sanitizes bb-browser remote null field values before registry persistence', () => {
     const remoteNull = `{
   "type": "object",

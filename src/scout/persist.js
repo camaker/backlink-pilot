@@ -81,6 +81,29 @@ function isWeakComputedClassification(classification = {}) {
   ].includes(String(classification.status || ''));
 }
 
+function finalizeWeakRetryClassification(target = {}, classification = {}) {
+  const retryingWeakScout = target.submission?.mode === 'needs_scout' &&
+    Boolean(target.technical?.last_scouted_at) &&
+    classification.mode === 'needs_scout' &&
+    isWeakComputedClassification(classification);
+
+  if (!retryingWeakScout) {
+    return { classification, finalized: false };
+  }
+
+  return {
+    finalized: true,
+    classification: {
+      ...classification,
+      mode: 'needs_review',
+      reasons: [
+        ...(classification.reasons || []),
+        'scout_retry_exhausted_manual_review',
+      ],
+    },
+  };
+}
+
 function isRemoteNullString(value) {
   const text = String(value || '');
   return text.includes('"subtype": "null"') && text.includes('"value": null');
@@ -180,7 +203,8 @@ export function applyScoutResultToTarget(target, result) {
     ...sanitized,
     final_url: result.final_url,
   });
-  const classification = resolved.classification || {};
+  const finalized = finalizeWeakRetryClassification(target, resolved.classification || {});
+  const classification = finalized.classification || {};
   const auth = sanitized.signals?.login_required
     ? 'required'
     : sanitized.signals?.oauth_available
@@ -225,6 +249,7 @@ export function applyScoutResultToTarget(target, result) {
       scout_classification_mismatch: resolved.mismatch,
       scout_classification_provided: resolved.provided,
       scout_classification_computed: resolved.computed,
+      ...(finalized.finalized ? { scout_retry_finalized: true } : {}),
       ...(scoutError ? { scout_failure_error: scoutError } : {}),
     },
     updated_at: nowIso(),
