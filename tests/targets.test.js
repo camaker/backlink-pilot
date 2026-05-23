@@ -2175,6 +2175,7 @@ targets:
       const authRows = parseCsv(readFileSync(written.files.auth_login_rescout_csv, 'utf-8'));
       const manualSurfaceRows = parseCsv(readFileSync(written.files.manual_surface_review_csv, 'utf-8'));
       const manualReviewRows = parseCsv(readFileSync(written.files.manual_review_first_csv, 'utf-8'));
+      const crossDomainRows = parseCsv(readFileSync(written.files.cross_domain_final_url_csv, 'utf-8'));
       const summary = JSON.parse(readFileSync(written.files.summary_json, 'utf-8'));
 
       assert.equal(pack.rows.length, 5);
@@ -2205,6 +2206,8 @@ targets:
       assert.equal(manualSurfaceRows[0].target_id, 'manual-target');
       assert.equal(manualReviewRows.length, 1);
       assert.equal(manualReviewRows[0].target_id, 'review-target');
+      assert.equal(crossDomainRows.length, 1);
+      assert.equal(crossDomainRows[0].target_id, 'cross-final-url');
       assert.equal(summary.policy, 'manual_assisted_pack_only_no_registry_changes_no_real_submissions');
       assert.equal(summary.by_exclusion_reason.paid_excluded_by_default, 1);
       assert.equal(summary.by_exclusion_reason.already_submitted, 1);
@@ -2212,6 +2215,8 @@ targets:
       assert.equal(existsSync(written.files.auth_login_rescout_csv), true);
       assert.equal(existsSync(written.files.manual_surface_review_csv), true);
       assert.equal(existsSync(written.files.manual_review_first_csv), true);
+      assert.equal(existsSync(written.files.cross_domain_final_url_csv), true);
+      assert.equal(summary.files.cross_domain_final_url_csv.endsWith('cross-domain-final-url-review.csv'), true);
       assert.match(assistedSubmissionPackCsv(pack.rows), /no_real_submission_from_pack/);
     } finally {
       rmSync(dir, { recursive: true, force: true });

@@ -601,6 +601,7 @@ function assistedPackMarkdown(pack, files = {}) {
     `- Auth login/rescout queue: ${files.auth_login_rescout_csv || 'auth-login-rescout-queue.csv'}`,
     `- Manual surface review queue: ${files.manual_surface_review_csv || 'manual-surface-review.csv'}`,
     `- Manual review-first queue: ${files.manual_review_first_csv || 'manual-review-first.csv'}`,
+    `- Cross-domain final URL review queue: ${files.cross_domain_final_url_csv || 'cross-domain-final-url-review.csv'}`,
     `- Summary JSON: ${files.summary_json || 'assisted-submission-summary.json'}`,
     '',
     '## Safe Next Commands',
@@ -621,6 +622,7 @@ export function writeAssistedSubmissionPack(pack, opts = {}) {
     auth_login_rescout_csv: join(outputDir, 'auth-login-rescout-queue.csv'),
     manual_surface_review_csv: join(outputDir, 'manual-surface-review.csv'),
     manual_review_first_csv: join(outputDir, 'manual-review-first.csv'),
+    cross_domain_final_url_csv: join(outputDir, 'cross-domain-final-url-review.csv'),
   };
   const publicFiles = Object.fromEntries(
     Object.entries(files).map(([key, value]) => [key, normalizePath(value)])
@@ -642,6 +644,11 @@ export function writeAssistedSubmissionPack(pack, opts = {}) {
   writeFileSync(
     files.manual_review_first_csv,
     assistedSubmissionPackCsv(pack.rows.filter(row => row.manual_bucket === 'manual_review_first')),
+    'utf-8'
+  );
+  writeFileSync(
+    files.cross_domain_final_url_csv,
+    assistedSubmissionPackCsv(pack.rows.filter(row => row.manual_bucket === 'fix_cross_domain_final_url')),
     'utf-8'
   );
   writeFileSync(files.summary_json, JSON.stringify({
