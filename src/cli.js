@@ -12,6 +12,7 @@ import { forceUpdate } from './bb-update.js';
 import { runCampaign } from './campaign.js';
 import {
   applyCoverageReviewQueueCommand,
+  assistedSubmissionPackCommand,
   coverageReviewDraftCommand,
   coverageReviewEvidenceCommand,
   coverageReviewBatchCommand,
@@ -292,6 +293,24 @@ targets
   .option('--json', 'Output as JSON')
   .action(async (opts) => {
     await auditTargetsCommand(opts);
+  });
+
+targets
+  .command('assisted-pack')
+  .description('Generate a manual assisted-submission pack from assisted and review targets without submitting')
+  .option('--registry <path>', 'Canonical registry path')
+  .option('--product-config <path>', 'Product config path to include product identity in the pack')
+  .option('--output-dir <path>', 'Directory to write the assisted submission pack')
+  .option('--modes <items>', 'Comma-separated target modes to include', 'assisted,needs_review')
+  .option('--offset <n>', 'Zero-based offset within the prioritized pack', '0')
+  .option('--limit <n>', 'Rows to include in the next work slice', '100')
+  .option('--include-paid', 'Include paid/paywalled targets in the pack')
+  .option('--include-high-risk', 'Include high-risk targets in the pack')
+  .option('--include-submitted', 'Include targets with previous submission evidence')
+  .option('--product-context-paths <items>', 'Comma-separated product context paths to check')
+  .option('--json', 'Output summary as JSON')
+  .action(async (opts) => {
+    await assistedSubmissionPackCommand(opts);
   });
 
 targets

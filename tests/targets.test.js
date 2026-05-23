@@ -7,6 +7,11 @@ import { inferTargetMode } from '../src/targets/classify.js';
 import { normalizeUrl } from '../src/targets/normalize.js';
 import { auditTargets, formatAuditReport } from '../src/targets/audit.js';
 import {
+  assistedSubmissionPackCsv,
+  buildAssistedSubmissionPack,
+  writeAssistedSubmissionPack,
+} from '../src/targets/assisted-pack.js';
+import {
   applyCoverageReviewQueue,
   buildCoverageReviewEvidence,
   buildCoverageReviewBatch,
@@ -1946,6 +1951,184 @@ targets:
       assert.equal(pack.rows[0].manual_bucket, 'directory_fit_requires_human_confirmation');
       assert.equal(pack.rows[0].safety_gate_reason, '');
       assert.equal(pack.summary.evidence_coverage.rows_with_safety_gate_block, 0);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe('assisted submission pack', () => {
+  it('builds a manual assisted pack without approving or submitting targets', () => {
+    const dir = tempDir();
+    try {
+      const registry = join(dir, 'registry.yaml');
+      const outputDir = join(dir, 'assisted-pack');
+      writeFileSync(registry, `
+version: 1
+targets:
+  - id: auth-target
+    name: Auth Target
+    domain: auth.example
+    root_url: https://auth.example
+    submit_url: https://auth.example/submit
+    pricing: free
+    lang: en
+    source:
+      - test
+    technical:
+      last_scouted_at: 2026-01-01T00:00:00.000Z
+      auth: required
+      captcha: none
+      reachable: yes
+      final_url: https://auth.example/login
+    submission:
+      mode: assisted
+      status: auth_required
+      reason: auth_signal
+    quality:
+      risk: low
+    forms:
+      - index: 0
+        fields:
+          - name: url
+            required: true
+            mapped_to: product.url
+        submit_buttons:
+          - text: Submit
+  - id: captcha-target
+    name: Captcha Target
+    domain: captcha.example
+    root_url: https://captcha.example
+    submit_url: https://captcha.example/submit
+    pricing: unknown
+    technical:
+      last_scouted_at: 2026-01-01T00:00:00.000Z
+      auth: none
+      captcha: required
+      reachable: yes
+    submission:
+      mode: assisted
+      status: captcha_required
+      reason: captcha_signal
+    quality:
+      risk: unknown
+  - id: review-target
+    name: Review Target
+    domain: review.example
+    root_url: https://review.example
+    submit_url: https://review.example/submit
+    pricing: unknown
+    technical:
+      auth: none
+      captcha: none
+      reachable: unknown
+    submission:
+      mode: needs_review
+      status: scout_failed
+      reason: scout_failed_network
+    quality:
+      risk: unknown
+  - id: paid-target
+    name: Paid Target
+    domain: paid.example
+    submit_url: https://paid.example/submit
+    pricing: paid
+    submission:
+      mode: assisted
+      status: paywalled
+    quality:
+      risk: unknown
+  - id: submitted-target
+    name: Submitted Target
+    domain: submitted.example
+    submit_url: https://submitted.example/submit
+    pricing: free
+    submission:
+      mode: assisted
+      status: auth_required
+      last_submitted_at: 2026-01-02T00:00:00.000Z
+    quality:
+      risk: low
+`);
+
+      const pack = buildAssistedSubmissionPack({
+        registry,
+        productConfig: join(dir, 'missing-product.yaml'),
+        limit: 2,
+        productContextPaths: [join(dir, 'product-marketing.md')],
+      });
+      const written = writeAssistedSubmissionPack(pack, { outputDir });
+      const fullRows = parseCsv(readFileSync(written.files.full_csv, 'utf-8'));
+      const nextRows = parseCsv(readFileSync(written.files.next_csv, 'utf-8'));
+      const summary = JSON.parse(readFileSync(written.files.summary_json, 'utf-8'));
+
+      assert.equal(pack.rows.length, 3);
+      assert.equal(pack.excluded.length, 2);
+      assert.equal(pack.rows[0].target_id, 'auth-target');
+      assert.equal(pack.rows[0].manual_bucket, 'manual_login_then_rescout');
+      assert.equal(pack.rows[0].automation_after_human, 'rescout_after_saved_login_profile');
+      assert.match(pack.rows[0].auth_login_command, /auth login --profile "auth-target"/);
+      assert.match(pack.rows[0].auth_scout_command, /--update-registry --engine playwright/);
+      assert.match(pack.rows[0].auth_scout_command, /--persist --scout-dir "resources\/scout-results"/);
+      assert.equal(pack.rows.find(row => row.target_id === 'captcha-target').automation_after_human, 'no_captcha_manual_only');
+      assert.equal(pack.rows.find(row => row.target_id === 'captcha-target').auth_login_command, '');
+      assert.equal(pack.rows.find(row => row.target_id === 'review-target').auth_scout_command, '');
+      assert.equal(pack.rows.find(row => row.target_id === 'review-target').automation_after_human, 'no_manual_review_required_first');
+      assert.equal(nextRows.length, 2);
+      assert.equal(fullRows.length, 3);
+      assert.equal(summary.policy, 'manual_assisted_pack_only_no_registry_changes_no_real_submissions');
+      assert.equal(summary.by_exclusion_reason.paid_excluded_by_default, 1);
+      assert.equal(summary.by_exclusion_reason.already_submitted, 1);
+      assert.equal(existsSync(written.files.summary_md), true);
+      assert.match(assistedSubmissionPackCsv(pack.rows), /no_real_submission_from_pack/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('can include paid, high-risk, and submitted rows only when explicitly requested', () => {
+    const dir = tempDir();
+    try {
+      const registry = join(dir, 'registry.yaml');
+      writeFileSync(registry, `
+version: 1
+targets:
+  - id: paid
+    name: Paid
+    domain: paid.example
+    submit_url: https://paid.example/submit
+    pricing: paid
+    submission:
+      mode: assisted
+      status: paywalled
+    quality:
+      risk: high
+  - id: submitted
+    name: Submitted
+    domain: submitted.example
+    submit_url: https://submitted.example/submit
+    pricing: free
+    submission:
+      mode: assisted
+      status: auth_required
+      last_submitted_at: 2026-01-01T00:00:00.000Z
+    quality:
+      risk: low
+`);
+
+      const defaultPack = buildAssistedSubmissionPack({ registry });
+      const explicitPack = buildAssistedSubmissionPack({
+        registry,
+        includePaid: true,
+        includeHighRisk: true,
+        includeSubmitted: true,
+      });
+
+      assert.equal(defaultPack.rows.length, 0);
+      assert.equal(defaultPack.excluded.length, 2);
+      assert.equal(explicitPack.rows.length, 2);
+      assert.equal(explicitPack.rows.find(row => row.target_id === 'paid').automation_after_human, 'no_paid_or_paywalled');
+      assert.equal(explicitPack.rows.find(row => row.target_id === 'submitted').automation_after_human, 'no_verify_existing_submission_first');
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

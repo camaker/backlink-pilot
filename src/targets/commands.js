@@ -9,6 +9,10 @@ import {
 } from './registry.js';
 import { auditRegistry, formatAuditReport } from './audit.js';
 import {
+  buildAssistedSubmissionPack,
+  writeAssistedSubmissionPack,
+} from './assisted-pack.js';
+import {
   applyCoverageReviewQueue,
   buildCoverageReviewEvidence,
   buildCoverageReviewBatch,
@@ -128,6 +132,47 @@ export async function dedupeTargetIdsCommand(opts = {}) {
   console.log(`Registry: ${result.path}`);
   console.log(`Targets: ${result.total}`);
   console.log(`IDs renamed: ${result.renamed_ids}`);
+  return result;
+}
+
+export async function assistedSubmissionPackCommand(opts = {}) {
+  const pack = buildAssistedSubmissionPack({
+    registry: opts.registry || DEFAULT_REGISTRY_FILE,
+    productConfig: opts.productConfig,
+    modes: opts.modes,
+    offset: opts.offset,
+    limit: opts.limit,
+    includePaid: Boolean(opts.includePaid),
+    includeHighRisk: Boolean(opts.includeHighRisk),
+    includeSubmitted: Boolean(opts.includeSubmitted),
+    productContextPaths: opts.productContextPaths,
+  });
+  const written = writeAssistedSubmissionPack(pack, {
+    outputDir: opts.outputDir,
+  });
+  const result = {
+    ...pack.summary,
+    output_dir: written.output_dir,
+    files: written.files,
+  };
+
+  if (opts.json) {
+    console.log(JSON.stringify(result, null, 2));
+    return result;
+  }
+
+  console.log(`Registry: ${pack.registry}`);
+  console.log(`Output dir: ${written.output_dir}`);
+  console.log(`Rows: ${pack.summary.total_rows}`);
+  console.log(`Next rows: ${pack.summary.next_rows}`);
+  console.log(`Excluded rows: ${pack.summary.excluded_rows}`);
+  console.log(`Priority counts: ${JSON.stringify(pack.summary.by_priority)}`);
+  console.log(`Manual buckets: ${JSON.stringify(pack.summary.by_manual_bucket)}`);
+  console.log(`Automation after human: ${JSON.stringify(pack.summary.by_automation_after_human)}`);
+  console.log(`Full CSV: ${written.files.full_csv}`);
+  console.log(`Next CSV: ${written.files.next_csv}`);
+  console.log(`Summary: ${written.files.summary_md}`);
+
   return result;
 }
 
