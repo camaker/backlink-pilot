@@ -1,6 +1,6 @@
 version: 1
 generated_at: 2026-05-21T15:44:34.969Z
-updated_at: 2026-05-22T17:46:10.839Z
+updated_at: 2026-05-23T01:18:01.887Z
 targets:
   - id: 01webdirectory
     name: 01webdirectory
@@ -21688,21 +21688,70 @@ targets:
       - notion
     source_meta:
       id: rayday
+      scout_classification_source: provided_equal
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: dead
+        confidence: 0.9
+        reasons:
+          - scout_failed_dns
+      scout_classification_computed:
+        mode: skip
+        status: dead
+        confidence: 1
+        reasons:
+          - unreachable_or_404
+      scout_failure_error: "page.goto: net::ERR_NAME_NOT_RESOLVED at
+        https://raiday.ai/submit-ai-tool
+
+        Call log:
+
+        \e[2m  - navigating to \"https://raiday.ai/submit-ai-tool\", waiting
+        until \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_NAME_NOT_RESOLVED at
+        https://raiday.ai/submit-ai-tool
+
+        Call log:
+
+        \e[2m  - navigating to \"https://raiday.ai/submit-ai-tool\", waiting
+        until \"networkidle\"\e[22m"
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T00:46:51.432Z
+      auth: none
+      captcha: none
+      reachable: no
+      final_url: https://raiday.ai/submit-ai-tool
+      http_status: null
+      last_scout_error: "page.goto: net::ERR_NAME_NOT_RESOLVED at
+        https://raiday.ai/submit-ai-tool
+
+        Call log:
+
+        \e[2m  - navigating to \"https://raiday.ai/submit-ai-tool\", waiting
+        until \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_NAME_NOT_RESOLVED at
+        https://raiday.ai/submit-ai-tool
+
+        Call log:
+
+        \e[2m  - navigating to \"https://raiday.ai/submit-ai-tool\", waiting
+        until \"networkidle\"\e[22m"
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: skip
+      status: dead
+      reason: scout_failed_dns
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.105Z
-    updated_at: 2026-05-21T15:44:39.105Z
+    updated_at: 2026-05-23T00:46:51.433Z
+    forms: []
   - id: r-entrepreneur
     name: r/Entrepreneur
     domain: reddit.com
@@ -22696,21 +22745,108 @@ targets:
       - notion
     source_meta:
       id: saas-po
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T00:47:23.932Z
+      auth: oauth
+      captcha: none
+      reachable: yes
+      final_url: https://saaspo.com/submit
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.106Z
-    updated_at: 2026-05-21T15:44:39.106Z
+    updated_at: 2026-05-23T00:47:57.977Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: Name
+            id: Name
+            placeholder: Your name
+            aria_label: ""
+            selector: input[id="Name"]
+            label: ""
+            required: true
+            mapped_to: product.name
+          - tag: input
+            type: email
+            name: Email
+            id: Email
+            placeholder: Your email
+            aria_label: ""
+            selector: input[id="Email"]
+            label: ""
+            required: true
+            mapped_to: product.email
+          - tag: input
+            type: text
+            name: Twitter
+            id: Twitter
+            placeholder: Your Twitter @
+            aria_label: ""
+            selector: input[id="Twitter"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: Website-URL
+            id: Website-URL
+            placeholder: Website URL
+            aria_label: ""
+            selector: input[id="Website-URL"]
+            label: ""
+            required: true
+            mapped_to: product.url
+          - tag: input
+            type: submit
+            name: ""
+            id: w-node-d15ef1f6-ff5e-e1fe-264f-d7b03fbe1c1b-5707fa9d
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="w-node-d15ef1f6-ff5e-e1fe-264f-d7b03fbe1c1b-5707fa9d"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: hidden
+            name: cf-turnstile-response
+            id: cf-chl-widget-nkefg_response
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="cf-chl-widget-nkefg_response"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: input
+            type: submit
+            name: ""
+            id: w-node-d15ef1f6-ff5e-e1fe-264f-d7b03fbe1c1b-5707fa9d
+            text: Submit site
+            value: Submit site
+            selector: input[id="w-node-d15ef1f6-ff5e-e1fe-264f-d7b03fbe1c1b-5707fa9d"]
   - id: saasroots-com
     name: https://saasroots.com/
     domain: saasroots.com
@@ -23862,21 +23998,70 @@ targets:
       - targets.yaml
     source_meta:
       id: siteswebdirectory
+      scout_classification_source: provided_equal
+      scout_classification_mismatch: true
+      scout_classification_provided:
+        mode: needs_review
+        status: scout_failed
+        confidence: 0.55
+        reasons:
+          - scout_failed_network
+      scout_classification_computed:
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
+        reasons:
+          - no_form_detected
+      scout_failure_error: "page.goto: net::ERR_CONNECTION_RESET at
+        https://www.siteswebdirectory.com/submit.php
+
+        Call log:
+
+        \e[2m  - navigating to \"https://www.siteswebdirectory.com/submit.php\",
+        waiting until \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_CONNECTION_RESET at
+        https://www.siteswebdirectory.com/submit.php
+
+        Call log:
+
+        \e[2m  - navigating to \"https://www.siteswebdirectory.com/submit.php\",
+        waiting until \"networkidle\"\e[22m"
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
+      last_scouted_at: 2026-05-23T00:48:01.503Z
+      auth: none
+      captcha: none
       reachable: unknown
+      final_url: https://www.siteswebdirectory.com/submit.php
+      http_status: null
+      last_scout_error: "page.goto: net::ERR_CONNECTION_RESET at
+        https://www.siteswebdirectory.com/submit.php
+
+        Call log:
+
+        \e[2m  - navigating to \"https://www.siteswebdirectory.com/submit.php\",
+        waiting until \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_CONNECTION_RESET at
+        https://www.siteswebdirectory.com/submit.php
+
+        Call log:
+
+        \e[2m  - navigating to \"https://www.siteswebdirectory.com/submit.php\",
+        waiting until \"networkidle\"\e[22m"
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: needs_review
+      status: scout_failed
+      reason: scout_failed_network; classification_mismatch:needs_review->needs_review
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.123Z
-    updated_at: 2026-05-21T15:44:39.123Z
+    updated_at: 2026-05-23T00:48:01.504Z
+    forms: []
   - id: smartkithub-com
     name: https://smartkithub.com
     domain: smartkithub.com
@@ -24515,21 +24700,78 @@ targets:
       - 91wink
     source_meta:
       id: sourcedir-com
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
+      scout_classification_computed:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T00:48:08.433Z
+      auth: required
+      captcha: none
+      reachable: yes
+      final_url: https://sourcedir.com/get-started
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: assisted
+      status: auth_required
+      reason: auth_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.124Z
-    updated_at: 2026-05-21T15:44:39.124Z
+    updated_at: 2026-05-23T00:48:13.576Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: q
+            id: ""
+            placeholder: Search products...
+            aria_label: ""
+            selector: input[name="q"]
+            label: ""
+            required: true
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Search
+            value: ""
+            selector: button[type="submit"]
+      - index: 1
+        fields:
+          - tag: input
+            type: text
+            name: q
+            id: ""
+            placeholder: Search products...
+            aria_label: ""
+            selector: input[name="q"]
+            label: ""
+            required: true
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Search
+            value: ""
+            selector: button[type="submit"]
   - id: sourceforge
     external_id: 14368f41-8f50-812d-8020-c11f2fe0bb9f
     name: Source Forge
@@ -24550,21 +24792,38 @@ targets:
       - targets.yaml
     source_meta:
       id: sourceforge
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
+        reasons:
+          - no_form_detected
+      scout_classification_computed:
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
+        reasons:
+          - no_form_detected
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T00:48:45.982Z
+      auth: none
+      captcha: none
+      reachable: yes
+      final_url: https://sourceforge.net/software/vendors/new?__cf_chl_rt_tk=dtuQEvvlWh3gkM63n_juguzrFWcRKhVflT7UJyiL1qI-1779497322-1.0.1.1-vg1fzxhdfODt.Deg_OHl51_nX0kV2u4iAaW6M0In3KA
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: needs_review
+      status: no_form_detected
+      reason: no_form_detected
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.124Z
-    updated_at: 2026-05-21T15:44:39.124Z
+    updated_at: 2026-05-23T00:48:46.797Z
+    forms: []
   - id: spotsaas
     name: SpotSaaS
     domain: spotsaas.com
@@ -24618,21 +24877,38 @@ targets:
       - targets.yaml
     source_meta:
       id: spottheai
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: needs_scout
+        status: browser_error
+        confidence: 0.5
+        reasons:
+          - browser_error_final_url
+      scout_classification_computed:
+        mode: needs_scout
+        status: browser_error
+        confidence: 0.5
+        reasons:
+          - browser_error_final_url
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T00:49:12.497Z
+      auth: none
+      captcha: none
+      reachable: yes
+      final_url: https://www.spottheai.com/submit
+      http_status: 200
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: needs_scout
+      status: browser_error
+      reason: browser_error_final_url
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.124Z
-    updated_at: 2026-05-21T15:44:39.124Z
+    updated_at: 2026-05-23T00:49:13.356Z
+    forms: []
   - id: stackdirectory-com
     name: https://stackdirectory.com/
     domain: stackdirectory.com
@@ -24652,21 +24928,78 @@ targets:
       - 91wink
     source_meta:
       id: stackdirectory-com
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
+      scout_classification_computed:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T00:49:19.853Z
+      auth: required
+      captcha: none
+      reachable: yes
+      final_url: https://stackdirectory.com/get-started
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: assisted
+      status: auth_required
+      reason: auth_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.124Z
-    updated_at: 2026-05-21T15:44:39.124Z
+    updated_at: 2026-05-23T00:49:25.635Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: q
+            id: ""
+            placeholder: Search products...
+            aria_label: ""
+            selector: input[name="q"]
+            label: ""
+            required: true
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Search
+            value: ""
+            selector: button[type="submit"]
+      - index: 1
+        fields:
+          - tag: input
+            type: text
+            name: q
+            id: ""
+            placeholder: Search products...
+            aria_label: ""
+            selector: input[name="q"]
+            label: ""
+            required: true
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Search
+            value: ""
+            selector: button[type="submit"]
   - id: stackshare
     external_id: 14368f41-8f50-81af-99b0-dbd4b8c91fb3
     name: Stackshare
@@ -24687,21 +25020,38 @@ targets:
       - notion
     source_meta:
       id: stackshare
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T00:49:33.831Z
+      auth: required
+      captcha: required
+      reachable: yes
+      final_url: https://stackshare.io/submit/my-stack
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.124Z
-    updated_at: 2026-05-21T15:44:39.124Z
+    updated_at: 2026-05-23T00:49:38.778Z
+    forms: []
   - id: startup88
     external_id: 14368f41-8f50-8140-9330-c2fa0539ae09
     name: Startup88
@@ -24722,21 +25072,38 @@ targets:
       - notion
     source_meta:
       id: startup88
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T00:49:50.410Z
+      auth: required
+      captcha: required
+      reachable: yes
+      final_url: https://startup88.typeform.com/to/CRjWqM
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.124Z
-    updated_at: 2026-05-21T15:44:39.124Z
+    updated_at: 2026-05-23T00:49:51.073Z
+    forms: []
   - id: startupaideas-com
     name: https://startupaideas.com
     domain: startupaideas.com
@@ -24791,21 +25158,38 @@ targets:
       - targets.yaml
     source_meta:
       id: startup-ai-tools
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T00:50:28.352Z
+      auth: oauth
+      captcha: required
+      reachable: yes
+      final_url: https://www.startupaitools.com/submit-ai-tools/
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.124Z
-    updated_at: 2026-05-21T15:44:39.124Z
+    updated_at: 2026-05-23T00:51:01.965Z
+    forms: []
   - id: startupbase
     name: StartupBase
     domain: startupbase.io
@@ -24825,21 +25209,78 @@ targets:
       - targets.yaml
     source_meta:
       id: startupbase
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T00:51:12.104Z
+      auth: required
+      captcha: required
+      reachable: yes
+      final_url: https://startupbase.io/
+      http_status: 200
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.124Z
-    updated_at: 2026-05-21T15:44:39.124Z
+    updated_at: 2026-05-23T00:51:13.862Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: email
+            name: ""
+            id: login-email-address
+            placeholder: you@example.com
+            aria_label: ""
+            selector: input[id="login-email-address"]
+            label: ""
+            required: false
+            mapped_to: product.email
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: loginEmailRequestBtn
+            text: Continue with Email
+            value: ""
+            selector: button[id="loginEmailRequestBtn"]
+      - index: 1
+        fields:
+          - tag: input
+            type: text
+            name: ""
+            id: login-email-otp
+            placeholder: Enter verification code
+            aria_label: ""
+            selector: input[id="login-email-otp"]
+            label: ""
+            required: false
+            mapped_to: product.email
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: loginEmailVerifyBtn
+            text: Verify and Continue
+            value: ""
+            selector: button[id="loginEmailVerifyBtn"]
   - id: startupbase-io
     external_id: 14368f41-8f50-817e-bc0f-e3c02ba13c13
     name: startupbase.io
@@ -24860,21 +25301,72 @@ targets:
       - notion
     source_meta:
       id: startupbase-io
+      scout_classification_source: provided_equal
+      scout_classification_mismatch: true
+      scout_classification_provided:
+        mode: needs_review
+        status: scout_failed
+        confidence: 0.55
+        reasons:
+          - scout_failed_network
+      scout_classification_computed:
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
+        reasons:
+          - no_form_detected
+      scout_failure_error: "page.goto: Timeout 15000ms exceeded.
+
+        Call log:
+
+        \e[2m  - navigating to
+        \"https://startupbase.io/auth/google?origin=/submissions/start\",
+        waiting until \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_CONNECTION_TIMED_OUT at
+        https://startupbase.io/auth/google?origin=/submissions/start
+
+        Call log:
+
+        \e[2m  - navigating to
+        \"https://startupbase.io/auth/google?origin=/submissions/start\",
+        waiting until \"networkidle\"\e[22m"
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
+      last_scouted_at: 2026-05-23T00:51:58.448Z
+      auth: none
+      captcha: none
       reachable: unknown
+      final_url: https://startupbase.io/submissions/start
+      http_status: null
+      last_scout_error: "page.goto: Timeout 15000ms exceeded.
+
+        Call log:
+
+        \e[2m  - navigating to
+        \"https://startupbase.io/auth/google?origin=/submissions/start\",
+        waiting until \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_CONNECTION_TIMED_OUT at
+        https://startupbase.io/auth/google?origin=/submissions/start
+
+        Call log:
+
+        \e[2m  - navigating to
+        \"https://startupbase.io/auth/google?origin=/submissions/start\",
+        waiting until \"networkidle\"\e[22m"
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: needs_review
+      status: scout_failed
+      reason: scout_failed_network; classification_mismatch:needs_review->needs_review
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.124Z
-    updated_at: 2026-05-21T15:44:39.124Z
+    updated_at: 2026-05-23T00:51:58.448Z
+    forms: []
   - id: startup-buffer
     external_id: 14368f41-8f50-81f6-941c-c8c3b5cabf1f
     name: Startup Buffer
@@ -24895,21 +25387,38 @@ targets:
       - notion
     source_meta:
       id: startup-buffer
+      scout_classification_source: provided_explicit_blocker
+      scout_classification_mismatch: true
+      scout_classification_provided:
+        mode: assisted
+        status: captcha_required
+        confidence: 0.85
+        reasons:
+          - captcha_signal
+      scout_classification_computed:
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
+        reasons:
+          - no_form_detected
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T00:57:09.077Z
+      auth: none
+      captcha: required
+      reachable: yes
+      final_url: https://startupbuffer.com/site/submit
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: assisted
+      status: captcha_required
+      reason: captcha_signal; classification_mismatch:assisted->needs_review
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.124Z
-    updated_at: 2026-05-21T15:44:39.124Z
+    updated_at: 2026-05-23T01:02:40.326Z
+    forms: []
   - id: startup-collections
     external_id: 14368f41-8f50-8159-a345-d7824d6aa106
     name: Startup Collections
@@ -24930,21 +25439,168 @@ targets:
       - targets.yaml
     source_meta:
       id: startup-collections
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
+      scout_classification_computed:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T00:57:39.478Z
+      auth: oauth
+      captcha: none
+      reachable: yes
+      final_url: https://startupcollections.com/submit-product/
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: assisted
+      status: auth_required
+      reason: auth_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.124Z
-    updated_at: 2026-05-21T15:44:39.124Z
+    updated_at: 2026-05-23T00:57:40.921Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: email
+            name: email
+            id: ""
+            placeholder: Email address
+            aria_label: ""
+            selector: input[name="email"]
+            label: ""
+            required: true
+            mapped_to: product.email
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Join now
+            value: ""
+            selector: button[type="submit"]
+      - index: 1
+        fields:
+          - tag: input
+            type: search
+            name: s
+            id: ""
+            placeholder: Search query...
+            aria_label: ""
+            selector: input[name="s"]
+            label: ""
+            required: true
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: ""
+            value: ""
+            selector: button[type="submit"]
+      - index: 2
+        fields:
+          - tag: input
+            type: hidden
+            name: filter
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="filter"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: hidden
+            name: nonce
+            id: nonce
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="nonce"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: name
+            id: ""
+            placeholder: Resource name
+            aria_label: ""
+            selector: input[name="name"]
+            label: ""
+            required: true
+            mapped_to: product.name
+          - tag: select
+            type: select
+            name: collection
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: select[name="collection"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: input
+            type: url
+            name: website
+            id: ""
+            placeholder: Website URL
+            aria_label: ""
+            selector: input[name="website"]
+            label: ""
+            required: true
+            mapped_to: product.url
+          - tag: input
+            type: text
+            name: content
+            id: ""
+            placeholder: Description
+            aria_label: ""
+            selector: input[name="content"]
+            label: ""
+            required: false
+            mapped_to: product.description
+          - tag: input
+            type: text
+            name: submitter_name
+            id: ""
+            placeholder: Your name
+            aria_label: ""
+            selector: input[name="submitter_name"]
+            label: ""
+            required: true
+            mapped_to: product.name
+          - tag: input
+            type: email
+            name: submitter_email
+            id: ""
+            placeholder: Your email
+            aria_label: ""
+            selector: input[name="submitter_email"]
+            label: ""
+            required: true
+            mapped_to: product.email
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Submit
+            value: ""
+            selector: button[type="submit"]
   - id: startup-lister
     external_id: 14368f41-8f50-8117-9a7e-fa9e6be28192
     name: Startup Lister
@@ -24965,21 +25621,38 @@ targets:
       - notion
     source_meta:
       id: startup-lister
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T00:58:15.938Z
+      auth: required
+      captcha: required
+      reachable: yes
+      final_url: https://bubble.io/domain_not_supported?domain=startuplister.com
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.125Z
-    updated_at: 2026-05-21T15:44:39.125Z
+    updated_at: 2026-05-23T00:58:16.971Z
+    forms: []
   - id: startupranking
     name: StartupRanking
     domain: startupranking.com
@@ -24999,21 +25672,38 @@ targets:
       - targets.yaml
     source_meta:
       id: startupranking
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T00:58:28.334Z
+      auth: required
+      captcha: none
+      reachable: yes
+      final_url: https://www.startupranking.com/
+      http_status: 200
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.125Z
-    updated_at: 2026-05-21T15:44:39.125Z
+    updated_at: 2026-05-23T00:58:29.791Z
+    forms: []
   - id: startup-ranking
     external_id: 14368f41-8f50-816c-a786-e9b1a8895368
     name: Startup Ranking
@@ -25034,21 +25724,38 @@ targets:
       - notion
     source_meta:
       id: startup-ranking
+      scout_classification_source: provided_explicit_blocker
+      scout_classification_mismatch: true
+      scout_classification_provided:
+        mode: assisted
+        status: captcha_required
+        confidence: 0.85
+        reasons:
+          - captcha_signal
+      scout_classification_computed:
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
+        reasons:
+          - no_form_detected
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T00:59:02.424Z
+      auth: none
+      captcha: required
+      reachable: yes
+      final_url: https://www.startupranking.com/startup/create/url-validation
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: assisted
+      status: captcha_required
+      reason: captcha_signal; classification_mismatch:assisted->needs_review
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.125Z
-    updated_at: 2026-05-21T15:44:39.125Z
+    updated_at: 2026-05-23T01:02:41.397Z
+    forms: []
   - id: startup-roulette
     external_id: 14368f41-8f50-81d1-af72-e7943015676d
     name: Startup Roulette
@@ -25069,21 +25776,74 @@ targets:
       - notion
     source_meta:
       id: startup-roulette
+      scout_classification_source: provided_equal
+      scout_classification_mismatch: true
+      scout_classification_provided:
+        mode: needs_review
+        status: scout_failed
+        confidence: 0.55
+        reasons:
+          - scout_failed_network
+      scout_classification_computed:
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
+        reasons:
+          - no_form_detected
+      scout_failure_error: "page.goto: net::ERR_CERT_COMMON_NAME_INVALID at
+        https://startuproulette.com/promote-my-startup
+
+        Call log:
+
+        \e[2m  - navigating to
+        \"https://startuproulette.com/promote-my-startup\", waiting until
+        \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_CERT_COMMON_NAME_INVALID
+        at https://startuproulette.com/promote-my-startup
+
+        Call log:
+
+        \e[2m  - navigating to
+        \"https://startuproulette.com/promote-my-startup\", waiting until
+        \"networkidle\"\e[22m"
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
+      last_scouted_at: 2026-05-23T00:59:10.789Z
+      auth: none
+      captcha: none
       reachable: unknown
+      final_url: https://startuproulette.com/promote-my-startup
+      http_status: null
+      last_scout_error: "page.goto: net::ERR_CERT_COMMON_NAME_INVALID at
+        https://startuproulette.com/promote-my-startup
+
+        Call log:
+
+        \e[2m  - navigating to
+        \"https://startuproulette.com/promote-my-startup\", waiting until
+        \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: net::ERR_CERT_COMMON_NAME_INVALID
+        at https://startuproulette.com/promote-my-startup
+
+        Call log:
+
+        \e[2m  - navigating to
+        \"https://startuproulette.com/promote-my-startup\", waiting until
+        \"networkidle\"\e[22m"
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: needs_review
+      status: scout_failed
+      reason: scout_failed_network; classification_mismatch:needs_review->needs_review
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.125Z
-    updated_at: 2026-05-21T15:44:39.125Z
+    updated_at: 2026-05-23T00:59:10.790Z
+    forms: []
   - id: startup-stage
     external_id: 14368f41-8f50-81a7-b92c-f3740bef5ac3
     name: Startup Stage
@@ -25104,21 +25864,38 @@ targets:
       - notion
     source_meta:
       id: startup-stage
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
+        reasons:
+          - no_form_detected
+      scout_classification_computed:
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
+        reasons:
+          - no_form_detected
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T00:59:14.304Z
+      auth: none
+      captcha: none
+      reachable: yes
+      final_url: https://startupstage.app/startups/new
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: needs_review
+      status: no_form_detected
+      reason: no_form_detected
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.125Z
-    updated_at: 2026-05-21T15:44:39.125Z
+    updated_at: 2026-05-23T00:59:15.158Z
+    forms: []
   - id: startup-stash
     external_id: 14368f41-8f50-817d-8550-f62ca7a7b5a9
     name: Startup Stash
@@ -25174,21 +25951,38 @@ targets:
       - notion
     source_meta:
       id: startuptracker
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
+      scout_classification_computed:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T00:59:25.141Z
+      auth: required
+      captcha: none
+      reachable: yes
+      final_url: https://startuptracker.io/crowdsourcing
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: assisted
+      status: auth_required
+      reason: auth_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.125Z
-    updated_at: 2026-05-21T15:44:39.125Z
+    updated_at: 2026-05-23T00:59:26.073Z
+    forms: []
   - id: startupvessel-com
     name: https://startupvessel.com/
     domain: startupvessel.com
@@ -25208,21 +26002,71 @@ targets:
       - 91wink
     source_meta:
       id: startupvessel-com
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
+      scout_classification_computed:
+        mode: assisted
+        status: auth_required
+        confidence: 0.8
+        reasons:
+          - auth_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T00:59:32.130Z
+      auth: required
+      captcha: none
+      reachable: yes
+      final_url: https://startupvessel.com/get-started
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: assisted
+      status: auth_required
+      reason: auth_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.125Z
-    updated_at: 2026-05-21T15:44:39.125Z
+    updated_at: 2026-05-23T00:59:39.122Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: q
+            id: ""
+            placeholder: Search products...
+            aria_label: ""
+            selector: input[name="q"]
+            label: ""
+            required: true
+            mapped_to: ""
+        submit_buttons: []
+      - index: 1
+        fields:
+          - tag: input
+            type: text
+            name: q
+            id: ""
+            placeholder: Search products...
+            aria_label: ""
+            selector: input[name="q"]
+            label: ""
+            required: true
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Search
+            value: ""
+            selector: button[type="submit"]
   - id: stork
     name: Stork
     domain: stork.ai
@@ -25276,21 +26120,38 @@ targets:
       - targets.yaml
     source_meta:
       id: submission-web-directory
+      scout_classification_source: provided_explicit_blocker
+      scout_classification_mismatch: true
+      scout_classification_provided:
+        mode: assisted
+        status: captcha_required
+        confidence: 0.85
+        reasons:
+          - captcha_signal
+      scout_classification_computed:
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
+        reasons:
+          - no_form_detected
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T01:00:11.776Z
+      auth: none
+      captcha: required
+      reachable: yes
+      final_url: https://www.submissionwebdirectory.com/
+      http_status: 200
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: assisted
+      status: captcha_required
+      reason: captcha_signal; classification_mismatch:assisted->needs_review
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.125Z
-    updated_at: 2026-05-21T15:44:39.125Z
+    updated_at: 2026-05-23T01:02:42.271Z
+    forms: []
   - id: submission-web-directory-submissionwebdirectory-com-submit-php
     external_id: 14368f41-8f50-81d7-8776-e90c1b6a75a3
     name: Submission Web Directory
@@ -25312,21 +26173,38 @@ targets:
     source_meta:
       id: submission-web-directory
       previous_id: submission-web-directory
+      scout_classification_source: provided_explicit_blocker
+      scout_classification_mismatch: true
+      scout_classification_provided:
+        mode: assisted
+        status: captcha_required
+        confidence: 0.85
+        reasons:
+          - captcha_signal
+      scout_classification_computed:
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
+        reasons:
+          - no_form_detected
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T01:05:02.630Z
+      auth: none
+      captcha: required
+      reachable: yes
+      final_url: https://www.submissionwebdirectory.com/submit.php
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: assisted
+      status: captcha_required
+      reason: captcha_signal; classification_mismatch:assisted->needs_review
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.125Z
-    updated_at: 2026-05-22T00:50:01.369Z
+    updated_at: 2026-05-23T01:05:03.611Z
+    forms: []
   - id: submit-biz
     name: Submit.biz
     domain: submit.biz
@@ -25346,21 +26224,66 @@ targets:
       - targets.yaml
     source_meta:
       id: submit-biz
+      scout_classification_source: provided_equal
+      scout_classification_mismatch: true
+      scout_classification_provided:
+        mode: needs_review
+        status: scout_failed
+        confidence: 0.55
+        reasons:
+          - scout_failed_network
+      scout_classification_computed:
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
+        reasons:
+          - no_form_detected
+      scout_failure_error: "page.goto: Timeout 15000ms exceeded.
+
+        Call log:
+
+        \e[2m  - navigating to \"https://www.submit.biz/\", waiting until
+        \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: Timeout 30000ms exceeded.
+
+        Call log:
+
+        \e[2m  - navigating to \"https://www.submit.biz/\", waiting until
+        \"networkidle\"\e[22m"
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
+      last_scouted_at: 2026-05-23T01:05:50.528Z
+      auth: none
+      captcha: none
       reachable: unknown
+      final_url: https://www.submit.biz/
+      http_status: null
+      last_scout_error: "page.goto: Timeout 15000ms exceeded.
+
+        Call log:
+
+        \e[2m  - navigating to \"https://www.submit.biz/\", waiting until
+        \"domcontentloaded\"\e[22m
+
+
+        Initial networkidle error: page.goto: Timeout 30000ms exceeded.
+
+        Call log:
+
+        \e[2m  - navigating to \"https://www.submit.biz/\", waiting until
+        \"networkidle\"\e[22m"
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: needs_review
+      status: scout_failed
+      reason: scout_failed_network; classification_mismatch:needs_review->needs_review
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.125Z
-    updated_at: 2026-05-21T15:44:39.125Z
+    updated_at: 2026-05-23T01:05:50.528Z
+    forms: []
   - id: submitdirs-com
     name: https://submitdirs.com
     domain: submitdirs.com
@@ -25380,21 +26303,38 @@ targets:
       - 91wink
     source_meta:
       id: submitdirs-com
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: assisted
+        status: captcha_required
+        confidence: 0.85
+        reasons:
+          - captcha_signal
+      scout_classification_computed:
+        mode: assisted
+        status: captcha_required
+        confidence: 0.85
+        reasons:
+          - captcha_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T01:06:23.390Z
+      auth: oauth
+      captcha: required
+      reachable: yes
+      final_url: https://submitdirs.com/auth/login?callbackUrl=%2Fsubmit
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: assisted
+      status: captcha_required
+      reason: captcha_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.125Z
-    updated_at: 2026-05-21T15:44:39.125Z
+    updated_at: 2026-05-23T01:06:56.949Z
+    forms: []
   - id: submitmatic-com
     name: https://submitmatic.com
     domain: submitmatic.com
@@ -25414,21 +26354,38 @@ targets:
       - 91wink
     source_meta:
       id: submitmatic-com
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T01:12:42.744Z
+      auth: required
+      captcha: none
+      reachable: yes
+      final_url: https://submitmatic.com/#pricing
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.125Z
-    updated_at: 2026-05-21T15:44:39.125Z
+    updated_at: 2026-05-23T01:12:45.126Z
+    forms: []
   - id: www-submitpro-ai
     name: https://www.submitpro.ai
     domain: submitpro.ai
@@ -25448,21 +26405,38 @@ targets:
       - 91wink
     source_meta:
       id: www-submitpro-ai
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T01:08:09.488Z
+      auth: required
+      captcha: required
+      reachable: yes
+      final_url: https://www.submitpro.ai/#price
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.125Z
-    updated_at: 2026-05-21T15:44:39.125Z
+    updated_at: 2026-05-23T01:08:41.633Z
+    forms: []
   - id: superaiboom-com
     name: https://superaiboom.com/
     domain: superaiboom.com
@@ -25516,21 +26490,148 @@ targets:
       - targets.yaml
     source_meta:
       id: super-ai-tools
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T01:08:50.684Z
+      auth: required
+      captcha: required
+      reachable: yes
+      final_url: https://www.superaitools.io/submit-a-tool
+      http_status: 200
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.125Z
-    updated_at: 2026-05-21T15:44:39.125Z
+    updated_at: 2026-05-23T01:08:55.643Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: G-2d9daf35
+            id: form1-Yourname-845622360
+            placeholder: Your Name
+            aria_label: ""
+            selector: input[id="form1-Yourname-845622360"]
+            label: ""
+            required: false
+            mapped_to: product.name
+          - tag: input
+            type: email
+            name: G-8933c87b
+            id: form1-Youremailaddress-1055599683
+            placeholder: Your Business Email
+            aria_label: ""
+            selector: input[id="form1-Youremailaddress-1055599683"]
+            label: ""
+            required: false
+            mapped_to: product.email
+          - tag: input
+            type: text
+            name: G-e617d7b9
+            id: form1-ToolName-90177075
+            placeholder: Tool Name
+            aria_label: ""
+            selector: input[id="form1-ToolName-90177075"]
+            label: ""
+            required: false
+            mapped_to: product.name
+          - tag: input
+            type: text
+            name: G-b92d4d38
+            id: form1-ToolURL--689821497
+            placeholder: Tool link
+            aria_label: ""
+            selector: input[id="form1-ToolURL--689821497"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: input
+            type: input
+            name: G-f24b5794
+            id: form1-Pricingmodel--2090496945
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="form1-Pricingmodel--2090496945"]
+            label: ""
+            required: false
+            mapped_to: product.pricing
+          - tag: input
+            type: text
+            name: G-4ae3cc9a
+            id: form1-ToolTags-90355649
+            placeholder: Tool Tags
+            aria_label: ""
+            selector: input[id="form1-ToolTags-90355649"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: textarea
+            type: textarea
+            name: G-a04361ed
+            id: form1-ToolDescription-272962388
+            placeholder: Describe your product
+            aria_label: ""
+            selector: textarea[id="form1-ToolDescription-272962388"]
+            label: ""
+            required: false
+            mapped_to: product.description
+          - tag: textarea
+            type: textarea
+            name: ""
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: textarea[type="textarea"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: textarea
+            type: textarea
+            name: G-c96b52c2
+            id: form1-Otherremarks-1130168803
+            placeholder: Other remarks...
+            aria_label: ""
+            selector: textarea[id="form1-Otherremarks-1130168803"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: textarea
+            type: textarea
+            name: ""
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: textarea[type="textarea"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Submit
+            value: ""
+            selector: button[type="submit"]
   - id: supertools
     external_id: 14368f41-8f50-8134-bc46-c7fcf494fd89
     name: Super Tools
@@ -25551,21 +26652,118 @@ targets:
       - targets.yaml
     source_meta:
       id: supertools
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: needs_scout
+        status: unsupported_form
+        confidence: 0.6
+        reasons:
+          - auto_safe_fields_missing:product.name,product.url,product.description
+      scout_classification_computed:
+        mode: needs_scout
+        status: unsupported_form
+        confidence: 0.6
+        reasons:
+          - auto_safe_fields_missing:product.name,product.url,product.description
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T01:09:09.832Z
+      auth: none
+      captcha: none
+      reachable: yes
+      final_url: https://www.rundown.ai/submit
+      http_status: 200
     submission:
       mode: needs_scout
-      status: new
-      reason: unverified_form
+      status: unsupported_form
+      reason: auto_safe_fields_missing:product.name,product.url,product.description
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.125Z
-    updated_at: 2026-05-21T15:44:39.125Z
+    updated_at: 2026-05-23T01:09:10.977Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: hidden
+            name: secret_token
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="secret_token"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: email
+            name: email-4
+            id: email-4
+            placeholder: Email Address
+            aria_label: ""
+            selector: input[id="email-4"]
+            label: ""
+            required: true
+            mapped_to: product.email
+          - tag: input
+            type: submit
+            name: ""
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[type="submit"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: input
+            type: submit
+            name: ""
+            id: ""
+            text: Submit
+            value: Submit
+            selector: input[type="submit"]
+      - index: 1
+        fields:
+          - tag: input
+            type: hidden
+            name: secret_token
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[name="secret_token"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: email
+            name: email
+            id: footer-email
+            placeholder: Email Address
+            aria_label: ""
+            selector: input[id="footer-email"]
+            label: ""
+            required: true
+            mapped_to: product.email
+          - tag: input
+            type: submit
+            name: ""
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[type="submit"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: input
+            type: submit
+            name: ""
+            id: ""
+            text: Submit
+            value: Submit
+            selector: input[type="submit"]
   - id: startups-fyi
     external_id: 14368f41-8f50-8134-9801-e14801704736
     name: Startups fyi
@@ -25586,21 +26784,78 @@ targets:
       - notion
     source_meta:
       id: startups-fyi
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T01:09:17.958Z
+      auth: oauth
+      captcha: required
+      reachable: yes
+      final_url: https://tally.so/r/3lOGLk
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.126Z
-    updated_at: 2026-05-21T15:44:39.126Z
+    updated_at: 2026-05-23T01:09:18.864Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: ""
+            id: b5883e83-3721-4c24-934b-32258624da63
+            placeholder: First Name
+            aria_label: First Name
+            selector: input[id="b5883e83-3721-4c24-934b-32258624da63"]
+            label: ""
+            required: true
+            mapped_to: product.name
+          - tag: input
+            type: text
+            name: ""
+            id: 894b35da-7f68-4ed5-9c10-985c716860e8
+            placeholder: Last Name
+            aria_label: Last Name
+            selector: input[id="894b35da-7f68-4ed5-9c10-985c716860e8"]
+            label: ""
+            required: true
+            mapped_to: product.name
+          - tag: input
+            type: email
+            name: ""
+            id: 632a0242-1f91-4474-8e43-ae51df338c70
+            placeholder: Your best email if we have questions
+            aria_label: Your best email if we have questions
+            selector: input[id="632a0242-1f91-4474-8e43-ae51df338c70"]
+            label: ""
+            required: true
+            mapped_to: product.email
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Next
+            value: ""
+            selector: button[type="submit"]
   - id: toolsfine
     external_id: 14368f41-8f50-814f-8ed9-f4761197c8a9
     name: ToolsFine
@@ -25621,21 +26876,289 @@ targets:
       - notion
     source_meta:
       id: toolsfine
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T01:09:25.778Z
+      auth: oauth
+      captcha: required
+      reachable: yes
+      final_url: https://tally.so/r/3qVzOG
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.126Z
-    updated_at: 2026-05-21T15:44:39.126Z
+    updated_at: 2026-05-23T01:09:27.302Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: ""
+            id: 1a20a987-bccc-4869-9a59-4b68fd2047de
+            placeholder: ""
+            aria_label: Your name
+            selector: input[id="1a20a987-bccc-4869-9a59-4b68fd2047de"]
+            label: ""
+            required: true
+            mapped_to: product.name
+          - tag: input
+            type: text
+            name: ""
+            id: 7899dec3-d5f3-48d9-ad37-8969ee0b6fd3
+            placeholder: ""
+            aria_label: Your email
+            selector: input[id="7899dec3-d5f3-48d9-ad37-8969ee0b6fd3"]
+            label: ""
+            required: true
+            mapped_to: product.email
+          - tag: input
+            type: text
+            name: ""
+            id: 699ec1fd-4d8b-424c-bd2b-671e3dd3717a
+            placeholder: ""
+            aria_label: Product name
+            selector: input[id="699ec1fd-4d8b-424c-bd2b-671e3dd3717a"]
+            label: ""
+            required: true
+            mapped_to: product.name
+          - tag: input
+            type: url
+            name: ""
+            id: bd04e0ce-8096-4145-856a-ed505955df81
+            placeholder: ""
+            aria_label: Product website url
+            selector: input[id="bd04e0ce-8096-4145-856a-ed505955df81"]
+            label: ""
+            required: true
+            mapped_to: product.url
+          - tag: input
+            type: text
+            name: ""
+            id: d0f84cba-1708-4c72-8aba-604eb4f86b32
+            placeholder: ""
+            aria_label: Short introduce in one sentence
+            selector: input[id="d0f84cba-1708-4c72-8aba-604eb4f86b32"]
+            label: ""
+            required: true
+            mapped_to: product.description
+          - tag: textarea
+            type: textarea
+            name: ""
+            id: 4a29e5db-8d54-4d65-855e-d57fef964c4a
+            placeholder: ""
+            aria_label: "Long introduction "
+            selector: textarea[id="4a29e5db-8d54-4d65-855e-d57fef964c4a"]
+            label: ""
+            required: true
+            mapped_to: product.description
+          - tag: textarea
+            type: textarea
+            name: ""
+            id: 21d30f02-9e41-44e4-b223-7d9c2b244171
+            placeholder: ""
+            aria_label: Features or benefits
+            selector: textarea[id="21d30f02-9e41-44e4-b223-7d9c2b244171"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: ""
+            id: e3da4fa8-6eb3-4d3f-921c-e5edefef09f6
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="e3da4fa8-6eb3-4d3f-921c-e5edefef09f6"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: ""
+            id: 52cafdf8-afda-4cc2-8727-8391470f0688
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="52cafdf8-afda-4cc2-8727-8391470f0688"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: ""
+            id: f4906663-42a3-44ac-9459-517e94c007c6
+            placeholder: ""
+            aria_label: Minimum price
+            selector: input[id="f4906663-42a3-44ac-9459-517e94c007c6"]
+            label: ""
+            required: false
+            mapped_to: product.pricing
+          - tag: input
+            type: file
+            name: ""
+            id: ""
+            placeholder: ""
+            aria_label: Logo (less than 500*500px, less than 1MB)
+            selector: input[aria-label="Logo (less than 500*500px, less than 1MB)"]
+            label: ""
+            required: true
+            mapped_to: product.logo
+          - tag: input
+            type: file
+            name: ""
+            id: ""
+            placeholder: ""
+            aria_label: Screen shots A (less than 2MB)
+            selector: input[aria-label="Screen shots A (less than 2MB)"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: file
+            name: ""
+            id: ""
+            placeholder: ""
+            aria_label: Screen shots B (less than 2MB)
+            selector: input[aria-label="Screen shots B (less than 2MB)"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: ""
+            id: checkbox_0becc04b-e28a-4ba1-be33-d5ade3b19c65
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="checkbox_0becc04b-e28a-4ba1-be33-d5ade3b19c65"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: ""
+            id: checkbox_b3b82b7a-50ee-4398-a2a9-92b6538bca9d
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="checkbox_b3b82b7a-50ee-4398-a2a9-92b6538bca9d"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: ""
+            id: checkbox_d6439324-671e-4b7a-b1e2-1c026c5b03b9
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="checkbox_d6439324-671e-4b7a-b1e2-1c026c5b03b9"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: ""
+            id: checkbox_99076bbe-9975-4a18-afea-3b6e612e126d
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="checkbox_99076bbe-9975-4a18-afea-3b6e612e126d"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: ""
+            id: checkbox_e975f912-b9fc-493f-bae5-2115d67d2bbf
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="checkbox_e975f912-b9fc-493f-bae5-2115d67d2bbf"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: ""
+            id: checkbox_8dc6a4b4-27b0-447b-8cac-08422e666764
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="checkbox_8dc6a4b4-27b0-447b-8cac-08422e666764"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: ""
+            id: checkbox_be44e9ed-2497-4ad7-a0a3-9553acf5abea
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="checkbox_be44e9ed-2497-4ad7-a0a3-9553acf5abea"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: ""
+            id: checkbox_bc488d0c-884a-450e-98ab-6917e1e4f01f
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="checkbox_bc488d0c-884a-450e-98ab-6917e1e4f01f"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: ""
+            id: checkbox_cd7b0bb9-309e-4a60-a8d3-b325f2835902
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="checkbox_cd7b0bb9-309e-4a60-a8d3-b325f2835902"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: ""
+            id: checkbox_b051c3c8-d9c9-4393-b671-5d1538e3acd5
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="checkbox_b051c3c8-d9c9-4393-b671-5d1538e3acd5"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: textarea
+            type: textarea
+            name: ""
+            id: 689a6e24-d098-42c6-baa0-61059a940f86
+            placeholder: ""
+            aria_label: Do you have any more additional words, suggestions, or anything I
+              can  help you?
+            selector: textarea[id="689a6e24-d098-42c6-baa0-61059a940f86"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Submit and Waiting Review
+            value: ""
+            selector: button[type="submit"]
   - id: micro-launch
     external_id: 14368f41-8f50-81c1-a3a0-d71a26d79a29
     name: Micro Launch
@@ -25656,21 +27179,300 @@ targets:
       - notion
     source_meta:
       id: micro-launch
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T01:09:34.287Z
+      auth: required
+      captcha: required
+      reachable: yes
+      final_url: https://tally.so/r/mYaR6N
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.126Z
-    updated_at: 2026-05-21T15:44:39.126Z
+    updated_at: 2026-05-23T01:09:35.649Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: ""
+            id: 51ae7123-677e-4199-844f-b984e530ad97
+            placeholder: John
+            aria_label: John
+            selector: input[id="51ae7123-677e-4199-844f-b984e530ad97"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: input
+            type: email
+            name: ""
+            id: d8225ae0-272c-462a-8c31-89d0c14d6326
+            placeholder: john.doe@startup.ai
+            aria_label: john.doe@startup.ai
+            selector: input[id="d8225ae0-272c-462a-8c31-89d0c14d6326"]
+            label: ""
+            required: true
+            mapped_to: product.email
+          - tag: input
+            type: text
+            name: ""
+            id: 54e3d712-57e4-463d-bd46-30e860a039bc
+            placeholder: Your Twitter handle (encouraged)
+            aria_label: Your Twitter handle (encouraged)
+            selector: input[id="54e3d712-57e4-463d-bd46-30e860a039bc"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: ""
+            id: d3cd16ac-184f-48cc-92e1-1a63e7296fbf
+            placeholder: Company (if any)
+            aria_label: Company (if any)
+            selector: input[id="d3cd16ac-184f-48cc-92e1-1a63e7296fbf"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: ""
+            id: 8153b190-57af-45a3-ac04-7160c3617551
+            placeholder: Country you live in
+            aria_label: Country you live in
+            selector: input[id="8153b190-57af-45a3-ac04-7160c3617551"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: input
+            type: url
+            name: ""
+            id: 5c308277-eea2-413a-8085-25e7ac0e45a6
+            placeholder: Link to your product website
+            aria_label: Link to your product website
+            selector: input[id="5c308277-eea2-413a-8085-25e7ac0e45a6"]
+            label: ""
+            required: true
+            mapped_to: product.url
+          - tag: input
+            type: text
+            name: ""
+            id: 8f750cc4-4bda-4fa9-bd75-0aa920c96744
+            placeholder: Your product's codename
+            aria_label: Your product's codename
+            selector: input[id="8f750cc4-4bda-4fa9-bd75-0aa920c96744"]
+            label: ""
+            required: true
+            mapped_to: product.name
+          - tag: input
+            type: text
+            name: ""
+            id: 6c8a0348-c53d-4036-9b6b-b36c134a720c
+            placeholder: Your product's punchline (<10 words)
+            aria_label: Your product's punchline (<10 words)
+            selector: input[id="6c8a0348-c53d-4036-9b6b-b36c134a720c"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: textarea
+            type: textarea
+            name: ""
+            id: 7372a853-2566-430c-812d-4ad4d73b982c
+            placeholder: A short description here (~70 words)
+            aria_label: A short description here (~70 words)
+            selector: textarea[id="7372a853-2566-430c-812d-4ad4d73b982c"]
+            label: ""
+            required: true
+            mapped_to: product.description
+          - tag: textarea
+            type: textarea
+            name: ""
+            id: 28f6f14c-bf17-41ca-979a-5524d6f8683f
+            placeholder: A longer text description (markdown *italic* and **bold** operators
+              supported)
+            aria_label: A longer text description (markdown *italic* and **bold** operators
+              supported)
+            selector: textarea[id="28f6f14c-bf17-41ca-979a-5524d6f8683f"]
+            label: ""
+            required: false
+            mapped_to: product.description
+          - tag: input
+            type: file
+            name: ""
+            id: ""
+            placeholder: ""
+            aria_label: Logo file (.jpg or .png format, 128x128)
+            selector: input[aria-label="Logo file (.jpg or .png format, 128x128)"]
+            label: ""
+            required: true
+            mapped_to: product.logo
+          - tag: input
+            type: file
+            name: ""
+            id: ""
+            placeholder: ""
+            aria_label: Hero image (.jpg or .png format, w:h 680x340)
+            selector: input[aria-label="Hero image (.jpg or .png format, w:h 680x340)"]
+            label: ""
+            required: false
+            mapped_to: product.logo
+          - tag: input
+            type: text
+            name: ""
+            id: c2418896-df67-4b88-83b9-bca9abf625b9
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="c2418896-df67-4b88-83b9-bca9abf625b9"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: ""
+            id: fe949fc1-f898-4ffd-acfe-b182dbebe4b6
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="fe949fc1-f898-4ffd-acfe-b182dbebe4b6"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: ""
+            id: 71460535-d063-4b9b-a2a0-468cf3205b03
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="71460535-d063-4b9b-a2a0-468cf3205b03"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: ""
+            id: checkbox_5ba19745-d092-4209-a55f-ac581bca384e
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="checkbox_5ba19745-d092-4209-a55f-ac581bca384e"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: textarea
+            type: textarea
+            name: ""
+            id: 573f41aa-c1fd-4e2c-899f-d81474724242
+            placeholder: One tag per line, maximum 10
+            aria_label: Extra tags for your product
+            selector: textarea[id="573f41aa-c1fd-4e2c-899f-d81474724242"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: textarea
+            type: textarea
+            name: ""
+            id: 6d898b42-266c-4cc1-8d6e-8fb04f4bce06
+            placeholder: One product name per line, maximum 5
+            aria_label: field_alternatives_to
+            selector: textarea[id="6d898b42-266c-4cc1-8d6e-8fb04f4bce06"]
+            label: ""
+            required: false
+            mapped_to: product.name
+          - tag: textarea
+            type: textarea
+            name: ""
+            id: a088990b-bc2b-4472-899e-9c5698a2f2f9
+            placeholder: A promotional code or link
+            aria_label: Promo code or link you'd like to share with the community
+            selector: textarea[id="a088990b-bc2b-4472-899e-9c5698a2f2f9"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: input
+            type: input
+            name: ""
+            id: 226d18fe-e3ae-40eb-80ea-42077deda10e
+            placeholder: Approximate date here
+            aria_label: Approximate date here
+            selector: input[id="226d18fe-e3ae-40eb-80ea-42077deda10e"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: ""
+            id: a9c8d46a-9fe1-4b38-910a-58c51c74df98
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="a9c8d46a-9fe1-4b38-910a-58c51c74df98"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: textarea
+            type: textarea
+            name: ""
+            id: 04906571-f4d6-46e2-89f2-246fd221d7ba
+            placeholder: Extra Notes to the team, fields you're unsure about.
+            aria_label: Extra Notes to the team, fields you're unsure about.
+            selector: textarea[id="04906571-f4d6-46e2-89f2-246fd221d7ba"]
+            label: ""
+            required: false
+            mapped_to: product.description
+          - tag: input
+            type: checkbox
+            name: ""
+            id: checkbox_c95bb677-b1d2-4317-8a27-f534f2d5ff6b
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="checkbox_c95bb677-b1d2-4317-8a27-f534f2d5ff6b"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: ""
+            id: checkbox_33e3a673-b63a-441c-8ea3-5a5e9c867643
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="checkbox_33e3a673-b63a-441c-8ea3-5a5e9c867643"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: ""
+            id: checkbox_8a4fa151-0969-40fc-8c62-d100ea992fdd
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="checkbox_8a4fa151-0969-40fc-8c62-d100ea992fdd"]
+            label: ""
+            required: true
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Register
+            value: ""
+            selector: button[type="submit"]
   - id: lachief
     external_id: 14368f41-8f50-8147-86ed-cc290457c12c
     name: Lachief
@@ -25691,21 +27493,240 @@ targets:
       - notion
     source_meta:
       id: lachief
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T01:14:36.364Z
+      auth: oauth
+      captcha: required
+      reachable: yes
+      final_url: https://tally.so/r/w4Jb4b
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.126Z
-    updated_at: 2026-05-21T15:44:39.126Z
+    updated_at: 2026-05-23T01:14:37.867Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: ""
+            id: 769d192e-b225-44b2-a958-60a85765e63b
+            placeholder: Enter your name
+            aria_label: Name
+            selector: input[id="769d192e-b225-44b2-a958-60a85765e63b"]
+            label: ""
+            required: true
+            mapped_to: product.name
+          - tag: input
+            type: text
+            name: ""
+            id: ab7d2ab6-3aea-416a-9b99-d997f4d253b6
+            placeholder: Enter your last name
+            aria_label: Last name
+            selector: input[id="ab7d2ab6-3aea-416a-9b99-d997f4d253b6"]
+            label: ""
+            required: true
+            mapped_to: product.name
+          - tag: input
+            type: text
+            name: ""
+            id: 2ace864a-1ee6-402b-88f3-7cf05f5e4011
+            placeholder: Enter your company name
+            aria_label: Company
+            selector: input[id="2ace864a-1ee6-402b-88f3-7cf05f5e4011"]
+            label: ""
+            required: false
+            mapped_to: product.name
+          - tag: input
+            type: email
+            name: ""
+            id: 56daa62d-dec0-49d3-ad22-2202d11dc040
+            placeholder: Enter your email address
+            aria_label: Email
+            selector: input[id="56daa62d-dec0-49d3-ad22-2202d11dc040"]
+            label: ""
+            required: true
+            mapped_to: product.email
+          - tag: input
+            type: text
+            name: ""
+            id: b2248461-c546-45b2-8d06-a1a43121b71f
+            placeholder: Enter your tool name
+            aria_label: Name of the tool
+            selector: input[id="b2248461-c546-45b2-8d06-a1a43121b71f"]
+            label: ""
+            required: true
+            mapped_to: product.name
+          - tag: input
+            type: text
+            name: ""
+            id: 8021c594-e79a-4b4d-8e0d-9b13f19f1fde
+            placeholder: Short descriptive tagline of tool
+            aria_label: Tagline
+            selector: input[id="8021c594-e79a-4b4d-8e0d-9b13f19f1fde"]
+            label: ""
+            required: true
+            mapped_to: product.tags
+          - tag: textarea
+            type: textarea
+            name: ""
+            id: 3edd5180-ef76-47f3-b884-8aa7871ec776
+            placeholder: Short description of the tool
+            aria_label: Description of the tool
+            selector: textarea[id="3edd5180-ef76-47f3-b884-8aa7871ec776"]
+            label: ""
+            required: true
+            mapped_to: product.description
+          - tag: input
+            type: url
+            name: ""
+            id: ee799170-6e15-446a-9721-eca03501636e
+            placeholder: https://tool.ai
+            aria_label: Tool url
+            selector: input[id="ee799170-6e15-446a-9721-eca03501636e"]
+            label: ""
+            required: true
+            mapped_to: product.url
+          - tag: input
+            type: text
+            name: ""
+            id: 9056903c-23c2-4b80-bada-39d55d470333
+            placeholder: ""
+            aria_label: Category
+            selector: input[id="9056903c-23c2-4b80-bada-39d55d470333"]
+            label: ""
+            required: false
+            mapped_to: product.category
+          - tag: input
+            type: text
+            name: ""
+            id: 680dcc3a-238e-4e28-8b4c-4f0489f7d645
+            placeholder: ""
+            aria_label: Select Topic
+            selector: input[id="680dcc3a-238e-4e28-8b4c-4f0489f7d645"]
+            label: ""
+            required: false
+            mapped_to: product.tags
+          - tag: input
+            type: file
+            name: ""
+            id: ""
+            placeholder: ""
+            aria_label: Tool logo (540x540 Square with background color | JPG, PNG) Max
+              size:2MB)
+            selector: input[aria-label="Tool logo (540x540 Square with background color |
+              JPG, PNG) Max size:2MB)"]
+            label: ""
+            required: true
+            mapped_to: product.logo
+          - tag: input
+            type: text
+            name: ""
+            id: 042c660d-a628-457d-9369-d94895f9e20c
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="042c660d-a628-457d-9369-d94895f9e20c"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: url
+            name: ""
+            id: b27b4559-61ae-4aa8-9076-f055a95d3814
+            placeholder: https://tool.com/affiliate
+            aria_label: "Affiliate program application link "
+            selector: input[id="b27b4559-61ae-4aa8-9076-f055a95d3814"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: input
+            type: text
+            name: ""
+            id: e0b1f503-6976-4021-9cc1-9d213cd2c842
+            placeholder: Add any promotional codes
+            aria_label: Promo code
+            selector: input[id="e0b1f503-6976-4021-9cc1-9d213cd2c842"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: textarea
+            type: textarea
+            name: ""
+            id: 910d19b0-5cf5-4700-92eb-775ef4e06ea4
+            placeholder: ""
+            aria_label: Message
+            selector: textarea[id="910d19b0-5cf5-4700-92eb-775ef4e06ea4"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: ""
+            id: checkbox_d7c20e66-d6d7-4ca7-a8a2-4ab61e3519db
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="checkbox_d7c20e66-d6d7-4ca7-a8a2-4ab61e3519db"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: ""
+            id: checkbox_a533ab71-169b-4331-89a6-00aa80239e9c
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="checkbox_a533ab71-169b-4331-89a6-00aa80239e9c"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: ""
+            id: checkbox_24cb2332-ba64-43d9-a683-aa2a70383beb
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="checkbox_24cb2332-ba64-43d9-a683-aa2a70383beb"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: ""
+            id: checkbox_7c84dffa-eb6c-411d-abde-4aa4c6346b96
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="checkbox_7c84dffa-eb6c-411d-abde-4aa4c6346b96"]
+            label: ""
+            required: true
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Submit Tool
+            value: ""
+            selector: button[type="submit"]
   - id: ai-bot-cn
     name: ai-bot.cn
     domain: tally.so
@@ -25725,21 +27746,138 @@ targets:
       - targets.yaml
     source_meta:
       id: ai-bot-cn
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T01:14:45.325Z
+      auth: oauth
+      captcha: required
+      reachable: yes
+      final_url: https://tally.so/r/wkeKz1
+      http_status: 200
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.126Z
-    updated_at: 2026-05-21T15:44:39.126Z
+    updated_at: 2026-05-23T01:14:46.579Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: ""
+            id: b0efcb11-f7d9-420c-a7bd-c75639f013eb
+            placeholder: 请输入产品名字
+            aria_label: 产品名称
+            selector: input[id="b0efcb11-f7d9-420c-a7bd-c75639f013eb"]
+            label: ""
+            required: true
+            mapped_to: product.name
+          - tag: input
+            type: url
+            name: ""
+            id: 18b479a9-4b13-4f6f-a04c-e9764405c0f9
+            placeholder: 如https://ai-bot.cn
+            aria_label: 产品官网
+            selector: input[id="18b479a9-4b13-4f6f-a04c-e9764405c0f9"]
+            label: ""
+            required: true
+            mapped_to: product.url
+          - tag: input
+            type: text
+            name: ""
+            id: cbe05324-0144-4187-a994-00b2222f7fd5
+            placeholder: 请选择分类
+            aria_label: ""
+            selector: input[id="cbe05324-0144-4187-a994-00b2222f7fd5"]
+            label: ""
+            required: false
+            mapped_to: product.category
+          - tag: input
+            type: text
+            name: ""
+            id: 52fbf8c4-9bfa-4923-ba91-e6a9ae4931e4
+            placeholder: 产品一句话介绍
+            aria_label: 产品简介
+            selector: input[id="52fbf8c4-9bfa-4923-ba91-e6a9ae4931e4"]
+            label: ""
+            required: true
+            mapped_to: product.description
+          - tag: textarea
+            type: textarea
+            name: ""
+            id: ffddfbc7-49bd-4418-85bc-e8e3e95b832e
+            placeholder: 请输入详细介绍，可包含产品介绍、产品功能、如何使用、产品价格等
+            aria_label: 产品详情
+            selector: textarea[id="ffddfbc7-49bd-4418-85bc-e8e3e95b832e"]
+            label: ""
+            required: true
+            mapped_to: product.description
+          - tag: input
+            type: text
+            name: ""
+            id: 75ef637e-fc32-4c85-8c13-a5f5e0a39c61
+            placeholder: 请输入名字
+            aria_label: 提交人名字
+            selector: input[id="75ef637e-fc32-4c85-8c13-a5f5e0a39c61"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: input
+            type: email
+            name: ""
+            id: 24baf94a-4bde-42a8-b0b3-e48cb05c36d3
+            placeholder: 联系邮箱（必填）
+            aria_label: 提交人联系方式
+            selector: input[id="24baf94a-4bde-42a8-b0b3-e48cb05c36d3"]
+            label: ""
+            required: true
+            mapped_to: product.email
+          - tag: input
+            type: tel
+            name: ""
+            id: cd0439dd-ad64-479f-90b0-8da528e9835c
+            placeholder: 电话号码（可选）
+            aria_label: 电话号码（可选）
+            selector: input[id="cd0439dd-ad64-479f-90b0-8da528e9835c"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: ""
+            id: cebb3143-6b6b-4a15-bc4a-054c4a0bc81a
+            placeholder: 微信号（可选）
+            aria_label: 微信号（可选）
+            selector: input[id="cebb3143-6b6b-4a15-bc4a-054c4a0bc81a"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: 立即提交
+            value: ""
+            selector: button[type="submit"]
   - id: tiny-startups
     external_id: 14368f41-8f50-816d-afe6-f1143cbbc71c
     name: Tiny Startups
@@ -25760,21 +27898,189 @@ targets:
       - notion
     source_meta:
       id: tiny-startups
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T01:14:53.528Z
+      auth: oauth
+      captcha: required
+      reachable: yes
+      final_url: https://tally.so/r/npZLWP
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.126Z
-    updated_at: 2026-05-21T15:44:39.126Z
+    updated_at: 2026-05-23T01:14:58.881Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: ""
+            id: eb3ff6cc-d1be-4947-980a-bc834cfad8b4
+            placeholder: Tiny Startups
+            aria_label: StartupName
+            selector: input[id="eb3ff6cc-d1be-4947-980a-bc834cfad8b4"]
+            label: ""
+            required: true
+            mapped_to: product.name
+          - tag: input
+            type: url
+            name: ""
+            id: 47d39032-722b-44ca-acbf-c08a7a56e513
+            placeholder: https://www.yourwebsite.com
+            aria_label: website url
+            selector: input[id="47d39032-722b-44ca-acbf-c08a7a56e513"]
+            label: ""
+            required: true
+            mapped_to: product.url
+          - tag: textarea
+            type: textarea
+            name: ""
+            id: 2f996e25-51a6-4777-90a2-91ee21b99da6
+            placeholder: Describe your project in 10 words or less! Be concise. This will
+              show up under your product.
+            aria_label: Tagline
+            selector: textarea[id="2f996e25-51a6-4777-90a2-91ee21b99da6"]
+            label: ""
+            required: true
+            mapped_to: product.tags
+          - tag: input
+            type: text
+            name: ""
+            id: 074a6ea0-5729-40e4-b004-1008e1d1c14c
+            placeholder: E.g. SEO, Productivity, Startups, etc
+            aria_label: Category tags
+            selector: input[id="074a6ea0-5729-40e4-b004-1008e1d1c14c"]
+            label: ""
+            required: true
+            mapped_to: product.category
+          - tag: input
+            type: file
+            name: ""
+            id: ""
+            placeholder: ""
+            aria_label: Logo
+            selector: input[aria-label="Logo"]
+            label: ""
+            required: true
+            mapped_to: product.logo
+          - tag: input
+            type: file
+            name: ""
+            id: ""
+            placeholder: ""
+            aria_label: featured image
+            selector: input[aria-label="featured image"]
+            label: ""
+            required: true
+            mapped_to: product.logo
+          - tag: input
+            type: text
+            name: ""
+            id: a8d93a10-f599-43ea-9ece-0a9f53ada958
+            placeholder: First Name
+            aria_label: First Name
+            selector: input[id="a8d93a10-f599-43ea-9ece-0a9f53ada958"]
+            label: ""
+            required: true
+            mapped_to: product.name
+          - tag: input
+            type: text
+            name: ""
+            id: 50bec628-dc23-486d-90c4-a80121a7c28b
+            placeholder: Last Name
+            aria_label: Last Name
+            selector: input[id="50bec628-dc23-486d-90c4-a80121a7c28b"]
+            label: ""
+            required: true
+            mapped_to: product.name
+          - tag: input
+            type: email
+            name: ""
+            id: 101df482-c46b-4dd5-b1b6-180416a61d15
+            placeholder: Email
+            aria_label: Email
+            selector: input[id="101df482-c46b-4dd5-b1b6-180416a61d15"]
+            label: ""
+            required: true
+            mapped_to: product.email
+          - tag: input
+            type: text
+            name: ""
+            id: f08e1640-b244-4ae1-a166-cbb63a10ee8c
+            placeholder: 𝕏.com username
+            aria_label: 𝕏.com username
+            selector: input[id="f08e1640-b244-4ae1-a166-cbb63a10ee8c"]
+            label: ""
+            required: true
+            mapped_to: product.name
+          - tag: input
+            type: checkbox
+            name: ""
+            id: checkbox_3be09715-c274-4418-9e7d-01c21072bf09
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="checkbox_3be09715-c274-4418-9e7d-01c21072bf09"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: ""
+            id: checkbox_1e24b83c-1044-452c-adcd-7d8a7a6c6033
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="checkbox_1e24b83c-1044-452c-adcd-7d8a7a6c6033"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: ""
+            id: 5e04f76a-dde3-44b1-84e5-c804ef72648e
+            placeholder: E.g. On X
+            aria_label: How did you hear about us?
+            selector: input[id="5e04f76a-dde3-44b1-84e5-c804ef72648e"]
+            label: ""
+            required: true
+            mapped_to: product.description
+          - tag: input
+            type: text
+            name: ""
+            id: 7863c722-cb71-48ff-a69c-e9658644f146
+            placeholder: Answer here...
+            aria_label: Your goal with this listing?
+            selector: input[id="7863c722-cb71-48ff-a69c-e9658644f146"]
+            label: ""
+            required: true
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Next
+            value: ""
+            selector: button[type="submit"]
   - id: toolsfine-tally-so-r-wvb7xg
     name: ToolsFine
     domain: tally.so
@@ -25795,21 +28101,308 @@ targets:
     source_meta:
       id: toolsfine
       previous_id: toolsfine
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T01:15:06.439Z
+      auth: oauth
+      captcha: required
+      reachable: yes
+      final_url: https://tally.so/r/wvB7Xg
+      http_status: 200
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.126Z
-    updated_at: 2026-05-22T00:50:01.369Z
+    updated_at: 2026-05-23T01:15:07.885Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: ""
+            id: 6eeb5f15-aa1f-4e42-98aa-d6327403ac54
+            placeholder: ""
+            aria_label: Your name
+            selector: input[id="6eeb5f15-aa1f-4e42-98aa-d6327403ac54"]
+            label: ""
+            required: true
+            mapped_to: product.name
+          - tag: input
+            type: text
+            name: ""
+            id: 5805db26-36e2-4178-b33c-3020af27f064
+            placeholder: ""
+            aria_label: Your email
+            selector: input[id="5805db26-36e2-4178-b33c-3020af27f064"]
+            label: ""
+            required: true
+            mapped_to: product.email
+          - tag: input
+            type: text
+            name: ""
+            id: ffed62fe-bef2-4f54-8417-f7d510f2c50a
+            placeholder: ""
+            aria_label: Product name
+            selector: input[id="ffed62fe-bef2-4f54-8417-f7d510f2c50a"]
+            label: ""
+            required: true
+            mapped_to: product.name
+          - tag: input
+            type: url
+            name: ""
+            id: b5dfc35f-2805-4877-871c-820cd17f54a0
+            placeholder: https://url.com
+            aria_label: Product website url
+            selector: input[id="b5dfc35f-2805-4877-871c-820cd17f54a0"]
+            label: ""
+            required: true
+            mapped_to: product.url
+          - tag: input
+            type: text
+            name: ""
+            id: b6b995cc-9856-4649-9aaf-0c0c4775588a
+            placeholder: A super product...
+            aria_label: Short introduce in one sentence
+            selector: input[id="b6b995cc-9856-4649-9aaf-0c0c4775588a"]
+            label: ""
+            required: true
+            mapped_to: product.description
+          - tag: textarea
+            type: textarea
+            name: ""
+            id: 62ce5d61-a62f-4fa5-bdc0-505ecafbce68
+            placeholder: With AI, we can....
+            aria_label: "Long introduction "
+            selector: textarea[id="62ce5d61-a62f-4fa5-bdc0-505ecafbce68"]
+            label: ""
+            required: true
+            mapped_to: product.description
+          - tag: textarea
+            type: textarea
+            name: ""
+            id: c6d77c53-e2d1-40ec-8604-940cf7a3cf5f
+            placeholder: 1...2...3...
+            aria_label: Features or benefits
+            selector: textarea[id="c6d77c53-e2d1-40ec-8604-940cf7a3cf5f"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: ""
+            id: e774327a-4782-42c4-aee2-7c49f242452d
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="e774327a-4782-42c4-aee2-7c49f242452d"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: ""
+            id: b4edd7df-9210-41c3-8cda-fa895d210027
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="b4edd7df-9210-41c3-8cda-fa895d210027"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: text
+            name: ""
+            id: ff7b7068-ac07-40d9-85ce-804bab435b0f
+            placeholder: ""
+            aria_label: Minimum price($)
+            selector: input[id="ff7b7068-ac07-40d9-85ce-804bab435b0f"]
+            label: ""
+            required: false
+            mapped_to: product.pricing
+          - tag: input
+            type: file
+            name: ""
+            id: ""
+            placeholder: ""
+            aria_label: Logo (less than 500*500px, less than 1MB)
+            selector: input[aria-label="Logo (less than 500*500px, less than 1MB)"]
+            label: ""
+            required: true
+            mapped_to: product.logo
+          - tag: input
+            type: file
+            name: ""
+            id: ""
+            placeholder: ""
+            aria_label: Screen shots A (less than 2MB)
+            selector: input[aria-label="Screen shots A (less than 2MB)"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: file
+            name: ""
+            id: ""
+            placeholder: ""
+            aria_label: Screen shots B (less than 2MB)
+            selector: input[aria-label="Screen shots B (less than 2MB)"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: ""
+            id: checkbox_d696279e-b1d4-402a-b94e-627787ed5e0f
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="checkbox_d696279e-b1d4-402a-b94e-627787ed5e0f"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: ""
+            id: checkbox_22e0519b-9a99-4423-8db5-6c52f98f856a
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="checkbox_22e0519b-9a99-4423-8db5-6c52f98f856a"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: ""
+            id: checkbox_52465d95-c6c6-4898-bb50-1eea75117a77
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="checkbox_52465d95-c6c6-4898-bb50-1eea75117a77"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: ""
+            id: checkbox_ad0d805d-4920-4d52-9171-841455acd348
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="checkbox_ad0d805d-4920-4d52-9171-841455acd348"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: ""
+            id: checkbox_3e38e13f-639e-4946-928e-a0c964e0b14a
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="checkbox_3e38e13f-639e-4946-928e-a0c964e0b14a"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: ""
+            id: checkbox_0ad4796c-8b1d-45b1-b282-2b8449ec69d4
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="checkbox_0ad4796c-8b1d-45b1-b282-2b8449ec69d4"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: ""
+            id: checkbox_9fedbb6b-26ab-4298-b71e-6ae9a4687cc8
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="checkbox_9fedbb6b-26ab-4298-b71e-6ae9a4687cc8"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: ""
+            id: checkbox_bac915bd-afe6-4d98-be11-6a21504f745c
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="checkbox_bac915bd-afe6-4d98-be11-6a21504f745c"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: ""
+            id: checkbox_cade926a-70e6-4487-871c-a98c9eff51d8
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="checkbox_cade926a-70e6-4487-871c-a98c9eff51d8"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: ""
+            id: checkbox_710855d7-4fb6-4680-bf56-5ced22c677ee
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="checkbox_710855d7-4fb6-4680-bf56-5ced22c677ee"]
+            label: ""
+            required: false
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: ""
+            id: checkbox_15837936-dcc6-4152-a5ea-1c06f838f82b
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="checkbox_15837936-dcc6-4152-a5ea-1c06f838f82b"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: input
+            type: checkbox
+            name: ""
+            id: checkbox_ec32ba8a-3ad0-4ee1-ae00-a11a732251d6
+            placeholder: ""
+            aria_label: ""
+            selector: input[id="checkbox_ec32ba8a-3ad0-4ee1-ae00-a11a732251d6"]
+            label: ""
+            required: true
+            mapped_to: ""
+          - tag: textarea
+            type: textarea
+            name: ""
+            id: 40f326ca-61d3-49c9-820f-16284ce018da
+            placeholder: ""
+            aria_label: More additional informations or anything else...
+            selector: textarea[id="40f326ca-61d3-49c9-820f-16284ce018da"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Submit and Waiting Review
+            value: ""
+            selector: button[type="submit"]
   - id: sick-tools
     external_id: 14368f41-8f50-8196-b277-c6d37c70ee64
     name: Sick Tools
@@ -25830,21 +28423,68 @@ targets:
       - notion
     source_meta:
       id: sick-tools
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T01:15:14.977Z
+      auth: oauth
+      captcha: required
+      reachable: yes
+      final_url: https://tally.so/r/wvY09d
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.126Z
-    updated_at: 2026-05-21T15:44:39.126Z
+    updated_at: 2026-05-23T01:15:15.915Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: text
+            name: ""
+            id: 99815dd2-2214-4fac-abaf-52f56ad0da33
+            placeholder: Your Full Name
+            aria_label: Basic Info Of Founder
+            selector: input[id="99815dd2-2214-4fac-abaf-52f56ad0da33"]
+            label: ""
+            required: true
+            mapped_to: product.name
+          - tag: input
+            type: email
+            name: ""
+            id: 843fdde8-b878-468c-b12f-3947daaa4b2a
+            placeholder: Your Email Address
+            aria_label: Your Email Address
+            selector: input[id="843fdde8-b878-468c-b12f-3947daaa4b2a"]
+            label: ""
+            required: true
+            mapped_to: product.email
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Next
+            value: ""
+            selector: button[type="submit"]
   - id: tap4-ai
     name: https://tap4.ai
     domain: tap4.ai
@@ -25864,21 +28504,118 @@ targets:
       - 91wink
     source_meta:
       id: tap4-ai
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T01:15:49.300Z
+      auth: oauth
+      captcha: required
+      reachable: yes
+      final_url: https://tap4.ai/submit/
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.126Z
-    updated_at: 2026-05-21T15:44:39.126Z
+    updated_at: 2026-05-23T01:16:23.494Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: input
+            name: search
+            id: _R_5ipivb_-form-item
+            placeholder: Search
+            aria_label: ""
+            selector: input[id="_R_5ipivb_-form-item"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: search
+            value: ""
+            selector: button[type="submit"]
+      - index: 1
+        fields:
+          - tag: input
+            type: input
+            name: website
+            id: _R_d9av5tiv1ivb_-form-item
+            placeholder: Tap4 AI
+            aria_label: ""
+            selector: input[id="_R_d9av5tiv1ivb_-form-item"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: input
+            type: input
+            name: url
+            id: _R_h9av5tiv1ivb_-form-item
+            placeholder: https://tap4.ai/
+            aria_label: ""
+            selector: input[id="_R_h9av5tiv1ivb_-form-item"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: input
+            type: input
+            name: title
+            id: _R_1l9av5tiv1ivb_-form-item
+            placeholder: Title of AI Tool
+            aria_label: ""
+            selector: input[id="_R_1l9av5tiv1ivb_-form-item"]
+            label: ""
+            required: false
+            mapped_to: product.name
+          - tag: textarea
+            type: textarea
+            name: description
+            id: _R_2l9av5tiv1ivb_-form-item
+            placeholder: Detail Description of AI Tool
+            aria_label: ""
+            selector: textarea[id="_R_2l9av5tiv1ivb_-form-item"]
+            label: ""
+            required: false
+            mapped_to: product.description
+          - tag: input
+            type: radio
+            name: ""
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[type="radio"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Submit
+            value: ""
+            selector: button[type="submit"]
   - id: tap4-ai-tap4-ai-cn-submit
     name: Tap4 AI
     domain: tap4.ai
@@ -25899,21 +28636,118 @@ targets:
     source_meta:
       id: tap4-ai
       previous_id: tap4-ai
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T01:16:56.733Z
+      auth: oauth
+      captcha: required
+      reachable: yes
+      final_url: https://tap4.ai/cn/submit/
+      http_status: 200
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.126Z
-    updated_at: 2026-05-22T00:50:01.369Z
+    updated_at: 2026-05-23T01:17:21.779Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: input
+            name: search
+            id: _R_5ipivb_-form-item
+            placeholder: 搜索
+            aria_label: ""
+            selector: input[id="_R_5ipivb_-form-item"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: search
+            value: ""
+            selector: button[type="submit"]
+      - index: 1
+        fields:
+          - tag: input
+            type: input
+            name: website
+            id: _R_d9av5tiv1ivb_-form-item
+            placeholder: Tap4 AI
+            aria_label: ""
+            selector: input[id="_R_d9av5tiv1ivb_-form-item"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: input
+            type: input
+            name: url
+            id: _R_h9av5tiv1ivb_-form-item
+            placeholder: https://tap4.ai/
+            aria_label: ""
+            selector: input[id="_R_h9av5tiv1ivb_-form-item"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: input
+            type: input
+            name: title
+            id: _R_1l9av5tiv1ivb_-form-item
+            placeholder: AI 工具标题
+            aria_label: ""
+            selector: input[id="_R_1l9av5tiv1ivb_-form-item"]
+            label: ""
+            required: false
+            mapped_to: product.name
+          - tag: textarea
+            type: textarea
+            name: description
+            id: _R_2l9av5tiv1ivb_-form-item
+            placeholder: AI 工具详细描述
+            aria_label: ""
+            selector: textarea[id="_R_2l9av5tiv1ivb_-form-item"]
+            label: ""
+            required: false
+            mapped_to: product.description
+          - tag: input
+            type: radio
+            name: ""
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[type="radio"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: 立即提交
+            value: ""
+            selector: button[type="submit"]
   - id: tap4-ai-user-growth-ai-tools-directory
     name: https://tap4.ai/user-growth/ai-tools-directory
     domain: tap4.ai
@@ -25933,21 +28767,118 @@ targets:
       - 91wink
     source_meta:
       id: tap4-ai-user-growth-ai-tools-directory
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T01:17:32.310Z
+      auth: oauth
+      captcha: required
+      reachable: yes
+      final_url: https://tap4.ai/submit/
+      http_status: 200
     submission:
-      mode: needs_scout
-      status: new
-      reason: unverified_form
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.126Z
-    updated_at: 2026-05-21T15:44:39.126Z
+    updated_at: 2026-05-23T01:17:42.943Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: input
+            name: search
+            id: _R_5ipivb_-form-item
+            placeholder: Search
+            aria_label: ""
+            selector: input[id="_R_5ipivb_-form-item"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: search
+            value: ""
+            selector: button[type="submit"]
+      - index: 1
+        fields:
+          - tag: input
+            type: input
+            name: website
+            id: _R_d9av5tiv1ivb_-form-item
+            placeholder: Tap4 AI
+            aria_label: ""
+            selector: input[id="_R_d9av5tiv1ivb_-form-item"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: input
+            type: input
+            name: url
+            id: _R_h9av5tiv1ivb_-form-item
+            placeholder: https://tap4.ai/
+            aria_label: ""
+            selector: input[id="_R_h9av5tiv1ivb_-form-item"]
+            label: ""
+            required: false
+            mapped_to: product.url
+          - tag: input
+            type: input
+            name: title
+            id: _R_1l9av5tiv1ivb_-form-item
+            placeholder: Title of AI Tool
+            aria_label: ""
+            selector: input[id="_R_1l9av5tiv1ivb_-form-item"]
+            label: ""
+            required: false
+            mapped_to: product.name
+          - tag: textarea
+            type: textarea
+            name: description
+            id: _R_2l9av5tiv1ivb_-form-item
+            placeholder: Detail Description of AI Tool
+            aria_label: ""
+            selector: textarea[id="_R_2l9av5tiv1ivb_-form-item"]
+            label: ""
+            required: false
+            mapped_to: product.description
+          - tag: input
+            type: radio
+            name: ""
+            id: ""
+            placeholder: ""
+            aria_label: ""
+            selector: input[type="radio"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Submit
+            value: ""
+            selector: button[type="submit"]
   - id: techdirectory-io
     name: techdirectory.io
     domain: techdirectory.io
@@ -25967,21 +28898,38 @@ targets:
       - targets.yaml
     source_meta:
       id: techdirectory-io
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
+        reasons:
+          - no_form_detected
+      scout_classification_computed:
+        mode: needs_review
+        status: no_form_detected
+        confidence: 0.55
+        reasons:
+          - no_form_detected
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T01:17:47.205Z
+      auth: none
+      captcha: none
+      reachable: yes
+      final_url: https://www.techdirectory.io/get-listed
+      http_status: 200
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: needs_review
+      status: no_form_detected
+      reason: no_form_detected
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.126Z
-    updated_at: 2026-05-21T15:44:39.126Z
+    updated_at: 2026-05-23T01:17:48.283Z
+    forms: []
   - id: techfaster
     name: TechFaster
     domain: techfaster.com
@@ -26001,21 +28949,71 @@ targets:
       - targets.yaml
     source_meta:
       id: techfaster
+      scout_classification_source: computed
+      scout_classification_mismatch: false
+      scout_classification_provided:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
+      scout_classification_computed:
+        mode: skip
+        status: paywalled
+        confidence: 0.8
+        reasons:
+          - payment_signal
     technical:
-      last_scouted_at: null
-      auth: unknown
-      captcha: unknown
-      reachable: unknown
+      last_scouted_at: 2026-05-23T01:18:00.332Z
+      auth: oauth
+      captcha: none
+      reachable: yes
+      final_url: https://guidenetworth.com/
+      http_status: 200
     submission:
-      mode: auto_candidate
-      status: new
-      reason: static_auto_yes_needs_scout
+      mode: skip
+      status: paywalled
+      reason: payment_signal
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.126Z
-    updated_at: 2026-05-21T15:44:39.126Z
+    updated_at: 2026-05-23T01:18:01.887Z
+    forms:
+      - index: 0
+        fields:
+          - tag: input
+            type: search
+            name: s
+            id: ""
+            placeholder: Search any celebrities net worth...
+            aria_label: ""
+            selector: input[name="s"]
+            label: ""
+            required: true
+            mapped_to: ""
+        submit_buttons:
+          - tag: button
+            type: submit
+            name: ""
+            id: ""
+            text: Search
+            value: ""
+            selector: button[type="submit"]
+      - index: 1
+        fields:
+          - tag: input
+            type: search
+            name: s
+            id: ""
+            placeholder: Search …
+            aria_label: ""
+            selector: input[name="s"]
+            label: ""
+            required: false
+            mapped_to: ""
+        submit_buttons: []
   - id: techpluto
     name: TechPluto
     domain: techpluto.com

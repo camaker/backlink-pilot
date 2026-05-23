@@ -6,7 +6,13 @@ import {
   scoutMappedFields,
   selectorForScoutField,
 } from '../src/sites/generic.js';
-import { gotoScoutPage, isSubmitLinkCandidate, selectorForField, sortSubmitLinks } from '../src/scout/discover.js';
+import {
+  canDeepScoutSubmitLink,
+  gotoScoutPage,
+  isSubmitLinkCandidate,
+  selectorForField,
+  sortSubmitLinks,
+} from '../src/scout/discover.js';
 
 describe('scout selector generation', () => {
   it('builds stable selectors from discovered field attributes', () => {
@@ -58,6 +64,21 @@ describe('scout selector generation', () => {
     );
     assert.equal(
       isSubmitLinkCandidate('https://appalist.com/latest', 'Latest', 'https://appalist.com/'),
+      false
+    );
+  });
+
+  it('only deep scouts same-domain submission links or trusted external form hosts', () => {
+    assert.equal(
+      canDeepScoutSubmitLink('https://example.com/submit', 'https://example.com/'),
+      true
+    );
+    assert.equal(
+      canDeepScoutSubmitLink('https://tally.so/r/3lOGLk', 'https://example.com/'),
+      true
+    );
+    assert.equal(
+      canDeepScoutSubmitLink('https://aisite.medsci.cn/submit', 'https://submitmatic.com/'),
       false
     );
   });

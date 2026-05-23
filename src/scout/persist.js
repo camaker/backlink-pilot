@@ -20,6 +20,11 @@ function nowIso() {
   return new Date().toISOString();
 }
 
+function truncate(value, max = 1000) {
+  const text = String(value || '').trim();
+  return text.length > max ? `${text.slice(0, max)}...` : text;
+}
+
 export function scoutResultPath(targetId, dir = DEFAULT_SCOUT_DIR) {
   return join(dir, `${slugify(targetId, 'target')}.json`);
 }
@@ -53,6 +58,25 @@ function classificationRisk(classification = {}) {
 function classificationChanged(left = {}, right = {}) {
   return String(left.mode || '') !== String(right.mode || '') ||
     String(left.status || '') !== String(right.status || '');
+}
+
+function isExplicitBlocker(classification = {}) {
+  return [
+    'auth_required',
+    'captcha_required',
+    'paywalled',
+    'asset_upload_required',
+    'dead',
+  ].includes(String(classification.status || ''));
+}
+
+function isWeakComputedClassification(classification = {}) {
+  return [
+    'no_form_detected',
+    'unsupported_form',
+    'scout_failed',
+    'browser_error',
+  ].includes(String(classification.status || ''));
 }
 
 function isRemoteNullString(value) {
@@ -107,12 +131,27 @@ export function resolveScoutClassification(result = {}) {
     classification: undefined,
   }));
   const provided = normalizeClassification(result.classification);
+  const computedRisk = classificationRisk(computed);
+  const providedRisk = classificationRisk(provided || {});
+  const isScoutFailure = Boolean(result.error);
   let selected = computed;
   let source = 'computed';
 
-  if (provided && classificationRisk(provided) < classificationRisk(computed)) {
+  const preserveExplicitBlocker = provided &&
+    isExplicitBlocker(provided) &&
+    isWeakComputedClassification(computed);
+
+  if (provided && (
+    providedRisk < computedRisk ||
+    (isScoutFailure && providedRisk <= computedRisk) ||
+    preserveExplicitBlocker
+  )) {
     selected = provided;
-    source = 'provided_conservative';
+    source = preserveExplicitBlocker && providedRisk >= computedRisk
+      ? 'provided_explicit_blocker'
+      : providedRisk < computedRisk
+        ? 'provided_conservative'
+        : 'provided_equal';
   }
 
   const mismatch = Boolean(provided && classificationChanged(provided, computed));
@@ -152,7 +191,10 @@ export function applyScoutResultToTarget(target, result) {
     : 'none';
   const reachable = sanitized.reachable === false || classification.status === 'dead'
     ? 'no'
-    : 'yes';
+    : sanitized.reachable === true
+      ? 'yes'
+      : 'unknown';
+  const scoutError = truncate(sanitized.error);
 
   return {
     ...target,
@@ -164,6 +206,7 @@ export function applyScoutResultToTarget(target, result) {
       reachable,
       final_url: sanitized.final_url || target.submit_url,
       http_status: sanitized.http_status || null,
+      ...(scoutError ? { last_scout_error: scoutError } : {}),
     },
     forms: sanitized.forms || target.forms || [],
     submission: {
@@ -180,9 +223,85 @@ export function applyScoutResultToTarget(target, result) {
       scout_classification_mismatch: resolved.mismatch,
       scout_classification_provided: resolved.provided,
       scout_classification_computed: resolved.computed,
+      ...(scoutError ? { scout_failure_error: scoutError } : {}),
     },
     updated_at: nowIso(),
   };
+}
+
+function infrastructureScoutFailure(errorText = '') {
+  return /browserType\.launch|executable doesn't exist|please run.*playwright install|bb-browser|auth storage state|cannot find module|module not found/i
+    .test(errorText);
+}
+
+function targetFailureClassification(errorText = '') {
+  if (infrastructureScoutFailure(errorText)) return null;
+
+  if (/ERR_NAME_NOT_RESOLVED|ENOTFOUND|getaddrinfo/i.test(errorText)) {
+    return {
+      reachable: false,
+      classification: {
+        mode: 'skip',
+        status: 'dead',
+        confidence: 0.9,
+        reasons: ['scout_failed_dns'],
+      },
+    };
+  }
+
+  if (/ERR_CONNECTION_RESET|ERR_CONNECTION_REFUSED|ERR_CONNECTION_TIMED_OUT|ERR_TIMED_OUT|ERR_CERT|SSL|TLS|scout target timed out|Timeout .*navigat|page\.goto: Timeout/i.test(errorText)) {
+    return {
+      classification: {
+        mode: 'needs_review',
+        status: 'scout_failed',
+        confidence: 0.55,
+        reasons: ['scout_failed_network'],
+      },
+    };
+  }
+
+  if (/page\.goto: net::ERR_/i.test(errorText)) {
+    return {
+      classification: {
+        mode: 'needs_review',
+        status: 'scout_failed',
+        confidence: 0.55,
+        reasons: ['scout_failed_network'],
+      },
+    };
+  }
+
+  return null;
+}
+
+export function scoutFailureResult(target = {}, error) {
+  const errorText = truncate(error?.message || error);
+  const failure = targetFailureClassification(errorText);
+  if (!failure) return null;
+
+  return {
+    target_id: target.id,
+    checked_at: nowIso(),
+    submit_url: target.submit_url,
+    final_url: target.submit_url,
+    reachable: failure.reachable,
+    http_status: null,
+    signals: {
+      login_required: false,
+      oauth_available: false,
+      captcha: false,
+      payment: false,
+    },
+    forms: [],
+    error: errorText,
+    classification: failure.classification,
+  };
+}
+
+export function applyScoutFailureToTarget(target = {}, error) {
+  const result = scoutFailureResult(target, error);
+  if (!result) return null;
+  return applyScoutResultToTarget(target, result);
 }
 
 export function updateRegistryWithScoutResult(result, opts = {}) {
@@ -201,6 +320,29 @@ export function updateRegistryWithScoutResult(result, opts = {}) {
   }
 
   registry.targets[index] = applyScoutResultToTarget(registry.targets[index], result);
+  saveRegistry(registry, registryPath);
+  return registry.targets[index];
+}
+
+export function updateRegistryWithScoutFailure(target, error, opts = {}) {
+  const registryPath = opts.registry || DEFAULT_REGISTRY_FILE;
+  const registry = loadRegistry(registryPath);
+  const targetId = target.id || target.target_id;
+  const targetUrl = target.submit_url || target.url;
+
+  const index = registry.targets.findIndex(entry =>
+    (targetId && entry.id === targetId) ||
+    (targetUrl && entry.submit_url === targetUrl)
+  );
+
+  if (index === -1) {
+    throw new Error(`Target not found in registry: ${targetId || targetUrl || '(unknown)'}`);
+  }
+
+  const updated = applyScoutFailureToTarget(registry.targets[index], error);
+  if (!updated) return null;
+
+  registry.targets[index] = updated;
   saveRegistry(registry, registryPath);
   return registry.targets[index];
 }

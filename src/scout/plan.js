@@ -11,6 +11,7 @@ import {
 } from '../runner/queue.js';
 import { scout } from './discover.js';
 import { configWithAuthProfile } from '../auth/session.js';
+import { updateRegistryWithScoutFailure } from './persist.js';
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -133,12 +134,18 @@ export async function scoutPlan(planPath, opts = {}) {
       });
       summary.processed++;
     } catch (error) {
+      let registryUpdated = false;
+      if (opts.updateRegistry) {
+        const updated = updateRegistryWithScoutFailure(target, error, opts);
+        registryUpdated = Boolean(updated);
+      }
       markItem(state, target.id, { status: 'scout_failed', last_error: error.message });
       appendJsonl(resultsPath, {
         target_id: target.id,
         submit_url: target.submit_url,
         status: 'scout_failed',
         error: error.message,
+        registry_updated: registryUpdated,
         at: new Date().toISOString(),
       });
       summary.failed++;

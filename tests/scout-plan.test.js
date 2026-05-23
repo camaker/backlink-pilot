@@ -135,4 +135,55 @@ describe('scoutPlan', () => {
       rmSync(dir, { recursive: true, force: true });
     }
   });
+
+  it('writes target-level scout failures back to the registry when requested', async () => {
+    const dir = tempDir();
+    try {
+      const plan = join(dir, 'plan.json');
+      const state = join(dir, 'scout-state.json');
+      const results = join(dir, 'scout-results.jsonl');
+      const registry = join(dir, 'registry.yaml');
+      writeFileSync(plan, JSON.stringify({
+        created_at: 'plan-1',
+        targets: [
+          { id: 'dead', submit_url: 'https://dead.example/submit', mode: 'auto_candidate' },
+        ],
+      }));
+      writeFileSync(registry, `
+version: 1
+targets:
+  - id: dead
+    submit_url: https://dead.example/submit
+    technical:
+      auth: unknown
+      captcha: unknown
+      reachable: unknown
+    submission:
+      mode: auto_candidate
+      status: new
+`);
+
+      const summary = await scoutPlan(plan, {
+        state,
+        results,
+        registry,
+        updateRegistry: true,
+        delay: '0ms',
+        configObject: { browser: { engine: 'playwright' } },
+        scoutFn: async () => {
+          throw new Error('page.goto: net::ERR_NAME_NOT_RESOLVED at https://dead.example/submit');
+        },
+      });
+
+      const parsedRegistry = readFileSync(registry, 'utf-8');
+      const lines = readFileSync(results, 'utf-8').trim().split('\n').map(JSON.parse);
+
+      assert.equal(summary.failed, 1);
+      assert.match(parsedRegistry, /mode: skip/);
+      assert.match(parsedRegistry, /status: dead/);
+      assert.equal(lines[0].registry_updated, true);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
 });

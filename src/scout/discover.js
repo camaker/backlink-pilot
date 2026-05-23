@@ -36,6 +36,21 @@ function normalizedHost(value = '') {
   }
 }
 
+function isTrustedExternalFormHost(host = '') {
+  return /(^|\.)tally\.so$|(^|\.)typeform\.com$|^forms\.gle$|^docs\.google\.com$|(^|\.)airtable\.com$|(^|\.)jotform\.com$/i
+    .test(host);
+}
+
+export function canDeepScoutSubmitLink(href = '', baseUrl = '') {
+  const resolved = resolveHref(href, baseUrl);
+  const baseHost = normalizedHost(baseUrl);
+  const hrefHost = normalizedHost(resolved);
+
+  if (!baseHost || !hrefHost) return false;
+  if (hrefHost === baseHost) return true;
+  return isTrustedExternalFormHost(hrefHost);
+}
+
 export function submitLinkScore(link, baseUrl) {
   const href = link.href || '';
   const text = link.text || '';
@@ -265,8 +280,9 @@ export async function scout(url, opts = {}) {
     }
 
     // If deep scouting, follow first submit link
-    if (opts.deep && result.submit_links.length > 0) {
-      const target = result.submit_links[0].href;
+    const deepLink = result.submit_links.find(link => canDeepScoutSubmitLink(link.href, url));
+    if (opts.deep && deepLink) {
+      const target = deepLink.href;
       console.log(`\n📝 Following: ${target}`);
       const deepNavigation = await gotoScoutPage(page, target);
       await delay(1000);
