@@ -13,6 +13,10 @@ import {
   writeAssistedSubmissionPack,
 } from './assisted-pack.js';
 import {
+  buildAuthLoginPlan,
+  writeAuthLoginPlan,
+} from './auth-login-plan.js';
+import {
   buildAuthRescoutPlan,
   writeAuthRescoutPlan,
 } from './auth-rescout-plan.js';
@@ -178,6 +182,39 @@ export async function assistedSubmissionPackCommand(opts = {}) {
   console.log(`Summary: ${written.files.summary_md}`);
 
   return result;
+}
+
+export async function authLoginPlanCommand(queuePath, opts = {}) {
+  const plan = buildAuthLoginPlan(queuePath, {
+    registry: opts.registry || DEFAULT_REGISTRY_FILE,
+    productConfig: opts.productConfig,
+    authDir: opts.authDir,
+    limit: opts.limit,
+  });
+  const written = writeAuthLoginPlan(plan, {
+    output: opts.output,
+    csvOutput: opts.csvOutput,
+  });
+
+  if (opts.json) {
+    console.log(JSON.stringify({ ...plan, files: written }, null, 2));
+    return plan;
+  }
+
+  console.log(`Queue: ${plan.source_queue}`);
+  console.log(`Registry: ${plan.registry}`);
+  console.log(`Manual login queued: ${plan.targets.length}`);
+  console.log(`Pending login rows: ${plan.summary.pending_rows}`);
+  console.log(`Completed profiles: ${plan.completed.length}`);
+  console.log(`Excluded: ${plan.excluded.length}`);
+  console.log(`Exclusion reasons: ${JSON.stringify(plan.summary.by_exclusion_reason)}`);
+  if (written.output) console.log(`Plan written: ${written.output}`);
+  if (written.csv_output) console.log(`CSV written: ${written.csv_output}`);
+  for (const target of plan.targets.slice(0, Number.parseInt(opts.preview || 10, 10))) {
+    console.log(`${target.order}. ${target.priority}\t${target.target_id}\t${target.login_url}`);
+  }
+
+  return plan;
 }
 
 export async function authRescoutPlanCommand(queuePath, opts = {}) {

@@ -12,6 +12,11 @@ import {
   writeAssistedSubmissionPack,
 } from '../src/targets/assisted-pack.js';
 import {
+  buildAuthLoginPlan,
+  authLoginPlanCsv,
+  writeAuthLoginPlan,
+} from '../src/targets/auth-login-plan.js';
+import {
   buildAuthRescoutPlan,
   writeAuthRescoutPlan,
 } from '../src/targets/auth-rescout-plan.js';
@@ -2235,6 +2240,90 @@ describe('auth rescout plan', () => {
 
       assert.equal(plan.targets.length, 1);
       assert.equal(plan.targets[0].id, 'a');
+      assert.equal(plan.excluded.length, 1);
+      assert.equal(plan.excluded[0].target_id, 'b');
+      assert.equal(plan.excluded[0].exclusion_reason, 'over_limit');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe('auth login plan', () => {
+  it('queues missing auth profiles and marks existing profiles completed', () => {
+    const dir = tempDir();
+    try {
+      const queue = join(dir, 'auth-login-rescout-queue.csv');
+      const authDir = join(dir, 'auth');
+      const output = join(dir, 'auth-login-plan.json');
+      const csvOutput = join(dir, 'auth-login-plan.csv');
+      mkdirSync(authDir, { recursive: true });
+      writeFileSync(join(authDir, 'done.storage-state.json'), JSON.stringify({
+        cookies: [],
+        origins: [],
+      }));
+      writeFileSync(queue, [
+        'rank,priority,priority_score,target_id,name,domain,mode,status,pricing,risk,lang,manual_bucket,automation_after_human,submission_policy,safety_blockers,recommended_next_step,auth_profile,auth_login_command,auth_scout_command,submit_url,final_url,root_url,last_scouted_at,last_submitted_at,form_count,field_count,required_fields,unmapped_required_fields,submit_button_count,source,reason,notes',
+        '1,P0,270,needs-login,Needs Login,login.example,assisted,auth_required,free,low,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required,login,needs-login,node src/cli.js auth login --profile "needs-login" --url "https://login.example/sign-in",node src/cli.js scout "https://login.example/submit" --auth-profile "needs-login",https://login.example/submit,https://login.example/sign-in,https://login.example,,,,,,,,test,auth_signal,',
+        '2,P0,260,done,Done,done.example,assisted,auth_required,free,low,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required,login,done,node src/cli.js auth login --profile "done" --url "https://done.example/login",node src/cli.js scout "https://done.example/submit" --auth-profile "done",https://done.example/submit,https://done.example/login,https://done.example,,,,,,,,test,auth_signal,',
+        '3,P2,120,captcha,Captcha,captcha.example,assisted,captcha_required,free,low,en,manual_submit_only_captcha,no_captcha_manual_only,no_real_submission_from_pack,captcha_or_turnstile_required,captcha,,,,https://captcha.example/submit,,https://captcha.example,,,,,,,,test,captcha_signal,',
+      ].join('\n'));
+
+      const plan = buildAuthLoginPlan(queue, {
+        authDir,
+        registry: join(dir, 'registry.yaml'),
+        limit: 10,
+      });
+      const written = writeAuthLoginPlan(plan, { output, csvOutput });
+      const parsed = JSON.parse(readFileSync(output, 'utf-8'));
+      const csvRows = parseCsv(readFileSync(csvOutput, 'utf-8'));
+
+      assert.equal(plan.targets.length, 1);
+      assert.equal(plan.targets[0].target_id, 'needs-login');
+      assert.equal(plan.targets[0].status, 'manual_login_required');
+      assert.equal(plan.targets[0].login_url, 'https://login.example/sign-in');
+      assert.match(plan.targets[0].auth_status_command, /auth status --profile "needs-login"/);
+      assert.match(plan.targets[0].manual_login_safety_policy, /Do not bypass CAPTCHA/);
+      assert.equal(plan.completed.length, 1);
+      assert.equal(plan.completed[0].target_id, 'done');
+      assert.equal(plan.excluded.length, 1);
+      assert.equal(plan.excluded[0].target_id, 'captcha');
+      assert.equal(plan.excluded[0].exclusion_reason, 'not_auth_login_row');
+      assert.equal(plan.summary.pending_rows, 1);
+      assert.equal(plan.summary.auth_profiles_missing, 1);
+      assert.equal(plan.summary.auth_profiles_found, 1);
+      assert.equal(parsed.constraints.no_real_submission, true);
+      assert.equal(parsed.constraints.no_automated_login, true);
+      assert.equal(csvRows.length, 1);
+      assert.equal(csvRows[0].target_id, 'needs-login');
+      assert.equal(csvRows[0].status, 'manual_login_required');
+      assert.equal(written.output.endsWith('auth-login-plan.json'), true);
+      assert.equal(written.csv_output.endsWith('auth-login-plan.csv'), true);
+      assert.match(authLoginPlanCsv(plan.targets), /manual_login_required/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('limits manual login queue without hiding total missing profiles', () => {
+    const dir = tempDir();
+    try {
+      const queue = join(dir, 'auth-login-rescout-queue.csv');
+      writeFileSync(queue, [
+        'rank,priority,priority_score,target_id,name,domain,mode,status,pricing,risk,lang,manual_bucket,automation_after_human,submission_policy,safety_blockers,recommended_next_step,auth_profile,auth_login_command,auth_scout_command,submit_url,final_url,root_url,last_scouted_at,last_submitted_at,form_count,field_count,required_fields,unmapped_required_fields,submit_button_count,source,reason,notes',
+        '1,P0,270,a,A,a.example,assisted,auth_required,free,low,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required,login,a,node src/cli.js auth login --profile "a" --url "https://a.example/login",scout,https://a.example/submit,,https://a.example,,,,,,,,test,auth_signal,',
+        '2,P0,260,b,B,b.example,assisted,auth_required,free,low,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required,login,b,node src/cli.js auth login --profile "b" --url "https://b.example/login",scout,https://b.example/submit,,https://b.example,,,,,,,,test,auth_signal,',
+      ].join('\n'));
+
+      const plan = buildAuthLoginPlan(queue, {
+        authDir: join(dir, 'auth'),
+        limit: 1,
+      });
+
+      assert.equal(plan.targets.length, 1);
+      assert.equal(plan.targets[0].target_id, 'a');
+      assert.equal(plan.summary.pending_rows, 2);
+      assert.equal(plan.summary.auth_profiles_missing, 2);
       assert.equal(plan.excluded.length, 1);
       assert.equal(plan.excluded[0].target_id, 'b');
       assert.equal(plan.excluded[0].exclusion_reason, 'over_limit');
