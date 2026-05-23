@@ -2,6 +2,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { parse as parseYaml } from 'yaml';
 import { parseCsv } from './importers/csv.js';
+import { authLoginDomainBlocker } from './auth-login-safety.js';
 
 function nowIso() {
   return new Date().toISOString();
@@ -22,27 +23,6 @@ function mdEscape(value) {
 
 function psSingle(value) {
   return `'${String(value ?? '').replace(/'/g, "''")}'`;
-}
-
-function urlHost(value = '') {
-  try {
-    return new URL(value).hostname.toLowerCase().replace(/^www\./, '');
-  } catch {
-    return '';
-  }
-}
-
-function baseDomain(value = '') {
-  const labels = String(value || '').toLowerCase().replace(/^www\./, '').split('.').filter(Boolean);
-  if (labels.length <= 2) return labels.join('.');
-  return labels.slice(-2).join('.');
-}
-
-function sameSite(left = '', right = '') {
-  const a = String(left || '').toLowerCase().replace(/^www\./, '');
-  const b = String(right || '').toLowerCase().replace(/^www\./, '');
-  if (!a || !b) return true;
-  return a === b || a.endsWith(`.${b}`) || b.endsWith(`.${a}`) || baseDomain(a) === baseDomain(b);
 }
 
 function parseStructuredTasks(raw, inputPath = '') {
@@ -68,15 +48,10 @@ function normalizeTask(row = {}, index = 0) {
   const targetId = row.target_id || row.id || '';
   const authProfile = row.auth_profile || row.profile || targetId;
   const loginUrl = row.login_url || '';
-  const targetDomain = String(row.domain || '').toLowerCase().replace(/^www\./, '');
-  const submitHost = urlHost(row.submit_url || '');
-  const loginHost = urlHost(loginUrl);
-  const comparisonHost = targetDomain || submitHost;
+  const domainBlocker = authLoginDomainBlocker({ ...row, login_url: loginUrl });
   const blocker = !authProfile || !loginUrl
     ? 'missing_auth_profile_or_login_url'
-    : (!sameSite(loginHost, comparisonHost) || !sameSite(loginHost, submitHost)
-        ? `login_domain_mismatch:${loginHost || 'unknown'}->${comparisonHost || submitHost || 'unknown'}`
-        : '');
+    : domainBlocker;
   const manualLoginCommand = !blocker && authProfile && loginUrl
     ? `node src/cli.js auth login --profile "${authProfile}" --url "${loginUrl}"`
     : '';

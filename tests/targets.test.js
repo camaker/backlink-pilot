@@ -79,10 +79,33 @@ import {
 import { buildSubmissionPlan } from '../src/planner/plan.js';
 import { buildScoutQueuePlan } from '../src/planner/plan.js';
 import { parseCsv } from '../src/targets/importers/csv.js';
+import { authLoginDomainBlocker } from '../src/targets/auth-login-safety.js';
 
 function tempDir() {
   return mkdtempSync(join(tmpdir(), 'backlink-pilot-targets-'));
 }
+
+describe('auth login safety', () => {
+  it('allows sibling subdomains only when the target root domain confirms the same site', () => {
+    const blocker = authLoginDomainBlocker({
+      domain: 'example.com',
+      login_url: 'https://accounts.example.com/login',
+      submit_url: 'https://www.example.com/submit',
+    });
+
+    assert.equal(blocker, '');
+  });
+
+  it('does not treat public-suffix sibling domains as the same site', () => {
+    const blocker = authLoginDomainBlocker({
+      domain: 'example.co.uk',
+      login_url: 'https://other.co.uk/login',
+      submit_url: 'https://example.co.uk/submit',
+    });
+
+    assert.equal(blocker, 'login_domain_mismatch:other.co.uk->example.co.uk');
+  });
+});
 
 describe('target URL normalization', () => {
   it('strips tracking params, hashes, default ports, and normalizes trailing slashes', () => {
@@ -2405,6 +2428,34 @@ describe('auth login plan', () => {
     }
   });
 
+  it('blocks manual login rows when the login domain does not match the target domain', () => {
+    const dir = tempDir();
+    try {
+      const queue = join(dir, 'auth-login-rescout-queue.csv');
+      writeFileSync(queue, [
+        'rank,priority,priority_score,target_id,name,domain,mode,status,pricing,risk,lang,manual_bucket,automation_after_human,submission_policy,safety_blockers,recommended_next_step,auth_profile,auth_login_command,auth_scout_command,submit_url,final_url,root_url,last_scouted_at,last_submitted_at,form_count,field_count,required_fields,unmapped_required_fields,submit_button_count,source,reason,notes',
+        '1,P0,270,cross,Cross,target.example,assisted,auth_required,free,low,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required,login,cross,node src/cli.js auth login --profile "cross" --url "https://other.example/login",node src/cli.js scout "https://target.example/submit" --auth-profile "cross",https://target.example/submit,https://other.example/login,https://target.example,,,,,,,,test,auth_signal,',
+      ].join('\n'));
+
+      const plan = buildAuthLoginPlan(queue, {
+        authDir: join(dir, 'auth'),
+        limit: 1,
+      });
+
+      assert.equal(plan.targets.length, 0);
+      assert.equal(plan.summary.pending_rows, 0);
+      assert.equal(plan.summary.auth_profiles_missing, 0);
+      assert.equal(plan.excluded.length, 1);
+      assert.equal(plan.excluded[0].target_id, 'cross');
+      assert.equal(plan.excluded[0].exclusion_reason, 'login_domain_mismatch:other.example->target.example');
+      assert.equal(plan.excluded[0].safety_blocker, 'login_domain_mismatch:other.example->target.example');
+      assert.equal(plan.excluded[0].auth_login_command, '');
+      assert.equal(plan.excluded[0].auth_scout_command, '');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
   it('supports rolling manual login batches with offset', () => {
     const dir = tempDir();
     try {
@@ -2500,6 +2551,39 @@ describe('auth login status', () => {
       assert.equal(report.rows[0].submit_url, 'https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit');
       assert.doesNotMatch(report.rows[0].auth_login_command, /ref/i);
       assert.doesNotMatch(report.rows[0].auth_scout_command, /ref/i);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('blocks next-login selection when the login domain does not match the target domain', () => {
+    const dir = tempDir();
+    try {
+      const batch = join(dir, 'auth-login-batch.csv');
+      writeFileSync(batch, [
+        'order,priority,target_id,name,domain,pricing,risk,auth_profile,auth_state_path,status,login_url,auth_login_command,auth_status_command,auth_scout_command,submit_url,manual_login_safety_policy',
+        '1,P0,cross,Cross,target.example,free,low,cross,auth/cross.storage-state.json,manual_login_required,https://other.example/login,node src/cli.js auth login --profile "cross" --url "https://other.example/login",status,node src/cli.js scout "https://target.example/submit" --auth-profile "cross",https://target.example/submit,manual',
+        '2,P0,next,Next,next.example,free,low,next,auth/next.storage-state.json,manual_login_required,https://next.example/login,node src/cli.js auth login --profile "next" --url "https://next.example/login",status,node src/cli.js scout "https://next.example/submit" --auth-profile "next",https://next.example/submit,manual',
+      ].join('\n'));
+
+      const status = buildAuthLoginStatus(batch, { authDir: join(dir, 'auth') });
+      const next = buildAuthLoginNext([batch], {
+        authDir: join(dir, 'auth'),
+        limit: 1,
+      });
+
+      assert.equal(status.rows[0].status, 'blocked_login_domain_mismatch');
+      assert.equal(status.rows[0].next_action, 'fix_login_domain_mismatch');
+      assert.equal(status.rows[0].safety_blocker, 'login_domain_mismatch:other.example->target.example');
+      assert.equal(status.rows[0].auth_login_command, '');
+      assert.equal(status.rows[0].auth_status_command, '');
+      assert.equal(status.rows[0].auth_scout_command, '');
+      assert.equal(status.summary.safety_blocked_rows, 1);
+      assert.equal(status.summary.auth_profiles_missing, 1);
+      assert.equal(next.summary.actionable_rows, 1);
+      assert.equal(next.tasks.length, 1);
+      assert.equal(next.tasks[0].target_id, 'next');
+      assert.equal(next.excluded.some(row => row.exclusion_reason === 'fix_login_domain_mismatch'), true);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

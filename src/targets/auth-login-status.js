@@ -4,6 +4,7 @@ import { parse as parseYaml, stringify } from 'yaml';
 import { DEFAULT_AUTH_DIR, authMetaPath, authProfileStatus } from '../auth/session.js';
 import { parseCsv } from './importers/csv.js';
 import { cleanTrackingUrl } from './normalize.js';
+import { authLoginDomainBlocker } from './auth-login-safety.js';
 
 const AUTH_LOGIN_STATUS_HEADERS = [
   'order',
@@ -26,6 +27,7 @@ const AUTH_LOGIN_STATUS_HEADERS = [
   'auth_login_command',
   'auth_status_command',
   'auth_scout_command',
+  'safety_blocker',
 ];
 
 const AUTH_LOGIN_NEXT_HEADERS = [
@@ -125,12 +127,14 @@ function rowTargetId(row = {}) {
 function statusForRow(row = {}, status = {}) {
   const profile = rowProfile(row);
   if (!String(profile || '').trim()) return 'blocked_missing_auth_profile';
+  if (row.safety_blocker) return 'blocked_login_domain_mismatch';
   return status.exists ? 'auth_profile_saved' : 'manual_login_required';
 }
 
 function nextActionForRow(row = {}, status = {}) {
   const profile = rowProfile(row);
   if (!String(profile || '').trim()) return 'fix_batch_auth_profile';
+  if (row.safety_blocker) return 'fix_login_domain_mismatch';
   if (status.exists) {
     return row.auth_scout_command ? 'run_auth_scout_command' : 'regenerate_auth_rescout_plan';
   }
@@ -151,8 +155,12 @@ function statusRow(row = {}, index = 0, opts = {}) {
         updated_at: '',
         size_bytes: 0,
       };
-  const rowStatus = statusForRow(row, status);
-  const nextAction = nextActionForRow(row, status);
+  const login = cleanUrl(row.login_url || '');
+  const submit = cleanUrl(row.submit_url || '');
+  const safetyBlocker = authLoginDomainBlocker({ ...row, login_url: login, submit_url: submit });
+  const safetyRow = { ...row, safety_blocker: safetyBlocker };
+  const rowStatus = statusForRow(safetyRow, status);
+  const nextAction = nextActionForRow(safetyRow, status);
   const safeProfile = status.profile || profile;
 
   return {
@@ -168,16 +176,19 @@ function statusRow(row = {}, index = 0, opts = {}) {
     auth_meta_path: hasProfile ? normalizePath(status.meta_path || authMetaPath(safeProfile, authDir)) : '',
     status: rowStatus,
     next_action: nextAction,
-    ready_for_auth_rescout: status.exists ? 'yes' : 'no',
+    ready_for_auth_rescout: status.exists && !safetyBlocker ? 'yes' : 'no',
     saved_at: status.updated_at || '',
     size_bytes: status.size_bytes || 0,
-    login_url: cleanUrl(row.login_url || ''),
-    submit_url: cleanUrl(row.submit_url || ''),
-    auth_login_command: cleanCommand(row.auth_login_command || '', row.login_url),
-    auth_status_command: row.auth_status_command || (
-      safeProfile ? `node src/cli.js auth status --profile ${commandQuote(safeProfile)}` : ''
-    ),
-    auth_scout_command: cleanCommand(row.auth_scout_command || '', row.submit_url, row.login_url),
+    login_url: login,
+    submit_url: submit,
+    auth_login_command: safetyBlocker ? '' : cleanCommand(row.auth_login_command || '', row.login_url),
+    auth_status_command: safetyBlocker
+      ? ''
+      : row.auth_status_command || (
+          safeProfile ? `node src/cli.js auth status --profile ${commandQuote(safeProfile)}` : ''
+        ),
+    auth_scout_command: safetyBlocker ? '' : cleanCommand(row.auth_scout_command || '', row.submit_url, row.login_url),
+    safety_blocker: safetyBlocker,
   };
 }
 
@@ -194,6 +205,7 @@ function summaryFor(rows = []) {
     auth_profiles_found: byStatus.auth_profile_saved || 0,
     auth_profiles_missing: byStatus.manual_login_required || 0,
     missing_auth_profile_rows: byStatus.blocked_missing_auth_profile || 0,
+    safety_blocked_rows: rows.filter(row => row.safety_blocker).length,
     ready_for_auth_rescout_rows: rows.filter(row => row.ready_for_auth_rescout === 'yes').length,
     manual_login_rows: rows.filter(row => row.next_action === 'run_auth_login_command').length,
     by_status: byStatus,

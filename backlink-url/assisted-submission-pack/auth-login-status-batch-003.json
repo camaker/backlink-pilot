@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "created_at": "2026-05-23T06:33:31.945Z",
+  "created_at": "2026-05-23T08:40:21.597Z",
   "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-003.json",
   "source_type": "rows",
   "constraints": {
@@ -31,7 +31,8 @@
       "submit_url": "https://sourcedir.com/",
       "auth_login_command": "node src/cli.js auth login --profile \"sourcedir-com\" --url \"https://sourcedir.com/get-started\"",
       "auth_status_command": "node src/cli.js auth status --profile \"sourcedir-com\"",
-      "auth_scout_command": "node src/cli.js scout \"https://sourcedir.com/\" --auth-profile \"sourcedir-com\" --target-id \"sourcedir-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright"
+      "auth_scout_command": "node src/cli.js scout \"https://sourcedir.com/\" --auth-profile \"sourcedir-com\" --target-id \"sourcedir-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
+      "safety_blocker": ""
     },
     {
       "order": "52",
@@ -53,7 +54,8 @@
       "submit_url": "https://stackdirectory.com/",
       "auth_login_command": "node src/cli.js auth login --profile \"stackdirectory-com\" --url \"https://stackdirectory.com/get-started\"",
       "auth_status_command": "node src/cli.js auth status --profile \"stackdirectory-com\"",
-      "auth_scout_command": "node src/cli.js scout \"https://stackdirectory.com/\" --auth-profile \"stackdirectory-com\" --target-id \"stackdirectory-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright"
+      "auth_scout_command": "node src/cli.js scout \"https://stackdirectory.com/\" --auth-profile \"stackdirectory-com\" --target-id \"stackdirectory-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
+      "safety_blocker": ""
     },
     {
       "order": "53",
@@ -75,7 +77,8 @@
       "submit_url": "https://startupvessel.com/",
       "auth_login_command": "node src/cli.js auth login --profile \"startupvessel-com\" --url \"https://startupvessel.com/get-started\"",
       "auth_status_command": "node src/cli.js auth status --profile \"startupvessel-com\"",
-      "auth_scout_command": "node src/cli.js scout \"https://startupvessel.com/\" --auth-profile \"startupvessel-com\" --target-id \"startupvessel-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright"
+      "auth_scout_command": "node src/cli.js scout \"https://startupvessel.com/\" --auth-profile \"startupvessel-com\" --target-id \"startupvessel-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
+      "safety_blocker": ""
     },
     {
       "order": "54",
@@ -97,7 +100,8 @@
       "submit_url": "https://theapptools.com/",
       "auth_login_command": "node src/cli.js auth login --profile \"theapptools-com\" --url \"https://theapptools.com/get-started\"",
       "auth_status_command": "node src/cli.js auth status --profile \"theapptools-com\"",
-      "auth_scout_command": "node src/cli.js scout \"https://theapptools.com/\" --auth-profile \"theapptools-com\" --target-id \"theapptools-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright"
+      "auth_scout_command": "node src/cli.js scout \"https://theapptools.com/\" --auth-profile \"theapptools-com\" --target-id \"theapptools-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
+      "safety_blocker": ""
     },
     {
       "order": "55",
@@ -119,7 +123,8 @@
       "submit_url": "https://thecoretools.com/",
       "auth_login_command": "node src/cli.js auth login --profile \"thecoretools-com\" --url \"https://thecoretools.com/get-started\"",
       "auth_status_command": "node src/cli.js auth status --profile \"thecoretools-com\"",
-      "auth_scout_command": "node src/cli.js scout \"https://thecoretools.com/\" --auth-profile \"thecoretools-com\" --target-id \"thecoretools-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright"
+      "auth_scout_command": "node src/cli.js scout \"https://thecoretools.com/\" --auth-profile \"thecoretools-com\" --target-id \"thecoretools-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
+      "safety_blocker": ""
     },
     {
       "order": "56",
@@ -141,7 +146,8 @@
       "submit_url": "https://tinytoolhub.com/",
       "auth_login_command": "node src/cli.js auth login --profile \"tinytoolhub-com\" --url \"https://tinytoolhub.com/get-started\"",
       "auth_status_command": "node src/cli.js auth status --profile \"tinytoolhub-com\"",
-      "auth_scout_command": "node src/cli.js scout \"https://tinytoolhub.com/\" --auth-profile \"tinytoolhub-com\" --target-id \"tinytoolhub-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright"
+      "auth_scout_command": "node src/cli.js scout \"https://tinytoolhub.com/\" --auth-profile \"tinytoolhub-com\" --target-id \"tinytoolhub-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
+      "safety_blocker": ""
     },
     {
       "order": "57",
@@ -163,7 +169,8 @@
       "submit_url": "https://toolcosmos.com/",
       "auth_login_command": "node src/cli.js auth login --profile \"toolcosmos-com\" --url \"https://toolcosmos.com/get-started\"",
       "auth_status_command": "node src/cli.js auth status --profile \"toolcosmos-com\"",
-      "auth_scout_command": "node src/cli.js scout \"https://toolcosmos.com/\" --auth-profile \"toolcosmos-com\" --target-id \"toolcosmos-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright"
+      "auth_scout_command": "node src/cli.js scout \"https://toolcosmos.com/\" --auth-profile \"toolcosmos-com\" --target-id \"toolcosmos-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
+      "safety_blocker": ""
     },
     {
       "order": "58",
@@ -185,7 +192,8 @@
       "submit_url": "https://toolfinddir.com/",
       "auth_login_command": "node src/cli.js auth login --profile \"toolfinddir-com\" --url \"https://toolfinddir.com/get-started\"",
       "auth_status_command": "node src/cli.js auth status --profile \"toolfinddir-com\"",
-      "auth_scout_command": "node src/cli.js scout \"https://toolfinddir.com/\" --auth-profile \"toolfinddir-com\" --target-id \"toolfinddir-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright"
+      "auth_scout_command": "node src/cli.js scout \"https://toolfinddir.com/\" --auth-profile \"toolfinddir-com\" --target-id \"toolfinddir-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
+      "safety_blocker": ""
     },
     {
       "order": "59",
@@ -207,7 +215,8 @@
       "submit_url": "https://toolsignal.com/",
       "auth_login_command": "node src/cli.js auth login --profile \"toolsignal-com\" --url \"https://toolsignal.com/get-started\"",
       "auth_status_command": "node src/cli.js auth status --profile \"toolsignal-com\"",
-      "auth_scout_command": "node src/cli.js scout \"https://toolsignal.com/\" --auth-profile \"toolsignal-com\" --target-id \"toolsignal-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright"
+      "auth_scout_command": "node src/cli.js scout \"https://toolsignal.com/\" --auth-profile \"toolsignal-com\" --target-id \"toolsignal-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
+      "safety_blocker": ""
     },
     {
       "order": "60",
@@ -229,7 +238,8 @@
       "submit_url": "https://toolslisthq.com/",
       "auth_login_command": "node src/cli.js auth login --profile \"toolslisthq-com\" --url \"https://toolslisthq.com/get-started\"",
       "auth_status_command": "node src/cli.js auth status --profile \"toolslisthq-com\"",
-      "auth_scout_command": "node src/cli.js scout \"https://toolslisthq.com/\" --auth-profile \"toolslisthq-com\" --target-id \"toolslisthq-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright"
+      "auth_scout_command": "node src/cli.js scout \"https://toolslisthq.com/\" --auth-profile \"toolslisthq-com\" --target-id \"toolslisthq-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
+      "safety_blocker": ""
     },
     {
       "order": "61",
@@ -251,7 +261,8 @@
       "submit_url": "https://toolsunderradar.com/",
       "auth_login_command": "node src/cli.js auth login --profile \"toolsunderradar-com\" --url \"https://toolsunderradar.com/get-started\"",
       "auth_status_command": "node src/cli.js auth status --profile \"toolsunderradar-com\"",
-      "auth_scout_command": "node src/cli.js scout \"https://toolsunderradar.com/\" --auth-profile \"toolsunderradar-com\" --target-id \"toolsunderradar-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright"
+      "auth_scout_command": "node src/cli.js scout \"https://toolsunderradar.com/\" --auth-profile \"toolsunderradar-com\" --target-id \"toolsunderradar-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
+      "safety_blocker": ""
     },
     {
       "order": "62",
@@ -273,7 +284,8 @@
       "submit_url": "https://toptrendtools.com/",
       "auth_login_command": "node src/cli.js auth login --profile \"toptrendtools-com\" --url \"https://toptrendtools.com/get-started\"",
       "auth_status_command": "node src/cli.js auth status --profile \"toptrendtools-com\"",
-      "auth_scout_command": "node src/cli.js scout \"https://toptrendtools.com/\" --auth-profile \"toptrendtools-com\" --target-id \"toptrendtools-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright"
+      "auth_scout_command": "node src/cli.js scout \"https://toptrendtools.com/\" --auth-profile \"toptrendtools-com\" --target-id \"toptrendtools-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
+      "safety_blocker": ""
     },
     {
       "order": "63",
@@ -295,7 +307,8 @@
       "submit_url": "https://toshilist.com/",
       "auth_login_command": "node src/cli.js auth login --profile \"toshilist-com\" --url \"https://toshilist.com/get-started\"",
       "auth_status_command": "node src/cli.js auth status --profile \"toshilist-com\"",
-      "auth_scout_command": "node src/cli.js scout \"https://toshilist.com/\" --auth-profile \"toshilist-com\" --target-id \"toshilist-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright"
+      "auth_scout_command": "node src/cli.js scout \"https://toshilist.com/\" --auth-profile \"toshilist-com\" --target-id \"toshilist-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
+      "safety_blocker": ""
     },
     {
       "order": "64",
@@ -317,7 +330,8 @@
       "submit_url": "https://trustiner.com/",
       "auth_login_command": "node src/cli.js auth login --profile \"trustiner-com\" --url \"https://trustiner.com/get-started\"",
       "auth_status_command": "node src/cli.js auth status --profile \"trustiner-com\"",
-      "auth_scout_command": "node src/cli.js scout \"https://trustiner.com/\" --auth-profile \"trustiner-com\" --target-id \"trustiner-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright"
+      "auth_scout_command": "node src/cli.js scout \"https://trustiner.com/\" --auth-profile \"trustiner-com\" --target-id \"trustiner-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
+      "safety_blocker": ""
     },
     {
       "order": "65",
@@ -339,7 +353,8 @@
       "submit_url": "https://weliketools.com/",
       "auth_login_command": "node src/cli.js auth login --profile \"weliketools-com\" --url \"https://weliketools.com/get-started\"",
       "auth_status_command": "node src/cli.js auth status --profile \"weliketools-com\"",
-      "auth_scout_command": "node src/cli.js scout \"https://weliketools.com/\" --auth-profile \"weliketools-com\" --target-id \"weliketools-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright"
+      "auth_scout_command": "node src/cli.js scout \"https://weliketools.com/\" --auth-profile \"weliketools-com\" --target-id \"weliketools-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
+      "safety_blocker": ""
     },
     {
       "order": "66",
@@ -361,7 +376,8 @@
       "submit_url": "https://orbic.ai/login?callbackUrl=https%3A%2F%2Forbic.ai%2Fsubmit%2Ftools",
       "auth_login_command": "node src/cli.js auth login --profile \"orbic-ai\" --url \"https://orbic.ai/login?callbackUrl=https%3A%2F%2Forbic.ai%2Fsubmit%2Ftools\"",
       "auth_status_command": "node src/cli.js auth status --profile \"orbic-ai\"",
-      "auth_scout_command": "node src/cli.js scout \"https://orbic.ai/login?callbackUrl=https%3A%2F%2Forbic.ai%2Fsubmit%2Ftools\" --auth-profile \"orbic-ai\" --target-id \"orbic-ai\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright"
+      "auth_scout_command": "node src/cli.js scout \"https://orbic.ai/login?callbackUrl=https%3A%2F%2Forbic.ai%2Fsubmit%2Ftools\" --auth-profile \"orbic-ai\" --target-id \"orbic-ai\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
+      "safety_blocker": ""
     },
     {
       "order": "67",
@@ -383,7 +399,8 @@
       "submit_url": "https://www.promoteproject.com/login",
       "auth_login_command": "node src/cli.js auth login --profile \"promoteproject\" --url \"https://www.promoteproject.com/login\"",
       "auth_status_command": "node src/cli.js auth status --profile \"promoteproject\"",
-      "auth_scout_command": "node src/cli.js scout \"https://www.promoteproject.com/login\" --auth-profile \"promoteproject\" --target-id \"promoteproject\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright"
+      "auth_scout_command": "node src/cli.js scout \"https://www.promoteproject.com/login\" --auth-profile \"promoteproject\" --target-id \"promoteproject\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
+      "safety_blocker": ""
     },
     {
       "order": "68",
@@ -405,7 +422,8 @@
       "submit_url": "https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit",
       "auth_login_command": "node src/cli.js auth login --profile \"tool-ai\" --url \"https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit\"",
       "auth_status_command": "node src/cli.js auth status --profile \"tool-ai\"",
-      "auth_scout_command": "node src/cli.js scout \"https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit\" --auth-profile \"tool-ai\" --target-id \"tool-ai\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright"
+      "auth_scout_command": "node src/cli.js scout \"https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit\" --auth-profile \"tool-ai\" --target-id \"tool-ai\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
+      "safety_blocker": ""
     },
     {
       "order": "69",
@@ -427,7 +445,8 @@
       "submit_url": "https://aitoptools.com/login?redirect_to=submit",
       "auth_login_command": "node src/cli.js auth login --profile \"aitoptools\" --url \"https://aitoptools.com/login?redirect_to=submit\"",
       "auth_status_command": "node src/cli.js auth status --profile \"aitoptools\"",
-      "auth_scout_command": "node src/cli.js scout \"https://aitoptools.com/login?redirect_to=submit\" --auth-profile \"aitoptools\" --target-id \"aitoptools\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright"
+      "auth_scout_command": "node src/cli.js scout \"https://aitoptools.com/login?redirect_to=submit\" --auth-profile \"aitoptools\" --target-id \"aitoptools\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
+      "safety_blocker": ""
     },
     {
       "order": "70",
@@ -449,7 +468,8 @@
       "submit_url": "https://betalist.com/users/sign_in",
       "auth_login_command": "node src/cli.js auth login --profile \"betalist\" --url \"https://betalist.com/users/sign_in\"",
       "auth_status_command": "node src/cli.js auth status --profile \"betalist\"",
-      "auth_scout_command": "node src/cli.js scout \"https://betalist.com/users/sign_in\" --auth-profile \"betalist\" --target-id \"betalist\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright"
+      "auth_scout_command": "node src/cli.js scout \"https://betalist.com/users/sign_in\" --auth-profile \"betalist\" --target-id \"betalist\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
+      "safety_blocker": ""
     },
     {
       "order": "71",
@@ -471,7 +491,8 @@
       "submit_url": "https://broadwise.org/t/how-to-promote-your-startup-on-broadwise-org/125",
       "auth_login_command": "node src/cli.js auth login --profile \"broadwise-org\" --url \"https://broadwise.org/t/how-to-promote-your-startup-on-broadwise-org/125\"",
       "auth_status_command": "node src/cli.js auth status --profile \"broadwise-org\"",
-      "auth_scout_command": "node src/cli.js scout \"https://broadwise.org/t/how-to-promote-your-startup-on-broadwise-org/125\" --auth-profile \"broadwise-org\" --target-id \"broadwise-org\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright"
+      "auth_scout_command": "node src/cli.js scout \"https://broadwise.org/t/how-to-promote-your-startup-on-broadwise-org/125\" --auth-profile \"broadwise-org\" --target-id \"broadwise-org\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
+      "safety_blocker": ""
     }
   ],
   "summary": {
@@ -479,6 +500,7 @@
     "auth_profiles_found": 0,
     "auth_profiles_missing": 21,
     "missing_auth_profile_rows": 0,
+    "safety_blocked_rows": 0,
     "ready_for_auth_rescout_rows": 0,
     "manual_login_rows": 21,
     "by_status": {

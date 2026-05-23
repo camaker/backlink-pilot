@@ -5,6 +5,7 @@ import { DEFAULT_AUTH_DIR, authMetaPath, authProfileStatus, authStatePath } from
 import { DEFAULT_REGISTRY_FILE } from './registry.js';
 import { parseCsv } from './importers/csv.js';
 import { cleanTrackingUrl } from './normalize.js';
+import { authLoginDomainBlocker } from './auth-login-safety.js';
 
 const AUTH_LOGIN_HEADERS = [
   'order',
@@ -22,6 +23,7 @@ const AUTH_LOGIN_HEADERS = [
   'auth_status_command',
   'auth_scout_command',
   'submit_url',
+  'safety_blocker',
   'manual_login_safety_policy',
 ];
 
@@ -114,11 +116,18 @@ function exclusionReason(row = {}) {
   if (!isAuthLoginRow(row)) return 'not_auth_login_row';
   if (!String(row.auth_profile || '').trim()) return 'missing_auth_profile';
   if (!loginUrl(row)) return 'missing_login_url';
+  const safetyBlocker = authLoginDomainBlocker({
+    ...row,
+    login_url: loginUrl(row),
+    submit_url: cleanUrl(row.submit_url || ''),
+  });
+  if (safetyBlocker) return safetyBlocker;
   if (!loginCommand(row)) return 'missing_auth_login_command';
   return '';
 }
 
 function baseRow(row = {}, status = {}, reason = '') {
+  const safetyBlocker = reason.startsWith('login_domain_mismatch:') ? reason : '';
   return {
     target_id: row.target_id || '',
     name: row.name || '',
@@ -130,8 +139,9 @@ function baseRow(row = {}, status = {}, reason = '') {
     auth_profile: status.profile || row.auth_profile || '',
     auth_state_path: normalizePath(status.path || ''),
     login_url: loginUrl(row),
-    auth_login_command: loginCommand(row),
-    auth_scout_command: scoutCommand(row),
+    auth_login_command: safetyBlocker ? '' : loginCommand(row),
+    auth_scout_command: safetyBlocker ? '' : scoutCommand(row),
+    safety_blocker: safetyBlocker,
     exclusion_reason: reason,
   };
 }

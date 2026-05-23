@@ -1,6 +1,6 @@
 # Auth Login Operator Pack
 
-Generated: 2026-05-23T06:57:09.046Z
+Generated: 2026-05-23T08:40:32.292Z
 Source: backlink-url/assisted-submission-pack/auth-login-next-current.json
 
 ## Safety Policy
@@ -14,8 +14,8 @@ Source: backlink-url/assisted-submission-pack/auth-login-next-current.json
 ## Summary
 
 - Tasks: 10
-- Runnable manual login rows: 9
-- Blocked rows: 1
+- Runnable manual login rows: 10
+- Blocked rows: 0
 
 ## Operating Sequence
 
@@ -36,9 +36,9 @@ Source: backlink-url/assisted-submission-pack/auth-login-next-current.json
 |5|P0|sitelike|sitelike.org|free|unknown|https://www.sitelike.org/add-site|sitelike|Login: `node src/cli.js auth login --profile "sitelike" --url "https://www.sitelike.org/add-site"`<br>Status: `node src/cli.js auth status --profile "sitelike"`|
 |6|P0|247webdirectory|247webdirectory.com|unknown|unknown|https://www.247webdirectory.com/|247webdirectory|Login: `node src/cli.js auth login --profile "247webdirectory" --url "https://www.247webdirectory.com/"`<br>Status: `node src/cli.js auth status --profile "247webdirectory"`|
 |7|P0|asr|activesearchresults.com|unknown|unknown|https://www.activesearchresults.com/addwebsite.php|asr|Login: `node src/cli.js auth login --profile "asr" --url "https://www.activesearchresults.com/addwebsite.php"`<br>Status: `node src/cli.js auth status --profile "asr"`|
-|8|P0|aigc|aigc.cn|unknown|unknown|https://www.ainavpro.com/contribute|aigc|Blocked: login_domain_mismatch:ainavpro.com->aigc.cn|
-|9|P0|ai-ailookme|ailookme.com|unknown|unknown|https://www.ailookme.com/%e7%bd%91%e5%9d%80%e6%8f%90%e4%ba%a4|ai-ailookme|Login: `node src/cli.js auth login --profile "ai-ailookme" --url "https://www.ailookme.com/%e7%bd%91%e5%9d%80%e6%8f%90%e4%ba%a4"`<br>Status: `node src/cli.js auth status --profile "ai-ailookme"`|
-|10|P0|changelog|changelog.com|unknown|unknown|https://changelog.com/news/submit|changelog|Login: `node src/cli.js auth login --profile "changelog" --url "https://changelog.com/news/submit"`<br>Status: `node src/cli.js auth status --profile "changelog"`|
+|8|P0|ai-ailookme|ailookme.com|unknown|unknown|https://www.ailookme.com/%e7%bd%91%e5%9d%80%e6%8f%90%e4%ba%a4|ai-ailookme|Login: `node src/cli.js auth login --profile "ai-ailookme" --url "https://www.ailookme.com/%e7%bd%91%e5%9d%80%e6%8f%90%e4%ba%a4"`<br>Status: `node src/cli.js auth status --profile "ai-ailookme"`|
+|9|P0|changelog|changelog.com|unknown|unknown|https://changelog.com/news/submit|changelog|Login: `node src/cli.js auth login --profile "changelog" --url "https://changelog.com/news/submit"`<br>Status: `node src/cli.js auth status --profile "changelog"`|
+|10|P0|top-best-alternatives|topbestalternatives.com|unknown|unknown|https://www.topbestalternatives.com/|top-best-alternatives|Login: `node src/cli.js auth login --profile "top-best-alternatives" --url "https://www.topbestalternatives.com/"`<br>Status: `node src/cli.js auth status --profile "top-best-alternatives"`|
 
 ## Refresh Command
 

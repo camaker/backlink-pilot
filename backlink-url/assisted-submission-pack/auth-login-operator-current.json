@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "created_at": "2026-05-23T06:57:09.046Z",
+  "created_at": "2026-05-23T08:40:32.292Z",
   "source": "backlink-url/assisted-submission-pack/auth-login-next-current.json",
   "source_type": "tasks",
   "constraints": {
@@ -25,8 +25,8 @@
   },
   "summary": {
     "task_rows": 10,
-    "runnable_manual_login_rows": 9,
-    "blocked_rows": 1,
+    "runnable_manual_login_rows": 10,
+    "blocked_rows": 0,
     "by_priority": {
       "P0": 10
     },
@@ -37,9 +37,7 @@
     "by_risk": {
       "unknown": 10
     },
-    "by_blocker": {
-      "login_domain_mismatch:ainavpro.com->aigc.cn": 1
-    }
+    "by_blocker": {}
   },
   "tasks": [
     {
@@ -185,26 +183,6 @@
     {
       "task_order": "8",
       "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-001.json",
-      "batch_order": "8",
-      "priority": "P0",
-      "target_id": "aigc",
-      "name": "AIGC工具导航",
-      "domain": "aigc.cn",
-      "pricing": "unknown",
-      "risk": "unknown",
-      "auth_profile": "aigc",
-      "status": "manual_login_required",
-      "login_url": "https://www.ainavpro.com/contribute",
-      "submit_url": "https://www.aigc.cn/submit",
-      "auth_state_path": "playwright/.auth/aigc.storage-state.json",
-      "auth_meta_path": "playwright/.auth/aigc.meta.json",
-      "manual_login_command": "",
-      "status_command": "",
-      "blocker": "login_domain_mismatch:ainavpro.com->aigc.cn"
-    },
-    {
-      "task_order": "9",
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-001.json",
       "batch_order": "9",
       "priority": "P0",
       "target_id": "ai-ailookme",
@@ -223,7 +201,7 @@
       "blocker": ""
     },
     {
-      "task_order": "10",
+      "task_order": "9",
       "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-001.json",
       "batch_order": "10",
       "priority": "P0",
@@ -240,6 +218,26 @@
       "auth_meta_path": "playwright/.auth/changelog.meta.json",
       "manual_login_command": "node src/cli.js auth login --profile \"changelog\" --url \"https://changelog.com/news/submit\"",
       "status_command": "node src/cli.js auth status --profile \"changelog\"",
+      "blocker": ""
+    },
+    {
+      "task_order": "10",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-001.json",
+      "batch_order": "11",
+      "priority": "P0",
+      "target_id": "top-best-alternatives",
+      "name": "Top Best Alternatives",
+      "domain": "topbestalternatives.com",
+      "pricing": "unknown",
+      "risk": "unknown",
+      "auth_profile": "top-best-alternatives",
+      "status": "manual_login_required",
+      "login_url": "https://www.topbestalternatives.com/",
+      "submit_url": "https://www.topbestalternatives.com/",
+      "auth_state_path": "playwright/.auth/top-best-alternatives.storage-state.json",
+      "auth_meta_path": "playwright/.auth/top-best-alternatives.meta.json",
+      "manual_login_command": "node src/cli.js auth login --profile \"top-best-alternatives\" --url \"https://www.topbestalternatives.com/\"",
+      "status_command": "node src/cli.js auth status --profile \"top-best-alternatives\"",
       "blocker": ""
     }
   ]

@@ -44,9 +44,9 @@ Invoke-ManualLogin -Order '4' -TargetId 'resource-fyi' -Name 'Resource fyi' -Dom
 Invoke-ManualLogin -Order '5' -TargetId 'sitelike' -Name 'Sitelike' -Domain 'sitelike.org' -Profile 'sitelike' -LoginUrl 'https://www.sitelike.org/add-site'
 Invoke-ManualLogin -Order '6' -TargetId '247webdirectory' -Name '247WebDirectory' -Domain '247webdirectory.com' -Profile '247webdirectory' -LoginUrl 'https://www.247webdirectory.com/'
 Invoke-ManualLogin -Order '7' -TargetId 'asr' -Name 'ASR' -Domain 'activesearchresults.com' -Profile 'asr' -LoginUrl 'https://www.activesearchresults.com/addwebsite.php'
-Write-Host 'Blocked aigc: login_domain_mismatch:ainavpro.com->aigc.cn' -ForegroundColor Red
-Invoke-ManualLogin -Order '9' -TargetId 'ai-ailookme' -Name 'AI工具箱 (ailookme)' -Domain 'ailookme.com' -Profile 'ai-ailookme' -LoginUrl 'https://www.ailookme.com/%e7%bd%91%e5%9d%80%e6%8f%90%e4%ba%a4'
-Invoke-ManualLogin -Order '10' -TargetId 'changelog' -Name 'Changelog' -Domain 'changelog.com' -Profile 'changelog' -LoginUrl 'https://changelog.com/news/submit'
+Invoke-ManualLogin -Order '8' -TargetId 'ai-ailookme' -Name 'AI工具箱 (ailookme)' -Domain 'ailookme.com' -Profile 'ai-ailookme' -LoginUrl 'https://www.ailookme.com/%e7%bd%91%e5%9d%80%e6%8f%90%e4%ba%a4'
+Invoke-ManualLogin -Order '9' -TargetId 'changelog' -Name 'Changelog' -Domain 'changelog.com' -Profile 'changelog' -LoginUrl 'https://changelog.com/news/submit'
+Invoke-ManualLogin -Order '10' -TargetId 'top-best-alternatives' -Name 'Top Best Alternatives' -Domain 'topbestalternatives.com' -Profile 'top-best-alternatives' -LoginUrl 'https://www.topbestalternatives.com/'
 
 Write-Host ""
 Write-Host "After completing logins, run this read-only refresh command:" -ForegroundColor Green
