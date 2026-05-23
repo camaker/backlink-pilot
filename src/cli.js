@@ -13,6 +13,7 @@ import { runCampaign } from './campaign.js';
 import {
   applyCoverageReviewQueueCommand,
   assistedSubmissionPackCommand,
+  authLoginNextCommand,
   authLoginPlanCommand,
   authLoginStatusCommand,
   authRescoutPlanCommand,
@@ -342,6 +343,20 @@ targets
   .option('--json', 'Output full status report as JSON')
   .action(async (batch, opts) => {
     await authLoginStatusCommand(batch, opts);
+  });
+
+targets
+  .command('auth-login-next <batches...>')
+  .description('Select the next manual auth-login tasks from one or more batches without executing them')
+  .option('--auth-dir <path>', 'Auth profile directory')
+  .option('--offset <n>', 'Zero-based offset within actionable manual login rows', '0')
+  .option('--limit <n>', 'Maximum login tasks to select', '10')
+  .option('--output <path>', 'Write task report to JSON/YAML')
+  .option('--csv-output <path>', 'Write selected login tasks to CSV')
+  .option('--preview <n>', 'Rows to preview in text output', '10')
+  .option('--json', 'Output full task report as JSON')
+  .action(async (batches, opts) => {
+    await authLoginNextCommand(batches, opts);
   });
 
 targets

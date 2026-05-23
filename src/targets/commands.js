@@ -17,7 +17,9 @@ import {
   writeAuthLoginPlan,
 } from './auth-login-plan.js';
 import {
+  buildAuthLoginNext,
   buildAuthLoginStatus,
+  writeAuthLoginNext,
   writeAuthLoginStatus,
 } from './auth-login-status.js';
 import {
@@ -250,6 +252,39 @@ export async function authLoginStatusCommand(batchPath, opts = {}) {
   if (written.csv_output) console.log(`CSV written: ${written.csv_output}`);
   for (const row of report.rows.slice(0, Number.parseInt(opts.preview || 10, 10))) {
     console.log(`${row.order}. ${row.status}\t${row.target_id}\t${row.next_action}`);
+  }
+
+  return report;
+}
+
+export async function authLoginNextCommand(batchPaths, opts = {}) {
+  const report = buildAuthLoginNext(batchPaths, {
+    authDir: opts.authDir,
+    offset: opts.offset,
+    limit: opts.limit,
+  });
+  const written = writeAuthLoginNext(report, {
+    output: opts.output,
+    csvOutput: opts.csvOutput,
+  });
+
+  if (opts.json) {
+    console.log(JSON.stringify({ ...report, files: written }, null, 2));
+    return report;
+  }
+
+  console.log(`Batches: ${report.source_batches.join(', ')}`);
+  console.log(`Auth dir: ${report.constraints.auth_dir}`);
+  console.log(`Actionable login rows: ${report.summary.actionable_rows}`);
+  console.log(`Tasks selected: ${report.summary.task_rows}`);
+  console.log(`Batch: ${report.summary.current_batch_start}-${report.summary.current_batch_end} of ${report.summary.actionable_rows}`);
+  console.log(`Remaining after batch: ${report.summary.remaining_after_batch}`);
+  console.log(`Priority counts: ${JSON.stringify(report.summary.by_priority)}`);
+  console.log(`Exclusion reasons: ${JSON.stringify(report.summary.by_exclusion_reason)}`);
+  if (written.output) console.log(`Tasks written: ${written.output}`);
+  if (written.csv_output) console.log(`CSV written: ${written.csv_output}`);
+  for (const row of report.tasks.slice(0, Number.parseInt(opts.preview || 10, 10))) {
+    console.log(`${row.task_order}. ${row.priority}\t${row.target_id}\t${row.auth_login_command}`);
   }
 
   return report;

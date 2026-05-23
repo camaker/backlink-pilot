@@ -73,6 +73,16 @@ When `bb` is selected, the CLI tries to start the `bb-browser` daemon automatica
 Some directories require a normal account login before the submit form is visible. Backlink Pilot supports these as `assisted` targets, but it does not bypass login, OAuth, 2FA, CAPTCHA, Cloudflare, payment, or moderator review.
 
 ```bash
+# Optional: select the next manual login tasks from generated batches.
+# This only writes/prints commands; it does not launch browsers or submit anything.
+node src/cli.js targets auth-login-next \
+  backlink-url/assisted-submission-pack/auth-login-status-batch-001.json \
+  backlink-url/assisted-submission-pack/auth-login-status-batch-002.json \
+  backlink-url/assisted-submission-pack/auth-login-status-batch-003.json \
+  --limit 10 \
+  --output backlink-url/assisted-submission-pack/auth-login-next-001.json \
+  --csv-output backlink-url/assisted-submission-pack/auth-login-next-001.csv
+
 # 1. Open a visible Playwright browser and complete login manually
 node src/cli.js auth login --profile saashub --url https://www.saashub.com/login
 
@@ -145,6 +155,7 @@ node src/cli.js targets coverage-review-suggest <batch.csv> <evidence.csv>  # Cr
 node src/cli.js targets coverage-review-draft <batch.csv> <suggestions.csv>  # Draft rejection-only batch edits from high-confidence suggestions
 node src/cli.js targets promote-coverage-review-batch <review.csv> <batch.csv> --dry-run  # Validate batch promotion before import/scout
 node src/cli.js targets coverage-review-manual-pack <queue.csv>  # Generate a manual review pack from remaining candidates
+node src/cli.js targets auth-login-next <batch...>  # Select next manual login tasks without executing them
 node src/cli.js pipeline --scout-queue   # Scout unverified targets, refresh plan, dry-run or execute
 node src/cli.js scout-plan <plan>        # Scout a generated plan and update target safety
 node src/cli.js run-plan <plan>          # Dry-run or execute verified auto_safe targets

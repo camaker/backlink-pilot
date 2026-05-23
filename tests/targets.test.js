@@ -17,8 +17,11 @@ import {
   writeAuthLoginPlan,
 } from '../src/targets/auth-login-plan.js';
 import {
+  authLoginNextCsv,
+  buildAuthLoginNext,
   authLoginStatusCsv,
   buildAuthLoginStatus,
+  writeAuthLoginNext,
   writeAuthLoginStatus,
 } from '../src/targets/auth-login-status.js';
 import {
@@ -2530,6 +2533,63 @@ describe('auth login status', () => {
       assert.equal(report.rows[1].auth_meta_path, '');
       assert.equal(report.summary.missing_auth_profile_rows, 1);
       assert.equal(report.summary.auth_profiles_found, 0);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('selects next manual login tasks from multiple batches without executing commands', () => {
+    const dir = tempDir();
+    try {
+      const batchOne = join(dir, 'auth-login-batch-001.csv');
+      const batchTwo = join(dir, 'auth-login-batch-002.csv');
+      const authDir = join(dir, 'auth');
+      const output = join(dir, 'auth-login-next.json');
+      const csvOutput = join(dir, 'auth-login-next.csv');
+      mkdirSync(authDir, { recursive: true });
+      writeFileSync(join(authDir, 'saved.storage-state.json'), JSON.stringify({ cookies: [], origins: [] }));
+      writeFileSync(batchOne, [
+        'order,priority,target_id,name,domain,pricing,risk,auth_profile,auth_state_path,status,login_url,auth_login_command,auth_status_command,auth_scout_command,submit_url,manual_login_safety_policy',
+        '1,P0,saved,Saved,saved.example,free,low,saved,auth/saved.storage-state.json,manual_login_required,https://saved.example/login,node src/cli.js auth login --profile "saved" --url "https://saved.example/login",status,node src/cli.js scout "https://saved.example/submit" --auth-profile "saved",https://saved.example/submit,manual',
+        '2,P0,a,A,a.example,free,low,a,auth/a.storage-state.json,manual_login_required,https://a.example/login,node src/cli.js auth login --profile "a" --url "https://a.example/login",status,node src/cli.js scout "https://a.example/submit" --auth-profile "a",https://a.example/submit,manual',
+      ].join('\n'));
+      writeFileSync(batchTwo, [
+        'order,priority,target_id,name,domain,pricing,risk,auth_profile,auth_state_path,status,login_url,auth_login_command,auth_status_command,auth_scout_command,submit_url,manual_login_safety_policy',
+        '3,P1,b,B,b.example,free,low,b,auth/b.storage-state.json,manual_login_required,https://b.example/login,node src/cli.js auth login --profile "b" --url "https://b.example/login",status,node src/cli.js scout "https://b.example/submit" --auth-profile "b",https://b.example/submit,manual',
+        '4,P1,c,C,c.example,free,low,c,auth/c.storage-state.json,manual_login_required,https://c.example/login,node src/cli.js auth login --profile "c" --url "https://c.example/login",status,node src/cli.js scout "https://c.example/submit" --auth-profile "c",https://c.example/submit,manual',
+      ].join('\n'));
+
+      const report = buildAuthLoginNext([batchOne, batchTwo], {
+        authDir,
+        offset: 1,
+        limit: 1,
+      });
+      const written = writeAuthLoginNext(report, { output, csvOutput });
+      const parsed = JSON.parse(readFileSync(output, 'utf-8'));
+      const csvRows = parseCsv(readFileSync(csvOutput, 'utf-8'));
+
+      assert.equal(report.constraints.no_real_submission, true);
+      assert.equal(report.constraints.no_browser_launch, true);
+      assert.equal(report.constraints.no_network_access_required, true);
+      assert.equal(report.constraints.no_command_execution, true);
+      assert.equal(report.summary.actionable_rows, 3);
+      assert.equal(report.summary.task_rows, 1);
+      assert.equal(report.summary.current_batch_start, 2);
+      assert.equal(report.summary.current_batch_end, 2);
+      assert.equal(report.summary.remaining_after_batch, 1);
+      assert.equal(report.summary.by_exclusion_reason.auth_profile_saved, 1);
+      assert.equal(report.summary.by_exclusion_reason.before_offset, 1);
+      assert.equal(report.summary.by_exclusion_reason.after_batch_limit, 1);
+      assert.equal(report.tasks[0].target_id, 'b');
+      assert.equal(report.tasks[0].task_order, '1');
+      assert.equal(report.tasks[0].batch_order, '3');
+      assert.match(report.tasks[0].manual_login_safety_policy, /no_real_submission/);
+      assert.match(authLoginNextCsv(report.tasks), /manual_login_safety_policy/);
+      assert.equal(parsed.summary.task_rows, 1);
+      assert.equal(csvRows.length, 1);
+      assert.equal(csvRows[0].target_id, 'b');
+      assert.equal(written.output.endsWith('auth-login-next.json'), true);
+      assert.equal(written.csv_output.endsWith('auth-login-next.csv'), true);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
