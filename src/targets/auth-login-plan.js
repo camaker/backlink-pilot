@@ -4,6 +4,7 @@ import { parse, stringify } from 'yaml';
 import { DEFAULT_AUTH_DIR, authMetaPath, authProfileStatus, authStatePath } from '../auth/session.js';
 import { DEFAULT_REGISTRY_FILE } from './registry.js';
 import { parseCsv } from './importers/csv.js';
+import { cleanTrackingUrl } from './normalize.js';
 
 const AUTH_LOGIN_HEADERS = [
   'order',
@@ -68,6 +69,10 @@ function commandQuote(value) {
   return `"${String(value || '').replace(/"/g, '\\"')}"`;
 }
 
+function cleanUrl(value = '') {
+  return value ? cleanTrackingUrl(value) : '';
+}
+
 function commandArg(command = '', flag = '') {
   const escaped = flag.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const match = String(command || '').match(new RegExp(`${escaped}\\s+(?:"([^"]*)"|'([^']*)'|(\\S+))`));
@@ -80,19 +85,28 @@ function isAuthLoginRow(row = {}) {
 }
 
 function loginUrl(row = {}) {
-  return commandArg(row.auth_login_command, '--url') ||
+  return cleanUrl(commandArg(row.auth_login_command, '--url') ||
     row.final_url ||
     row.submit_url ||
     row.root_url ||
-    '';
+    '');
 }
 
 function loginCommand(row = {}) {
-  if (row.auth_login_command) return row.auth_login_command;
   const profile = row.auth_profile || row.target_id || '';
   const url = loginUrl(row);
   if (!profile || !url) return '';
   return `node src/cli.js auth login --profile ${commandQuote(profile)} --url ${commandQuote(url)}`;
+}
+
+function scoutCommand(row = {}) {
+  const command = row.auth_scout_command || '';
+  if (!command) return '';
+  const rawSubmitUrl = row.submit_url || '';
+  const rawFinalUrl = row.final_url || '';
+  return command
+    .replace(rawSubmitUrl, cleanUrl(rawSubmitUrl))
+    .replace(rawFinalUrl, cleanUrl(rawFinalUrl));
 }
 
 function exclusionReason(row = {}) {
@@ -109,7 +123,7 @@ function baseRow(row = {}, status = {}, reason = '') {
     target_id: row.target_id || '',
     name: row.name || '',
     domain: row.domain || '',
-    submit_url: row.submit_url || '',
+    submit_url: cleanUrl(row.submit_url || ''),
     priority: row.priority || '',
     pricing: row.pricing || 'unknown',
     risk: row.risk || 'unknown',
@@ -117,7 +131,7 @@ function baseRow(row = {}, status = {}, reason = '') {
     auth_state_path: normalizePath(status.path || ''),
     login_url: loginUrl(row),
     auth_login_command: loginCommand(row),
-    auth_scout_command: row.auth_scout_command || '',
+    auth_scout_command: scoutCommand(row),
     exclusion_reason: reason,
   };
 }

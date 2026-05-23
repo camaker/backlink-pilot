@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "created_at": "2026-05-23T04:58:48.698Z",
+  "created_at": "2026-05-23T05:29:00.435Z",
   "registry": "resources/targets.canonical.yaml",
   "source_queue": "backlink-url/assisted-submission-pack/auth-login-rescout-queue.csv",
   "product": {
@@ -87,6 +87,7 @@
   "constraints": {
     "purpose": "manual_auth_login_collection",
     "limit": 25,
+    "offset": 0,
     "auth_dir": "playwright/.auth",
     "product_config": "backlink-url/submission-materials/xtimer.config.yaml",
     "no_real_submission": true,
@@ -404,8 +405,8 @@
       "risk": "unknown",
       "auth_profile": "alternative-me",
       "auth_state_path": "playwright/.auth/alternative-me.storage-state.json",
-      "login_url": "https://alternative.me/how-to/suggest-alternatives/",
-      "auth_login_command": "node src/cli.js auth login --profile \"alternative-me\" --url \"https://alternative.me/how-to/suggest-alternatives/\"",
+      "login_url": "https://alternative.me/how-to/suggest-alternatives",
+      "auth_login_command": "node src/cli.js auth login --profile \"alternative-me\" --url \"https://alternative.me/how-to/suggest-alternatives\"",
       "auth_scout_command": "node src/cli.js scout \"https://alternative.me/how-to/submit-software\" --auth-profile \"alternative-me\" --target-id \"alternative-me\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
       "exclusion_reason": "",
       "order": 16,
@@ -524,8 +525,8 @@
       "risk": "unknown",
       "auth_profile": "nextpedia",
       "auth_state_path": "playwright/.auth/nextpedia.storage-state.json",
-      "login_url": "https://nextpedia.io/submit-tool/",
-      "auth_login_command": "node src/cli.js auth login --profile \"nextpedia\" --url \"https://nextpedia.io/submit-tool/\"",
+      "login_url": "https://nextpedia.io/submit-tool",
+      "auth_login_command": "node src/cli.js auth login --profile \"nextpedia\" --url \"https://nextpedia.io/submit-tool\"",
       "auth_scout_command": "node src/cli.js scout \"https://www.nextpedia.io/submit-tool\" --auth-profile \"nextpedia\" --target-id \"nextpedia\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
       "exclusion_reason": "",
       "order": 22,
@@ -544,8 +545,8 @@
       "risk": "unknown",
       "auth_profile": "startup-collections",
       "auth_state_path": "playwright/.auth/startup-collections.storage-state.json",
-      "login_url": "https://startupcollections.com/submit-product/",
-      "auth_login_command": "node src/cli.js auth login --profile \"startup-collections\" --url \"https://startupcollections.com/submit-product/\"",
+      "login_url": "https://startupcollections.com/submit-product",
+      "auth_login_command": "node src/cli.js auth login --profile \"startup-collections\" --url \"https://startupcollections.com/submit-product\"",
       "auth_scout_command": "node src/cli.js scout \"https://startupcollections.com/submit-product\" --auth-profile \"startup-collections\" --target-id \"startup-collections\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
       "exclusion_reason": "",
       "order": 23,
@@ -610,7 +611,7 @@
       "login_url": "https://tools.robingood.com/",
       "auth_login_command": "node src/cli.js auth login --profile \"tools-robingood-com\" --url \"https://tools.robingood.com/\"",
       "auth_scout_command": "node src/cli.js scout \"https://tools.robingood.com/\" --auth-profile \"tools-robingood-com\" --target-id \"tools-robingood-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "ai-nav",
@@ -625,7 +626,7 @@
       "login_url": "https://www.ainavpro.com/contribute",
       "auth_login_command": "node src/cli.js auth login --profile \"ai-nav\" --url \"https://www.ainavpro.com/contribute\"",
       "auth_scout_command": "node src/cli.js scout \"https://www.ainavpro.com/contribute\" --auth-profile \"ai-nav\" --target-id \"ai-nav\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "dizkaz-com",
@@ -640,7 +641,7 @@
       "login_url": "https://dizkaz.com/",
       "auth_login_command": "node src/cli.js auth login --profile \"dizkaz-com\" --url \"https://dizkaz.com/\"",
       "auth_scout_command": "node src/cli.js scout \"https://dizkaz.com/\" --auth-profile \"dizkaz-com\" --target-id \"dizkaz-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "foundr-ai",
@@ -655,7 +656,7 @@
       "login_url": "https://foundr.ai/login",
       "auth_login_command": "node src/cli.js auth login --profile \"foundr-ai\" --url \"https://foundr.ai/login\"",
       "auth_scout_command": "node src/cli.js scout \"https://foundr.ai/\" --auth-profile \"foundr-ai\" --target-id \"foundr-ai\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "gainweb-org",
@@ -670,7 +671,7 @@
       "login_url": "https://gainweb.org/",
       "auth_login_command": "node src/cli.js auth login --profile \"gainweb-org\" --url \"https://gainweb.org/\"",
       "auth_scout_command": "node src/cli.js scout \"https://gainweb.org/\" --auth-profile \"gainweb-org\" --target-id \"gainweb-org\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "hhlink-com",
@@ -685,7 +686,7 @@
       "login_url": "https://www.hhlink.com/%E6%8F%90%E4%BA%A4%E6%96%B0%E7%BD%91%E7%AB%99",
       "auth_login_command": "node src/cli.js auth login --profile \"hhlink-com\" --url \"https://www.hhlink.com/%E6%8F%90%E4%BA%A4%E6%96%B0%E7%BD%91%E7%AB%99\"",
       "auth_scout_command": "node src/cli.js scout \"https://www.hhlink.com/%E6%8F%90%E4%BA%A4%E6%96%B0%E7%BD%91%E7%AB%99\" --auth-profile \"hhlink-com\" --target-id \"hhlink-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "iforai",
@@ -697,10 +698,10 @@
       "risk": "unknown",
       "auth_profile": "iforai",
       "auth_state_path": "playwright/.auth/iforai.storage-state.json",
-      "login_url": "https://iforai.com/submit_website/",
-      "auth_login_command": "node src/cli.js auth login --profile \"iforai\" --url \"https://iforai.com/submit_website/\"",
+      "login_url": "https://iforai.com/submit_website",
+      "auth_login_command": "node src/cli.js auth login --profile \"iforai\" --url \"https://iforai.com/submit_website\"",
       "auth_scout_command": "node src/cli.js scout \"https://iforai.com/submit_website\" --auth-profile \"iforai\" --target-id \"iforai\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "mergeek",
@@ -715,7 +716,7 @@
       "login_url": "https://mergeek.com/publish_project",
       "auth_login_command": "node src/cli.js auth login --profile \"mergeek\" --url \"https://mergeek.com/publish_project\"",
       "auth_scout_command": "node src/cli.js scout \"https://mergeek.com/publish_project\" --auth-profile \"mergeek\" --target-id \"mergeek\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "offpagesavvy",
@@ -727,10 +728,10 @@
       "risk": "unknown",
       "auth_profile": "offpagesavvy",
       "auth_state_path": "playwright/.auth/offpagesavvy.storage-state.json",
-      "login_url": "https://www.offpagesavvy.com/submit-your-site/",
-      "auth_login_command": "node src/cli.js auth login --profile \"offpagesavvy\" --url \"https://www.offpagesavvy.com/submit-your-site/\"",
+      "login_url": "https://www.offpagesavvy.com/submit-your-site",
+      "auth_login_command": "node src/cli.js auth login --profile \"offpagesavvy\" --url \"https://www.offpagesavvy.com/submit-your-site\"",
       "auth_scout_command": "node src/cli.js scout \"https://www.offpagesavvy.com/submit-your-site\" --auth-profile \"offpagesavvy\" --target-id \"offpagesavvy\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "wechalet-cn",
@@ -745,7 +746,7 @@
       "login_url": "https://wechalet.cn/appstore/user-submit",
       "auth_login_command": "node src/cli.js auth login --profile \"wechalet-cn\" --url \"https://wechalet.cn/appstore/user-submit\"",
       "auth_scout_command": "node src/cli.js scout \"https://wechalet.cn/appstore/add\" --auth-profile \"wechalet-cn\" --target-id \"wechalet-cn\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "appalist-com",
@@ -760,7 +761,7 @@
       "login_url": "https://appalist.com/get-started",
       "auth_login_command": "node src/cli.js auth login --profile \"appalist-com\" --url \"https://appalist.com/get-started\"",
       "auth_scout_command": "node src/cli.js scout \"https://appalist.com/\" --auth-profile \"appalist-com\" --target-id \"appalist-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "ashlist-com",
@@ -775,7 +776,7 @@
       "login_url": "https://ashlist.com/get-started",
       "auth_login_command": "node src/cli.js auth login --profile \"ashlist-com\" --url \"https://ashlist.com/get-started\"",
       "auth_scout_command": "node src/cli.js scout \"https://ashlist.com/\" --auth-profile \"ashlist-com\" --target-id \"ashlist-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "launchscroll-com",
@@ -790,7 +791,7 @@
       "login_url": "https://launchscroll.com/get-started",
       "auth_login_command": "node src/cli.js auth login --profile \"launchscroll-com\" --url \"https://launchscroll.com/get-started\"",
       "auth_scout_command": "node src/cli.js scout \"https://launchscroll.com/\" --auth-profile \"launchscroll-com\" --target-id \"launchscroll-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "mylaunchstash-com",
@@ -805,7 +806,7 @@
       "login_url": "https://mylaunchstash.com/get-started",
       "auth_login_command": "node src/cli.js auth login --profile \"mylaunchstash-com\" --url \"https://mylaunchstash.com/get-started\"",
       "auth_scout_command": "node src/cli.js scout \"https://mylaunchstash.com/\" --auth-profile \"mylaunchstash-com\" --target-id \"mylaunchstash-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "openfuture-ai",
@@ -820,7 +821,7 @@
       "login_url": "https://openfuture.ai/zh/submit-tool",
       "auth_login_command": "node src/cli.js auth login --profile \"openfuture-ai\" --url \"https://openfuture.ai/zh/submit-tool\"",
       "auth_scout_command": "node src/cli.js scout \"https://openfuture.ai/zh/submit-tool\" --auth-profile \"openfuture-ai\" --target-id \"openfuture-ai\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "poweruptools-com",
@@ -835,7 +836,7 @@
       "login_url": "https://poweruptools.com/get-started",
       "auth_login_command": "node src/cli.js auth login --profile \"poweruptools-com\" --url \"https://poweruptools.com/get-started\"",
       "auth_scout_command": "node src/cli.js scout \"https://poweruptools.com/\" --auth-profile \"poweruptools-com\" --target-id \"poweruptools-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "productlistdir-com",
@@ -850,7 +851,7 @@
       "login_url": "https://productlistdir.com/get-started",
       "auth_login_command": "node src/cli.js auth login --profile \"productlistdir-com\" --url \"https://productlistdir.com/get-started\"",
       "auth_scout_command": "node src/cli.js scout \"https://productlistdir.com/\" --auth-profile \"productlistdir-com\" --target-id \"productlistdir-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "productwing-com",
@@ -865,7 +866,7 @@
       "login_url": "https://productwing.com/get-started",
       "auth_login_command": "node src/cli.js auth login --profile \"productwing-com\" --url \"https://productwing.com/get-started\"",
       "auth_scout_command": "node src/cli.js scout \"https://productwing.com/\" --auth-profile \"productwing-com\" --target-id \"productwing-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "www-ruanyifeng-com",
@@ -880,7 +881,7 @@
       "login_url": "https://www.ruanyifeng.com/",
       "auth_login_command": "node src/cli.js auth login --profile \"www-ruanyifeng-com\" --url \"https://www.ruanyifeng.com/\"",
       "auth_scout_command": "node src/cli.js scout \"https://www.ruanyifeng.com/\" --auth-profile \"www-ruanyifeng-com\" --target-id \"www-ruanyifeng-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "saasfield-com",
@@ -895,7 +896,7 @@
       "login_url": "https://saasfield.com/get-started",
       "auth_login_command": "node src/cli.js auth login --profile \"saasfield-com\" --url \"https://saasfield.com/get-started\"",
       "auth_scout_command": "node src/cli.js scout \"https://saasfield.com/\" --auth-profile \"saasfield-com\" --target-id \"saasfield-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "saashubdirectory-com",
@@ -910,7 +911,7 @@
       "login_url": "https://saashubdirectory.com/get-started",
       "auth_login_command": "node src/cli.js auth login --profile \"saashubdirectory-com\" --url \"https://saashubdirectory.com/get-started\"",
       "auth_scout_command": "node src/cli.js scout \"https://saashubdirectory.com/\" --auth-profile \"saashubdirectory-com\" --target-id \"saashubdirectory-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "saasroots-com",
@@ -925,7 +926,7 @@
       "login_url": "https://saasroots.com/get-started",
       "auth_login_command": "node src/cli.js auth login --profile \"saasroots-com\" --url \"https://saasroots.com/get-started\"",
       "auth_scout_command": "node src/cli.js scout \"https://saasroots.com/\" --auth-profile \"saasroots-com\" --target-id \"saasroots-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "smartkithub-com",
@@ -940,7 +941,7 @@
       "login_url": "https://smartkithub.com/get-started",
       "auth_login_command": "node src/cli.js auth login --profile \"smartkithub-com\" --url \"https://smartkithub.com/get-started\"",
       "auth_scout_command": "node src/cli.js scout \"https://smartkithub.com/\" --auth-profile \"smartkithub-com\" --target-id \"smartkithub-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "softwarebolt-com",
@@ -955,7 +956,7 @@
       "login_url": "https://softwarebolt.com/get-started",
       "auth_login_command": "node src/cli.js auth login --profile \"softwarebolt-com\" --url \"https://softwarebolt.com/get-started\"",
       "auth_scout_command": "node src/cli.js scout \"https://softwarebolt.com/\" --auth-profile \"softwarebolt-com\" --target-id \"softwarebolt-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "solvertools-com",
@@ -970,7 +971,7 @@
       "login_url": "https://solvertools.com/get-started",
       "auth_login_command": "node src/cli.js auth login --profile \"solvertools-com\" --url \"https://solvertools.com/get-started\"",
       "auth_scout_command": "node src/cli.js scout \"https://solvertools.com/\" --auth-profile \"solvertools-com\" --target-id \"solvertools-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "sourcedir-com",
@@ -985,7 +986,7 @@
       "login_url": "https://sourcedir.com/get-started",
       "auth_login_command": "node src/cli.js auth login --profile \"sourcedir-com\" --url \"https://sourcedir.com/get-started\"",
       "auth_scout_command": "node src/cli.js scout \"https://sourcedir.com/\" --auth-profile \"sourcedir-com\" --target-id \"sourcedir-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "stackdirectory-com",
@@ -1000,7 +1001,7 @@
       "login_url": "https://stackdirectory.com/get-started",
       "auth_login_command": "node src/cli.js auth login --profile \"stackdirectory-com\" --url \"https://stackdirectory.com/get-started\"",
       "auth_scout_command": "node src/cli.js scout \"https://stackdirectory.com/\" --auth-profile \"stackdirectory-com\" --target-id \"stackdirectory-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "startupvessel-com",
@@ -1015,7 +1016,7 @@
       "login_url": "https://startupvessel.com/get-started",
       "auth_login_command": "node src/cli.js auth login --profile \"startupvessel-com\" --url \"https://startupvessel.com/get-started\"",
       "auth_scout_command": "node src/cli.js scout \"https://startupvessel.com/\" --auth-profile \"startupvessel-com\" --target-id \"startupvessel-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "theapptools-com",
@@ -1030,7 +1031,7 @@
       "login_url": "https://theapptools.com/get-started",
       "auth_login_command": "node src/cli.js auth login --profile \"theapptools-com\" --url \"https://theapptools.com/get-started\"",
       "auth_scout_command": "node src/cli.js scout \"https://theapptools.com/\" --auth-profile \"theapptools-com\" --target-id \"theapptools-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "thecoretools-com",
@@ -1045,7 +1046,7 @@
       "login_url": "https://thecoretools.com/get-started",
       "auth_login_command": "node src/cli.js auth login --profile \"thecoretools-com\" --url \"https://thecoretools.com/get-started\"",
       "auth_scout_command": "node src/cli.js scout \"https://thecoretools.com/\" --auth-profile \"thecoretools-com\" --target-id \"thecoretools-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "tinytoolhub-com",
@@ -1060,7 +1061,7 @@
       "login_url": "https://tinytoolhub.com/get-started",
       "auth_login_command": "node src/cli.js auth login --profile \"tinytoolhub-com\" --url \"https://tinytoolhub.com/get-started\"",
       "auth_scout_command": "node src/cli.js scout \"https://tinytoolhub.com/\" --auth-profile \"tinytoolhub-com\" --target-id \"tinytoolhub-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "toolcosmos-com",
@@ -1075,7 +1076,7 @@
       "login_url": "https://toolcosmos.com/get-started",
       "auth_login_command": "node src/cli.js auth login --profile \"toolcosmos-com\" --url \"https://toolcosmos.com/get-started\"",
       "auth_scout_command": "node src/cli.js scout \"https://toolcosmos.com/\" --auth-profile \"toolcosmos-com\" --target-id \"toolcosmos-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "toolfinddir-com",
@@ -1090,7 +1091,7 @@
       "login_url": "https://toolfinddir.com/get-started",
       "auth_login_command": "node src/cli.js auth login --profile \"toolfinddir-com\" --url \"https://toolfinddir.com/get-started\"",
       "auth_scout_command": "node src/cli.js scout \"https://toolfinddir.com/\" --auth-profile \"toolfinddir-com\" --target-id \"toolfinddir-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "toolsignal-com",
@@ -1105,7 +1106,7 @@
       "login_url": "https://toolsignal.com/get-started",
       "auth_login_command": "node src/cli.js auth login --profile \"toolsignal-com\" --url \"https://toolsignal.com/get-started\"",
       "auth_scout_command": "node src/cli.js scout \"https://toolsignal.com/\" --auth-profile \"toolsignal-com\" --target-id \"toolsignal-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "toolslisthq-com",
@@ -1120,7 +1121,7 @@
       "login_url": "https://toolslisthq.com/get-started",
       "auth_login_command": "node src/cli.js auth login --profile \"toolslisthq-com\" --url \"https://toolslisthq.com/get-started\"",
       "auth_scout_command": "node src/cli.js scout \"https://toolslisthq.com/\" --auth-profile \"toolslisthq-com\" --target-id \"toolslisthq-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "toolsunderradar-com",
@@ -1135,7 +1136,7 @@
       "login_url": "https://toolsunderradar.com/get-started",
       "auth_login_command": "node src/cli.js auth login --profile \"toolsunderradar-com\" --url \"https://toolsunderradar.com/get-started\"",
       "auth_scout_command": "node src/cli.js scout \"https://toolsunderradar.com/\" --auth-profile \"toolsunderradar-com\" --target-id \"toolsunderradar-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "toptrendtools-com",
@@ -1150,7 +1151,7 @@
       "login_url": "https://toptrendtools.com/get-started",
       "auth_login_command": "node src/cli.js auth login --profile \"toptrendtools-com\" --url \"https://toptrendtools.com/get-started\"",
       "auth_scout_command": "node src/cli.js scout \"https://toptrendtools.com/\" --auth-profile \"toptrendtools-com\" --target-id \"toptrendtools-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "toshilist-com",
@@ -1165,7 +1166,7 @@
       "login_url": "https://toshilist.com/get-started",
       "auth_login_command": "node src/cli.js auth login --profile \"toshilist-com\" --url \"https://toshilist.com/get-started\"",
       "auth_scout_command": "node src/cli.js scout \"https://toshilist.com/\" --auth-profile \"toshilist-com\" --target-id \"toshilist-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "trustiner-com",
@@ -1180,7 +1181,7 @@
       "login_url": "https://trustiner.com/get-started",
       "auth_login_command": "node src/cli.js auth login --profile \"trustiner-com\" --url \"https://trustiner.com/get-started\"",
       "auth_scout_command": "node src/cli.js scout \"https://trustiner.com/\" --auth-profile \"trustiner-com\" --target-id \"trustiner-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "weliketools-com",
@@ -1195,7 +1196,7 @@
       "login_url": "https://weliketools.com/get-started",
       "auth_login_command": "node src/cli.js auth login --profile \"weliketools-com\" --url \"https://weliketools.com/get-started\"",
       "auth_scout_command": "node src/cli.js scout \"https://weliketools.com/\" --auth-profile \"weliketools-com\" --target-id \"weliketools-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "orbic-ai",
@@ -1210,7 +1211,7 @@
       "login_url": "https://orbic.ai/login?callbackUrl=https%3A%2F%2Forbic.ai%2Fsubmit%2Ftools",
       "auth_login_command": "node src/cli.js auth login --profile \"orbic-ai\" --url \"https://orbic.ai/login?callbackUrl=https%3A%2F%2Forbic.ai%2Fsubmit%2Ftools\"",
       "auth_scout_command": "node src/cli.js scout \"https://orbic.ai/login?callbackUrl=https%3A%2F%2Forbic.ai%2Fsubmit%2Ftools\" --auth-profile \"orbic-ai\" --target-id \"orbic-ai\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "promoteproject",
@@ -1225,22 +1226,22 @@
       "login_url": "https://www.promoteproject.com/login",
       "auth_login_command": "node src/cli.js auth login --profile \"promoteproject\" --url \"https://www.promoteproject.com/login\"",
       "auth_scout_command": "node src/cli.js scout \"https://www.promoteproject.com/login\" --auth-profile \"promoteproject\" --target-id \"promoteproject\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "tool-ai",
       "name": "Tool AI",
       "domain": "toolai.io",
-      "submit_url": "https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit%3Fref%3Daidirectories",
+      "submit_url": "https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit",
       "priority": "P1",
       "pricing": "free",
       "risk": "medium",
       "auth_profile": "tool-ai",
       "auth_state_path": "playwright/.auth/tool-ai.storage-state.json",
-      "login_url": "https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit%3Fref%3Daidirectories",
-      "auth_login_command": "node src/cli.js auth login --profile \"tool-ai\" --url \"https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit%3Fref%3Daidirectories\"",
-      "auth_scout_command": "node src/cli.js scout \"https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit%3Fref%3Daidirectories\" --auth-profile \"tool-ai\" --target-id \"tool-ai\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "login_url": "https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit",
+      "auth_login_command": "node src/cli.js auth login --profile \"tool-ai\" --url \"https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit\"",
+      "auth_scout_command": "node src/cli.js scout \"https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit\" --auth-profile \"tool-ai\" --target-id \"tool-ai\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "aitoptools",
@@ -1255,7 +1256,7 @@
       "login_url": "https://aitoptools.com/login?redirect_to=submit",
       "auth_login_command": "node src/cli.js auth login --profile \"aitoptools\" --url \"https://aitoptools.com/login?redirect_to=submit\"",
       "auth_scout_command": "node src/cli.js scout \"https://aitoptools.com/login?redirect_to=submit\" --auth-profile \"aitoptools\" --target-id \"aitoptools\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "betalist",
@@ -1270,7 +1271,7 @@
       "login_url": "https://betalist.com/users/sign_in",
       "auth_login_command": "node src/cli.js auth login --profile \"betalist\" --url \"https://betalist.com/users/sign_in\"",
       "auth_scout_command": "node src/cli.js scout \"https://betalist.com/users/sign_in\" --auth-profile \"betalist\" --target-id \"betalist\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     },
     {
       "target_id": "broadwise-org",
@@ -1285,20 +1286,25 @@
       "login_url": "https://broadwise.org/t/how-to-promote-your-startup-on-broadwise-org/125",
       "auth_login_command": "node src/cli.js auth login --profile \"broadwise-org\" --url \"https://broadwise.org/t/how-to-promote-your-startup-on-broadwise-org/125\"",
       "auth_scout_command": "node src/cli.js scout \"https://broadwise.org/t/how-to-promote-your-startup-on-broadwise-org/125\" --auth-profile \"broadwise-org\" --target-id \"broadwise-org\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "exclusion_reason": "over_limit"
+      "exclusion_reason": "after_batch_limit"
     }
   ],
   "summary": {
     "source_rows": 71,
     "auth_login_rows": 71,
     "pending_rows": 71,
+    "offset": 0,
+    "limit": 25,
+    "current_batch_start": 1,
+    "current_batch_end": 25,
     "queued_rows": 25,
+    "remaining_after_batch": 46,
     "completed_rows": 0,
     "excluded_rows": 46,
     "auth_profiles_found": 0,
     "auth_profiles_missing": 71,
     "by_exclusion_reason": {
-      "over_limit": 46
+      "after_batch_limit": 46
     }
   }
 }

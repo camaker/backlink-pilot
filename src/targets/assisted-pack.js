@@ -2,6 +2,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { parse } from 'yaml';
 import { DEFAULT_REGISTRY_FILE, loadRegistry } from './registry.js';
+import { cleanTrackingUrl } from './normalize.js';
 
 const ASSISTED_PACK_HEADERS = [
   'rank',
@@ -307,13 +308,17 @@ function commandQuote(value) {
   return `"${String(value || '').replace(/"/g, '\\"')}"`;
 }
 
+function cleanUrl(value = '') {
+  return value ? cleanTrackingUrl(value) : '';
+}
+
 function targetRow(target, context = {}) {
   const blockers = targetBlockers(target);
   const score = scoreTarget(target, blockers);
   const requiresAuth = blockers.includes('auth_or_oauth_required');
   const profile = requiresAuth ? safeProfileName(target) : '';
-  const loginUrl = target.technical?.final_url || target.submit_url || target.root_url || '';
-  const scoutUrl = target.submit_url || target.technical?.final_url || target.root_url || '';
+  const loginUrl = cleanUrl(target.technical?.final_url || target.submit_url || target.root_url || '');
+  const scoutUrl = cleanUrl(target.submit_url || target.technical?.final_url || target.root_url || '');
   const stats = requiredFieldStats(target);
   const registryArg = ` --registry ${commandQuote(context.registry || DEFAULT_REGISTRY_FILE)}`;
 
@@ -340,9 +345,9 @@ function targetRow(target, context = {}) {
     auth_scout_command: requiresAuth
       ? `node src/cli.js scout ${commandQuote(scoutUrl)} --auth-profile ${commandQuote(profile)} --target-id ${commandQuote(target.id || '')}${registryArg} --persist --scout-dir "resources/scout-results" --update-registry --engine playwright`
       : '',
-    submit_url: target.submit_url || '',
-    final_url: target.technical?.final_url || '',
-    root_url: target.root_url || '',
+    submit_url: cleanUrl(target.submit_url || ''),
+    final_url: cleanUrl(target.technical?.final_url || ''),
+    root_url: cleanUrl(target.root_url || ''),
     last_scouted_at: target.technical?.last_scouted_at || '',
     last_submitted_at: target.submission?.last_submitted_at || '',
     form_count: String(asArray(target.forms).length),

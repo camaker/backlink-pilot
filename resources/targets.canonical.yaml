@@ -17810,7 +17810,7 @@ targets:
       auth: none
       captcha: none
       reachable: yes
-      final_url: https://www.afternic.com/forsale/intersys.ai?utm_source=TDFS_DASLNC&utm_medium=parkedpages&utm_campaign=x_corp_tdfs-daslnc_base&traffic_type=TDFS_DASLNC&traffic_id=daslnc&
+      final_url: https://www.afternic.com/forsale/intersys.ai?traffic_id=daslnc&traffic_type=TDFS_DASLNC
       http_status: 200
     submission:
       mode: needs_review
@@ -26398,7 +26398,7 @@ targets:
       auth: oauth
       captcha: required
       reachable: yes
-      final_url: https://solo.xin/login?ref=%2Fpublish
+      final_url: https://solo.xin/login
       http_status: 200
     submission:
       mode: skip
@@ -32578,8 +32578,8 @@ targets:
     name: Tool AI
     domain: toolai.io
     root_url: https://toolai.io/
-    submit_url: https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit%3Fref%3Daidirectories
-    normalized_key: toolai.io/login?returnurl=%2fen%2fsubmit%3fref%3daidirectories
+    submit_url: https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit
+    normalized_key: toolai.io/login?returnurl=%2fen%2fsubmit
     type: form
     lang: unknown
     group: ""

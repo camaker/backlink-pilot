@@ -14,6 +14,7 @@ import {
   applyCoverageReviewQueueCommand,
   assistedSubmissionPackCommand,
   authLoginPlanCommand,
+  authLoginStatusCommand,
   authRescoutPlanCommand,
   coverageReviewDraftCommand,
   coverageReviewEvidenceCommand,
@@ -329,6 +330,18 @@ targets
   .option('--json', 'Output full plan as JSON')
   .action(async (queue, opts) => {
     await authLoginPlanCommand(queue, opts);
+  });
+
+targets
+  .command('auth-login-status <batch>')
+  .description('Check saved auth profiles for an auth-login batch without launching browsers')
+  .option('--auth-dir <path>', 'Auth profile directory')
+  .option('--output <path>', 'Write status report to JSON/YAML')
+  .option('--csv-output <path>', 'Write per-target status rows to CSV')
+  .option('--preview <n>', 'Rows to preview in text output', '10')
+  .option('--json', 'Output full status report as JSON')
+  .action(async (batch, opts) => {
+    await authLoginStatusCommand(batch, opts);
   });
 
 targets

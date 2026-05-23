@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "created_at": "2026-05-23T04:48:40.399Z",
+  "created_at": "2026-05-23T05:35:28.645Z",
   "registry": "resources/targets.canonical.yaml",
   "source_queue": "backlink-url/assisted-submission-pack/auth-login-rescout-queue.csv",
   "product": {
@@ -333,7 +333,7 @@
       "auth_profile": "alternative-me",
       "auth_state_path": "playwright/.auth/alternative-me.storage-state.json",
       "exclusion_reason": "auth_profile_missing",
-      "auth_login_command": "node src/cli.js auth login --profile \"alternative-me\" --url \"https://alternative.me/how-to/suggest-alternatives/\""
+      "auth_login_command": "node src/cli.js auth login --profile \"alternative-me\" --url \"https://alternative.me/how-to/suggest-alternatives\""
     },
     {
       "target_id": "bestofai",
@@ -423,7 +423,7 @@
       "auth_profile": "nextpedia",
       "auth_state_path": "playwright/.auth/nextpedia.storage-state.json",
       "exclusion_reason": "auth_profile_missing",
-      "auth_login_command": "node src/cli.js auth login --profile \"nextpedia\" --url \"https://nextpedia.io/submit-tool/\""
+      "auth_login_command": "node src/cli.js auth login --profile \"nextpedia\" --url \"https://nextpedia.io/submit-tool\""
     },
     {
       "target_id": "startup-collections",
@@ -438,7 +438,7 @@
       "auth_profile": "startup-collections",
       "auth_state_path": "playwright/.auth/startup-collections.storage-state.json",
       "exclusion_reason": "auth_profile_missing",
-      "auth_login_command": "node src/cli.js auth login --profile \"startup-collections\" --url \"https://startupcollections.com/submit-product/\""
+      "auth_login_command": "node src/cli.js auth login --profile \"startup-collections\" --url \"https://startupcollections.com/submit-product\""
     },
     {
       "target_id": "startuptracker",
@@ -573,7 +573,7 @@
       "auth_profile": "iforai",
       "auth_state_path": "playwright/.auth/iforai.storage-state.json",
       "exclusion_reason": "auth_profile_missing",
-      "auth_login_command": "node src/cli.js auth login --profile \"iforai\" --url \"https://iforai.com/submit_website/\""
+      "auth_login_command": "node src/cli.js auth login --profile \"iforai\" --url \"https://iforai.com/submit_website\""
     },
     {
       "target_id": "mergeek",
@@ -603,7 +603,7 @@
       "auth_profile": "offpagesavvy",
       "auth_state_path": "playwright/.auth/offpagesavvy.storage-state.json",
       "exclusion_reason": "auth_profile_missing",
-      "auth_login_command": "node src/cli.js auth login --profile \"offpagesavvy\" --url \"https://www.offpagesavvy.com/submit-your-site/\""
+      "auth_login_command": "node src/cli.js auth login --profile \"offpagesavvy\" --url \"https://www.offpagesavvy.com/submit-your-site\""
     },
     {
       "target_id": "wechalet-cn",
@@ -1104,7 +1104,7 @@
       "target_id": "tool-ai",
       "name": "Tool AI",
       "domain": "toolai.io",
-      "submit_url": "https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit%3Fref%3Daidirectories",
+      "submit_url": "https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit",
       "mode": "assisted",
       "pricing": "free",
       "risk": "medium",
@@ -1113,7 +1113,7 @@
       "auth_profile": "tool-ai",
       "auth_state_path": "playwright/.auth/tool-ai.storage-state.json",
       "exclusion_reason": "auth_profile_missing",
-      "auth_login_command": "node src/cli.js auth login --profile \"tool-ai\" --url \"https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit%3Fref%3Daidirectories\""
+      "auth_login_command": "node src/cli.js auth login --profile \"tool-ai\" --url \"https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit\""
     },
     {
       "target_id": "aitoptools",

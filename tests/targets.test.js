@@ -17,6 +17,11 @@ import {
   writeAuthLoginPlan,
 } from '../src/targets/auth-login-plan.js';
 import {
+  authLoginStatusCsv,
+  buildAuthLoginStatus,
+  writeAuthLoginStatus,
+} from '../src/targets/auth-login-status.js';
+import {
   buildAuthRescoutPlan,
   writeAuthRescoutPlan,
 } from '../src/targets/auth-rescout-plan.js';
@@ -75,6 +80,13 @@ describe('target URL normalization', () => {
     assert.equal(normalized.url, 'https://www.example.com/submit?a=1&b=2');
     assert.equal(normalized.domain, 'example.com');
     assert.equal(normalized.dedupeKey, 'example.com/submit?a=1&b=2');
+  });
+
+  it('strips tracking params from nested encoded redirect URLs', () => {
+    const normalized = normalizeUrl('https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit%3Fref%3Daidirectories&utm_source=x');
+
+    assert.equal(normalized.url, 'https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit');
+    assert.equal(normalized.dedupeKey, 'toolai.io/login?returnurl=%2fen%2fsubmit');
   });
 
   it('accepts bare domains and rejects non-http protocols', () => {
@@ -2247,6 +2259,29 @@ describe('auth rescout plan', () => {
       rmSync(dir, { recursive: true, force: true });
     }
   });
+
+  it('cleans tracking params from queued and excluded auth rescout rows', () => {
+    const dir = tempDir();
+    try {
+      const queue = join(dir, 'auth-login-rescout-queue.csv');
+      const authDir = join(dir, 'auth');
+      mkdirSync(authDir, { recursive: true });
+      writeFileSync(join(authDir, 'saved.storage-state.json'), JSON.stringify({ cookies: [], origins: [] }));
+      writeFileSync(queue, [
+        'rank,priority,priority_score,target_id,name,domain,mode,status,pricing,risk,lang,manual_bucket,automation_after_human,submission_policy,safety_blockers,recommended_next_step,auth_profile,auth_login_command,auth_scout_command,submit_url,final_url,root_url,last_scouted_at,last_submitted_at,form_count,field_count,required_fields,unmapped_required_fields,submit_button_count,source,reason,notes',
+        '1,P1,180,saved,Tool AI,toolai.io,assisted,auth_required,free,medium,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required,login,saved,"node src/cli.js auth login --profile ""saved"" --url ""https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit%3Fref%3Daidirectories""",scout,https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit%3Fref%3Daidirectories,,https://toolai.io,,,,,,,,test,auth_signal,',
+        '2,P1,170,missing,Missing,toolai.io,assisted,auth_required,free,medium,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required,login,missing,"node src/cli.js auth login --profile ""missing"" --url ""https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit%3Fref%3Daidirectories""",scout,https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit%3Fref%3Daidirectories,,https://toolai.io,,,,,,,,test,auth_signal,',
+      ].join('\n'));
+
+      const plan = buildAuthRescoutPlan(queue, { authDir });
+
+      assert.equal(plan.targets[0].submit_url, 'https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit');
+      assert.equal(plan.excluded[0].submit_url, 'https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit');
+      assert.doesNotMatch(plan.excluded[0].auth_login_command, /ref/i);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
 });
 
 describe('auth login plan', () => {
@@ -2335,6 +2370,30 @@ describe('auth login plan', () => {
     }
   });
 
+  it('cleans tracking params from generated login and scout commands', () => {
+    const dir = tempDir();
+    try {
+      const queue = join(dir, 'auth-login-rescout-queue.csv');
+      writeFileSync(queue, [
+        'rank,priority,priority_score,target_id,name,domain,mode,status,pricing,risk,lang,manual_bucket,automation_after_human,submission_policy,safety_blockers,recommended_next_step,auth_profile,auth_login_command,auth_scout_command,submit_url,final_url,root_url,last_scouted_at,last_submitted_at,form_count,field_count,required_fields,unmapped_required_fields,submit_button_count,source,reason,notes',
+        '1,P1,180,tool-ai,Tool AI,toolai.io,assisted,auth_required,free,medium,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required,login,tool-ai,"node src/cli.js auth login --profile ""tool-ai"" --url ""https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit%3Fref%3Daidirectories""","node src/cli.js scout ""https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit%3Fref%3Daidirectories"" --auth-profile ""tool-ai""",https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit%3Fref%3Daidirectories,,https://toolai.io,,,,,,,,test,auth_signal,',
+      ].join('\n'));
+
+      const plan = buildAuthLoginPlan(queue, {
+        authDir: join(dir, 'auth'),
+        limit: 1,
+      });
+
+      assert.equal(plan.targets[0].login_url, 'https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit');
+      assert.equal(plan.targets[0].submit_url, 'https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit');
+      assert.match(plan.targets[0].auth_login_command, /ReturnUrl=%2Fen%2Fsubmit"/);
+      assert.doesNotMatch(plan.targets[0].auth_login_command, /ref/i);
+      assert.doesNotMatch(plan.targets[0].auth_scout_command, /ref/i);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
   it('supports rolling manual login batches with offset', () => {
     const dir = tempDir();
     try {
@@ -2362,6 +2421,115 @@ describe('auth login plan', () => {
       assert.equal(plan.summary.remaining_after_batch, 1);
       assert.equal(plan.summary.by_exclusion_reason.before_offset, 1);
       assert.equal(plan.summary.by_exclusion_reason.after_batch_limit, 1);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe('auth login status', () => {
+  it('checks saved and missing auth profiles from a login batch CSV', () => {
+    const dir = tempDir();
+    try {
+      const batch = join(dir, 'auth-login-batch.csv');
+      const authDir = join(dir, 'auth');
+      const output = join(dir, 'auth-login-status.json');
+      const csvOutput = join(dir, 'auth-login-status.csv');
+      mkdirSync(authDir, { recursive: true });
+      writeFileSync(join(authDir, 'saved.storage-state.json'), JSON.stringify({ cookies: [], origins: [] }));
+      writeFileSync(batch, [
+        'order,priority,target_id,name,domain,pricing,risk,auth_profile,auth_state_path,status,login_url,auth_login_command,auth_status_command,auth_scout_command,submit_url,manual_login_safety_policy',
+        '1,P0,saved,Saved,saved.example,free,low,saved,auth/saved.storage-state.json,manual_login_required,https://saved.example/login,node src/cli.js auth login --profile "saved" --url "https://saved.example/login",status,node src/cli.js scout "https://saved.example/submit" --auth-profile "saved",https://saved.example/submit,manual',
+        '2,P0,missing,Missing,missing.example,free,low,missing,auth/missing.storage-state.json,manual_login_required,https://missing.example/login,node src/cli.js auth login --profile "missing" --url "https://missing.example/login",status,node src/cli.js scout "https://missing.example/submit" --auth-profile "missing",https://missing.example/submit,manual',
+      ].join('\n'));
+
+      const report = buildAuthLoginStatus(batch, { authDir });
+      const written = writeAuthLoginStatus(report, { output, csvOutput });
+      const parsed = JSON.parse(readFileSync(output, 'utf-8'));
+      const csvRows = parseCsv(readFileSync(csvOutput, 'utf-8'));
+
+      assert.equal(report.rows.length, 2);
+      assert.equal(report.rows[0].target_id, 'saved');
+      assert.equal(report.rows[0].status, 'auth_profile_saved');
+      assert.equal(report.rows[0].ready_for_auth_rescout, 'yes');
+      assert.equal(report.rows[0].next_action, 'run_auth_scout_command');
+      assert.equal(report.rows[1].target_id, 'missing');
+      assert.equal(report.rows[1].status, 'manual_login_required');
+      assert.equal(report.rows[1].ready_for_auth_rescout, 'no');
+      assert.equal(report.rows[1].next_action, 'run_auth_login_command');
+      assert.equal(report.summary.auth_profiles_found, 1);
+      assert.equal(report.summary.auth_profiles_missing, 1);
+      assert.equal(report.summary.ready_for_auth_rescout_rows, 1);
+      assert.equal(report.constraints.no_real_submission, true);
+      assert.equal(report.constraints.no_browser_launch, true);
+      assert.equal(report.constraints.no_network_access_required, true);
+      assert.equal(parsed.summary.source_rows, 2);
+      assert.equal(csvRows.length, 2);
+      assert.equal(csvRows[0].status, 'auth_profile_saved');
+      assert.equal(written.output.endsWith('auth-login-status.json'), true);
+      assert.equal(written.csv_output.endsWith('auth-login-status.csv'), true);
+      assert.match(authLoginStatusCsv(report.rows), /ready_for_auth_rescout/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('cleans tracking params from status rows and commands', () => {
+    const dir = tempDir();
+    try {
+      const batch = join(dir, 'auth-login-batch.csv');
+      writeFileSync(batch, [
+        'order,priority,target_id,name,domain,pricing,risk,auth_profile,auth_state_path,status,login_url,auth_login_command,auth_status_command,auth_scout_command,submit_url,manual_login_safety_policy',
+        '1,P1,tool-ai,Tool AI,toolai.io,free,medium,tool-ai,auth/tool-ai.storage-state.json,manual_login_required,https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit%3Fref%3Daidirectories,"node src/cli.js auth login --profile ""tool-ai"" --url ""https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit%3Fref%3Daidirectories""",status,"node src/cli.js scout ""https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit%3Fref%3Daidirectories"" --auth-profile ""tool-ai""",https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit%3Fref%3Daidirectories,manual',
+      ].join('\n'));
+
+      const report = buildAuthLoginStatus(batch, { authDir: join(dir, 'auth') });
+
+      assert.equal(report.rows[0].login_url, 'https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit');
+      assert.equal(report.rows[0].submit_url, 'https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit');
+      assert.doesNotMatch(report.rows[0].auth_login_command, /ref/i);
+      assert.doesNotMatch(report.rows[0].auth_scout_command, /ref/i);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('accepts JSON login plans, falls back to target IDs, and blocks rows without identity', () => {
+    const dir = tempDir();
+    try {
+      const batch = join(dir, 'auth-login-plan.json');
+      writeFileSync(batch, JSON.stringify({
+        targets: [
+          {
+            order: 1,
+            target_id: 'needs-profile',
+            name: 'Needs Profile',
+            auth_profile: '',
+            login_url: 'https://example.com/login',
+            submit_url: 'https://example.com/submit',
+          },
+          {
+            order: 2,
+            name: 'No Identity',
+            auth_profile: '',
+            login_url: 'https://no-identity.example/login',
+            submit_url: 'https://no-identity.example/submit',
+          },
+        ],
+      }));
+
+      const report = buildAuthLoginStatus(batch, { authDir: join(dir, 'auth') });
+
+      assert.equal(report.source_type, 'plan_targets');
+      assert.equal(report.rows.length, 2);
+      assert.equal(report.rows[0].auth_profile, 'needs-profile');
+      assert.equal(report.rows[0].status, 'manual_login_required');
+      assert.equal(report.rows[0].next_action, 'manual_login_command_missing');
+      assert.equal(report.rows[1].status, 'blocked_missing_auth_profile');
+      assert.equal(report.rows[1].next_action, 'fix_batch_auth_profile');
+      assert.equal(report.rows[1].auth_meta_path, '');
+      assert.equal(report.summary.missing_auth_profile_rows, 1);
+      assert.equal(report.summary.auth_profiles_found, 0);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

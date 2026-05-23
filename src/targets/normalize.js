@@ -43,6 +43,21 @@ function cleanInputUrl(value) {
   return text;
 }
 
+function looksLikeUrlOrPath(value = '') {
+  const text = String(value || '').trim();
+  return /^https?:\/\//i.test(text) ||
+    /^\/[^/]/.test(text) ||
+    /^[a-z0-9._~!$&'()*+,;=:@/%-]+(\?|%3f)/i.test(text);
+}
+
+function decodeComponent(value = '') {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return String(value || '');
+  }
+}
+
 export function stripWww(hostname = '') {
   return String(hostname || '').toLowerCase().replace(/^www\./, '');
 }
@@ -51,6 +66,42 @@ export function isTrackingParam(name) {
   const key = String(name || '').toLowerCase();
   return TRACKING_PARAM_NAMES.has(key) ||
     TRACKING_PARAM_PREFIXES.some(prefix => key.startsWith(prefix));
+}
+
+function cleanNestedQueryValue(value = '') {
+  const decoded = decodeComponent(value);
+  if (!looksLikeUrlOrPath(decoded)) return value;
+
+  let parsed;
+  try {
+    parsed = new URL(decoded, 'https://placeholder.local');
+  } catch {
+    return value;
+  }
+
+  for (const name of [...parsed.searchParams.keys()]) {
+    if (isTrackingParam(name)) parsed.searchParams.delete(name);
+  }
+
+  const sortedParams = [...parsed.searchParams.entries()]
+    .sort(([aName, aValue], [bName, bValue]) =>
+      aName.localeCompare(bName) || aValue.localeCompare(bValue)
+    );
+  parsed.search = '';
+  for (const [name, paramValue] of sortedParams) {
+    parsed.searchParams.append(name, paramValue);
+  }
+
+  let cleaned = decoded.startsWith('http://') || decoded.startsWith('https://')
+    ? parsed.toString()
+    : `${parsed.pathname}${parsed.search}`;
+  if (cleaned.length > 1) cleaned = cleaned.replace(/\/+(?=\?|$)/, '');
+  return cleaned;
+}
+
+export function cleanTrackingUrl(value) {
+  const normalized = normalizeUrl(value);
+  return normalized?.url || String(value || '');
 }
 
 export function normalizeUrl(value, opts = {}) {
@@ -84,7 +135,7 @@ export function normalizeUrl(value, opts = {}) {
     );
   parsed.search = '';
   for (const [name, paramValue] of sortedParams) {
-    parsed.searchParams.append(name, paramValue);
+    parsed.searchParams.append(name, cleanNestedQueryValue(paramValue));
   }
 
   let pathname = parsed.pathname || '/';

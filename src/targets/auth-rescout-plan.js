@@ -4,6 +4,7 @@ import { parse, stringify } from 'yaml';
 import { DEFAULT_AUTH_DIR, authProfileStatus } from '../auth/session.js';
 import { DEFAULT_REGISTRY_FILE } from './registry.js';
 import { parseCsv } from './importers/csv.js';
+import { cleanTrackingUrl } from './normalize.js';
 
 function nowIso() {
   return new Date().toISOString();
@@ -11,6 +12,18 @@ function nowIso() {
 
 function normalizePath(value) {
   return String(value || '').replace(/\\/g, '/');
+}
+
+function cleanUrl(value = '') {
+  return value ? cleanTrackingUrl(value) : '';
+}
+
+function cleanCommand(command = '', ...urls) {
+  let cleaned = String(command || '');
+  for (const url of urls.filter(Boolean)) {
+    cleaned = cleaned.replace(url, cleanUrl(url));
+  }
+  return cleaned;
 }
 
 function parseLimit(value, fallback = 100) {
@@ -53,7 +66,7 @@ function excludedRow(row = {}, status = {}, reason = '') {
     target_id: row.target_id || '',
     name: row.name || '',
     domain: row.domain || '',
-    submit_url: row.submit_url || '',
+    submit_url: cleanUrl(row.submit_url || ''),
     mode: row.mode || '',
     pricing: row.pricing || 'unknown',
     risk: row.risk || 'unknown',
@@ -62,7 +75,7 @@ function excludedRow(row = {}, status = {}, reason = '') {
     auth_profile: status.profile || row.auth_profile || '',
     auth_state_path: normalizePath(status.path || ''),
     exclusion_reason: reason,
-    auth_login_command: row.auth_login_command || '',
+    auth_login_command: cleanCommand(row.auth_login_command || '', row.submit_url, row.final_url),
   };
 }
 
@@ -73,7 +86,7 @@ function planTarget(entry, order) {
     id: row.target_id,
     name: row.name || '',
     domain: row.domain || '',
-    submit_url: row.submit_url,
+    submit_url: cleanUrl(row.submit_url),
     mode: row.mode || 'assisted',
     reason: row.reason || '',
     pricing: row.pricing || 'unknown',

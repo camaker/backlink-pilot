@@ -17,6 +17,10 @@ import {
   writeAuthLoginPlan,
 } from './auth-login-plan.js';
 import {
+  buildAuthLoginStatus,
+  writeAuthLoginStatus,
+} from './auth-login-status.js';
+import {
   buildAuthRescoutPlan,
   writeAuthRescoutPlan,
 } from './auth-rescout-plan.js';
@@ -218,6 +222,37 @@ export async function authLoginPlanCommand(queuePath, opts = {}) {
   }
 
   return plan;
+}
+
+export async function authLoginStatusCommand(batchPath, opts = {}) {
+  const report = buildAuthLoginStatus(batchPath, {
+    authDir: opts.authDir,
+  });
+  const written = writeAuthLoginStatus(report, {
+    output: opts.output,
+    csvOutput: opts.csvOutput,
+  });
+
+  if (opts.json) {
+    console.log(JSON.stringify({ ...report, files: written }, null, 2));
+    return report;
+  }
+
+  console.log(`Batch: ${report.source_batch}`);
+  console.log(`Auth dir: ${report.constraints.auth_dir}`);
+  console.log(`Rows: ${report.summary.source_rows}`);
+  console.log(`Profiles found: ${report.summary.auth_profiles_found}`);
+  console.log(`Profiles missing: ${report.summary.auth_profiles_missing}`);
+  console.log(`Ready for auth rescout: ${report.summary.ready_for_auth_rescout_rows}`);
+  console.log(`Status counts: ${JSON.stringify(report.summary.by_status)}`);
+  console.log(`Next actions: ${JSON.stringify(report.summary.by_next_action)}`);
+  if (written.output) console.log(`Report written: ${written.output}`);
+  if (written.csv_output) console.log(`CSV written: ${written.csv_output}`);
+  for (const row of report.rows.slice(0, Number.parseInt(opts.preview || 10, 10))) {
+    console.log(`${row.order}. ${row.status}\t${row.target_id}\t${row.next_action}`);
+  }
+
+  return report;
 }
 
 export async function authRescoutPlanCommand(queuePath, opts = {}) {
