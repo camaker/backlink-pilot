@@ -83,6 +83,17 @@ node src/cli.js targets auth-login-next \
   --output backlink-url/assisted-submission-pack/auth-login-next-001.json \
   --csv-output backlink-url/assisted-submission-pack/auth-login-next-001.csv
 
+# Optional: refresh all current auth workflow artifacts in one read-only pass.
+# This rewrites status reports, next-login tasks, the auth-rescout plan, and a summary.
+node src/cli.js targets auth-workflow-refresh \
+  backlink-url/assisted-submission-pack/auth-login-rescout-queue.csv \
+  backlink-url/assisted-submission-pack/auth-login-status-batch-001.json \
+  backlink-url/assisted-submission-pack/auth-login-status-batch-002.json \
+  backlink-url/assisted-submission-pack/auth-login-status-batch-003.json \
+  --registry resources/targets.canonical.yaml \
+  --output-dir backlink-url/assisted-submission-pack \
+  --next-limit 10
+
 # 1. Open a visible Playwright browser and complete login manually
 node src/cli.js auth login --profile saashub --url https://www.saashub.com/login
 
@@ -156,6 +167,7 @@ node src/cli.js targets coverage-review-draft <batch.csv> <suggestions.csv>  # D
 node src/cli.js targets promote-coverage-review-batch <review.csv> <batch.csv> --dry-run  # Validate batch promotion before import/scout
 node src/cli.js targets coverage-review-manual-pack <queue.csv>  # Generate a manual review pack from remaining candidates
 node src/cli.js targets auth-login-next <batch...>  # Select next manual login tasks without executing them
+node src/cli.js targets auth-workflow-refresh <queue.csv> <batch...>  # Refresh auth workflow artifacts without executing commands
 node src/cli.js pipeline --scout-queue   # Scout unverified targets, refresh plan, dry-run or execute
 node src/cli.js scout-plan <plan>        # Scout a generated plan and update target safety
 node src/cli.js run-plan <plan>          # Dry-run or execute verified auto_safe targets

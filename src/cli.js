@@ -17,6 +17,7 @@ import {
   authLoginPlanCommand,
   authLoginStatusCommand,
   authRescoutPlanCommand,
+  authWorkflowRefreshCommand,
   coverageReviewDraftCommand,
   coverageReviewEvidenceCommand,
   coverageReviewBatchCommand,
@@ -371,6 +372,24 @@ targets
   .option('--json', 'Output full plan as JSON')
   .action(async (queue, opts) => {
     await authRescoutPlanCommand(queue, opts);
+  });
+
+targets
+  .command('auth-workflow-refresh <queue> <batches...>')
+  .description('Refresh auth status, next-login tasks, and auth-rescout plan without executing commands')
+  .option('--registry <path>', 'Canonical registry path')
+  .option('--product-config <path>', 'Product config path to include in the auth-rescout plan')
+  .option('--auth-dir <path>', 'Auth profile directory')
+  .option('--output-dir <path>', 'Directory to write refreshed auth workflow artifacts')
+  .option('--next-name <name>', 'Base filename for next-login JSON/CSV outputs', 'auth-login-next-current')
+  .option('--summary-name <name>', 'Base filename for workflow summary JSON output', 'auth-workflow-refresh-summary')
+  .option('--next-offset <n>', 'Zero-based offset within actionable manual login rows', '0')
+  .option('--next-limit <n>', 'Maximum next-login tasks to select', '10')
+  .option('--rescout-limit <n>', 'Maximum authenticated rescout targets to queue', '100')
+  .option('--preview <n>', 'Rows to preview in text output', '10')
+  .option('--json', 'Output workflow summary as JSON')
+  .action(async (queue, batches, opts) => {
+    await authWorkflowRefreshCommand(queue, batches, opts);
   });
 
 targets

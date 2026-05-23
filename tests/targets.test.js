@@ -29,6 +29,10 @@ import {
   writeAuthRescoutPlan,
 } from '../src/targets/auth-rescout-plan.js';
 import {
+  buildAuthWorkflowRefresh,
+  writeAuthWorkflowRefresh,
+} from '../src/targets/auth-workflow-refresh.js';
+import {
   applyCoverageReviewQueue,
   buildCoverageReviewEvidence,
   buildCoverageReviewBatch,
@@ -2590,6 +2594,63 @@ describe('auth login status', () => {
       assert.equal(csvRows[0].target_id, 'b');
       assert.equal(written.output.endsWith('auth-login-next.json'), true);
       assert.equal(written.csv_output.endsWith('auth-login-next.csv'), true);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe('auth workflow refresh', () => {
+  it('refreshes status, next-login tasks, and auth-rescout plan without executing commands', () => {
+    const dir = tempDir();
+    try {
+      const queue = join(dir, 'auth-login-rescout-queue.csv');
+      const batch = join(dir, 'auth-login-batch-001.csv');
+      const authDir = join(dir, 'auth');
+      const outputDir = join(dir, 'out');
+      mkdirSync(authDir, { recursive: true });
+      writeFileSync(join(authDir, 'saved.storage-state.json'), JSON.stringify({ cookies: [], origins: [] }));
+      const headers = 'rank,priority,priority_score,target_id,name,domain,mode,status,pricing,risk,lang,manual_bucket,automation_after_human,submission_policy,safety_blockers,recommended_next_step,auth_profile,auth_login_command,auth_scout_command,submit_url,final_url,root_url,last_scouted_at,last_submitted_at,form_count,field_count,required_fields,unmapped_required_fields,submit_button_count,source,reason,notes';
+      const savedRow = '1,P0,270,saved,Saved,saved.example,assisted,auth_required,free,low,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required,login,saved,node src/cli.js auth login --profile "saved" --url "https://saved.example/login",node src/cli.js scout "https://saved.example/submit" --auth-profile "saved",https://saved.example/submit,https://saved.example/login,https://saved.example,,,,,,,,test,auth_signal,';
+      const missingRow = '2,P0,260,missing,Missing,missing.example,assisted,auth_required,free,low,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required,login,missing,node src/cli.js auth login --profile "missing" --url "https://missing.example/login",node src/cli.js scout "https://missing.example/submit" --auth-profile "missing",https://missing.example/submit,https://missing.example/login,https://missing.example,,,,,,,,test,auth_signal,';
+      writeFileSync(queue, [headers, savedRow, missingRow].join('\n'));
+      writeFileSync(batch, [
+        'order,priority,target_id,name,domain,pricing,risk,auth_profile,auth_state_path,status,login_url,auth_login_command,auth_status_command,auth_scout_command,submit_url,manual_login_safety_policy',
+        '1,P0,saved,Saved,saved.example,free,low,saved,auth/saved.storage-state.json,manual_login_required,https://saved.example/login,node src/cli.js auth login --profile "saved" --url "https://saved.example/login",status,node src/cli.js scout "https://saved.example/submit" --auth-profile "saved",https://saved.example/submit,manual',
+        '2,P0,missing,Missing,missing.example,free,low,missing,auth/missing.storage-state.json,manual_login_required,https://missing.example/login,node src/cli.js auth login --profile "missing" --url "https://missing.example/login",status,node src/cli.js scout "https://missing.example/submit" --auth-profile "missing",https://missing.example/submit,manual',
+      ].join('\n'));
+
+      const report = buildAuthWorkflowRefresh(queue, [batch], {
+        authDir,
+        nextLimit: 1,
+        rescoutLimit: 5,
+      });
+      const written = writeAuthWorkflowRefresh(report, {
+        outputDir,
+        nextName: 'auth-login-next-test',
+        summaryName: 'auth-workflow-refresh-test',
+      });
+      const summary = JSON.parse(readFileSync(written.summary, 'utf-8'));
+
+      assert.equal(report.constraints.no_real_submission, true);
+      assert.equal(report.constraints.no_browser_launch, true);
+      assert.equal(report.constraints.no_network_access_required, true);
+      assert.equal(report.constraints.no_command_execution, true);
+      assert.equal(report.summary.status.source_rows, 2);
+      assert.equal(report.summary.status.auth_profiles_found, 1);
+      assert.equal(report.summary.status.auth_profiles_missing, 1);
+      assert.equal(report.summary.next_login.task_rows, 1);
+      assert.equal(report.next_login.tasks[0].target_id, 'missing');
+      assert.equal(report.summary.auth_rescout.queued_rows, 1);
+      assert.equal(report.auth_rescout.targets[0].id, 'saved');
+      assert.equal(existsSync(join(outputDir, 'auth-login-status-batch-001.json')), true);
+      assert.equal(existsSync(join(outputDir, 'auth-login-status-batch-001.csv')), true);
+      assert.equal(existsSync(written.next_login.output), true);
+      assert.equal(existsSync(written.next_login.csv_output), true);
+      assert.equal(existsSync(written.auth_rescout), true);
+      assert.equal(summary.summary.status.auth_profiles_found, 1);
+      assert.equal(summary.files.next_login.csv_output.endsWith('auth-login-next-test.csv'), true);
+      assert.equal(summary.files.summary.endsWith('auth-workflow-refresh-test.json'), true);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

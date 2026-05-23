@@ -27,6 +27,10 @@ import {
   writeAuthRescoutPlan,
 } from './auth-rescout-plan.js';
 import {
+  buildAuthWorkflowRefresh,
+  writeAuthWorkflowRefresh,
+} from './auth-workflow-refresh.js';
+import {
   applyCoverageReviewQueue,
   buildCoverageReviewEvidence,
   buildCoverageReviewBatch,
@@ -320,6 +324,55 @@ export async function authRescoutPlanCommand(queuePath, opts = {}) {
   }
 
   return plan;
+}
+
+export async function authWorkflowRefreshCommand(queuePath, batchPaths, opts = {}) {
+  const report = buildAuthWorkflowRefresh(queuePath, batchPaths, {
+    registry: opts.registry || DEFAULT_REGISTRY_FILE,
+    productConfig: opts.productConfig,
+    authDir: opts.authDir,
+    nextOffset: opts.nextOffset,
+    nextLimit: opts.nextLimit || opts.limit,
+    rescoutLimit: opts.rescoutLimit,
+  });
+  const written = writeAuthWorkflowRefresh(report, {
+    outputDir: opts.outputDir,
+    nextName: opts.nextName,
+    summaryName: opts.summaryName,
+  });
+
+  if (opts.json) {
+    console.log(JSON.stringify({
+      version: report.version,
+      created_at: report.created_at,
+      source_queue: report.source_queue,
+      source_batches: report.source_batches,
+      constraints: report.constraints,
+      files: written,
+      summary: report.summary,
+    }, null, 2));
+    return report;
+  }
+
+  console.log(`Queue: ${report.source_queue}`);
+  console.log(`Batches: ${report.source_batches.join(', ')}`);
+  console.log(`Auth dir: ${report.constraints.auth_dir}`);
+  console.log(`Status rows: ${report.summary.status.source_rows}`);
+  console.log(`Profiles found: ${report.summary.status.auth_profiles_found}`);
+  console.log(`Profiles missing: ${report.summary.status.auth_profiles_missing}`);
+  console.log(`Ready for auth rescout: ${report.summary.status.ready_for_auth_rescout_rows}`);
+  console.log(`Next login tasks: ${report.summary.next_login.task_rows}`);
+  console.log(`Auth rescout queued: ${report.summary.auth_rescout.queued_rows}`);
+  console.log(`Auth rescout missing profiles: ${report.summary.auth_rescout.auth_profiles_missing}`);
+  console.log(`Output dir: ${written.output_dir}`);
+  console.log(`Next login CSV: ${written.next_login.csv_output}`);
+  console.log(`Auth rescout plan: ${written.auth_rescout}`);
+  console.log(`Summary: ${written.summary}`);
+  for (const task of report.next_login.tasks.slice(0, Number.parseInt(opts.preview || 10, 10))) {
+    console.log(`${task.task_order}. ${task.priority}\t${task.target_id}\t${task.auth_login_command}`);
+  }
+
+  return report;
 }
 
 export async function coverageTargetsCommand(inputDir, opts = {}) {
