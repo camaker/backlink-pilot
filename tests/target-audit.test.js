@@ -85,6 +85,34 @@ describe('target registry audit', () => {
     assert.ok(codes.includes('runnable_manual_strategic_domain'));
   });
 
+  it('blocks runnable targets when persisted scout final_url crosses target and submit domains', () => {
+    const report = auditTargets([
+      safeAutoTarget({
+        id: 'cross',
+        domain: 'target.example',
+        submit_url: 'https://target.example/submit',
+        technical: {
+          last_scouted_at: '2026-05-22T00:00:00.000Z',
+          auth: 'required',
+          captcha: 'none',
+          reachable: 'yes',
+          final_url: 'https://other.example/login',
+        },
+        submission: {
+          mode: 'assisted',
+          status: 'auth_required',
+          reason: 'auth_signal',
+        },
+      }),
+    ]);
+
+    assert.equal(report.ok, false);
+    assert.ok(report.blockers.some(item =>
+      item.code === 'runnable_final_url_domain_mismatch' &&
+      /final_url_domain_mismatch:other\.example->target\.example/.test(item.message)
+    ));
+  });
+
   it('warns for unscouted auto candidates and blocks duplicate runnable submit URLs', () => {
     const report = auditTargets([
       {

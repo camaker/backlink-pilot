@@ -17,6 +17,21 @@ export function sameSite(left = '', right = '') {
   return a === b || a.endsWith(`.${b}`) || b.endsWith(`.${a}`);
 }
 
+export function urlDomainBlocker(opts = {}) {
+  const sourceHost = urlHost(opts.url || '');
+  const allowedHosts = [
+    normalizeHost(opts.domain || ''),
+    ...(Array.isArray(opts.allowed_urls) ? opts.allowed_urls : [])
+      .map(url => urlHost(url))
+      .filter(Boolean),
+  ].filter(Boolean);
+  const code = opts.code || 'url_domain_mismatch';
+
+  if (!sourceHost || !allowedHosts.length) return '';
+  if (allowedHosts.some(host => sameSite(sourceHost, host))) return '';
+  return `${code}:${sourceHost}->${allowedHosts[0] || 'unknown'}`;
+}
+
 export function authLoginDomainBlocker(row = {}) {
   const loginHost = urlHost(row.login_url || '');
   const submitHost = urlHost(row.submit_url || '');

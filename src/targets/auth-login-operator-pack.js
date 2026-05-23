@@ -107,9 +107,9 @@ function defaultRefreshCommand() {
   return [
     'node src/cli.js targets auth-workflow-refresh',
     'backlink-url/assisted-submission-pack/auth-login-rescout-queue.csv',
-    'backlink-url/assisted-submission-pack/auth-login-status-batch-001.json',
-    'backlink-url/assisted-submission-pack/auth-login-status-batch-002.json',
-    'backlink-url/assisted-submission-pack/auth-login-status-batch-003.json',
+    'backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json',
+    'backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json',
+    'backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json',
     '--registry resources/targets.canonical.yaml',
     '--product-config backlink-url/submission-materials/xtimer.config.yaml',
     '--output-dir backlink-url/assisted-submission-pack',

@@ -1,10 +1,10 @@
 {
   "version": 1,
-  "created_at": "2026-05-23T08:40:21.613Z",
+  "created_at": "2026-05-23T09:01:41.361Z",
   "source_batches": [
-    "backlink-url/assisted-submission-pack/auth-login-status-batch-001.json",
-    "backlink-url/assisted-submission-pack/auth-login-status-batch-002.json",
-    "backlink-url/assisted-submission-pack/auth-login-status-batch-003.json"
+    "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
+    "backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json",
+    "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json"
   ],
   "constraints": {
     "purpose": "manual_auth_login_next_tasks",
@@ -18,8 +18,8 @@
   "tasks": [
     {
       "task_order": "1",
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-001.json",
-      "batch_order": "1",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
+      "batch_order": 1,
       "priority": "P0",
       "target_id": "beta-list",
       "name": "Beta List",
@@ -39,8 +39,8 @@
     },
     {
       "task_order": "2",
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-001.json",
-      "batch_order": "2",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
+      "batch_order": 2,
       "priority": "P0",
       "target_id": "chatgptdemo",
       "name": "ChatGPT demo",
@@ -60,8 +60,8 @@
     },
     {
       "task_order": "3",
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-001.json",
-      "batch_order": "3",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
+      "batch_order": 3,
       "priority": "P0",
       "target_id": "promptzone",
       "name": "Promptzone",
@@ -81,8 +81,8 @@
     },
     {
       "task_order": "4",
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-001.json",
-      "batch_order": "4",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
+      "batch_order": 4,
       "priority": "P0",
       "target_id": "resource-fyi",
       "name": "Resource fyi",
@@ -102,8 +102,8 @@
     },
     {
       "task_order": "5",
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-001.json",
-      "batch_order": "5",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
+      "batch_order": 5,
       "priority": "P0",
       "target_id": "sitelike",
       "name": "Sitelike",
@@ -123,8 +123,8 @@
     },
     {
       "task_order": "6",
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-001.json",
-      "batch_order": "6",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
+      "batch_order": 6,
       "priority": "P0",
       "target_id": "247webdirectory",
       "name": "247WebDirectory",
@@ -144,8 +144,8 @@
     },
     {
       "task_order": "7",
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-001.json",
-      "batch_order": "7",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
+      "batch_order": 7,
       "priority": "P0",
       "target_id": "asr",
       "name": "ASR",
@@ -165,8 +165,8 @@
     },
     {
       "task_order": "8",
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-001.json",
-      "batch_order": "9",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
+      "batch_order": 8,
       "priority": "P0",
       "target_id": "ai-ailookme",
       "name": "AI工具箱 (ailookme)",
@@ -186,8 +186,8 @@
     },
     {
       "task_order": "9",
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-001.json",
-      "batch_order": "10",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
+      "batch_order": 9,
       "priority": "P0",
       "target_id": "changelog",
       "name": "Changelog",
@@ -207,8 +207,8 @@
     },
     {
       "task_order": "10",
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-001.json",
-      "batch_order": "11",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
+      "batch_order": 10,
       "priority": "P0",
       "target_id": "top-best-alternatives",
       "name": "Top Best Alternatives",
@@ -229,19 +229,8 @@
   ],
   "excluded": [
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-001.json",
-      "batch_order": "8",
-      "target_id": "aigc",
-      "name": "AIGC工具导航",
-      "domain": "aigc.cn",
-      "auth_profile": "aigc",
-      "status": "blocked_login_domain_mismatch",
-      "next_action": "fix_login_domain_mismatch",
-      "exclusion_reason": "fix_login_domain_mismatch"
-    },
-    {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-001.json",
-      "batch_order": "12",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
+      "batch_order": 11,
       "target_id": "xinquji-com",
       "name": "新趣集",
       "domain": "xinquji.com",
@@ -251,8 +240,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-001.json",
-      "batch_order": "13",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
+      "batch_order": 12,
       "target_id": "betalist-com",
       "name": "https://betalist.com",
       "domain": "betalist.com",
@@ -262,8 +251,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-001.json",
-      "batch_order": "14",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
+      "batch_order": 13,
       "target_id": "ai-tool-guru",
       "name": "AI Tool guru",
       "domain": "aitoolguru.com",
@@ -273,8 +262,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-001.json",
-      "batch_order": "15",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
+      "batch_order": 14,
       "target_id": "ai-tools-arena",
       "name": "AI Tools Arena",
       "domain": "aitoolsarena.com",
@@ -284,8 +273,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-001.json",
-      "batch_order": "16",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
+      "batch_order": 15,
       "target_id": "alternative-me",
       "name": "Alternative",
       "domain": "alternative.me",
@@ -295,8 +284,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-001.json",
-      "batch_order": "17",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
+      "batch_order": 16,
       "target_id": "bestofai",
       "name": "BestOfAI",
       "domain": "bestofai.com",
@@ -306,8 +295,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-001.json",
-      "batch_order": "18",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
+      "batch_order": 17,
       "target_id": "f6s",
       "name": "F6S",
       "domain": "f6s.com",
@@ -317,8 +306,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-001.json",
-      "batch_order": "19",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
+      "batch_order": 18,
       "target_id": "favird",
       "name": "Favird",
       "domain": "favird.com",
@@ -328,8 +317,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-001.json",
-      "batch_order": "20",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
+      "batch_order": 19,
       "target_id": "ai-infinity",
       "name": "AI Infinity",
       "domain": "forms.gle",
@@ -339,8 +328,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-001.json",
-      "batch_order": "21",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
+      "batch_order": 20,
       "target_id": "gpt-forge",
       "name": "Gpt Forge",
       "domain": "forms.gle",
@@ -350,8 +339,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-001.json",
-      "batch_order": "22",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
+      "batch_order": 21,
       "target_id": "nextpedia",
       "name": "Nextpedia",
       "domain": "nextpedia.io",
@@ -361,8 +350,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-001.json",
-      "batch_order": "23",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
+      "batch_order": 22,
       "target_id": "startup-collections",
       "name": "Startup Collections",
       "domain": "startupcollections.com",
@@ -372,8 +361,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-001.json",
-      "batch_order": "24",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
+      "batch_order": 23,
       "target_id": "startuptracker",
       "name": "StartupTracker",
       "domain": "startuptracker.io",
@@ -383,8 +372,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-001.json",
-      "batch_order": "25",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
+      "batch_order": 24,
       "target_id": "the-hack-stack",
       "name": "The Hack Stack",
       "domain": "thehackstack.com",
@@ -394,8 +383,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-002.json",
-      "batch_order": "26",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
+      "batch_order": 25,
       "target_id": "tools-robingood-com",
       "name": "tools.robingood.com",
       "domain": "tools.robingood.com",
@@ -405,8 +394,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-002.json",
-      "batch_order": "27",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json",
+      "batch_order": 26,
       "target_id": "ai-nav",
       "name": "AI NAV",
       "domain": "ainavpro.com",
@@ -416,8 +405,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-002.json",
-      "batch_order": "28",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json",
+      "batch_order": 27,
       "target_id": "dizkaz-com",
       "name": "笛卡",
       "domain": "dizkaz.com",
@@ -427,8 +416,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-002.json",
-      "batch_order": "29",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json",
+      "batch_order": 28,
       "target_id": "foundr-ai",
       "name": "Foundr.ai",
       "domain": "foundr.ai",
@@ -438,8 +427,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-002.json",
-      "batch_order": "30",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json",
+      "batch_order": 29,
       "target_id": "gainweb-org",
       "name": "GainWeb.org",
       "domain": "gainweb.org",
@@ -449,8 +438,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-002.json",
-      "batch_order": "31",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json",
+      "batch_order": 30,
       "target_id": "hhlink-com",
       "name": "海外导航网",
       "domain": "hhlink.com",
@@ -460,8 +449,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-002.json",
-      "batch_order": "32",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json",
+      "batch_order": 31,
       "target_id": "iforai",
       "name": "iforai",
       "domain": "iforai.com",
@@ -471,8 +460,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-002.json",
-      "batch_order": "33",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json",
+      "batch_order": 32,
       "target_id": "mergeek",
       "name": "Mergeek",
       "domain": "mergeek.com",
@@ -482,8 +471,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-002.json",
-      "batch_order": "34",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json",
+      "batch_order": 33,
       "target_id": "offpagesavvy",
       "name": "Offpagesavvy",
       "domain": "offpagesavvy.com",
@@ -493,8 +482,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-002.json",
-      "batch_order": "35",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json",
+      "batch_order": 34,
       "target_id": "wechalet-cn",
       "name": "小木屋",
       "domain": "wechalet.cn",
@@ -504,8 +493,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-002.json",
-      "batch_order": "36",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json",
+      "batch_order": 35,
       "target_id": "appalist-com",
       "name": "https://appalist.com/",
       "domain": "appalist.com",
@@ -515,8 +504,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-002.json",
-      "batch_order": "37",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json",
+      "batch_order": 36,
       "target_id": "ashlist-com",
       "name": "https://ashlist.com",
       "domain": "ashlist.com",
@@ -526,8 +515,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-002.json",
-      "batch_order": "38",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json",
+      "batch_order": 37,
       "target_id": "launchscroll-com",
       "name": "https://launchscroll.com/",
       "domain": "launchscroll.com",
@@ -537,8 +526,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-002.json",
-      "batch_order": "39",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json",
+      "batch_order": 38,
       "target_id": "mylaunchstash-com",
       "name": "https://mylaunchstash.com/",
       "domain": "mylaunchstash.com",
@@ -548,8 +537,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-002.json",
-      "batch_order": "40",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json",
+      "batch_order": 39,
       "target_id": "openfuture-ai",
       "name": "OpenFuture AI",
       "domain": "openfuture.ai",
@@ -559,8 +548,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-002.json",
-      "batch_order": "41",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json",
+      "batch_order": 40,
       "target_id": "poweruptools-com",
       "name": "https://poweruptools.com",
       "domain": "poweruptools.com",
@@ -570,8 +559,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-002.json",
-      "batch_order": "42",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json",
+      "batch_order": 41,
       "target_id": "productlistdir-com",
       "name": "https://productlistdir.com",
       "domain": "productlistdir.com",
@@ -581,8 +570,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-002.json",
-      "batch_order": "43",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json",
+      "batch_order": 42,
       "target_id": "productwing-com",
       "name": "https://productwing.com/",
       "domain": "productwing.com",
@@ -592,8 +581,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-002.json",
-      "batch_order": "44",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json",
+      "batch_order": 43,
       "target_id": "www-ruanyifeng-com",
       "name": "https://www.ruanyifeng.com",
       "domain": "ruanyifeng.com",
@@ -603,8 +592,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-002.json",
-      "batch_order": "45",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json",
+      "batch_order": 44,
       "target_id": "saasfield-com",
       "name": "https://saasfield.com/",
       "domain": "saasfield.com",
@@ -614,8 +603,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-002.json",
-      "batch_order": "46",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json",
+      "batch_order": 45,
       "target_id": "saashubdirectory-com",
       "name": "https://saashubdirectory.com",
       "domain": "saashubdirectory.com",
@@ -625,8 +614,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-002.json",
-      "batch_order": "47",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json",
+      "batch_order": 46,
       "target_id": "saasroots-com",
       "name": "https://saasroots.com/",
       "domain": "saasroots.com",
@@ -636,8 +625,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-002.json",
-      "batch_order": "48",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json",
+      "batch_order": 47,
       "target_id": "smartkithub-com",
       "name": "https://smartkithub.com",
       "domain": "smartkithub.com",
@@ -647,8 +636,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-002.json",
-      "batch_order": "49",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json",
+      "batch_order": 48,
       "target_id": "softwarebolt-com",
       "name": "访问官网",
       "domain": "softwarebolt.com",
@@ -658,8 +647,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-002.json",
-      "batch_order": "50",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json",
+      "batch_order": 49,
       "target_id": "solvertools-com",
       "name": "🔗 访问我们的网站",
       "domain": "solvertools.com",
@@ -669,8 +658,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-003.json",
-      "batch_order": "51",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json",
+      "batch_order": 50,
       "target_id": "sourcedir-com",
       "name": "https://sourcedir.com/",
       "domain": "sourcedir.com",
@@ -680,8 +669,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-003.json",
-      "batch_order": "52",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
+      "batch_order": 51,
       "target_id": "stackdirectory-com",
       "name": "https://stackdirectory.com/",
       "domain": "stackdirectory.com",
@@ -691,8 +680,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-003.json",
-      "batch_order": "53",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
+      "batch_order": 52,
       "target_id": "startupvessel-com",
       "name": "https://startupvessel.com/",
       "domain": "startupvessel.com",
@@ -702,8 +691,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-003.json",
-      "batch_order": "54",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
+      "batch_order": 53,
       "target_id": "theapptools-com",
       "name": "https://theapptools.com/",
       "domain": "theapptools.com",
@@ -713,8 +702,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-003.json",
-      "batch_order": "55",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
+      "batch_order": 54,
       "target_id": "thecoretools-com",
       "name": "https://thecoretools.com",
       "domain": "thecoretools.com",
@@ -724,8 +713,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-003.json",
-      "batch_order": "56",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
+      "batch_order": 55,
       "target_id": "tinytoolhub-com",
       "name": "https://tinytoolhub.com",
       "domain": "tinytoolhub.com",
@@ -735,8 +724,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-003.json",
-      "batch_order": "57",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
+      "batch_order": 56,
       "target_id": "toolcosmos-com",
       "name": "https://toolcosmos.com",
       "domain": "toolcosmos.com",
@@ -746,8 +735,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-003.json",
-      "batch_order": "58",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
+      "batch_order": 57,
       "target_id": "toolfinddir-com",
       "name": "https://toolfinddir.com",
       "domain": "toolfinddir.com",
@@ -757,8 +746,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-003.json",
-      "batch_order": "59",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
+      "batch_order": 58,
       "target_id": "toolsignal-com",
       "name": "https://toolsignal.com/",
       "domain": "toolsignal.com",
@@ -768,8 +757,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-003.json",
-      "batch_order": "60",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
+      "batch_order": 59,
       "target_id": "toolslisthq-com",
       "name": "https://toolslisthq.com",
       "domain": "toolslisthq.com",
@@ -779,8 +768,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-003.json",
-      "batch_order": "61",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
+      "batch_order": 60,
       "target_id": "toolsunderradar-com",
       "name": "https://toolsunderradar.com",
       "domain": "toolsunderradar.com",
@@ -790,8 +779,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-003.json",
-      "batch_order": "62",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
+      "batch_order": 61,
       "target_id": "toptrendtools-com",
       "name": "https://toptrendtools.com/",
       "domain": "toptrendtools.com",
@@ -801,8 +790,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-003.json",
-      "batch_order": "63",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
+      "batch_order": 62,
       "target_id": "toshilist-com",
       "name": "https://toshilist.com",
       "domain": "toshilist.com",
@@ -812,8 +801,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-003.json",
-      "batch_order": "64",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
+      "batch_order": 63,
       "target_id": "trustiner-com",
       "name": "https://trustiner.com",
       "domain": "trustiner.com",
@@ -823,8 +812,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-003.json",
-      "batch_order": "65",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
+      "batch_order": 64,
       "target_id": "weliketools-com",
       "name": "https://weliketools.com",
       "domain": "weliketools.com",
@@ -834,8 +823,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-003.json",
-      "batch_order": "66",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
+      "batch_order": 65,
       "target_id": "orbic-ai",
       "name": "Orbic AI",
       "domain": "orbic.ai",
@@ -845,8 +834,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-003.json",
-      "batch_order": "67",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
+      "batch_order": 66,
       "target_id": "promoteproject",
       "name": "PromoteProject",
       "domain": "promoteproject.com",
@@ -856,8 +845,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-003.json",
-      "batch_order": "68",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
+      "batch_order": 67,
       "target_id": "tool-ai",
       "name": "Tool AI",
       "domain": "toolai.io",
@@ -867,8 +856,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-003.json",
-      "batch_order": "69",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
+      "batch_order": 68,
       "target_id": "aitoptools",
       "name": "AITopTools",
       "domain": "aitoptools.com",
@@ -878,8 +867,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-003.json",
-      "batch_order": "70",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
+      "batch_order": 69,
       "target_id": "betalist",
       "name": "Betalist",
       "domain": "betalist.com",
@@ -889,8 +878,8 @@
       "exclusion_reason": "after_batch_limit"
     },
     {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-003.json",
-      "batch_order": "71",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
+      "batch_order": 70,
       "target_id": "broadwise-org",
       "name": "Broadwise.org",
       "domain": "broadwise.org",
@@ -904,7 +893,7 @@
     "source_batches": 3,
     "actionable_rows": 70,
     "task_rows": 10,
-    "excluded_rows": 61,
+    "excluded_rows": 60,
     "offset": 0,
     "limit": 10,
     "current_batch_start": 1,
@@ -914,7 +903,6 @@
       "P0": 10
     },
     "by_exclusion_reason": {
-      "fix_login_domain_mismatch": 1,
       "after_batch_limit": 60
     }
   }

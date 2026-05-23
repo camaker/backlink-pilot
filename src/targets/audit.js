@@ -1,6 +1,7 @@
 import { isRunnableMode } from './classify.js';
 import { normalizeUrl } from './normalize.js';
 import { DEFAULT_REGISTRY_FILE, loadRegistry, registryStats } from './registry.js';
+import { urlDomainBlocker } from './auth-login-safety.js';
 
 const REQUIRED_MAPPED_FIELDS = ['product.name', 'product.url', 'product.description'];
 
@@ -197,6 +198,22 @@ function auditRunnableTarget(target = {}) {
       target,
       'Runnable target has unknown pricing.',
       'Scout or manually verify pricing before real execution.'
+    ));
+  }
+
+  const finalUrlBlocker = urlDomainBlocker({
+    url: target.technical?.final_url || '',
+    domain: target.domain || '',
+    allowed_urls: [target.submit_url || ''],
+    code: 'final_url_domain_mismatch',
+  });
+  if (finalUrlBlocker) {
+    findings.push(finding(
+      'blocker',
+      'runnable_final_url_domain_mismatch',
+      target,
+      `Runnable target scout final_url is outside the target or submit domain: ${finalUrlBlocker}.`,
+      'Fix stale scout evidence, correct submit_url/domain, or rescout the intended target before login, assisted execution, or auto_safe promotion.'
     ));
   }
 

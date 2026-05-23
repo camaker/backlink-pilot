@@ -3,6 +3,7 @@ import { dirname, join } from 'path';
 import { parse } from 'yaml';
 import { DEFAULT_REGISTRY_FILE, loadRegistry } from './registry.js';
 import { cleanTrackingUrl } from './normalize.js';
+import { urlDomainBlocker } from './auth-login-safety.js';
 
 const ASSISTED_PACK_HEADERS = [
   'rank',
@@ -140,6 +141,15 @@ function hasAuthSignal(target = {}) {
   ].join(' '));
 }
 
+function finalUrlDomainBlocker(target = {}) {
+  return urlDomainBlocker({
+    url: target.technical?.final_url || '',
+    domain: target.domain || '',
+    allowed_urls: [target.submit_url || ''],
+    code: 'final_url_domain_mismatch',
+  });
+}
+
 function hasManualSurfaceSignal(target = {}) {
   const type = String(target.type || '').toLowerCase();
   const auto = String(target.auto || target.original_auto || '').toLowerCase();
@@ -159,6 +169,7 @@ function targetBlockers(target = {}) {
   const risk = target.quality?.risk || 'unknown';
 
   if (submission.last_submitted_at) blockers.push('already_submitted_verify_before_resubmission');
+  if (finalUrlDomainBlocker(target)) blockers.push('final_url_domain_mismatch');
   if (mode === 'needs_review') blockers.push('manual_review_required_before_any_execution');
   if (risk === 'high') blockers.push('high_risk_target');
   if (pricing === 'paid') blockers.push('paid_or_paywalled');
@@ -198,6 +209,7 @@ function targetBlockers(target = {}) {
 function manualBucket(blockers = [], target = {}) {
   const mode = target.submission?.mode || '';
   if (blockers.includes('already_submitted_verify_before_resubmission')) return 'already_submitted_verify_only';
+  if (blockers.includes('final_url_domain_mismatch')) return 'fix_cross_domain_final_url';
   if (blockers.includes('paid_or_paywalled')) return 'paid_path_or_pricing_review';
   if (blockers.includes('high_risk_target')) return 'high_risk_manual_review';
   if (blockers.includes('captcha_or_turnstile_required')) return 'manual_submit_only_captcha';
@@ -220,6 +232,7 @@ function manualBucket(blockers = [], target = {}) {
 
 function automationAfterHuman(blockers = [], target = {}) {
   if (target.submission?.last_submitted_at) return 'no_verify_existing_submission_first';
+  if (blockers.includes('final_url_domain_mismatch')) return 'no_fix_cross_domain_final_url_first';
   if (target.submission?.mode === 'needs_review') return 'no_manual_review_required_first';
   if (blockers.includes('paid_or_paywalled')) return 'no_paid_or_paywalled';
   if (blockers.includes('high_risk_target')) return 'no_high_risk';
@@ -236,6 +249,9 @@ function recommendedNextStep(blockers = [], target = {}) {
   const profile = safeProfileName(target);
   if (blockers.includes('already_submitted_verify_before_resubmission')) {
     return 'Verify whether a live listing/backlink exists; do not resubmit unless explicitly approved.';
+  }
+  if (blockers.includes('final_url_domain_mismatch')) {
+    return 'Fix the target URL/scout evidence first: final_url resolves outside the target or submit domain, so login and rescout commands are intentionally suppressed.';
   }
   if (blockers.includes('paid_or_paywalled')) {
     return 'Confirm a free submission path exists; skip sponsored-only or paid-only listings.';
@@ -291,6 +307,7 @@ function scoreTarget(target = {}, blockers = []) {
   if (blockers.includes('scout_or_browser_failure')) score -= 30;
   if (blockers.includes('no_persisted_form_evidence')) score -= 20;
   if (blockers.includes('already_submitted_verify_before_resubmission')) score -= 200;
+  if (blockers.includes('final_url_domain_mismatch')) score -= 200;
   return score;
 }
 
@@ -315,7 +332,7 @@ function cleanUrl(value = '') {
 function targetRow(target, context = {}) {
   const blockers = targetBlockers(target);
   const score = scoreTarget(target, blockers);
-  const requiresAuth = blockers.includes('auth_or_oauth_required');
+  const requiresAuth = blockers.includes('auth_or_oauth_required') && !blockers.includes('final_url_domain_mismatch');
   const profile = requiresAuth ? safeProfileName(target) : '';
   const loginUrl = cleanUrl(target.technical?.final_url || target.submit_url || target.root_url || '');
   const scoutUrl = cleanUrl(target.submit_url || target.technical?.final_url || target.root_url || '');

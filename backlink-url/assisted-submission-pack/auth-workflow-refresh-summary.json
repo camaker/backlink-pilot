@@ -1,11 +1,11 @@
 {
   "version": 1,
-  "created_at": "2026-05-23T08:40:21.654Z",
+  "created_at": "2026-05-23T09:01:41.403Z",
   "source_queue": "backlink-url/assisted-submission-pack/auth-login-rescout-queue.csv",
   "source_batches": [
-    "backlink-url/assisted-submission-pack/auth-login-status-batch-001.json",
-    "backlink-url/assisted-submission-pack/auth-login-status-batch-002.json",
-    "backlink-url/assisted-submission-pack/auth-login-status-batch-003.json"
+    "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
+    "backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json",
+    "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json"
   ],
   "constraints": {
     "purpose": "refresh_manual_auth_workflow_artifacts",
@@ -41,7 +41,7 @@
   },
   "summary": {
     "status": {
-      "source_rows": 71,
+      "source_rows": 70,
       "auth_profiles_found": 0,
       "auth_profiles_missing": 70,
       "ready_for_auth_rescout_rows": 0,
@@ -50,26 +50,24 @@
     "by_batch": [
       {
         "suffix": "batch-001",
-        "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-001.json",
-        "source_type": "rows",
+        "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
+        "source_type": "plan_targets",
         "source_rows": 25,
         "auth_profiles_found": 0,
-        "auth_profiles_missing": 24,
+        "auth_profiles_missing": 25,
         "ready_for_auth_rescout_rows": 0,
-        "manual_login_rows": 24,
+        "manual_login_rows": 25,
         "by_status": {
-          "manual_login_required": 24,
-          "blocked_login_domain_mismatch": 1
+          "manual_login_required": 25
         },
         "by_next_action": {
-          "run_auth_login_command": 24,
-          "fix_login_domain_mismatch": 1
+          "run_auth_login_command": 25
         }
       },
       {
         "suffix": "batch-002",
-        "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-002.json",
-        "source_type": "rows",
+        "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json",
+        "source_type": "plan_targets",
         "source_rows": 25,
         "auth_profiles_found": 0,
         "auth_profiles_missing": 25,
@@ -84,18 +82,18 @@
       },
       {
         "suffix": "batch-003",
-        "source_batch": "backlink-url/assisted-submission-pack/auth-login-status-batch-003.json",
-        "source_type": "rows",
-        "source_rows": 21,
+        "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
+        "source_type": "plan_targets",
+        "source_rows": 20,
         "auth_profiles_found": 0,
-        "auth_profiles_missing": 21,
+        "auth_profiles_missing": 20,
         "ready_for_auth_rescout_rows": 0,
-        "manual_login_rows": 21,
+        "manual_login_rows": 20,
         "by_status": {
-          "manual_login_required": 21
+          "manual_login_required": 20
         },
         "by_next_action": {
-          "run_auth_login_command": 21
+          "run_auth_login_command": 20
         }
       }
     ],
@@ -103,7 +101,7 @@
       "source_batches": 3,
       "actionable_rows": 70,
       "task_rows": 10,
-      "excluded_rows": 61,
+      "excluded_rows": 60,
       "offset": 0,
       "limit": 10,
       "current_batch_start": 1,
@@ -113,19 +111,18 @@
         "P0": 10
       },
       "by_exclusion_reason": {
-        "fix_login_domain_mismatch": 1,
         "after_batch_limit": 60
       }
     },
     "auth_rescout": {
-      "source_rows": 71,
+      "source_rows": 70,
       "eligible_rows": 0,
       "queued_rows": 0,
-      "excluded_rows": 71,
+      "excluded_rows": 70,
       "auth_profiles_found": 0,
-      "auth_profiles_missing": 71,
+      "auth_profiles_missing": 70,
       "by_exclusion_reason": {
-        "auth_profile_missing": 71
+        "auth_profile_missing": 70
       }
     }
   }

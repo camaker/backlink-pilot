@@ -79,7 +79,7 @@ import {
 import { buildSubmissionPlan } from '../src/planner/plan.js';
 import { buildScoutQueuePlan } from '../src/planner/plan.js';
 import { parseCsv } from '../src/targets/importers/csv.js';
-import { authLoginDomainBlocker } from '../src/targets/auth-login-safety.js';
+import { authLoginDomainBlocker, urlDomainBlocker } from '../src/targets/auth-login-safety.js';
 
 function tempDir() {
   return mkdtempSync(join(tmpdir(), 'backlink-pilot-targets-'));
@@ -104,6 +104,27 @@ describe('auth login safety', () => {
     });
 
     assert.equal(blocker, 'login_domain_mismatch:other.co.uk->example.co.uk');
+  });
+
+  it('blocks external login hosts when the target domain is known', () => {
+    const blocker = authLoginDomainBlocker({
+      domain: 'directory.example',
+      login_url: 'https://forms.gle/abc',
+      submit_url: 'https://forms.gle/abc',
+    });
+
+    assert.equal(blocker, 'login_domain_mismatch:forms.gle->directory.example');
+  });
+
+  it('allows a final URL on an explicit external submit host', () => {
+    const blocker = urlDomainBlocker({
+      url: 'https://docs.google.com/forms/d/e/abc/viewform',
+      domain: 'directory.example',
+      allowed_urls: ['https://docs.google.com/forms/d/e/abc/viewform'],
+      code: 'final_url_domain_mismatch',
+    });
+
+    assert.equal(blocker, '');
   });
 });
 
@@ -2067,6 +2088,24 @@ targets:
       reason: captcha_signal
     quality:
       risk: unknown
+  - id: cross-final-url
+    name: Cross Final URL
+    domain: cross.example
+    root_url: https://cross.example
+    submit_url: https://cross.example/submit
+    pricing: free
+    technical:
+      last_scouted_at: 2026-01-01T00:00:00.000Z
+      auth: required
+      captcha: none
+      reachable: yes
+      final_url: https://other.example/login
+    submission:
+      mode: assisted
+      status: auth_required
+      reason: auth_signal
+    quality:
+      risk: low
   - id: review-target
     name: Review Target
     domain: review.example
@@ -2138,7 +2177,7 @@ targets:
       const manualReviewRows = parseCsv(readFileSync(written.files.manual_review_first_csv, 'utf-8'));
       const summary = JSON.parse(readFileSync(written.files.summary_json, 'utf-8'));
 
-      assert.equal(pack.rows.length, 4);
+      assert.equal(pack.rows.length, 5);
       assert.equal(pack.excluded.length, 2);
       assert.equal(pack.rows[0].target_id, 'auth-target');
       assert.equal(pack.rows[0].manual_bucket, 'manual_login_then_rescout');
@@ -2149,12 +2188,17 @@ targets:
       assert.equal(pack.rows.find(row => row.target_id === 'manual-target').manual_bucket, 'manual_surface_review');
       assert.equal(pack.rows.find(row => row.target_id === 'manual-target').automation_after_human, 'no_manual_surface_review_required_first');
       assert.equal(pack.rows.find(row => row.target_id === 'manual-target').auth_login_command, '');
+      assert.equal(pack.rows.find(row => row.target_id === 'cross-final-url').manual_bucket, 'fix_cross_domain_final_url');
+      assert.equal(pack.rows.find(row => row.target_id === 'cross-final-url').automation_after_human, 'no_fix_cross_domain_final_url_first');
+      assert.match(pack.rows.find(row => row.target_id === 'cross-final-url').safety_blockers, /final_url_domain_mismatch/);
+      assert.equal(pack.rows.find(row => row.target_id === 'cross-final-url').auth_login_command, '');
+      assert.equal(pack.rows.find(row => row.target_id === 'cross-final-url').auth_scout_command, '');
       assert.equal(pack.rows.find(row => row.target_id === 'captcha-target').automation_after_human, 'no_captcha_manual_only');
       assert.equal(pack.rows.find(row => row.target_id === 'captcha-target').auth_login_command, '');
       assert.equal(pack.rows.find(row => row.target_id === 'review-target').auth_scout_command, '');
       assert.equal(pack.rows.find(row => row.target_id === 'review-target').automation_after_human, 'no_manual_review_required_first');
       assert.equal(nextRows.length, 2);
-      assert.equal(fullRows.length, 4);
+      assert.equal(fullRows.length, 5);
       assert.equal(authRows.length, 1);
       assert.equal(authRows[0].target_id, 'auth-target');
       assert.equal(manualSurfaceRows.length, 1);

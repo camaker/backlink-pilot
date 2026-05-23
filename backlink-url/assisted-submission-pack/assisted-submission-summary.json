@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-23T05:28:34.204Z",
+  "generated_at": "2026-05-23T08:58:48.441Z",
   "policy": "manual_assisted_pack_only_no_registry_changes_no_real_submissions",
   "total_rows": 222,
   "excluded_rows": 0,
@@ -19,17 +19,17 @@
     }
   ],
   "by_priority": {
-    "P0": 66,
+    "P0": 65,
     "P1": 33,
-    "P2": 93,
-    "P3": 30
+    "P2": 87,
+    "P3": 37
   },
   "by_mode": {
-    "assisted": 104,
-    "needs_review": 118
+    "assisted": 103,
+    "needs_review": 119
   },
   "by_status": {
-    "auth_required": 65,
+    "auth_required": 64,
     "captcha_required": 16,
     "asset_upload_required": 1,
     "new": 22,
@@ -37,21 +37,24 @@
     "access_blocked": 2,
     "unsupported_form": 4,
     "scout_failed": 37,
-    "browser_error": 4
+    "browser_error": 4,
+    "scout_domain_mismatch": 1
   },
   "by_manual_bucket": {
-    "manual_login_then_rescout": 71,
+    "manual_login_then_rescout": 70,
     "manual_submit_only_captcha": 16,
     "form_mapping_or_dynamic_form_review": 1,
     "manual_surface_review": 16,
-    "manual_review_first": 118
+    "manual_review_first": 112,
+    "fix_cross_domain_final_url": 7
   },
   "by_automation_after_human": {
-    "rescout_after_saved_login_profile": 71,
+    "rescout_after_saved_login_profile": 70,
     "no_captcha_manual_only": 16,
     "no_unmapped_required_fields": 1,
     "no_manual_surface_review_required_first": 16,
-    "no_manual_review_required_first": 118
+    "no_manual_review_required_first": 112,
+    "no_fix_cross_domain_final_url_first": 7
   },
   "by_exclusion_reason": {},
   "next_rows": 100,

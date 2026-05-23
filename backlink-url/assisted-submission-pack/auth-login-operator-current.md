@@ -1,6 +1,6 @@
 # Auth Login Operator Pack
 
-Generated: 2026-05-23T08:40:32.292Z
+Generated: 2026-05-23T09:01:52.930Z
 Source: backlink-url/assisted-submission-pack/auth-login-next-current.json
 
 ## Safety Policy
@@ -45,5 +45,5 @@ Source: backlink-url/assisted-submission-pack/auth-login-next-current.json
 Run this after completing manual login tasks:
 
 ```bash
-node src/cli.js targets auth-workflow-refresh backlink-url/assisted-submission-pack/auth-login-rescout-queue.csv backlink-url/assisted-submission-pack/auth-login-status-batch-001.json backlink-url/assisted-submission-pack/auth-login-status-batch-002.json backlink-url/assisted-submission-pack/auth-login-status-batch-003.json --registry resources/targets.canonical.yaml --product-config backlink-url/submission-materials/xtimer.config.yaml --output-dir backlink-url/assisted-submission-pack --next-name auth-login-next-current --summary-name auth-workflow-refresh-summary --next-limit 10
+node src/cli.js targets auth-workflow-refresh backlink-url/assisted-submission-pack/auth-login-rescout-queue.csv backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json --registry resources/targets.canonical.yaml --product-config backlink-url/submission-materials/xtimer.config.yaml --output-dir backlink-url/assisted-submission-pack --next-name auth-login-next-current --summary-name auth-workflow-refresh-summary --next-limit 10
 ```
