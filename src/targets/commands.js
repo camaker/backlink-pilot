@@ -189,6 +189,7 @@ export async function authLoginPlanCommand(queuePath, opts = {}) {
     registry: opts.registry || DEFAULT_REGISTRY_FILE,
     productConfig: opts.productConfig,
     authDir: opts.authDir,
+    offset: opts.offset,
     limit: opts.limit,
   });
   const written = writeAuthLoginPlan(plan, {
@@ -205,6 +206,8 @@ export async function authLoginPlanCommand(queuePath, opts = {}) {
   console.log(`Registry: ${plan.registry}`);
   console.log(`Manual login queued: ${plan.targets.length}`);
   console.log(`Pending login rows: ${plan.summary.pending_rows}`);
+  console.log(`Batch: ${plan.summary.current_batch_start}-${plan.summary.current_batch_end} of ${plan.summary.pending_rows}`);
+  console.log(`Remaining after batch: ${plan.summary.remaining_after_batch}`);
   console.log(`Completed profiles: ${plan.completed.length}`);
   console.log(`Excluded: ${plan.excluded.length}`);
   console.log(`Exclusion reasons: ${JSON.stringify(plan.summary.by_exclusion_reason)}`);

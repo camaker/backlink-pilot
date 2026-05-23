@@ -321,6 +321,7 @@ targets
   .option('--registry <path>', 'Canonical registry path')
   .option('--product-config <path>', 'Product config path to include in the plan')
   .option('--auth-dir <path>', 'Auth profile directory')
+  .option('--offset <n>', 'Zero-based offset within missing auth profiles', '0')
   .option('--limit <n>', 'Maximum missing auth profiles to queue', '25')
   .option('--output <path>', 'Write login plan to JSON/YAML')
   .option('--csv-output <path>', 'Write login work queue to CSV')

@@ -2326,7 +2326,42 @@ describe('auth login plan', () => {
       assert.equal(plan.summary.auth_profiles_missing, 2);
       assert.equal(plan.excluded.length, 1);
       assert.equal(plan.excluded[0].target_id, 'b');
-      assert.equal(plan.excluded[0].exclusion_reason, 'over_limit');
+      assert.equal(plan.excluded[0].exclusion_reason, 'after_batch_limit');
+      assert.equal(plan.summary.current_batch_start, 1);
+      assert.equal(plan.summary.current_batch_end, 1);
+      assert.equal(plan.summary.remaining_after_batch, 1);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('supports rolling manual login batches with offset', () => {
+    const dir = tempDir();
+    try {
+      const queue = join(dir, 'auth-login-rescout-queue.csv');
+      writeFileSync(queue, [
+        'rank,priority,priority_score,target_id,name,domain,mode,status,pricing,risk,lang,manual_bucket,automation_after_human,submission_policy,safety_blockers,recommended_next_step,auth_profile,auth_login_command,auth_scout_command,submit_url,final_url,root_url,last_scouted_at,last_submitted_at,form_count,field_count,required_fields,unmapped_required_fields,submit_button_count,source,reason,notes',
+        '1,P0,270,a,A,a.example,assisted,auth_required,free,low,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required,login,a,node src/cli.js auth login --profile "a" --url "https://a.example/login",scout,https://a.example/submit,,https://a.example,,,,,,,,test,auth_signal,',
+        '2,P0,260,b,B,b.example,assisted,auth_required,free,low,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required,login,b,node src/cli.js auth login --profile "b" --url "https://b.example/login",scout,https://b.example/submit,,https://b.example,,,,,,,,test,auth_signal,',
+        '3,P0,250,c,C,c.example,assisted,auth_required,free,low,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required,login,c,node src/cli.js auth login --profile "c" --url "https://c.example/login",scout,https://c.example/submit,,https://c.example,,,,,,,,test,auth_signal,',
+      ].join('\n'));
+
+      const plan = buildAuthLoginPlan(queue, {
+        authDir: join(dir, 'auth'),
+        offset: 1,
+        limit: 1,
+      });
+
+      assert.equal(plan.targets.length, 1);
+      assert.equal(plan.targets[0].target_id, 'b');
+      assert.equal(plan.targets[0].order, 2);
+      assert.equal(plan.summary.pending_rows, 3);
+      assert.equal(plan.summary.offset, 1);
+      assert.equal(plan.summary.current_batch_start, 2);
+      assert.equal(plan.summary.current_batch_end, 2);
+      assert.equal(plan.summary.remaining_after_batch, 1);
+      assert.equal(plan.summary.by_exclusion_reason.before_offset, 1);
+      assert.equal(plan.summary.by_exclusion_reason.after_batch_limit, 1);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

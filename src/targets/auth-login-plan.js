@@ -37,6 +37,11 @@ function parseLimit(value, fallback = 25) {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 }
 
+function parseOffset(value, fallback = 0) {
+  const parsed = Number.parseInt(value ?? fallback, 10);
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : fallback;
+}
+
 function incrementCount(counts, key) {
   const normalized = String(key || 'unknown');
   counts[normalized] = (counts[normalized] || 0) + 1;
@@ -137,15 +142,24 @@ function completedRow(row = {}, status = {}) {
   };
 }
 
-function summaryFor(sourceRows, loginRows, pendingRows, targets, completed, excluded) {
+function summaryFor(sourceRows, loginRows, pendingRows, targets, completed, excluded, opts = {}) {
   const byExclusionReason = {};
   for (const row of excluded) incrementCount(byExclusionReason, row.exclusion_reason);
+  const offset = parseOffset(opts.offset, 0);
+  const limit = parseLimit(opts.limit, 25);
+  const currentBatchStart = targets.length ? offset + 1 : 0;
+  const currentBatchEnd = targets.length ? offset + targets.length : 0;
 
   return {
     source_rows: sourceRows.length,
     auth_login_rows: loginRows,
     pending_rows: pendingRows,
+    offset,
+    limit,
+    current_batch_start: currentBatchStart,
+    current_batch_end: currentBatchEnd,
     queued_rows: targets.length,
+    remaining_after_batch: Math.max(0, pendingRows - offset - targets.length),
     completed_rows: completed.length,
     excluded_rows: excluded.length,
     auth_profiles_found: completed.length,
@@ -159,6 +173,7 @@ export function buildAuthLoginPlan(queuePath, opts = {}) {
 
   const authDir = opts.authDir || DEFAULT_AUTH_DIR;
   const limit = parseLimit(opts.limit, 25);
+  const offset = parseOffset(opts.offset, 0);
   const sourceRows = parseCsv(readFileSync(queuePath, 'utf-8'));
   const pending = [];
   const completed = [];
@@ -191,12 +206,15 @@ export function buildAuthLoginPlan(queuePath, opts = {}) {
     pending.push({ row, status });
   }
 
-  const selected = pending.slice(0, limit);
-  for (const entry of pending.slice(limit)) {
-    excluded.push(baseRow(entry.row, entry.status, 'over_limit'));
+  const selected = pending.slice(offset, offset + limit);
+  for (const entry of pending.slice(0, offset)) {
+    excluded.push(baseRow(entry.row, entry.status, 'before_offset'));
+  }
+  for (const entry of pending.slice(offset + limit)) {
+    excluded.push(baseRow(entry.row, entry.status, 'after_batch_limit'));
   }
 
-  const targets = selected.map((entry, index) => targetRow(entry.row, entry.status, index + 1));
+  const targets = selected.map((entry, index) => targetRow(entry.row, entry.status, offset + index + 1));
 
   return {
     version: 1,
@@ -207,6 +225,7 @@ export function buildAuthLoginPlan(queuePath, opts = {}) {
     constraints: {
       purpose: 'manual_auth_login_collection',
       limit,
+      offset,
       auth_dir: normalizePath(authDir),
       product_config: opts.productConfig || '',
       no_real_submission: true,
@@ -216,7 +235,7 @@ export function buildAuthLoginPlan(queuePath, opts = {}) {
     targets,
     completed,
     excluded,
-    summary: summaryFor(sourceRows, loginRows, pending.length, targets, completed, excluded),
+    summary: summaryFor(sourceRows, loginRows, pending.length, targets, completed, excluded, { offset, limit }),
   };
 }
 
