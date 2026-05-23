@@ -1,6 +1,6 @@
 # Assisted Submission Pack
 
-Generated: 2026-05-23T09:08:30.178Z
+Generated: 2026-05-23T09:17:17.589Z
 
 ## Scope
 
@@ -97,6 +97,7 @@ Policy: this pack is manual/assisted preparation only. It does not approve targe
 - Manual surface review queue: backlink-url/assisted-submission-pack/manual-surface-review.csv
 - Manual review-first queue: backlink-url/assisted-submission-pack/manual-review-first.csv
 - Cross-domain final URL review queue: backlink-url/assisted-submission-pack/cross-domain-final-url-review.csv
+- Cross-domain final URL suggestions: backlink-url/assisted-submission-pack/cross-domain-final-url-suggestions.md
 - Summary JSON: backlink-url/assisted-submission-pack/assisted-submission-summary.json
 
 ## Safe Next Commands

@@ -3,7 +3,7 @@ import { dirname, join } from 'path';
 import { parse } from 'yaml';
 import { DEFAULT_REGISTRY_FILE, loadRegistry } from './registry.js';
 import { cleanTrackingUrl } from './normalize.js';
-import { urlDomainBlocker } from './auth-login-safety.js';
+import { urlDomainBlocker, urlHost } from './auth-login-safety.js';
 
 const ASSISTED_PACK_HEADERS = [
   'rank',
@@ -38,6 +38,23 @@ const ASSISTED_PACK_HEADERS = [
   'source',
   'reason',
   'notes',
+];
+
+const CROSS_DOMAIN_SUGGESTION_HEADERS = [
+  'target_id',
+  'name',
+  'domain',
+  'submit_url',
+  'final_url',
+  'submit_host',
+  'final_host',
+  'classification',
+  'confidence',
+  'recommended_decision',
+  'allowed_host_candidate',
+  'automation_policy',
+  'reason',
+  'next_step',
 ];
 
 function nowIso() {
@@ -520,6 +537,120 @@ export function assistedSubmissionPackCsv(rows = []) {
   ].join('\n') + '\n';
 }
 
+function crossDomainSuggestion(row = {}) {
+  const submitHost = urlHost(row.submit_url || '');
+  const finalHost = urlHost(row.final_url || '');
+  const finalUrl = String(row.final_url || '').toLowerCase();
+  const targetId = String(row.target_id || '');
+  const domain = String(row.domain || '').toLowerCase();
+  let suggestion = {
+    classification: 'unknown_cross_domain',
+    confidence: 'low',
+    recommended_decision: 'manual_review_before_any_execution',
+    allowed_host_candidate: '',
+    automation_policy: 'no_execution_from_suggestion',
+    reason: 'Final URL host differs from target and submit hosts without a known safe relationship.',
+    next_step: 'Manually verify the target owner, current submit path, pricing, auth, and form behavior before changing registry evidence.',
+  };
+
+  if (finalHost === 'bubble.io' && finalUrl.includes('/domain_not_supported')) {
+    suggestion = {
+      classification: 'platform_custom_domain_error',
+      confidence: 'high',
+      recommended_decision: 'skip_until_directory_domain_recovers',
+      allowed_host_candidate: '',
+      automation_policy: 'no_execution_from_suggestion',
+      reason: 'The target appears to resolve to Bubble domain_not_supported, which is not a valid directory submission form.',
+      next_step: 'Verify the directory root manually; if it still shows a platform domain error, mark the target skipped or replace it with a working submit URL.',
+    };
+  } else if (finalHost === 'afternic.com') {
+    suggestion = {
+      classification: 'domain_for_sale_or_parked',
+      confidence: 'high',
+      recommended_decision: 'skip_or_replace_source',
+      allowed_host_candidate: '',
+      automation_policy: 'no_execution_from_suggestion',
+      reason: 'The final URL is a domain-sale or parking page, not a directory submission surface.',
+      next_step: 'Mark the target skipped unless a current owned directory URL can be independently verified.',
+    };
+  } else if (finalHost === 'banggood.com') {
+    suggestion = {
+      classification: 'affiliate_or_unrelated_redirect',
+      confidence: 'high',
+      recommended_decision: 'skip_or_replace_source',
+      allowed_host_candidate: '',
+      automation_policy: 'no_execution_from_suggestion',
+      reason: 'The final URL is an unrelated commerce or affiliate destination.',
+      next_step: 'Do not submit; mark skipped unless the directory has a verified current submit surface.',
+    };
+  } else if (targetId === 'aigc' && finalHost === 'ainavpro.com') {
+    suggestion = {
+      classification: 'stale_scout_evidence_from_other_directory',
+      confidence: 'high',
+      recommended_decision: 'manual_rescout_target_domain_first',
+      allowed_host_candidate: '',
+      automation_policy: 'no_execution_from_suggestion',
+      reason: 'The final URL belongs to a different directory already represented separately.',
+      next_step: 'Manually inspect the intended aigc.cn submit path and update or skip the target before it can enter login or rescout workflows.',
+    };
+  } else if (finalHost === 'free-alan.com') {
+    suggestion = {
+      classification: 'unrelated_external_submit_endpoint',
+      confidence: 'medium',
+      recommended_decision: 'manual_rescout_target_domain_first',
+      allowed_host_candidate: '',
+      automation_policy: 'no_execution_from_suggestion',
+      reason: 'The final URL is a different site submit endpoint, not an obvious owned alias of the target domain.',
+      next_step: 'Verify whether the target was misidentified; otherwise update the target to the actual directory or mark the current row skipped.',
+    };
+  } else if (submitHost === 'jinshuju.net' && finalHost === 'jsj.top') {
+    suggestion = {
+      classification: 'possible_form_provider_alias',
+      confidence: 'medium',
+      recommended_decision: 'manual_verify_then_allowlist_if_owner_confirmed',
+      allowed_host_candidate: finalHost,
+      automation_policy: 'no_execution_from_suggestion',
+      reason: 'The submit URL and final URL look like a possible form-provider alias pair, but ownership and target fit are not proven by host matching alone.',
+      next_step: 'Open the form manually, confirm it belongs to the intended directory, then add an explicit allowed final host only after review.',
+    };
+  } else if (domain.endsWith('therundown.ai') && finalHost === 'rundown.ai') {
+    suggestion = {
+      classification: 'possible_parent_brand_submit_domain',
+      confidence: 'medium',
+      recommended_decision: 'manual_verify_then_allowlist_if_owner_confirmed',
+      allowed_host_candidate: finalHost,
+      automation_policy: 'no_execution_from_suggestion',
+      reason: 'The final URL appears to be on a parent or brand domain, but cross-host ownership still requires explicit review.',
+      next_step: 'Confirm the parent-domain form is the official submit surface for the target directory before allowing this host.',
+    };
+  }
+
+  return {
+    target_id: row.target_id || '',
+    name: row.name || '',
+    domain: row.domain || '',
+    submit_url: row.submit_url || '',
+    final_url: row.final_url || '',
+    submit_host: submitHost,
+    final_host: finalHost,
+    ...suggestion,
+  };
+}
+
+export function crossDomainFinalUrlSuggestions(rows = []) {
+  return rows
+    .filter(row => row.manual_bucket === 'fix_cross_domain_final_url')
+    .map(row => crossDomainSuggestion(row));
+}
+
+export function crossDomainFinalUrlSuggestionsCsv(rows = []) {
+  const suggestions = crossDomainFinalUrlSuggestions(rows);
+  return [
+    CROSS_DOMAIN_SUGGESTION_HEADERS.join(','),
+    ...suggestions.map(row => CROSS_DOMAIN_SUGGESTION_HEADERS.map(header => csvEscape(row[header])).join(',')),
+  ].join('\n') + '\n';
+}
+
 function markdownEscape(value) {
   return String(value || '').replace(/\|/g, '\\|');
 }
@@ -541,6 +672,50 @@ function topRowsTable(rows) {
     row.automation_after_human,
     row.submit_url,
   ].map(markdownEscape).join(' | ')).map(line => `| ${line} |`).join('\n');
+}
+
+function crossDomainSuggestionsTable(rows = []) {
+  const suggestions = crossDomainFinalUrlSuggestions(rows);
+  if (!suggestions.length) return '| - | - | - | - | - | - |';
+  return suggestions.map(row => [
+    row.target_id,
+    row.domain,
+    row.final_host,
+    row.classification,
+    row.confidence,
+    row.recommended_decision,
+  ].map(markdownEscape).join(' | ')).map(line => `| ${line} |`).join('\n');
+}
+
+function crossDomainSuggestionsMarkdown(pack, files = {}) {
+  const suggestions = crossDomainFinalUrlSuggestions(pack.rows);
+  return [
+    '# Cross-Domain Final URL Review Suggestions',
+    '',
+    `Generated: ${pack.generated_at}`,
+    '',
+    'Policy: this file is read-only guidance for human review. It does not approve targets, does not allowlist external hosts, does not log in, and does not authorize real submissions.',
+    '',
+    `Rows: ${suggestions.length}`,
+    '',
+    '| Target ID | Domain | Final Host | Classification | Confidence | Recommended Decision |',
+    '|---|---|---|---|---|---|',
+    crossDomainSuggestionsTable(pack.rows),
+    '',
+    '## Required Manual Checks',
+    '',
+    '1. Confirm the directory still exists and is a genuine fit for the product.',
+    '2. Confirm the final URL belongs to the same directory owner or an intentionally used form provider.',
+    '3. Confirm there is no CAPTCHA, OAuth, paywall, file upload, reciprocal-link requirement, or dynamic ambiguity before any automation promotion.',
+    '4. Add an explicit allowed host only after human review; never infer it from host similarity alone.',
+    '5. Skip parked domains, platform error pages, affiliate redirects, and unrelated submit endpoints.',
+    '',
+    '## Files',
+    '',
+    `- Source review queue: ${files.cross_domain_final_url_csv || 'cross-domain-final-url-review.csv'}`,
+    `- Suggestions CSV: ${files.cross_domain_final_url_suggestions_csv || 'cross-domain-final-url-suggestions.csv'}`,
+    '',
+  ].join('\n');
 }
 
 function assistedPackMarkdown(pack, files = {}) {
@@ -602,6 +777,7 @@ function assistedPackMarkdown(pack, files = {}) {
     `- Manual surface review queue: ${files.manual_surface_review_csv || 'manual-surface-review.csv'}`,
     `- Manual review-first queue: ${files.manual_review_first_csv || 'manual-review-first.csv'}`,
     `- Cross-domain final URL review queue: ${files.cross_domain_final_url_csv || 'cross-domain-final-url-review.csv'}`,
+    `- Cross-domain final URL suggestions: ${files.cross_domain_final_url_suggestions_md || 'cross-domain-final-url-suggestions.md'}`,
     `- Summary JSON: ${files.summary_json || 'assisted-submission-summary.json'}`,
     '',
     '## Safe Next Commands',
@@ -623,6 +799,8 @@ export function writeAssistedSubmissionPack(pack, opts = {}) {
     manual_surface_review_csv: join(outputDir, 'manual-surface-review.csv'),
     manual_review_first_csv: join(outputDir, 'manual-review-first.csv'),
     cross_domain_final_url_csv: join(outputDir, 'cross-domain-final-url-review.csv'),
+    cross_domain_final_url_suggestions_csv: join(outputDir, 'cross-domain-final-url-suggestions.csv'),
+    cross_domain_final_url_suggestions_md: join(outputDir, 'cross-domain-final-url-suggestions.md'),
   };
   const publicFiles = Object.fromEntries(
     Object.entries(files).map(([key, value]) => [key, normalizePath(value)])
@@ -649,6 +827,16 @@ export function writeAssistedSubmissionPack(pack, opts = {}) {
   writeFileSync(
     files.cross_domain_final_url_csv,
     assistedSubmissionPackCsv(pack.rows.filter(row => row.manual_bucket === 'fix_cross_domain_final_url')),
+    'utf-8'
+  );
+  writeFileSync(
+    files.cross_domain_final_url_suggestions_csv,
+    crossDomainFinalUrlSuggestionsCsv(pack.rows),
+    'utf-8'
+  );
+  writeFileSync(
+    files.cross_domain_final_url_suggestions_md,
+    crossDomainSuggestionsMarkdown(pack, publicFiles),
     'utf-8'
   );
   writeFileSync(files.summary_json, JSON.stringify({

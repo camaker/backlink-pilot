@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-23T09:08:30.178Z",
+  "generated_at": "2026-05-23T09:17:17.589Z",
   "policy": "manual_assisted_pack_only_no_registry_changes_no_real_submissions",
   "total_rows": 222,
   "excluded_rows": 0,
@@ -68,6 +68,8 @@
     "auth_login_rescout_csv": "backlink-url/assisted-submission-pack/auth-login-rescout-queue.csv",
     "manual_surface_review_csv": "backlink-url/assisted-submission-pack/manual-surface-review.csv",
     "manual_review_first_csv": "backlink-url/assisted-submission-pack/manual-review-first.csv",
-    "cross_domain_final_url_csv": "backlink-url/assisted-submission-pack/cross-domain-final-url-review.csv"
+    "cross_domain_final_url_csv": "backlink-url/assisted-submission-pack/cross-domain-final-url-review.csv",
+    "cross_domain_final_url_suggestions_csv": "backlink-url/assisted-submission-pack/cross-domain-final-url-suggestions.csv",
+    "cross_domain_final_url_suggestions_md": "backlink-url/assisted-submission-pack/cross-domain-final-url-suggestions.md"
   }
 }

@@ -9,6 +9,7 @@ import { auditTargets, formatAuditReport } from '../src/targets/audit.js';
 import {
   assistedSubmissionPackCsv,
   buildAssistedSubmissionPack,
+  crossDomainFinalUrlSuggestionsCsv,
   writeAssistedSubmissionPack,
 } from '../src/targets/assisted-pack.js';
 import {
@@ -2176,6 +2177,7 @@ targets:
       const manualSurfaceRows = parseCsv(readFileSync(written.files.manual_surface_review_csv, 'utf-8'));
       const manualReviewRows = parseCsv(readFileSync(written.files.manual_review_first_csv, 'utf-8'));
       const crossDomainRows = parseCsv(readFileSync(written.files.cross_domain_final_url_csv, 'utf-8'));
+      const crossDomainSuggestionRows = parseCsv(readFileSync(written.files.cross_domain_final_url_suggestions_csv, 'utf-8'));
       const summary = JSON.parse(readFileSync(written.files.summary_json, 'utf-8'));
 
       assert.equal(pack.rows.length, 5);
@@ -2208,6 +2210,10 @@ targets:
       assert.equal(manualReviewRows[0].target_id, 'review-target');
       assert.equal(crossDomainRows.length, 1);
       assert.equal(crossDomainRows[0].target_id, 'cross-final-url');
+      assert.equal(crossDomainSuggestionRows.length, 1);
+      assert.equal(crossDomainSuggestionRows[0].target_id, 'cross-final-url');
+      assert.equal(crossDomainSuggestionRows[0].classification, 'unknown_cross_domain');
+      assert.equal(crossDomainSuggestionRows[0].automation_policy, 'no_execution_from_suggestion');
       assert.equal(summary.policy, 'manual_assisted_pack_only_no_registry_changes_no_real_submissions');
       assert.equal(summary.by_exclusion_reason.paid_excluded_by_default, 1);
       assert.equal(summary.by_exclusion_reason.already_submitted, 1);
@@ -2216,7 +2222,11 @@ targets:
       assert.equal(existsSync(written.files.manual_surface_review_csv), true);
       assert.equal(existsSync(written.files.manual_review_first_csv), true);
       assert.equal(existsSync(written.files.cross_domain_final_url_csv), true);
+      assert.equal(existsSync(written.files.cross_domain_final_url_suggestions_csv), true);
+      assert.equal(existsSync(written.files.cross_domain_final_url_suggestions_md), true);
       assert.equal(summary.files.cross_domain_final_url_csv.endsWith('cross-domain-final-url-review.csv'), true);
+      assert.equal(summary.files.cross_domain_final_url_suggestions_csv.endsWith('cross-domain-final-url-suggestions.csv'), true);
+      assert.match(crossDomainFinalUrlSuggestionsCsv(pack.rows), /unknown_cross_domain/);
       assert.match(assistedSubmissionPackCsv(pack.rows), /no_real_submission_from_pack/);
     } finally {
       rmSync(dir, { recursive: true, force: true });
