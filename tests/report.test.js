@@ -218,6 +218,7 @@ targets:
       assert.match(report.next_actions[0].command, /verify-results/);
       assert.match(report.next_actions[1].command, /--execute/);
       assert.match(report.next_actions[2].command, /--scout-queue --update-registry/);
+      assert.match(report.next_actions[3].command, /pricing-review-queue/);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

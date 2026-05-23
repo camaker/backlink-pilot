@@ -173,6 +173,9 @@ node src/cli.js targets coverage-review-suggest <batch.csv> <evidence.csv>  # Cr
 node src/cli.js targets coverage-review-draft <batch.csv> <suggestions.csv>  # Draft rejection-only batch edits from high-confidence suggestions
 node src/cli.js targets promote-coverage-review-batch <review.csv> <batch.csv> --dry-run  # Validate batch promotion before import/scout
 node src/cli.js targets coverage-review-manual-pack <queue.csv>  # Generate a manual review pack from remaining candidates
+node src/cli.js targets pricing-review-queue       # Queue runnable targets whose pricing is still unknown
+node src/cli.js targets pricing-review-evidence <queue.csv>      # GET-only pricing evidence, no login or submission
+node src/cli.js targets pricing-review-suggest <queue.csv> <evidence.csv>  # Non-binding pricing suggestions
 node src/cli.js targets auth-login-next <batch...>  # Select next manual login tasks without executing them
 node src/cli.js targets auth-login-operator-pack <next-login.json>  # Generate a human-only login runbook and PowerShell helper
 node src/cli.js targets auth-workflow-refresh <queue.csv> <batch...>  # Refresh auth workflow artifacts without executing commands

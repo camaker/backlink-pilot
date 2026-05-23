@@ -36,6 +36,9 @@ import {
   importCoverageReviewCommand,
   listTargetsCommand,
   normalizeTargetsCommand,
+  pricingReviewEvidenceCommand,
+  pricingReviewQueueCommand,
+  pricingReviewSuggestCommand,
   promoteCoverageReviewBatchCommand,
   statsTargetsCommand,
   validateCrossDomainFinalUrlDecisionsCommand,
@@ -322,6 +325,44 @@ targets
   .option('--json', 'Output summary as JSON')
   .action(async (opts) => {
     await assistedSubmissionPackCommand(opts);
+  });
+
+targets
+  .command('pricing-review-queue')
+  .description('Generate a read-only queue of runnable targets whose pricing is unknown')
+  .option('--registry <path>', 'Canonical registry path')
+  .option('--output-dir <path>', 'Directory to write the pricing review queue')
+  .option('--modes <items>', 'Comma-separated runnable modes to include, e.g. assisted,auto_safe')
+  .option('--offset <n>', 'Zero-based offset within the prioritized queue', '0')
+  .option('--limit <n>', 'Rows to include in this queue slice')
+  .option('--json', 'Output summary as JSON')
+  .action(async (opts) => {
+    await pricingReviewQueueCommand(opts);
+  });
+
+targets
+  .command('pricing-review-evidence <queue>')
+  .description('Collect GET-only HTTP/HTML pricing evidence for a pricing review queue without submitting')
+  .option('--output <path>', 'Write evidence CSV')
+  .option('--json-output <path>', 'Write full evidence JSON')
+  .option('--offset <n>', 'Zero-based offset within evidence URL checks', '0')
+  .option('--limit <n>', 'Maximum URL checks to fetch')
+  .option('--timeout-ms <n>', 'Per-URL fetch timeout in milliseconds', '15000')
+  .option('--user-agent <value>', 'HTTP user-agent for read-only evidence fetches')
+  .option('--json', 'Output summary as JSON')
+  .action(async (queue, opts) => {
+    await pricingReviewEvidenceCommand(queue, opts);
+  });
+
+targets
+  .command('pricing-review-suggest <queue> <evidence>')
+  .description('Create non-binding pricing suggestions from a pricing review queue and read-only evidence')
+  .option('--output <path>', 'Write suggestions CSV', 'backlink-url/pricing-review/pricing-review-suggestions.csv')
+  .option('--json-output <path>', 'Write suggestions JSON', 'backlink-url/pricing-review/pricing-review-suggestions.json')
+  .option('--markdown-output <path>', 'Write suggestions Markdown', 'backlink-url/pricing-review/pricing-review-suggestions.md')
+  .option('--json', 'Output summary as JSON')
+  .action(async (queue, evidence, opts) => {
+    await pricingReviewSuggestCommand(queue, evidence, opts);
   });
 
 targets

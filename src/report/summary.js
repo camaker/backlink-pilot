@@ -230,7 +230,7 @@ function buildNextActions(runSummary, verificationSummary, registrySummary, inpu
       'review_unknown_pricing',
       'Manually verify pricing for auto_safe targets',
       `${automation.auto_safe_pricing_review} auto_safe target(s) have mapped forms but unknown pricing.`,
-      `node src/cli.js targets list --registry ${registry} --mode auto_safe`
+      `node src/cli.js targets pricing-review-queue --registry ${registry} --modes auto_safe --output-dir backlink-url/pricing-review`
     ));
   }
 

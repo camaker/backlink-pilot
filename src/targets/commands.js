@@ -44,6 +44,14 @@ import {
   writeAuthWorkflowRefresh,
 } from './auth-workflow-refresh.js';
 import {
+  buildPricingReviewEvidence,
+  buildPricingReviewQueue,
+  buildPricingReviewSuggestions,
+  writePricingReviewEvidence,
+  writePricingReviewQueue,
+  writePricingReviewSuggestions,
+} from './pricing-review.js';
+import {
   applyCoverageReviewQueue,
   buildCoverageReviewEvidence,
   buildCoverageReviewBatch,
@@ -156,6 +164,110 @@ export async function auditTargetsCommand(opts = {}) {
   }
   if (!report.ok && opts.failOnBlockers) process.exitCode = 1;
   return report;
+}
+
+export async function pricingReviewQueueCommand(opts = {}) {
+  const queue = buildPricingReviewQueue({
+    registry: opts.registry || DEFAULT_REGISTRY_FILE,
+    modes: opts.modes,
+    offset: opts.offset,
+    limit: opts.limit,
+  });
+  const written = writePricingReviewQueue(queue, {
+    outputDir: opts.outputDir,
+  });
+  const result = {
+    total_candidates: queue.total_candidates,
+    ...queue.summary,
+    output_dir: written.output_dir,
+    files: written.files,
+  };
+
+  if (opts.json) {
+    console.log(JSON.stringify(result, null, 2));
+    return result;
+  }
+
+  console.log(`Registry: ${queue.registry}`);
+  console.log(`Output dir: ${written.output_dir}`);
+  console.log(`Total candidates: ${queue.total_candidates}`);
+  console.log(`Rows: ${queue.summary.rows}`);
+  console.log(`By mode: ${JSON.stringify(queue.summary.by_mode)}`);
+  console.log(`By priority: ${JSON.stringify(queue.summary.by_priority)}`);
+  console.log(`Rows with scout evidence: ${queue.summary.rows_with_scout}`);
+  console.log(`Rows with forms: ${queue.summary.rows_with_forms}`);
+  console.log(`Queue CSV: ${written.files.queue_csv}`);
+  console.log(`Queue summary: ${written.files.queue_md}`);
+  console.log('Policy: read-only pricing review queue; no network, no registry writes, no submission.');
+
+  return result;
+}
+
+export async function pricingReviewEvidenceCommand(queuePath, opts = {}) {
+  const evidence = await buildPricingReviewEvidence(queuePath, {
+    offset: opts.offset,
+    limit: opts.limit,
+    timeoutMs: opts.timeoutMs,
+    userAgent: opts.userAgent,
+  });
+  writePricingReviewEvidence(evidence, {
+    output: opts.output,
+    jsonOutput: opts.jsonOutput,
+  });
+  const result = {
+    queue: evidence.queue,
+    checked_rows: evidence.checked_rows,
+    total_rows: evidence.total_rows,
+    ...evidence.summary,
+    output: opts.output || '',
+    json_output: opts.jsonOutput || '',
+  };
+
+  if (opts.json) {
+    console.log(JSON.stringify(result, null, 2));
+    return result;
+  }
+
+  console.log(`Queue: ${evidence.queue}`);
+  console.log(`Checked rows: ${evidence.checked_rows}/${evidence.total_rows}`);
+  console.log(`Fetch OK: ${evidence.summary.fetch_ok}`);
+  console.log(`Fetch failed: ${evidence.summary.fetch_failed}`);
+  console.log(`Pricing signals: ${JSON.stringify(evidence.summary.by_suggested_pricing_signal)}`);
+  if (opts.output) console.log(`Evidence CSV: ${opts.output}`);
+  if (opts.jsonOutput) console.log(`Evidence JSON: ${opts.jsonOutput}`);
+  console.log('Policy: GET-only read-only evidence; no login, no browser execution, no submission, no registry writes.');
+
+  return result;
+}
+
+export async function pricingReviewSuggestCommand(queuePath, evidencePath, opts = {}) {
+  const suggestions = buildPricingReviewSuggestions(queuePath, evidencePath);
+  const written = writePricingReviewSuggestions(suggestions, {
+    output: opts.output,
+    jsonOutput: opts.jsonOutput,
+    markdownOutput: opts.markdownOutput,
+  });
+  const result = {
+    ...suggestions.summary,
+    files: written.files,
+  };
+
+  if (opts.json) {
+    console.log(JSON.stringify(result, null, 2));
+    return result;
+  }
+
+  console.log(`Queue: ${suggestions.queue}`);
+  console.log(`Evidence: ${suggestions.evidence}`);
+  console.log(`Rows: ${suggestions.summary.rows}`);
+  console.log(`Evidence matched: ${suggestions.summary.evidence_matched}`);
+  console.log(`Suggested pricing: ${JSON.stringify(suggestions.summary.by_suggested_pricing)}`);
+  console.log(`Suggested decisions: ${JSON.stringify(suggestions.summary.by_suggested_review_decision)}`);
+  console.log(`Suggestions CSV: ${written.files.suggestions_csv}`);
+  console.log(`Suggestions summary: ${written.files.suggestions_md}`);
+  console.log('Policy: non-binding pricing suggestions only; no registry writes, no submission.');
+
+  return result;
 }
 
 export async function dedupeTargetIdsCommand(opts = {}) {

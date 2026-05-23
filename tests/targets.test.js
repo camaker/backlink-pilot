@@ -50,6 +50,17 @@ import {
   writeAuthWorkflowRefresh,
 } from '../src/targets/auth-workflow-refresh.js';
 import {
+  buildPricingReviewEvidence,
+  buildPricingReviewQueue,
+  buildPricingReviewSuggestions,
+  pricingReviewEvidenceCsv,
+  pricingReviewQueueCsv,
+  pricingReviewSuggestionsCsv,
+  writePricingReviewEvidence,
+  writePricingReviewQueue,
+  writePricingReviewSuggestions,
+} from '../src/targets/pricing-review.js';
+import {
   applyCoverageReviewQueue,
   buildCoverageReviewEvidence,
   buildCoverageReviewBatch,
@@ -433,6 +444,146 @@ describe('target registry audit filtering', () => {
     assert.match(formatted, /Filtered warnings: 1/);
     assert.match(formatted, /auto_candidate_needs_scout/);
     assert.doesNotMatch(formatted, /runnable_unknown_pricing candidate/);
+  });
+});
+
+describe('pricing review', () => {
+  it('builds a read-only queue for runnable targets with unknown pricing', () => {
+    const dir = tempDir();
+    try {
+      const registry = join(dir, 'registry.yaml');
+      writeFileSync(registry, `
+version: 1
+targets:
+  - id: auto-safe-unknown
+    name: Auto Safe Unknown
+    domain: auto.example
+    submit_url: https://auto.example/submit
+    pricing: unknown
+    forms:
+      - fields: []
+    technical:
+      last_scouted_at: 2026-05-22T00:00:00.000Z
+      auth: none
+      captcha: none
+    submission:
+      mode: auto_safe
+      status: mapped
+  - id: assisted-unknown
+    name: Assisted Unknown
+    domain: assisted.example
+    submit_url: https://assisted.example/submit
+    pricing: unknown
+    submission:
+      mode: assisted
+      status: needs_auth
+  - id: assisted-free
+    name: Assisted Free
+    domain: free.example
+    submit_url: https://free.example/submit
+    pricing: free
+    submission:
+      mode: assisted
+  - id: review-unknown
+    name: Review Unknown
+    domain: review.example
+    submit_url: https://review.example/submit
+    pricing: unknown
+    submission:
+      mode: needs_review
+`);
+
+      const queue = buildPricingReviewQueue({ registry });
+      assert.equal(queue.constraints.no_network, true);
+      assert.equal(queue.constraints.no_registry_writes, true);
+      assert.equal(queue.total_candidates, 2);
+      assert.equal(queue.summary.rows, 2);
+      assert.deepEqual(queue.rows.map(row => row.target_id), ['auto-safe-unknown', 'assisted-unknown']);
+      assert.equal(queue.rows.every(row => row.review_decision === ''), true);
+
+      const csv = pricingReviewQueueCsv(queue);
+      assert.match(csv, /review_decision_options/);
+      assert.match(csv, /mark_free \| mark_freemium \| mark_paid \| keep_unknown/);
+
+      const written = writePricingReviewQueue(queue, { outputDir: join(dir, 'pricing-review') });
+      assert.equal(existsSync(written.files.queue_csv), true);
+      assert.equal(existsSync(written.files.queue_json), true);
+      assert.equal(existsSync(written.files.queue_md), true);
+
+      const after = loadRegistry(registry);
+      assert.equal(after.targets.find(target => target.id === 'auto-safe-unknown').pricing, 'unknown');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('collects GET-only pricing evidence and creates non-binding suggestions', async () => {
+    const dir = tempDir();
+    try {
+      const queuePath = join(dir, 'pricing-review-queue.csv');
+      writeFileSync(queuePath, [
+        'queue_order,priority,priority_score,target_id,name,domain,mode,submission_status,pricing,risk,lang,submit_url,final_url,last_scouted_at,auth,captcha,form_count,last_submitted_at,review_decision,review_decision_options,review_notes,reviewed_by',
+        '1,P1,240,paid-target,Paid Target,paid.example,assisted,mapped,unknown,unknown,en,https://paid.example/submit,,,,none,none,1,,,,',
+        '2,P1,240,free-target,Free Target,free.example,assisted,mapped,unknown,unknown,en,https://free.example/submit,,,,none,none,1,,,,',
+        '3,P1,240,freemium-target,Freemium Target,freemium.example,assisted,mapped,unknown,unknown,en,https://freemium.example/submit,,,,none,none,1,,,,',
+      ].join('\n') + '\n');
+
+      const htmlByHost = {
+        'paid.example': '<html><title>Submit listing</title><form><input name="url"><button type="submit">Submit</button></form><p>Paid listing. Submission fee $49.</p></html>',
+        'free.example': '<html><title>Submit tool</title><form><input name="url"><button type="submit">Submit</button></form><p>Submit your tool for free with a free listing.</p></html>',
+        'freemium.example': '<html><title>List product</title><form><input name="url"><button type="submit">List</button></form><p>Free basic listing. Premium listing upgrade available.</p></html>',
+      };
+      const fakeFetch = async (url) => {
+        const host = new URL(url).hostname;
+        return {
+          status: 200,
+          ok: true,
+          url,
+          headers: { get: () => 'text/html; charset=utf-8' },
+          text: async () => htmlByHost[host],
+        };
+      };
+
+      const evidence = await buildPricingReviewEvidence(queuePath, { fetchFn: fakeFetch });
+      assert.equal(evidence.constraints.get_only, true);
+      assert.equal(evidence.constraints.no_submission, true);
+      assert.equal(evidence.checked_rows, 3);
+      assert.equal(evidence.summary.payment_signals, 1);
+      assert.equal(evidence.summary.free_signals, 2);
+      assert.equal(evidence.summary.by_suggested_pricing_signal.paid, 1);
+      assert.equal(evidence.summary.by_suggested_pricing_signal.free, 1);
+      assert.equal(evidence.summary.by_suggested_pricing_signal.freemium, 1);
+
+      const evidenceCsv = join(dir, 'pricing-review-evidence.csv');
+      const evidenceJson = join(dir, 'pricing-review-evidence.json');
+      writePricingReviewEvidence(evidence, { output: evidenceCsv, jsonOutput: evidenceJson });
+      assert.equal(existsSync(evidenceCsv), true);
+      assert.equal(existsSync(evidenceJson), true);
+      assert.match(pricingReviewEvidenceCsv(evidence), /suggested_pricing_signal/);
+
+      const suggestions = buildPricingReviewSuggestions(queuePath, evidenceCsv);
+      assert.equal(suggestions.constraints.non_binding, true);
+      assert.equal(suggestions.summary.by_suggested_pricing.paid, 1);
+      assert.equal(suggestions.summary.by_suggested_pricing.free, 1);
+      assert.equal(suggestions.summary.by_suggested_pricing.freemium, 1);
+      assert.equal(suggestions.rows.every(row => row.automation_policy === 'non_binding_suggestion_no_registry_write_no_submission'), true);
+
+      const suggestionsCsv = pricingReviewSuggestionsCsv(suggestions);
+      assert.match(suggestionsCsv, /mark_paid/);
+      assert.match(suggestionsCsv, /mark_free/);
+      assert.match(suggestionsCsv, /mark_freemium/);
+
+      const written = writePricingReviewSuggestions(suggestions, {
+        output: join(dir, 'pricing-review-suggestions.csv'),
+        jsonOutput: join(dir, 'pricing-review-suggestions.json'),
+        markdownOutput: join(dir, 'pricing-review-suggestions.md'),
+      });
+      assert.equal(existsSync(written.files.suggestions_csv), true);
+      assert.equal(existsSync(written.files.suggestions_json), true);
+      assert.equal(existsSync(written.files.suggestions_md), true);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 });
 
