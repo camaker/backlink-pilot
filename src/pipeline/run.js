@@ -1,9 +1,10 @@
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { buildScoutQueuePlan, buildSubmissionPlan, saveSubmissionPlan } from '../planner/plan.js';
-import { buildReport } from '../report/summary.js';
+import { buildReport, DEFAULT_BACKLOG_PATH } from '../report/summary.js';
 import { runPlan } from '../runner/run.js';
 import { scoutPlan } from '../scout/plan.js';
+import { buildBacklogLanes, loadBacklogLanesSummary, writeBacklogLanes } from '../targets/backlog-lanes.js';
 import { DEFAULT_REGISTRY_FILE } from '../targets/registry.js';
 import { verifyResults } from '../verification/results.js';
 
@@ -96,6 +97,46 @@ function ensureJsonlFile(path) {
   if (!existsSync(path)) writeFileSync(path, '', 'utf-8');
 }
 
+function maybeRefreshBacklog(opts = {}, registry = DEFAULT_REGISTRY_FILE) {
+  const backlogPath = opts.backlog || DEFAULT_BACKLOG_PATH;
+  if (!opts.refreshBacklogIfStale) {
+    return {
+      backlog_path: backlogPath,
+      refreshed: false,
+    };
+  }
+
+  try {
+    const summary = loadBacklogLanesSummary(backlogPath);
+    const generatedAt = Date.parse(summary.generated_at || '');
+    const staleAfterHours = Number.parseInt(opts.backlogStaleAfterHours || '24', 10);
+    const threshold = Number.isFinite(staleAfterHours) && staleAfterHours > 0 ? staleAfterHours : 24;
+    const ageHours = Number.isFinite(generatedAt)
+      ? (Date.now() - generatedAt) / (1000 * 60 * 60)
+      : Number.POSITIVE_INFINITY;
+    if (ageHours <= threshold) {
+      return {
+        backlog_path: backlogPath,
+        refreshed: false,
+        age_hours: Number(ageHours.toFixed(2)),
+      };
+    }
+  } catch {
+    // refresh below
+  }
+
+  const outputDir = backlogPath.replace(/[\\/]backlog-lanes\.json$/i, '');
+  const plan = buildBacklogLanes({
+    registry,
+    outputDir,
+  });
+  const files = writeBacklogLanes(plan, { outputDir });
+  return {
+    backlog_path: files.summary_json,
+    refreshed: true,
+  };
+}
+
 export async function runPipeline(opts = {}) {
   const execute = Boolean(opts.execute);
   const shouldScout = Boolean(opts.scout || opts.scoutQueue);
@@ -108,6 +149,7 @@ export async function runPipeline(opts = {}) {
 
   const runDir = opts.runDir || defaultRunDir();
   const registry = opts.registry || DEFAULT_REGISTRY_FILE;
+  const backlogRefresh = maybeRefreshBacklog(opts, registry);
   const productConfig = opts.productConfig || opts.config;
   const limit = parsePositiveInt(opts.limit, 10);
   const paths = pipelinePaths(runDir);
@@ -132,6 +174,7 @@ export async function runPipeline(opts = {}) {
     execute,
     registry,
     paths,
+    backlog: backlogRefresh,
     steps: {
       plan: summarizePlanStep(plan, activePlanPath, {
         phase: shouldScout ? 'pre_scout' : 'run',
@@ -209,7 +252,8 @@ export async function runPipeline(opts = {}) {
     results: paths.results,
     verification: opts.verify ? paths.verification : undefined,
     registry,
-    backlog: opts.backlog,
+    backlog: backlogRefresh.backlog_path,
+    backlogStaleAfterHours: opts.backlogStaleAfterHours,
   });
   writeJson(paths.report, report);
   summary.steps.report = {

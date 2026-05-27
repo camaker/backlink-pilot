@@ -82,7 +82,10 @@ import {
   writeAuthWorkflowRefresh,
 } from '../src/targets/auth-workflow-refresh.js';
 import {
+  buildBacklogLaneRunbook,
   buildBacklogLanes,
+  buildBacklogWorkerRunbook,
+  loadBacklogLanesSummary,
   writeBacklogLanes,
 } from '../src/targets/backlog-lanes.js';
 import {
@@ -411,6 +414,14 @@ pricing-001,3,3,gamma,Gamma,gamma.example,assisted,https://gamma.example/submit,
       assert.equal(existsSync(join(dir, 'lanes-out', 'backlog-lanes.md')), true);
       assert.equal(files.lanes.length, 9);
       assert.equal(files.workers.length, 3);
+
+      const summary = loadBacklogLanesSummary(join(dir, 'lanes-out', 'backlog-lanes.json'));
+      const laneRunbook = buildBacklogLaneRunbook(summary, 'auth-login-001');
+      const workerRunbook = buildBacklogWorkerRunbook(summary, 'worker-01');
+      assert.match(laneRunbook.open_command, /targets backlog-lane "auth-login-001"/);
+      assert.ok(laneRunbook.action_command);
+      assert.equal(workerRunbook.worker_id, 'worker-01');
+      assert.ok(workerRunbook.lanes.length > 0);
 
       const workerDoc = readFileSync(join(dir, 'lanes-out', 'workers', 'worker-01.md'), 'utf-8');
       assert.match(workerDoc, /worker-01/i);

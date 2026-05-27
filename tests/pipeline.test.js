@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, utimesSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { runPipeline } from '../src/pipeline/run.js';
@@ -285,6 +285,44 @@ describe('pipeline runner', () => {
       assert.equal(summary.steps.plan.scout_queue, true);
       assert.equal(summary.steps.plan.refreshed_after_scout, true);
       assert.match(summary.steps.run.plan, /plan\.json$/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('can refresh stale backlog lanes before report synthesis', async () => {
+    const dir = tempDir();
+    try {
+      const registry = join(dir, 'registry.yaml');
+      const runDir = join(dir, 'run');
+      const backlogDir = join(dir, 'backlog');
+      const backlogPath = join(backlogDir, 'backlog-lanes.json');
+      writeRegistry(registry);
+      mkdirSync(backlogDir, { recursive: true });
+      writeFileSync(backlogPath, JSON.stringify({
+        generated_at: '2026-01-01T00:00:00.000Z',
+        workflow_backlog: {},
+        lanes_summary: {},
+        lane_policy: {},
+        source_files: {},
+      }, null, 2));
+      const oldTime = new Date('2026-01-01T00:00:00.000Z');
+      utimesSync(backlogPath, oldTime, oldTime);
+
+      const summary = await runPipeline({
+        runDir,
+        registry,
+        backlog: backlogPath,
+        refreshBacklogIfStale: true,
+        backlogStaleAfterHours: '1',
+        freeOnly: true,
+        limit: 5,
+      });
+      const manifest = JSON.parse(readFileSync(join(runDir, 'pipeline-manifest.json'), 'utf-8'));
+
+      assert.equal(summary.backlog.refreshed, true);
+      assert.equal(manifest.backlog.refreshed, true);
+      assert.equal(existsSync(backlogPath), true);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

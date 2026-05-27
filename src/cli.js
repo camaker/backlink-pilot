@@ -28,7 +28,9 @@ import {
   authLoginStatusCommand,
   authRescoutPlanCommand,
   authWorkflowRefreshCommand,
+  backlogLaneCommand,
   backlogLanesCommand,
+  backlogWorkerCommand,
   crossDomainFinalUrlDecisionDraftCommand,
   crossDomainFinalUrlEvidenceCommand,
   crossDomainFinalUrlManualPackCommand,
@@ -770,6 +772,26 @@ targets
   });
 
 targets
+  .command('backlog-lane <laneId>')
+  .description('Show the execution runbook for a single backlog lane')
+  .option('--backlog <path>', 'Backlog lanes summary JSON path')
+  .option('--output-dir <path>', 'Fallback backlog output directory')
+  .option('--json', 'Output full lane runbook as JSON')
+  .action(async (laneId, opts) => {
+    await backlogLaneCommand(laneId, opts);
+  });
+
+targets
+  .command('backlog-worker <workerId>')
+  .description('Show the execution runbook for a single backlog worker assignment')
+  .option('--backlog <path>', 'Backlog lanes summary JSON path')
+  .option('--output-dir <path>', 'Fallback backlog output directory')
+  .option('--json', 'Output full worker runbook as JSON')
+  .action(async (workerId, opts) => {
+    await backlogWorkerCommand(workerId, opts);
+  });
+
+targets
   .command('backlog-lanes')
   .description('Build lane-based parallel backlog work packages from pricing, auth, and manual review artifacts')
   .option('--registry <path>', 'Canonical registry path')
@@ -1144,6 +1166,7 @@ program
   .option('--registry <path>', 'Canonical registry path')
   .option('--backlog <path>', 'Backlog lanes summary JSON path')
   .option('--backlog-stale-after-hours <n>', 'Treat backlog artifacts older than this threshold as stale', '24')
+  .option('--refresh-backlog-if-stale', 'Rebuild backlog lanes before reading status when the current backlog is stale or missing')
   .option('--json', 'Output as JSON')
   .action(async (opts) => {
     await opsStatusCommand(opts);
@@ -1155,6 +1178,8 @@ program
   .option('--run-dir <path>', 'Directory for all batch artifacts')
   .option('--registry <path>', 'Canonical registry path')
   .option('--backlog <path>', 'Backlog lanes summary JSON path for report synthesis')
+  .option('--backlog-stale-after-hours <n>', 'Treat backlog artifacts older than this threshold as stale', '24')
+  .option('--refresh-backlog-if-stale', 'Rebuild backlog lanes before report synthesis when the current backlog is stale or missing')
   .option('--config <path>', 'Config file path')
   .option('--product-config <path>', 'Product config path')
   .option('--product-url <url>', 'Product URL used for verification when config is not embedded in the plan')

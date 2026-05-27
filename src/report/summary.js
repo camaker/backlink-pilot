@@ -299,9 +299,8 @@ function selectLaneForType(backlogSummary = {}, laneType = '') {
 
 function workerOpenCommand(backlogSummary = {}, worker = null) {
   if (!worker) return '';
-  const workerFiles = workerFileIndex(backlogSummary);
-  const workerFile = workerFiles.get(worker.worker_id);
-  return workerFile?.markdown ? `Open ${normalizePath(workerFile.markdown)}` : '';
+  const backlogSummaryPath = backlogSummary?.files?.summary_json || DEFAULT_BACKLOG_PATH;
+  return `node src/cli.js targets backlog-worker ${shellQuote(worker.worker_id)} --backlog ${shellQuote(normalizePath(backlogSummaryPath))}`;
 }
 
 function laneFollowupCommand(backlogSummary = {}, lane = null) {

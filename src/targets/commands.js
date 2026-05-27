@@ -119,7 +119,15 @@ import {
   writeCoverageReviewQueue,
   writeCoverageReviewCsv,
 } from './coverage.js';
-import { buildBacklogLanes, writeBacklogLanes } from './backlog-lanes.js';
+import {
+  buildBacklogLaneRunbook,
+  buildBacklogLanes,
+  buildBacklogWorkerRunbook,
+  findBacklogLane,
+  findBacklogWorker,
+  loadBacklogLanesSummary,
+  writeBacklogLanes,
+} from './backlog-lanes.js';
 
 function printStats(stats) {
   console.log(`Total: ${stats.total}`);
@@ -1868,4 +1876,58 @@ export async function backlogLanesCommand(opts = {}) {
   }
 
   return result;
+}
+
+export async function backlogLaneCommand(laneId, opts = {}) {
+  const backlogPath = opts.backlog || join(opts.outputDir || 'backlink-url/backlog-lanes', 'backlog-lanes.json');
+  const summary = loadBacklogLanesSummary(backlogPath);
+  const lane = findBacklogLane(summary, laneId);
+  if (!lane) {
+    throw new Error(`backlog lane not found: ${laneId}`);
+  }
+
+  const runbook = buildBacklogLaneRunbook(summary, laneId);
+
+  if (opts.json) {
+    console.log(JSON.stringify(runbook, null, 2));
+    return runbook;
+  }
+
+  console.log(`Lane: ${runbook.lane_id}`);
+  console.log(`Type: ${runbook.lane_type}`);
+  console.log(`Priority: ${runbook.priority}`);
+  console.log(`Rows: ${runbook.row_count}`);
+  console.log(`Estimated minutes: ${runbook.estimated_total_minutes}`);
+  console.log(`Open: ${runbook.open_command || '(none)'}`);
+  console.log(`Action: ${runbook.action_command || '(none)'}`);
+  console.log(`Validate: ${runbook.validate_command || '(none)'}`);
+  console.log(`Merge/Follow-up: ${runbook.merge_command || runbook.refresh_command || '(none)'}`);
+  console.log(`Lane CSV: ${runbook.files.csv || '(none)'}`);
+  console.log(`Lane JSON: ${runbook.files.json || '(none)'}`);
+  return runbook;
+}
+
+export async function backlogWorkerCommand(workerId, opts = {}) {
+  const backlogPath = opts.backlog || join(opts.outputDir || 'backlink-url/backlog-lanes', 'backlog-lanes.json');
+  const summary = loadBacklogLanesSummary(backlogPath);
+  const worker = findBacklogWorker(summary, workerId);
+  if (!worker) {
+    throw new Error(`backlog worker not found: ${workerId}`);
+  }
+
+  const runbook = buildBacklogWorkerRunbook(summary, workerId);
+
+  if (opts.json) {
+    console.log(JSON.stringify(runbook, null, 2));
+    return runbook;
+  }
+
+  console.log(`Worker: ${runbook.worker_id}`);
+  console.log(`Lane count: ${runbook.lane_count}`);
+  console.log(`Rows: ${runbook.row_count}`);
+  console.log(`Estimated minutes: ${runbook.estimated_total_minutes}`);
+  for (const lane of runbook.lanes) {
+    console.log(`${lane.lane_id}\t${lane.lane_type}\tpriority=${lane.priority}\trows=${lane.row_count}\taction=${lane.action_command || '(none)'}`);
+  }
+  return runbook;
 }

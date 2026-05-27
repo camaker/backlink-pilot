@@ -11,7 +11,7 @@ const DEFAULT_COVERAGE_REVIEW = 'backlink-url/coverage-review.csv';
 const DEFAULT_AUTH_SUMMARY = 'backlink-url/assisted-submission-pack/resolved-direct-login/auth-workflow-refresh-resolved-summary.json';
 const DEFAULT_AUTH_NEEDS_SCOUT_SUMMARY = 'backlink-url/assisted-submission-pack/resolved-needs-scout-pack/auth-resolved-needs-scout-pack.json';
 const DEFAULT_AUTH_MANUAL_REVIEW_SUMMARY = 'backlink-url/assisted-submission-pack/resolved-manual-review-pack/auth-resolved-manual-review-pack.json';
-const DEFAULT_OUTPUT_DIR = 'backlink-url/backlog-lanes';
+export const DEFAULT_OUTPUT_DIR = 'backlink-url/backlog-lanes';
 
 function nowIso() {
   return new Date().toISOString();
@@ -34,6 +34,13 @@ function parseJsonFile(path) {
 function parseCsvFile(path) {
   if (!path || !existsSync(path)) return [];
   return parseCsv(readFileSync(path, 'utf-8'));
+}
+
+function readRequiredJson(path, label) {
+  if (!path || !existsSync(path)) {
+    throw new Error(`${label} file not found: ${path}`);
+  }
+  return JSON.parse(readFileSync(path, 'utf-8'));
 }
 
 function shellQuote(value = '') {
@@ -301,6 +308,46 @@ function buildCoverageLanes(rows = [], opts = {}) {
   return lanes;
 }
 
+function attachDerivedArtifactsToLane(lane = {}, outputDir = DEFAULT_OUTPUT_DIR) {
+  const normalizedOutputDir = normalizePath(outputDir);
+  const laneCsvPath = normalizePath(join(outputDir, 'lanes', `${lane.lane_id}.csv`));
+  const laneJsonPath = normalizePath(join(outputDir, 'lanes', `${lane.lane_id}.json`));
+  const reviewOutput = normalizePath(join(outputDir, 'merge', `${lane.lane_id}-coverage-review.updated.csv`));
+
+  const rows = Array.isArray(lane.rows) ? lane.rows : [];
+  const firstRow = rows[0] || {};
+  const laneWorkerHints = {
+    lane_csv_path: firstRow.lane_csv_path || laneCsvPath,
+    lane_json_path: laneJsonPath,
+    backlog_output_dir: normalizedOutputDir,
+  };
+
+  const safeRows = rows.map(row => ({
+    ...row,
+    ...laneWorkerHints,
+  }));
+
+  const openCommand = `node src/cli.js targets backlog-lane ${shellQuote(lane.lane_id)} --backlog ${shellQuote(normalizePath(join(outputDir, 'backlog-lanes.json')))}`;
+  const workerActionCommand = firstRow.auth_login_command
+    || firstRow.auth_scout_command
+    || lane.validate_command
+    || lane.merge_command
+    || lane.refresh_command
+    || openCommand;
+
+  return {
+    ...lane,
+    files: {
+      csv: laneCsvPath,
+      json: laneJsonPath,
+      merge_output: lane.merge_command ? reviewOutput : '',
+    },
+    open_command: openCommand,
+    action_command: workerActionCommand,
+    rows: safeRows,
+  };
+}
+
 function buildAuthNeedsScoutLanes(rows = [], opts = {}) {
   const chunks = chunkRows(rows, parsePositiveInt(opts.laneSize, 10));
   return chunks.map((chunk, index) => {
@@ -484,7 +531,8 @@ export function buildBacklogLanes(opts = {}) {
     coverageReviewPath,
     registry: registryPath,
   });
-  const lanes = [...pricingLanes, ...authLanes, ...authNeedsScoutLanes, ...authManualReviewLanes, ...coverageLanes];
+  const lanes = [...pricingLanes, ...authLanes, ...authNeedsScoutLanes, ...authManualReviewLanes, ...coverageLanes]
+    .map(lane => attachDerivedArtifactsToLane(lane, outputDir));
   const workers = assignWorkers(lanes, opts.workers || 4);
 
   const pricingPending = pricingRows.filter(row => blank(row.review_decision));
@@ -545,6 +593,76 @@ export function buildBacklogLanes(opts = {}) {
     },
     lanes,
     workers,
+  };
+}
+
+export function loadBacklogLanesSummary(path = join(DEFAULT_OUTPUT_DIR, 'backlog-lanes.json')) {
+  return readRequiredJson(path, 'backlog summary');
+}
+
+export function findBacklogLane(summary = {}, laneId = '') {
+  const lanes = Array.isArray(summary.lanes) ? summary.lanes : [];
+  return lanes.find(lane => lane.lane_id === laneId) || null;
+}
+
+export function findBacklogWorker(summary = {}, workerId = '') {
+  const workers = Array.isArray(summary.workers) ? summary.workers : [];
+  return workers.find(worker => worker.worker_id === workerId) || null;
+}
+
+export function buildBacklogLaneRunbook(summary = {}, laneId = '') {
+  const lane = findBacklogLane(summary, laneId);
+  if (!lane) {
+    throw new Error(`backlog lane not found: ${laneId}`);
+  }
+
+  return {
+    generated_at: nowIso(),
+    backlog_generated_at: summary.generated_at || '',
+    lane_id: lane.lane_id,
+    lane_type: lane.lane_type,
+    priority: lane.priority,
+    row_count: lane.row_count,
+    estimated_total_minutes: lane.estimated_total_minutes,
+    notes: lane.notes || '',
+    files: lane.files || {},
+    open_command: lane.open_command || '',
+    action_command: lane.action_command || '',
+    validate_command: lane.validate_command || '',
+    merge_command: lane.merge_command || '',
+    refresh_command: lane.refresh_command || '',
+    rows: lane.rows || [],
+  };
+}
+
+export function buildBacklogWorkerRunbook(summary = {}, workerId = '') {
+  const worker = findBacklogWorker(summary, workerId);
+  if (!worker) {
+    throw new Error(`backlog worker not found: ${workerId}`);
+  }
+
+  const lanes = (worker.lanes || []).map(laneSummary => {
+    const lane = findBacklogLane(summary, laneSummary.lane_id);
+    return {
+      ...laneSummary,
+      files: lane?.files || {},
+      notes: lane?.notes || '',
+      open_command: lane?.open_command || '',
+      action_command: lane?.action_command || '',
+      validate_command: lane?.validate_command || '',
+      merge_command: lane?.merge_command || '',
+      refresh_command: lane?.refresh_command || '',
+    };
+  });
+
+  return {
+    generated_at: nowIso(),
+    backlog_generated_at: summary.generated_at || '',
+    worker_id: worker.worker_id,
+    lane_count: worker.lane_count || 0,
+    row_count: worker.row_count || 0,
+    estimated_total_minutes: worker.estimated_total_minutes || 0,
+    lanes,
   };
 }
 
