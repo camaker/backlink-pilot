@@ -4033,6 +4033,63 @@ describe('auth workflow refresh', () => {
       rmSync(dir, { recursive: true, force: true });
     }
   });
+
+  it('filters stale auth workflow targets whose registry mode is no longer assisted', () => {
+    const dir = tempDir();
+    try {
+      const queue = join(dir, 'auth-login-rescout-queue.csv');
+      const batch = join(dir, 'auth-login-batch-001.csv');
+      const registry = join(dir, 'registry.yaml');
+      const authDir = join(dir, 'auth');
+      mkdirSync(authDir, { recursive: true });
+      writeFileSync(join(authDir, 'saved.storage-state.json'), JSON.stringify({ cookies: [], origins: [] }));
+      writeFileSync(registry, `
+version: 1
+targets:
+  - id: saved
+    name: Saved
+    domain: saved.example
+    submit_url: https://saved.example/submit
+    pricing: free
+    submission:
+      mode: assisted
+  - id: stale-skip
+    name: Stale Skip
+    domain: stale.example
+    submit_url: https://stale.example/submit
+    pricing: paid
+    submission:
+      mode: skip
+`);
+      const headers = 'rank,priority,priority_score,target_id,name,domain,mode,status,pricing,risk,lang,manual_bucket,automation_after_human,submission_policy,safety_blockers,recommended_next_step,auth_profile,auth_login_command,auth_scout_command,submit_url,final_url,root_url,last_scouted_at,last_submitted_at,form_count,field_count,required_fields,unmapped_required_fields,submit_button_count,source,reason,notes';
+      const savedRow = '1,P0,270,saved,Saved,saved.example,assisted,auth_required,free,low,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required,login,saved,node src/cli.js auth login --profile "saved" --url "https://saved.example/login",node src/cli.js scout "https://saved.example/submit" --auth-profile "saved",https://saved.example/submit,https://saved.example/login,https://saved.example,,,,,,,,test,auth_signal,';
+      const staleRow = '2,P0,260,stale-skip,Stale Skip,stale.example,assisted,auth_required,paid,low,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required,login,stale-skip,node src/cli.js auth login --profile "stale-skip" --url "https://stale.example/login",node src/cli.js scout "https://stale.example/submit" --auth-profile "stale-skip",https://stale.example/submit,https://stale.example/login,https://stale.example,,,,,,,,test,auth_signal,';
+      writeFileSync(queue, [headers, savedRow, staleRow].join('\n'));
+      writeFileSync(batch, [
+        'order,priority,target_id,name,domain,pricing,risk,auth_profile,auth_state_path,status,login_url,auth_login_command,auth_status_command,auth_scout_command,submit_url,manual_login_safety_policy',
+        '1,P0,saved,Saved,saved.example,free,low,saved,auth/saved.storage-state.json,manual_login_required,https://saved.example/login,node src/cli.js auth login --profile "saved" --url "https://saved.example/login",status,node src/cli.js scout "https://saved.example/submit" --auth-profile "saved",https://saved.example/submit,manual',
+        '2,P0,stale-skip,Stale Skip,stale.example,paid,low,stale-skip,auth/stale-skip.storage-state.json,manual_login_required,https://stale.example/login,node src/cli.js auth login --profile "stale-skip" --url "https://stale.example/login",status,node src/cli.js scout "https://stale.example/submit" --auth-profile "stale-skip",https://stale.example/submit,manual',
+      ].join('\n'));
+
+      const report = buildAuthWorkflowRefresh(queue, [batch], {
+        registry,
+        registryFilter: true,
+        authDir,
+        nextLimit: 10,
+        rescoutLimit: 10,
+      });
+
+      assert.equal(report.next_login.tasks.length, 0);
+      assert.equal(report.next_login.excluded.some(row => row.target_id === 'stale-skip' && row.exclusion_reason === 'drop_non_assisted_registry_target'), true);
+      assert.equal(report.auth_rescout.targets.length, 1);
+      assert.equal(report.auth_rescout.targets[0].id, 'saved');
+      assert.equal(report.auth_rescout.excluded.some(row => row.target_id === 'stale-skip' && row.exclusion_reason === 'registry_mode_not_assisted:skip'), true);
+      assert.equal(report.summary.by_batch[0].by_status.blocked_registry_filtered, 1);
+      assert.equal(report.summary.auth_rescout.by_exclusion_reason['registry_mode_not_assisted:skip'], 1);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
 });
 
 describe('submission plan', () => {

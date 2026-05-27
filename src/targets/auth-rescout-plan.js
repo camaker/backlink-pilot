@@ -1,8 +1,8 @@
-import { mkdirSync, readFileSync, writeFileSync } from 'fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { dirname } from 'path';
 import { parse, stringify } from 'yaml';
 import { DEFAULT_AUTH_DIR, authProfileStatus } from '../auth/session.js';
-import { DEFAULT_REGISTRY_FILE } from './registry.js';
+import { DEFAULT_REGISTRY_FILE, loadRegistry } from './registry.js';
 import { parseCsv } from './importers/csv.js';
 import { cleanTrackingUrl } from './normalize.js';
 
@@ -47,15 +47,31 @@ function loadProductIdentity(configPath) {
   }
 }
 
+function loadRegistryTargetMap(registryPath = '') {
+  const path = String(registryPath || '').trim();
+  if (!path || !existsSync(path)) return null;
+  const registry = loadRegistry(path);
+  return new Map(
+    (registry.targets || [])
+      .map(target => [String(target.id || '').trim(), target])
+      .filter(([id]) => id)
+  );
+}
+
 function isAuthRescoutRow(row = {}) {
   return row.automation_after_human === 'rescout_after_saved_login_profile' ||
     row.manual_bucket === 'manual_login_then_rescout';
 }
 
-function exclusionReason(row = {}, status = {}) {
+function exclusionReason(row = {}, status = {}, registryTargetMap = null) {
   if (!String(row.target_id || '').trim()) return 'missing_target_id';
   if (!String(row.submit_url || '').trim()) return 'missing_submit_url';
   if (!isAuthRescoutRow(row)) return 'not_auth_rescout_row';
+  if (registryTargetMap) {
+    const target = registryTargetMap.get(String(row.target_id || '').trim());
+    if (!target) return 'registry_target_missing';
+    if (target.submission?.mode !== 'assisted') return `registry_mode_not_assisted:${target.submission?.mode || 'unknown'}`;
+  }
   if (!String(row.auth_profile || '').trim()) return 'missing_auth_profile';
   if (!status.exists) return 'auth_profile_missing';
   return '';
@@ -123,6 +139,9 @@ export function buildAuthRescoutPlan(queuePath, opts = {}) {
   const authDir = opts.authDir || DEFAULT_AUTH_DIR;
   const limit = parseLimit(opts.limit, 100);
   const sourceRows = parseCsv(readFileSync(queuePath, 'utf-8'));
+  const registryTargetMap = opts.registryFilter
+    ? loadRegistryTargetMap(opts.registry || DEFAULT_REGISTRY_FILE)
+    : null;
   const eligible = [];
   const excluded = [];
 
@@ -130,7 +149,7 @@ export function buildAuthRescoutPlan(queuePath, opts = {}) {
     const status = row.auth_profile
       ? authProfileStatus(row.auth_profile, { authDir })
       : { profile: '', exists: false, path: '', meta_path: '' };
-    const reason = exclusionReason(row, status);
+    const reason = exclusionReason(row, status, registryTargetMap);
     if (reason) {
       excluded.push(excludedRow(row, status, reason));
       continue;

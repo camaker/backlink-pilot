@@ -992,6 +992,7 @@ export async function authRescoutPlanCommand(queuePath, opts = {}) {
 export async function authWorkflowRefreshCommand(queuePath, batchPaths, opts = {}) {
   const report = buildAuthWorkflowRefresh(queuePath, batchPaths, {
     registry: opts.registry || DEFAULT_REGISTRY_FILE,
+    registryFilter: true,
     productConfig: opts.productConfig,
     authDir: opts.authDir,
     nextOffset: opts.nextOffset,

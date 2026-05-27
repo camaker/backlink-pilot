@@ -1,7 +1,8 @@
-import { mkdirSync, readFileSync, writeFileSync } from 'fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { dirname } from 'path';
 import { parse as parseYaml, stringify } from 'yaml';
 import { DEFAULT_AUTH_DIR, authMetaPath, authProfileStatus } from '../auth/session.js';
+import { loadRegistry } from './registry.js';
 import { parseCsv } from './importers/csv.js';
 import { cleanTrackingUrl } from './normalize.js';
 import { authLoginDomainBlocker } from './auth-login-safety.js';
@@ -97,6 +98,17 @@ function parsePositive(value, fallback = 10) {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 }
 
+function loadRegistryTargetMap(registryPath = '') {
+  const path = String(registryPath || '').trim();
+  if (!path || !existsSync(path)) return null;
+  const registry = loadRegistry(path);
+  return new Map(
+    (registry.targets || [])
+      .map(target => [String(target.id || '').trim(), target])
+      .filter(([id]) => id)
+  );
+}
+
 function parseStructuredRows(raw, batchPath) {
   const trimmed = String(raw || '').trim();
   if (!trimmed) return { sourceType: 'empty', rows: [] };
@@ -124,9 +136,37 @@ function rowTargetId(row = {}) {
   return row.target_id || row.id || '';
 }
 
+function registryBlockerForRow(row = {}, registryTargetMap = null) {
+  if (!registryTargetMap) return '';
+  const targetId = String(rowTargetId(row) || '').trim();
+  if (!targetId) return '';
+
+  const target = registryTargetMap.get(targetId);
+  if (!target) return 'registry_target_missing';
+
+  const currentMode = String(target.submission?.mode || '').trim() || 'unknown';
+  if (currentMode !== 'assisted') return `registry_mode_not_assisted:${currentMode}`;
+
+  const rowDomain = String(row.domain || '').trim();
+  const targetDomain = String(target.domain || '').trim();
+  if (rowDomain && targetDomain && rowDomain !== targetDomain) {
+    return `registry_domain_changed:${rowDomain}->${targetDomain}`;
+  }
+
+  const rowSubmitUrl = cleanUrl(row.submit_url || '');
+  const targetSubmitUrl = cleanUrl(target.submit_url || '');
+  if (rowSubmitUrl && targetSubmitUrl && rowSubmitUrl !== targetSubmitUrl) {
+    return `registry_submit_url_changed:${rowSubmitUrl}->${targetSubmitUrl}`;
+  }
+
+  return '';
+}
+
 function statusForRow(row = {}, status = {}) {
   const profile = rowProfile(row);
   if (!String(profile || '').trim()) return 'blocked_missing_auth_profile';
+  if (row.registry_blocker === 'registry_target_missing') return 'blocked_registry_target_missing';
+  if (row.registry_blocker) return 'blocked_registry_filtered';
   if (row.safety_blocker) return 'blocked_login_domain_mismatch';
   return status.exists ? 'auth_profile_saved' : 'manual_login_required';
 }
@@ -134,6 +174,9 @@ function statusForRow(row = {}, status = {}) {
 function nextActionForRow(row = {}, status = {}) {
   const profile = rowProfile(row);
   if (!String(profile || '').trim()) return 'fix_batch_auth_profile';
+  if (row.registry_blocker === 'registry_target_missing') return 'drop_missing_registry_target';
+  if (String(row.registry_blocker || '').startsWith('registry_mode_not_assisted:')) return 'drop_non_assisted_registry_target';
+  if (row.registry_blocker) return 'refresh_auth_batch_from_registry';
   if (row.safety_blocker) return 'fix_login_domain_mismatch';
   if (status.exists) {
     return row.auth_scout_command ? 'run_auth_scout_command' : 'regenerate_auth_rescout_plan';
@@ -157,8 +200,20 @@ function statusRow(row = {}, index = 0, opts = {}) {
       };
   const login = cleanUrl(row.login_url || '');
   const submit = cleanUrl(row.submit_url || '');
+  const registryBlocker = registryBlockerForRow({
+    ...row,
+    login_url: login,
+    submit_url: submit,
+  }, opts.registryTargetMap || null);
   const safetyBlocker = authLoginDomainBlocker({ ...row, login_url: login, submit_url: submit });
-  const safetyRow = { ...row, safety_blocker: safetyBlocker };
+  const effectiveBlocker = safetyBlocker || registryBlocker;
+  const safetyRow = {
+    ...row,
+    submit_url: submit,
+    login_url: login,
+    registry_blocker: registryBlocker,
+    safety_blocker: effectiveBlocker,
+  };
   const rowStatus = statusForRow(safetyRow, status);
   const nextAction = nextActionForRow(safetyRow, status);
   const safeProfile = status.profile || profile;
@@ -176,19 +231,20 @@ function statusRow(row = {}, index = 0, opts = {}) {
     auth_meta_path: hasProfile ? normalizePath(status.meta_path || authMetaPath(safeProfile, authDir)) : '',
     status: rowStatus,
     next_action: nextAction,
-    ready_for_auth_rescout: status.exists && !safetyBlocker ? 'yes' : 'no',
+    ready_for_auth_rescout: status.exists && !effectiveBlocker ? 'yes' : 'no',
     saved_at: status.updated_at || '',
     size_bytes: status.size_bytes || 0,
     login_url: login,
     submit_url: submit,
-    auth_login_command: safetyBlocker ? '' : cleanCommand(row.auth_login_command || '', row.login_url),
-    auth_status_command: safetyBlocker
+    auth_login_command: effectiveBlocker ? '' : cleanCommand(row.auth_login_command || '', row.login_url),
+    auth_status_command: effectiveBlocker
       ? ''
       : row.auth_status_command || (
           safeProfile ? `node src/cli.js auth status --profile ${commandQuote(safeProfile)}` : ''
         ),
-    auth_scout_command: safetyBlocker ? '' : cleanCommand(row.auth_scout_command || '', row.submit_url, row.login_url),
-    safety_blocker: safetyBlocker,
+    auth_scout_command: effectiveBlocker ? '' : cleanCommand(row.auth_scout_command || '', row.submit_url, row.login_url),
+    safety_blocker: effectiveBlocker,
+    registry_blocker: registryBlocker,
   };
 }
 
@@ -286,7 +342,11 @@ export function buildAuthLoginStatus(batchPath, opts = {}) {
 
   const raw = readFileSync(batchPath, 'utf-8');
   const { sourceType, rows } = parseStructuredRows(raw, batchPath);
-  const statusRows = rows.map((row, index) => statusRow(row, index, opts));
+  const registryTargetMap = opts.registryFilter ? loadRegistryTargetMap(opts.registry) : null;
+  const statusRows = rows.map((row, index) => statusRow(row, index, {
+    ...opts,
+    registryTargetMap,
+  }));
 
   return {
     version: 1,
@@ -318,6 +378,8 @@ export function buildAuthLoginNext(batchPaths, opts = {}) {
   for (const batchPath of filteredPaths) {
     const report = buildAuthLoginStatus(batchPath, {
       authDir: opts.authDir,
+      registry: opts.registry,
+      registryFilter: Boolean(opts.registryFilter),
     });
     for (const row of report.rows) {
       if (row.status === 'auth_profile_saved') {

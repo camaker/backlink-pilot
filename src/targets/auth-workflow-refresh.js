@@ -60,17 +60,26 @@ export function buildAuthWorkflowRefresh(queuePath, batchPaths, opts = {}) {
   if (!batches.length) throw new Error('at least one auth login batch or status path is required');
 
   const authDir = opts.authDir || DEFAULT_AUTH_DIR;
+  const registry = opts.registry || DEFAULT_REGISTRY_FILE;
+  const registryFilter = Boolean(opts.registryFilter);
   const statusReports = batches.map((batchPath, index) => ({
     suffix: batchSuffix(batchPath, index),
-    report: buildAuthLoginStatus(batchPath, { authDir }),
+    report: buildAuthLoginStatus(batchPath, {
+      authDir,
+      registry,
+      registryFilter,
+    }),
   }));
   const next = buildAuthLoginNext(batches, {
     authDir,
+    registry,
+    registryFilter,
     offset: parseNonNegative(opts.nextOffset, 0),
     limit: parsePositive(opts.nextLimit ?? opts.limit, 10),
   });
   const authRescout = buildAuthRescoutPlan(queuePath, {
-    registry: opts.registry || DEFAULT_REGISTRY_FILE,
+    registry,
+    registryFilter,
     productConfig: opts.productConfig,
     authDir,
     limit: parsePositive(opts.rescoutLimit, 100),
