@@ -1,0 +1,29 @@
+{
+  "worker_id": "worker-04",
+  "estimated_total_minutes": 220,
+  "row_count": 45,
+  "lane_count": 3,
+  "lanes": [
+    {
+      "lane_id": "auth-login-003",
+      "lane_type": "auth_manual_login",
+      "priority": "P0",
+      "row_count": 10,
+      "estimated_total_minutes": 60
+    },
+    {
+      "lane_id": "auth-login-006",
+      "lane_type": "auth_manual_login",
+      "priority": "P0",
+      "row_count": 10,
+      "estimated_total_minutes": 60
+    },
+    {
+      "lane_id": "coverage-review-p2-004",
+      "lane_type": "coverage_manual_review_p2",
+      "priority": "P2",
+      "row_count": 25,
+      "estimated_total_minutes": 100
+    }
+  ]
+}

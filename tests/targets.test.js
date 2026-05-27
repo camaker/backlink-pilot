@@ -50,6 +50,10 @@ import {
   writeAuthWorkflowRefresh,
 } from '../src/targets/auth-workflow-refresh.js';
 import {
+  buildBacklogLanes,
+  writeBacklogLanes,
+} from '../src/targets/backlog-lanes.js';
+import {
   applyPricingReviewDecisionPatch,
   buildPricingReviewDecisionBatch,
   buildPricingReviewDecisionBatchMerge,
@@ -189,6 +193,121 @@ describe('target URL normalization', () => {
   it('accepts bare domains and rejects non-http protocols', () => {
     assert.equal(normalizeUrl('example.com/path').url, 'https://example.com/path');
     assert.equal(normalizeUrl('mailto:test@example.com'), null);
+  });
+});
+
+describe('backlog lanes', () => {
+  it('builds worker-balanced lanes from pricing, auth, and coverage artifacts', () => {
+    const dir = tempDir();
+    try {
+      const registryPath = join(dir, 'registry.yaml');
+      writeFileSync(registryPath, `targets:
+  - id: alpha
+    name: Alpha
+    submit_url: https://alpha.example/submit
+    pricing: unknown
+    submission:
+      mode: assisted
+  - id: beta
+    name: Beta
+    submit_url: https://beta.example/submit
+    pricing: free
+    submission:
+      mode: needs_review
+  - id: gamma
+    name: Gamma
+    submit_url: https://gamma.example/submit
+    pricing: unknown
+    submission:
+      mode: manual_strategic
+  - id: delta
+    name: Delta
+    submit_url: https://delta.example/submit
+    pricing: paid
+    submission:
+      mode: skip
+`, 'utf-8');
+
+      const pricingManual = join(dir, 'pricing-manual.csv');
+      writeFileSync(pricingManual, `batch_id,batch_order,queue_order,target_id,name,domain,mode,submit_url,review_decision
+pricing-001,1,1,alpha,Alpha,alpha.example,assisted,https://alpha.example/submit,
+pricing-001,2,2,beta,Beta,beta.example,assisted,https://beta.example/submit,
+pricing-001,3,3,gamma,Gamma,gamma.example,assisted,https://gamma.example/submit,mark_paid
+`, 'utf-8');
+
+      const pricingStatus = join(dir, 'pricing-status.json');
+      writeFileSync(pricingStatus, JSON.stringify({
+        manual: pricingManual.replace(/\\/g, '/'),
+        draft: 'draft.csv',
+      }, null, 2), 'utf-8');
+
+      const authBatchCsv = join(dir, 'auth-login-status-batch-001.csv');
+      writeFileSync(authBatchCsv, `order,priority,target_id,name,domain,status,next_action,login_url,submit_url,auth_login_command
+1,P0,alpha,Alpha,alpha.example,manual_login_required,run_auth_login_command,https://alpha.example/login,https://alpha.example/submit,cmd alpha
+2,P0,beta,Beta,beta.example,manual_login_required,run_auth_login_command,https://beta.example/login,https://beta.example/submit,cmd beta
+3,P1,gamma,Gamma,gamma.example,ready_for_auth_rescout,run_auth_scout_command,https://gamma.example/login,https://gamma.example/submit,cmd gamma
+`, 'utf-8');
+
+      const authSummary = join(dir, 'auth-summary.json');
+      writeFileSync(authSummary, JSON.stringify({
+        files: {
+          status_reports: [
+            { csv_output: authBatchCsv.replace(/\\/g, '/') },
+          ],
+        },
+      }, null, 2), 'utf-8');
+
+      const coverageManual = join(dir, 'coverage-manual.csv');
+      writeFileSync(coverageManual, `manual_rank,priority,review_row,review_decision,target_id,domain,url
+1,P0,11,,alpha,alpha.example,https://alpha.example/submit
+2,P2,12,,beta,beta.example,https://beta.example/submit
+3,P2,13,reject_not_submit,gamma,gamma.example,https://gamma.example/submit
+`, 'utf-8');
+
+      const coverageSummary = join(dir, 'coverage-summary.json');
+      writeFileSync(coverageSummary, JSON.stringify({
+        files: {
+          remaining_manual_review_csv: coverageManual.replace(/\\/g, '/'),
+        },
+      }, null, 2), 'utf-8');
+
+      const plan = buildBacklogLanes({
+        registry: registryPath,
+        outputDir: join(dir, 'lanes-out'),
+        workers: 3,
+        pricingStatus,
+        pricingLaneSize: 1,
+        authSummary,
+        authLaneSize: 1,
+        coverageSummary,
+        coverageReview: join(dir, 'coverage-review.csv'),
+        coverageLaneSize: 1,
+        coverageP0LaneSize: 1,
+      });
+
+      assert.equal(plan.registry_backlog.total_targets, 4);
+      assert.equal(plan.registry_backlog.non_skip_targets, 3);
+      assert.equal(plan.workflow_backlog.pricing_manual_rows, 2);
+      assert.equal(plan.workflow_backlog.auth_manual_login_rows, 2);
+      assert.equal(plan.workflow_backlog.coverage_manual_review_rows, 2);
+      assert.equal(plan.lanes.length, 6);
+      assert.equal(plan.workers.length, 3);
+      assert.equal(plan.lanes_summary.by_type.pricing_review_manual, 2);
+      assert.equal(plan.lanes_summary.by_type.auth_manual_login, 2);
+      assert.equal(plan.lanes_summary.by_type.coverage_manual_review_p0, 1);
+      assert.equal(plan.lanes_summary.by_type.coverage_manual_review_p2, 1);
+
+      const files = writeBacklogLanes(plan, { outputDir: join(dir, 'lanes-out') });
+      assert.equal(existsSync(join(dir, 'lanes-out', 'backlog-lanes.json')), true);
+      assert.equal(existsSync(join(dir, 'lanes-out', 'backlog-lanes.md')), true);
+      assert.equal(files.lanes.length, 6);
+      assert.equal(files.workers.length, 3);
+
+      const workerDoc = readFileSync(join(dir, 'lanes-out', 'workers', 'worker-01.md'), 'utf-8');
+      assert.match(workerDoc, /worker-01/i);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 });
 

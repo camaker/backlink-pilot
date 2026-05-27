@@ -1,0 +1,60 @@
+{
+  "generated_at": "2026-05-27T06:58:23.441Z",
+  "suggestions": "backlink-url/pricing-review/cooltools-suggestions.csv",
+  "constraints": {
+    "read_only": true,
+    "no_registry_writes": true,
+    "no_login": true,
+    "no_submission": true,
+    "no_mode_promotion": true,
+    "review_decision_left_blank": true
+  },
+  "rows": [
+    {
+      "queue_order": "1",
+      "target_id": "cooltools",
+      "name": "Cooltools",
+      "domain": "backdata.net",
+      "mode": "auto_safe",
+      "submit_url": "https://backdata.net/submit-site.html",
+      "current_pricing": "unknown",
+      "suggested_pricing": "unknown",
+      "suggested_review_decision": "keep_unknown",
+      "suggestion_confidence": "low",
+      "review_decision": "",
+      "reviewed_pricing": "",
+      "reviewer": "",
+      "reviewed_at": "",
+      "review_notes": "",
+      "evidence_url": "https://backdata.net/submit-site.html",
+      "evidence_matched": "yes",
+      "http_status": "200",
+      "fetch_ok": "yes",
+      "payment_signal": "no",
+      "free_signal": "no",
+      "freemium_signal": "no",
+      "captcha_signal": "no",
+      "cloudflare_signal": "no",
+      "suggestion_basis": "submit surface signal found; no decisive pricing signal found",
+      "automation_policy": "pricing_decision_draft_no_registry_write_no_submission"
+    }
+  ],
+  "summary": {
+    "rows": 1,
+    "rows_requiring_human_review": 1,
+    "by_suggested_review_decision": {
+      "keep_unknown": 1
+    },
+    "by_suggested_pricing": {
+      "unknown": 1
+    },
+    "by_confidence": {
+      "low": 1
+    }
+  },
+  "files": {
+    "decision_csv": "backlink-url/pricing-review/cooltools-draft/pricing-review-decision-draft.csv",
+    "decision_json": "backlink-url/pricing-review/cooltools-draft/pricing-review-decision-draft.json",
+    "decision_md": "backlink-url/pricing-review/cooltools-draft/pricing-review-decision-draft.md"
+  }
+}

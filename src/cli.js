@@ -20,6 +20,7 @@ import {
   authLoginStatusCommand,
   authRescoutPlanCommand,
   authWorkflowRefreshCommand,
+  backlogLanesCommand,
   crossDomainFinalUrlDecisionDraftCommand,
   crossDomainFinalUrlEvidenceCommand,
   crossDomainFinalUrlManualPackCommand,
@@ -645,6 +646,29 @@ targets
   .option('--json', 'Output workflow summary as JSON')
   .action(async (queue, batches, opts) => {
     await authWorkflowRefreshCommand(queue, batches, opts);
+  });
+
+targets
+  .command('backlog-lanes')
+  .description('Build lane-based parallel backlog work packages from pricing, auth, and manual review artifacts')
+  .option('--registry <path>', 'Canonical registry path')
+  .option('--output-dir <path>', 'Directory to write backlog lane artifacts', 'backlink-url/backlog-lanes')
+  .option('--workers <n>', 'Number of parallel workers to balance lanes across', '4')
+  .option('--pricing-status <path>', 'Pricing manual status JSON path')
+  .option('--pricing-manual <path>', 'Pricing manual review CSV path')
+  .option('--pricing-draft <path>', 'Pricing decision draft CSV path')
+  .option('--pricing-lane-size <n>', 'Rows per pricing review lane', '10')
+  .option('--auth-summary <path>', 'Auth workflow refresh summary JSON path')
+  .option('--auth-lane-size <n>', 'Rows per auth login lane', '10')
+  .option('--coverage-summary <path>', 'Coverage manual review summary JSON path')
+  .option('--coverage-manual <path>', 'Coverage remaining manual review CSV path')
+  .option('--coverage-review <path>', 'Coverage review CSV path', 'backlink-url/coverage-review.csv')
+  .option('--coverage-lane-size <n>', 'Rows per non-P0 coverage lane', '25')
+  .option('--coverage-p0-lane-size <n>', 'Rows per P0 coverage lane', '17')
+  .option('--auth-refresh-command <command>', 'Refresh command to print into auth lanes')
+  .option('--json', 'Output summary as JSON')
+  .action(async (opts) => {
+    await backlogLanesCommand(opts);
   });
 
 targets

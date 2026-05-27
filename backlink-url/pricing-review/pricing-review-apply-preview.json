@@ -1,0 +1,1281 @@
+{
+  "generated_at": "2026-05-27T06:12:10.632Z",
+  "ok": false,
+  "status": "blocked_decision_validation",
+  "registry": "resources/targets.canonical.yaml",
+  "decision_file": "backlink-url/pricing-review/pricing-review-decision-draft.merged.csv",
+  "dry_run": true,
+  "wrote_registry": false,
+  "constraints": {
+    "no_network": true,
+    "no_login": true,
+    "no_submission": true,
+    "no_mode_promotion": true,
+    "explicit_write_required": true
+  },
+  "validation": {
+    "file": "backlink-url/pricing-review/pricing-review-decision-draft.merged.csv",
+    "ok": false,
+    "rows": 75,
+    "blockers": [
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 2,
+        "target_id": "cooltools",
+        "domain": "backdata.net",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 3,
+        "target_id": "247webdirectory",
+        "domain": "247webdirectory.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 4,
+        "target_id": "asr",
+        "domain": "activesearchresults.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 5,
+        "target_id": "ai-ailookme",
+        "domain": "ailookme.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 6,
+        "target_id": "ai-nav",
+        "domain": "ainavpro.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 7,
+        "target_id": "appalist-com",
+        "domain": "appalist.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 8,
+        "target_id": "ashlist-com",
+        "domain": "ashlist.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 9,
+        "target_id": "betalist-com",
+        "domain": "betalist.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 11,
+        "target_id": "foundr-ai",
+        "domain": "foundr.ai",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 12,
+        "target_id": "fwol-cn",
+        "domain": "fwol.cn",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 13,
+        "target_id": "hhlink-com",
+        "domain": "hhlink.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 14,
+        "target_id": "iforai",
+        "domain": "iforai.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 15,
+        "target_id": "joinly-joinly-xyz",
+        "domain": "joinly.xyz",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 16,
+        "target_id": "launchscroll-com",
+        "domain": "launchscroll.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 17,
+        "target_id": "lbbai-com",
+        "domain": "lbbai.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 19,
+        "target_id": "mylaunchstash-com",
+        "domain": "mylaunchstash.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 20,
+        "target_id": "offpagesavvy",
+        "domain": "offpagesavvy.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 21,
+        "target_id": "poweruptools-com",
+        "domain": "poweruptools.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 22,
+        "target_id": "productlistdir-com",
+        "domain": "productlistdir.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 23,
+        "target_id": "productwing-com",
+        "domain": "productwing.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 24,
+        "target_id": "saasfield-com",
+        "domain": "saasfield.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 25,
+        "target_id": "saashubdirectory-com",
+        "domain": "saashubdirectory.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 26,
+        "target_id": "saasroots-com",
+        "domain": "saasroots.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 27,
+        "target_id": "smartkithub-com",
+        "domain": "smartkithub.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 28,
+        "target_id": "softwarebolt-com",
+        "domain": "softwarebolt.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 29,
+        "target_id": "solvertools-com",
+        "domain": "solvertools.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 31,
+        "target_id": "sourcedir-com",
+        "domain": "sourcedir.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 32,
+        "target_id": "stackdirectory-com",
+        "domain": "stackdirectory.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 33,
+        "target_id": "startupvessel-com",
+        "domain": "startupvessel.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 34,
+        "target_id": "theapptools-com",
+        "domain": "theapptools.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 35,
+        "target_id": "thecoretools-com",
+        "domain": "thecoretools.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 36,
+        "target_id": "tinytoolhub-com",
+        "domain": "tinytoolhub.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 37,
+        "target_id": "toolcosmos-com",
+        "domain": "toolcosmos.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 38,
+        "target_id": "toolfinddir-com",
+        "domain": "toolfinddir.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 39,
+        "target_id": "toolsignal-com",
+        "domain": "toolsignal.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 40,
+        "target_id": "toolslisthq-com",
+        "domain": "toolslisthq.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 41,
+        "target_id": "toolsunderradar-com",
+        "domain": "toolsunderradar.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 43,
+        "target_id": "toptrendtools-com",
+        "domain": "toptrendtools.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 44,
+        "target_id": "toshilist-com",
+        "domain": "toshilist.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 47,
+        "target_id": "weliketools-com",
+        "domain": "weliketools.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 48,
+        "target_id": "xinquji-com",
+        "domain": "xinquji.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 49,
+        "target_id": "aitechviral-com",
+        "domain": "aitechviral.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 50,
+        "target_id": "aitoptools",
+        "domain": "aitoptools.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 51,
+        "target_id": "alternativeto",
+        "domain": "alternativeto.net",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 52,
+        "target_id": "betalist",
+        "domain": "betalist.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 53,
+        "target_id": "broadwise-org",
+        "domain": "broadwise.org",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 54,
+        "target_id": "dev-to",
+        "domain": "dev.to",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 55,
+        "target_id": "dev-hunt",
+        "domain": "devhunt.org",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 56,
+        "target_id": "dizkaz-com",
+        "domain": "dizkaz.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 57,
+        "target_id": "free-ai-tool",
+        "domain": "freeaitool.ai",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 58,
+        "target_id": "gainweb-org",
+        "domain": "gainweb.org",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 59,
+        "target_id": "hackernoon",
+        "domain": "hackernoon.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 60,
+        "target_id": "hashnode",
+        "domain": "hashnode.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 61,
+        "target_id": "hellogithub",
+        "domain": "hellogithub.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 62,
+        "target_id": "indie-hackers-guide-pages-dev-id",
+        "domain": "indie-hackers-guide.pages.dev",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 63,
+        "target_id": "juejin-cn",
+        "domain": "juejin.cn",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 64,
+        "target_id": "latestaiupdates-com",
+        "domain": "latestaiupdates.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 65,
+        "target_id": "makerpeak",
+        "domain": "makerpeak.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 66,
+        "target_id": "openfuture-ai",
+        "domain": "openfuture.ai",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 67,
+        "target_id": "www-ruanyifeng-com",
+        "domain": "ruanyifeng.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 68,
+        "target_id": "saaswheel-com",
+        "domain": "saaswheel.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 69,
+        "target_id": "startupaideas-com",
+        "domain": "startupaideas.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 70,
+        "target_id": "submission-web-directory",
+        "domain": "submissionwebdirectory.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 72,
+        "target_id": "superaiboom-com",
+        "domain": "superaiboom.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 73,
+        "target_id": "v2ex",
+        "domain": "v2ex.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 74,
+        "target_id": "w2solo",
+        "domain": "w2solo.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 75,
+        "target_id": "web-okjike-com",
+        "domain": "web.okjike.com",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      },
+      {
+        "severity": "blocker",
+        "code": "review_decision_missing",
+        "line": 76,
+        "target_id": "wechalet-cn",
+        "domain": "wechalet.cn",
+        "review_decision": "",
+        "message": "review_decision must be filled before this row can affect registry data."
+      }
+    ],
+    "warnings": [],
+    "blockers_count": 68,
+    "warnings_count": 0,
+    "by_decision": {
+      "unreviewed": 68,
+      "mark_paid": 3,
+      "mark_free": 2,
+      "mark_freemium": 1,
+      "needs_manual_check": 1
+    },
+    "constraints": {
+      "read_only": true,
+      "no_network": true,
+      "no_login": true,
+      "no_submission": true,
+      "no_registry_writes_without_explicit_apply": true,
+      "allowed_review_decisions": [
+        "mark_free",
+        "mark_freemium",
+        "mark_paid",
+        "keep_unknown",
+        "needs_manual_check"
+      ]
+    }
+  },
+  "rows": 75,
+  "proposals_count": 0,
+  "skipped_rows": 0,
+  "blockers_count": 68,
+  "blockers": [
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 2,
+      "target_id": "cooltools",
+      "domain": "backdata.net",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 3,
+      "target_id": "247webdirectory",
+      "domain": "247webdirectory.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 4,
+      "target_id": "asr",
+      "domain": "activesearchresults.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 5,
+      "target_id": "ai-ailookme",
+      "domain": "ailookme.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 6,
+      "target_id": "ai-nav",
+      "domain": "ainavpro.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 7,
+      "target_id": "appalist-com",
+      "domain": "appalist.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 8,
+      "target_id": "ashlist-com",
+      "domain": "ashlist.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 9,
+      "target_id": "betalist-com",
+      "domain": "betalist.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 11,
+      "target_id": "foundr-ai",
+      "domain": "foundr.ai",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 12,
+      "target_id": "fwol-cn",
+      "domain": "fwol.cn",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 13,
+      "target_id": "hhlink-com",
+      "domain": "hhlink.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 14,
+      "target_id": "iforai",
+      "domain": "iforai.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 15,
+      "target_id": "joinly-joinly-xyz",
+      "domain": "joinly.xyz",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 16,
+      "target_id": "launchscroll-com",
+      "domain": "launchscroll.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 17,
+      "target_id": "lbbai-com",
+      "domain": "lbbai.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 19,
+      "target_id": "mylaunchstash-com",
+      "domain": "mylaunchstash.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 20,
+      "target_id": "offpagesavvy",
+      "domain": "offpagesavvy.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 21,
+      "target_id": "poweruptools-com",
+      "domain": "poweruptools.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 22,
+      "target_id": "productlistdir-com",
+      "domain": "productlistdir.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 23,
+      "target_id": "productwing-com",
+      "domain": "productwing.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 24,
+      "target_id": "saasfield-com",
+      "domain": "saasfield.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 25,
+      "target_id": "saashubdirectory-com",
+      "domain": "saashubdirectory.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 26,
+      "target_id": "saasroots-com",
+      "domain": "saasroots.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 27,
+      "target_id": "smartkithub-com",
+      "domain": "smartkithub.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 28,
+      "target_id": "softwarebolt-com",
+      "domain": "softwarebolt.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 29,
+      "target_id": "solvertools-com",
+      "domain": "solvertools.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 31,
+      "target_id": "sourcedir-com",
+      "domain": "sourcedir.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 32,
+      "target_id": "stackdirectory-com",
+      "domain": "stackdirectory.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 33,
+      "target_id": "startupvessel-com",
+      "domain": "startupvessel.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 34,
+      "target_id": "theapptools-com",
+      "domain": "theapptools.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 35,
+      "target_id": "thecoretools-com",
+      "domain": "thecoretools.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 36,
+      "target_id": "tinytoolhub-com",
+      "domain": "tinytoolhub.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 37,
+      "target_id": "toolcosmos-com",
+      "domain": "toolcosmos.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 38,
+      "target_id": "toolfinddir-com",
+      "domain": "toolfinddir.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 39,
+      "target_id": "toolsignal-com",
+      "domain": "toolsignal.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 40,
+      "target_id": "toolslisthq-com",
+      "domain": "toolslisthq.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 41,
+      "target_id": "toolsunderradar-com",
+      "domain": "toolsunderradar.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 43,
+      "target_id": "toptrendtools-com",
+      "domain": "toptrendtools.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 44,
+      "target_id": "toshilist-com",
+      "domain": "toshilist.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 47,
+      "target_id": "weliketools-com",
+      "domain": "weliketools.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 48,
+      "target_id": "xinquji-com",
+      "domain": "xinquji.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 49,
+      "target_id": "aitechviral-com",
+      "domain": "aitechviral.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 50,
+      "target_id": "aitoptools",
+      "domain": "aitoptools.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 51,
+      "target_id": "alternativeto",
+      "domain": "alternativeto.net",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 52,
+      "target_id": "betalist",
+      "domain": "betalist.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 53,
+      "target_id": "broadwise-org",
+      "domain": "broadwise.org",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 54,
+      "target_id": "dev-to",
+      "domain": "dev.to",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 55,
+      "target_id": "dev-hunt",
+      "domain": "devhunt.org",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 56,
+      "target_id": "dizkaz-com",
+      "domain": "dizkaz.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 57,
+      "target_id": "free-ai-tool",
+      "domain": "freeaitool.ai",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 58,
+      "target_id": "gainweb-org",
+      "domain": "gainweb.org",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 59,
+      "target_id": "hackernoon",
+      "domain": "hackernoon.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 60,
+      "target_id": "hashnode",
+      "domain": "hashnode.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 61,
+      "target_id": "hellogithub",
+      "domain": "hellogithub.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 62,
+      "target_id": "indie-hackers-guide-pages-dev-id",
+      "domain": "indie-hackers-guide.pages.dev",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 63,
+      "target_id": "juejin-cn",
+      "domain": "juejin.cn",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 64,
+      "target_id": "latestaiupdates-com",
+      "domain": "latestaiupdates.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 65,
+      "target_id": "makerpeak",
+      "domain": "makerpeak.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 66,
+      "target_id": "openfuture-ai",
+      "domain": "openfuture.ai",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 67,
+      "target_id": "www-ruanyifeng-com",
+      "domain": "ruanyifeng.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 68,
+      "target_id": "saaswheel-com",
+      "domain": "saaswheel.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 69,
+      "target_id": "startupaideas-com",
+      "domain": "startupaideas.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 70,
+      "target_id": "submission-web-directory",
+      "domain": "submissionwebdirectory.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 72,
+      "target_id": "superaiboom-com",
+      "domain": "superaiboom.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 73,
+      "target_id": "v2ex",
+      "domain": "v2ex.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 74,
+      "target_id": "w2solo",
+      "domain": "w2solo.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 75,
+      "target_id": "web-okjike-com",
+      "domain": "web.okjike.com",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    },
+    {
+      "severity": "blocker",
+      "code": "review_decision_missing",
+      "line": 76,
+      "target_id": "wechalet-cn",
+      "domain": "wechalet.cn",
+      "review_decision": "",
+      "message": "review_decision must be filled before this row can affect registry data."
+    }
+  ],
+  "warnings": [],
+  "proposals": [],
+  "skipped": [],
+  "write_requested": false
+}

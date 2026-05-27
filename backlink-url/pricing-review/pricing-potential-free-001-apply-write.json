@@ -1,0 +1,163 @@
+{
+  "generated_at": "2026-05-27T06:13:56.523Z",
+  "ok": true,
+  "status": "registry_written_requires_audit_before_execution",
+  "registry": "resources/targets.canonical.yaml",
+  "decision_file": "backlink-url/pricing-review/manual-review/pricing-potential-free-001-manual-review.csv",
+  "dry_run": false,
+  "wrote_registry": true,
+  "constraints": {
+    "no_network": true,
+    "no_login": true,
+    "no_submission": true,
+    "no_mode_promotion": true,
+    "explicit_write_required": true
+  },
+  "validation": {
+    "file": "backlink-url/pricing-review/manual-review/pricing-potential-free-001-manual-review.csv",
+    "ok": true,
+    "rows": 7,
+    "blockers": [],
+    "warnings": [],
+    "blockers_count": 0,
+    "warnings_count": 0,
+    "by_decision": {
+      "mark_paid": 3,
+      "mark_free": 2,
+      "mark_freemium": 1,
+      "needs_manual_check": 1
+    },
+    "constraints": {
+      "read_only": true,
+      "no_network": true,
+      "no_login": true,
+      "no_submission": true,
+      "no_registry_writes_without_explicit_apply": true,
+      "allowed_review_decisions": [
+        "mark_free",
+        "mark_freemium",
+        "mark_paid",
+        "keep_unknown",
+        "needs_manual_check"
+      ]
+    }
+  },
+  "rows": 7,
+  "proposals_count": 6,
+  "skipped_rows": 1,
+  "blockers_count": 0,
+  "blockers": [],
+  "warnings": [],
+  "proposals": [
+    {
+      "target_id": "changelog",
+      "domain": "changelog.com",
+      "submit_url": "https://changelog.com/news/submit",
+      "review_decision": "mark_paid",
+      "previous_pricing": "unknown",
+      "next_pricing": "paid",
+      "previous_mode": "assisted",
+      "next_mode": "skip",
+      "previous_reason": "auth_signal",
+      "next_reason": "pricing_review_paid_confirmed",
+      "action": "update_pricing_and_skip_paid",
+      "write_allowed": true,
+      "notes": "Homepage and submit page state commercial products/services must use sponsorship; submission also requires sign-in/up. No free self-serve product submission path was visible for a commercial software listing, so paid-only is the safest classification."
+    },
+    {
+      "target_id": "mergeek",
+      "domain": "mergeek.com",
+      "submit_url": "https://mergeek.com/publish_project",
+      "review_decision": "mark_free",
+      "previous_pricing": "unknown",
+      "next_pricing": "free",
+      "previous_mode": "assisted",
+      "next_mode": "assisted",
+      "previous_reason": "auth_signal; classification_mismatch:assisted->needs_scout",
+      "next_reason": "auth_signal; classification_mismatch:assisted->needs_scout",
+      "action": "update_pricing",
+      "write_allowed": true,
+      "notes": "The publish page explicitly says 免费发布产品 and 立即提交产品 on the product publishing surface. Public page evidence supports a genuine free submission path, even though account context may still be needed operationally."
+    },
+    {
+      "target_id": "sonic-run",
+      "domain": "sonicrun.com",
+      "submit_url": "https://www.sonicrun.com/freelisting.html",
+      "review_decision": "mark_free",
+      "previous_pricing": "unknown",
+      "next_pricing": "free",
+      "previous_mode": "assisted",
+      "next_mode": "assisted",
+      "previous_reason": "captcha_field",
+      "next_reason": "captcha_field",
+      "action": "update_pricing",
+      "write_allowed": true,
+      "notes": "The page states 'Submit a Free Listing' and explains free listings are added after a delay. That is a clear free submission path."
+    },
+    {
+      "target_id": "top-best-alternatives",
+      "domain": "topbestalternatives.com",
+      "submit_url": "https://www.topbestalternatives.com/",
+      "review_decision": "mark_freemium",
+      "previous_pricing": "unknown",
+      "next_pricing": "freemium",
+      "previous_mode": "assisted",
+      "next_mode": "assisted",
+      "previous_reason": "auth_signal; classification_mismatch:assisted->assisted",
+      "next_reason": "auth_signal; classification_mismatch:assisted->assisted",
+      "action": "update_pricing",
+      "write_allowed": true,
+      "notes": "The real submit page at /submit says submissions are always free but paid submission and sponsored listing provide fast-lane processing. That is a classic free plus paid acceleration model, so freemium is appropriate."
+    },
+    {
+      "target_id": "websitehunt",
+      "domain": "websitehunt.co",
+      "submit_url": "https://www.websitehunt.co/",
+      "review_decision": "mark_paid",
+      "previous_pricing": "unknown",
+      "next_pricing": "paid",
+      "previous_mode": "assisted",
+      "next_mode": "skip",
+      "previous_reason": "captcha_signal",
+      "next_reason": "pricing_review_paid_confirmed",
+      "action": "update_pricing_and_skip_paid",
+      "write_allowed": true,
+      "notes": "Homepage says users must sign in to upvote, submit, manage websites, and advertise, and the site heavily marks promoted inventory as Sponsored/Get Featured. The actual submit URL redirects to login, and no public free submission policy was visible; for commercial product placement this is best treated as paid until contrary evidence appears."
+    },
+    {
+      "target_id": "submitdirs-com",
+      "domain": "submitdirs.com",
+      "submit_url": "https://submitdirs.com/",
+      "review_decision": "mark_paid",
+      "previous_pricing": "unknown",
+      "next_pricing": "paid",
+      "previous_mode": "assisted",
+      "next_mode": "skip",
+      "previous_reason": "captcha_signal",
+      "next_reason": "pricing_review_paid_confirmed",
+      "action": "update_pricing_and_skip_paid",
+      "write_allowed": true,
+      "notes": "Public pricing is explicit: listing plan $9.9 and pro plan $199, with 10+ paid directories highlighted. Submission is a paid service, not a free listing path."
+    }
+  ],
+  "skipped": [
+    {
+      "target_id": "trustiner-com",
+      "domain": "trustiner.com",
+      "submit_url": "https://trustiner.com/",
+      "review_decision": "needs_manual_check",
+      "previous_pricing": "unknown",
+      "next_pricing": "unknown",
+      "previous_mode": "assisted",
+      "next_mode": "assisted",
+      "previous_reason": "auth_signal",
+      "next_reason": "auth_signal",
+      "action": "needs_manual_check",
+      "write_allowed": false,
+      "notes": "Homepage CTA and /get-started confirm a product submission surface, but public HTML did not show a clear mandatory paid plan or a clear always-free submission path. Sponsored signals exist, yet the pricing model for submission itself remains ambiguous, so this should stay unknown pending a browser check."
+    }
+  ],
+  "write_requested": true,
+  "updated_targets": 6,
+  "registry_updated_at": "2026-05-27T06:13:58.987Z"
+}

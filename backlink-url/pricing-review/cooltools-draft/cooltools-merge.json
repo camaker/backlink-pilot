@@ -1,0 +1,79 @@
+{
+  "generated_at": "2026-05-27T06:59:56.981Z",
+  "ok": true,
+  "status": "merge_preview_ready",
+  "draft": "backlink-url/pricing-review/cooltools-draft/pricing-review-decision-draft.csv",
+  "batch": "backlink-url/pricing-review/cooltools-batch/cooltools-pricing-001.csv",
+  "constraints": {
+    "read_only": true,
+    "no_network": true,
+    "no_login": true,
+    "no_submission": true,
+    "no_registry_writes": true,
+    "merge_only_review_fields": true,
+    "explicit_output_required": true,
+    "overwrite_reviewed_rows": false
+  },
+  "validation": {
+    "file": "backlink-url/pricing-review/cooltools-batch/cooltools-pricing-001.csv",
+    "ok": true,
+    "rows": 1,
+    "blockers": [],
+    "warnings": [],
+    "blockers_count": 0,
+    "warnings_count": 0,
+    "by_decision": {
+      "mark_free": 1
+    },
+    "constraints": {
+      "read_only": true,
+      "no_network": true,
+      "no_login": true,
+      "no_submission": true,
+      "no_registry_writes_without_explicit_apply": true,
+      "allowed_review_decisions": [
+        "mark_free",
+        "mark_freemium",
+        "mark_paid",
+        "keep_unknown",
+        "needs_manual_check"
+      ]
+    }
+  },
+  "draft_rows": 1,
+  "batch_rows": 1,
+  "proposals_count": 1,
+  "unchanged_rows": 0,
+  "blockers_count": 0,
+  "blockers": [],
+  "proposals": [
+    {
+      "target_id": "cooltools",
+      "domain": "backdata.net",
+      "batch_id": "cooltools-pricing-001",
+      "batch_order": "1",
+      "review_decision": "mark_free",
+      "reviewed_pricing": "free",
+      "changed_fields": [
+        "review_decision",
+        "reviewed_pricing",
+        "reviewer",
+        "reviewed_at",
+        "review_notes"
+      ]
+    }
+  ],
+  "unchanged": [],
+  "updated_summary": {
+    "rows": 1,
+    "reviewed_rows": 1,
+    "unreviewed_rows": 0,
+    "by_decision": {
+      "mark_free": 1
+    }
+  },
+  "files": {
+    "updated_draft_csv": "backlink-url/pricing-review/cooltools-draft/pricing-review-decision-draft.reviewed.csv",
+    "merge_report_json": "backlink-url/pricing-review/cooltools-draft/cooltools-merge.json"
+  }
+}

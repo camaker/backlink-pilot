@@ -1,0 +1,67 @@
+{
+  "generated_at": "2026-05-27T07:00:51.647Z",
+  "ok": true,
+  "status": "preview_ready",
+  "registry": "resources/targets.canonical.yaml",
+  "decision_file": "backlink-url/pricing-review/cooltools-draft/pricing-review-decision-draft.reviewed.csv",
+  "dry_run": true,
+  "wrote_registry": false,
+  "constraints": {
+    "no_network": true,
+    "no_login": true,
+    "no_submission": true,
+    "no_mode_promotion": true,
+    "explicit_write_required": true
+  },
+  "validation": {
+    "file": "backlink-url/pricing-review/cooltools-draft/pricing-review-decision-draft.reviewed.csv",
+    "ok": true,
+    "rows": 1,
+    "blockers": [],
+    "warnings": [],
+    "blockers_count": 0,
+    "warnings_count": 0,
+    "by_decision": {
+      "mark_free": 1
+    },
+    "constraints": {
+      "read_only": true,
+      "no_network": true,
+      "no_login": true,
+      "no_submission": true,
+      "no_registry_writes_without_explicit_apply": true,
+      "allowed_review_decisions": [
+        "mark_free",
+        "mark_freemium",
+        "mark_paid",
+        "keep_unknown",
+        "needs_manual_check"
+      ]
+    }
+  },
+  "rows": 1,
+  "proposals_count": 1,
+  "skipped_rows": 0,
+  "blockers_count": 0,
+  "blockers": [],
+  "warnings": [],
+  "proposals": [
+    {
+      "target_id": "cooltools",
+      "domain": "backdata.net",
+      "submit_url": "https://backdata.net/submit-site.html",
+      "review_decision": "mark_free",
+      "previous_pricing": "unknown",
+      "next_pricing": "free",
+      "previous_mode": "auto_safe",
+      "next_mode": "auto_safe",
+      "previous_reason": "form_mapped_no_auth_no_captcha",
+      "next_reason": "form_mapped_no_auth_no_captcha",
+      "action": "update_pricing",
+      "write_allowed": true,
+      "notes": "Manual browser review checked submit-site.html, js/submit-site.js, terms-of-service.html, and help.html. Public submission form is directly accessible without login, CAPTCHA, or payment step. Front-end script posts form data to /submit_site and no paid listing requirement or sponsored-only rule was found in visible page copy or terms. Classified as free submission path."
+    }
+  ],
+  "skipped": [],
+  "write_requested": false
+}

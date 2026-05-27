@@ -1,6 +1,6 @@
 version: 1
 generated_at: 2026-05-21T15:44:34.969Z
-updated_at: 2026-05-23T03:41:03.388Z
+updated_at: 2026-05-27T07:00:53.733Z
 targets:
   - id: 01webdirectory
     name: 01webdirectory
@@ -2492,7 +2492,8 @@ targets:
     submission:
       mode: needs_review
       status: scout_domain_mismatch
-      reason: final_url_domain_mismatch:ainavpro.com->aigc.cn; stale_scout_evidence_requires_manual_rescout
+      reason: final_url_domain_mismatch:ainavpro.com->aigc.cn;
+        stale_scout_evidence_requires_manual_rescout
       last_submitted_at: null
       last_verified_at: null
     quality:
@@ -8870,7 +8871,7 @@ targets:
     type: form
     lang: zh
     group: chinese_ai_directories
-    pricing: unknown
+    pricing: free
     price_text: ""
     status: ""
     original_auto: yes
@@ -8894,6 +8895,8 @@ targets:
         confidence: 0.75
         reasons:
           - form_mapped_no_auth_no_captcha
+      pricing_review_decision: mark_free
+      pricing_reviewed_at: 2026-05-27T07:00:53.732Z
     technical:
       last_scouted_at: 2026-05-22T14:52:25.655Z
       auth: none
@@ -8923,7 +8926,7 @@ targets:
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.093Z
-    updated_at: 2026-05-22T15:29:04.475Z
+    updated_at: 2026-05-27T07:00:53.732Z
     forms:
       - index: 0
         fields:
@@ -10398,7 +10401,7 @@ targets:
     type: form
     lang: en
     group: overseas_general
-    pricing: unknown
+    pricing: paid
     price_text: ""
     status: ""
     original_auto: yes
@@ -10422,6 +10425,8 @@ targets:
         confidence: 0.8
         reasons:
           - auth_signal
+      pricing_review_decision: mark_paid
+      pricing_reviewed_at: 2026-05-27T06:13:58.986Z
     technical:
       last_scouted_at: 2026-05-22T15:00:13.115Z
       auth: required
@@ -10430,15 +10435,15 @@ targets:
       final_url: https://changelog.com/news/submit
       http_status: 200
     submission:
-      mode: assisted
+      mode: skip
       status: auth_required
-      reason: auth_signal
+      reason: pricing_review_paid_confirmed
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.094Z
-    updated_at: 2026-05-22T15:01:15.937Z
+    updated_at: 2026-05-27T06:13:58.986Z
     forms:
       - index: 0
         fields:
@@ -19798,7 +19803,7 @@ targets:
     type: form
     lang: zh
     group: chinese_general
-    pricing: unknown
+    pricing: free
     price_text: ""
     status: ""
     original_auto: yes
@@ -19823,6 +19828,8 @@ targets:
         reasons:
           - required_fields_unmapped:1
           - auto_safe_fields_missing:product.description
+      pricing_review_decision: mark_free
+      pricing_reviewed_at: 2026-05-27T06:13:58.987Z
     technical:
       last_scouted_at: 2026-05-23T03:38:04.478Z
       auth: required
@@ -19839,7 +19846,7 @@ targets:
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.102Z
-    updated_at: 2026-05-23T03:38:05.727Z
+    updated_at: 2026-05-27T06:13:58.987Z
     forms:
       - index: 0
         fields:
@@ -26642,7 +26649,7 @@ targets:
     type: form
     lang: en
     group: overseas_directories
-    pricing: unknown
+    pricing: free
     price_text: ""
     status: ""
     original_auto: yes
@@ -26666,6 +26673,8 @@ targets:
         confidence: 0.85
         reasons:
           - captcha_field
+      pricing_review_decision: mark_free
+      pricing_reviewed_at: 2026-05-27T06:13:58.987Z
     technical:
       last_scouted_at: 2026-05-23T03:40:06.737Z
       auth: none
@@ -26682,7 +26691,7 @@ targets:
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.124Z
-    updated_at: 2026-05-23T03:40:39.178Z
+    updated_at: 2026-05-27T06:13:58.987Z
     forms:
       - index: 0
         fields:
@@ -28367,7 +28376,7 @@ targets:
     type: form
     lang: unknown
     group: ""
-    pricing: unknown
+    pricing: paid
     price_text: ""
     status: ""
     original_auto: ""
@@ -28391,6 +28400,8 @@ targets:
         confidence: 0.85
         reasons:
           - captcha_signal
+      pricing_review_decision: mark_paid
+      pricing_reviewed_at: 2026-05-27T06:13:58.987Z
     technical:
       last_scouted_at: 2026-05-23T01:06:23.390Z
       auth: oauth
@@ -28399,15 +28410,15 @@ targets:
       final_url: https://submitdirs.com/auth/login?callbackUrl=%2Fsubmit
       http_status: 200
     submission:
-      mode: assisted
+      mode: skip
       status: captcha_required
-      reason: captcha_signal
+      reason: pricing_review_paid_confirmed
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.125Z
-    updated_at: 2026-05-23T01:06:56.949Z
+    updated_at: 2026-05-27T06:13:58.987Z
     forms: []
   - id: submitmatic-com
     name: https://submitmatic.com
@@ -34352,7 +34363,7 @@ targets:
     type: form
     lang: en
     group: overseas_general
-    pricing: unknown
+    pricing: freemium
     price_text: ""
     status: ""
     original_auto: yes
@@ -34376,6 +34387,8 @@ targets:
         confidence: 0.8
         reasons:
           - auth_signal
+      pricing_review_decision: mark_freemium
+      pricing_reviewed_at: 2026-05-27T06:13:58.987Z
     technical:
       last_scouted_at: 2026-05-23T02:23:36.763Z
       auth: oauth
@@ -34392,7 +34405,7 @@ targets:
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.130Z
-    updated_at: 2026-05-23T02:23:38.343Z
+    updated_at: 2026-05-27T06:13:58.987Z
     forms:
       - index: 0
         fields:
@@ -38015,7 +38028,7 @@ targets:
     type: form
     lang: en
     group: overseas_general
-    pricing: unknown
+    pricing: paid
     price_text: ""
     status: ""
     original_auto: yes
@@ -38039,6 +38052,8 @@ targets:
         confidence: 0.85
         reasons:
           - captcha_signal
+      pricing_review_decision: mark_paid
+      pricing_reviewed_at: 2026-05-27T06:13:58.987Z
     technical:
       last_scouted_at: 2026-05-23T02:38:35.622Z
       auth: required
@@ -38047,15 +38062,15 @@ targets:
       final_url: https://www.websitehunt.co/accounts/login/?next=/websites/submit/create
       http_status: 200
     submission:
-      mode: assisted
+      mode: skip
       status: captcha_required
-      reason: captcha_signal
+      reason: pricing_review_paid_confirmed
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.131Z
-    updated_at: 2026-05-23T02:38:40.406Z
+    updated_at: 2026-05-27T06:13:58.987Z
     forms:
       - index: 0
         fields:

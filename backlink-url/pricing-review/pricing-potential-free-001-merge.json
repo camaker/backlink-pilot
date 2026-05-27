@@ -1,0 +1,176 @@
+{
+  "generated_at": "2026-05-27T06:11:46.589Z",
+  "ok": true,
+  "status": "merge_preview_ready",
+  "draft": "backlink-url/pricing-review/pricing-review-decision-draft.csv",
+  "batch": "backlink-url/pricing-review/manual-review/pricing-potential-free-001-manual-review.csv",
+  "constraints": {
+    "read_only": true,
+    "no_network": true,
+    "no_login": true,
+    "no_submission": true,
+    "no_registry_writes": true,
+    "merge_only_review_fields": true,
+    "explicit_output_required": true,
+    "overwrite_reviewed_rows": false
+  },
+  "validation": {
+    "file": "backlink-url/pricing-review/manual-review/pricing-potential-free-001-manual-review.csv",
+    "ok": true,
+    "rows": 7,
+    "blockers": [],
+    "warnings": [],
+    "blockers_count": 0,
+    "warnings_count": 0,
+    "by_decision": {
+      "mark_paid": 3,
+      "mark_free": 2,
+      "mark_freemium": 1,
+      "needs_manual_check": 1
+    },
+    "constraints": {
+      "read_only": true,
+      "no_network": true,
+      "no_login": true,
+      "no_submission": true,
+      "no_registry_writes_without_explicit_apply": true,
+      "allowed_review_decisions": [
+        "mark_free",
+        "mark_freemium",
+        "mark_paid",
+        "keep_unknown",
+        "needs_manual_check"
+      ]
+    }
+  },
+  "draft_rows": 75,
+  "batch_rows": 7,
+  "proposals_count": 7,
+  "unchanged_rows": 0,
+  "blockers_count": 0,
+  "blockers": [],
+  "proposals": [
+    {
+      "target_id": "changelog",
+      "domain": "changelog.com",
+      "batch_id": "pricing-potential-free-001",
+      "batch_order": "1",
+      "review_decision": "mark_paid",
+      "reviewed_pricing": "paid",
+      "changed_fields": [
+        "review_decision",
+        "reviewed_pricing",
+        "reviewer",
+        "reviewed_at",
+        "review_notes"
+      ]
+    },
+    {
+      "target_id": "mergeek",
+      "domain": "mergeek.com",
+      "batch_id": "pricing-potential-free-001",
+      "batch_order": "2",
+      "review_decision": "mark_free",
+      "reviewed_pricing": "free",
+      "changed_fields": [
+        "review_decision",
+        "reviewed_pricing",
+        "reviewer",
+        "reviewed_at",
+        "review_notes"
+      ]
+    },
+    {
+      "target_id": "sonic-run",
+      "domain": "sonicrun.com",
+      "batch_id": "pricing-potential-free-001",
+      "batch_order": "3",
+      "review_decision": "mark_free",
+      "reviewed_pricing": "free",
+      "changed_fields": [
+        "review_decision",
+        "reviewed_pricing",
+        "reviewer",
+        "reviewed_at",
+        "review_notes"
+      ]
+    },
+    {
+      "target_id": "top-best-alternatives",
+      "domain": "topbestalternatives.com",
+      "batch_id": "pricing-potential-free-001",
+      "batch_order": "4",
+      "review_decision": "mark_freemium",
+      "reviewed_pricing": "freemium",
+      "changed_fields": [
+        "review_decision",
+        "reviewed_pricing",
+        "reviewer",
+        "reviewed_at",
+        "review_notes"
+      ]
+    },
+    {
+      "target_id": "trustiner-com",
+      "domain": "trustiner.com",
+      "batch_id": "pricing-potential-free-001",
+      "batch_order": "5",
+      "review_decision": "needs_manual_check",
+      "reviewed_pricing": "unknown",
+      "changed_fields": [
+        "review_decision",
+        "reviewed_pricing",
+        "reviewer",
+        "reviewed_at",
+        "review_notes"
+      ]
+    },
+    {
+      "target_id": "websitehunt",
+      "domain": "websitehunt.co",
+      "batch_id": "pricing-potential-free-001",
+      "batch_order": "6",
+      "review_decision": "mark_paid",
+      "reviewed_pricing": "paid",
+      "changed_fields": [
+        "review_decision",
+        "reviewed_pricing",
+        "reviewer",
+        "reviewed_at",
+        "review_notes"
+      ]
+    },
+    {
+      "target_id": "submitdirs-com",
+      "domain": "submitdirs.com",
+      "batch_id": "pricing-potential-free-001",
+      "batch_order": "7",
+      "review_decision": "mark_paid",
+      "reviewed_pricing": "paid",
+      "changed_fields": [
+        "review_decision",
+        "reviewed_pricing",
+        "reviewer",
+        "reviewed_at",
+        "review_notes"
+      ]
+    }
+  ],
+  "unchanged": [],
+  "updated_summary": {
+    "rows": 75,
+    "reviewed_rows": 7,
+    "unreviewed_rows": 68,
+    "by_decision": {
+      "unreviewed": 68,
+      "mark_paid": 3,
+      "mark_free": 2,
+      "mark_freemium": 1,
+      "needs_manual_check": 1
+    }
+  },
+  "files": {
+    "updated_draft_csv": "backlink-url/pricing-review/pricing-review-decision-draft.merged.csv",
+    "merge_report_json": "backlink-url/pricing-review/pricing-potential-free-001-merge.json"
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "generated_at": "2026-05-27T06:58:23.419Z",
+  "queue": "backlink-url/pricing-review/pricing-review-queue.csv",
+  "evidence": "backlink-url/pricing-review/pricing-review-evidence.csv",
+  "constraints": {
+    "read_only": true,
+    "no_registry_writes": true,
+    "no_login": true,
+    "no_submission": true,
+    "non_binding": true
+  },
+  "summary": {
+    "rows": 1,
+    "evidence_matched": 1,
+    "by_suggested_pricing": {
+      "unknown": 1
+    },
+    "by_suggested_review_decision": {
+      "keep_unknown": 1
+    },
+    "by_confidence": {
+      "low": 1
+    }
+  },
+  "rows": [
+    {
+      "queue_order": "1",
+      "target_id": "cooltools",
+      "name": "Cooltools",
+      "domain": "backdata.net",
+      "mode": "auto_safe",
+      "submit_url": "https://backdata.net/submit-site.html",
+      "current_pricing": "unknown",
+      "suggested_pricing": "unknown",
+      "suggested_review_decision": "keep_unknown",
+      "suggestion_confidence": "low",
+      "reviewer_action": "open_manually_and_record_pricing_evidence",
+      "suggested_review_notes": "evidence: submit/add/list button signal found; submit-like URL path found | basis: submit surface signal found; no decisive pricing signal found",
+      "suggestion_basis": "submit surface signal found; no decisive pricing signal found",
+      "evidence_matched": "yes",
+      "http_status": "200",
+      "fetch_ok": "yes",
+      "final_url": "https://backdata.net/submit-site.html",
+      "final_domain": "backdata.net",
+      "submit_button_signal": "yes",
+      "submit_path_signal": "yes",
+      "directory_signal": "yes",
+      "auth_signal": "no",
+      "oauth_signal": "no",
+      "captcha_signal": "no",
+      "cloudflare_signal": "no",
+      "payment_signal": "no",
+      "free_signal": "no",
+      "freemium_signal": "no",
+      "pricing_page_signal": "no",
+      "checked_at": "2026-05-27T06:55:13.372Z",
+      "automation_policy": "non_binding_suggestion_no_registry_write_no_submission"
+    }
+  ],
+  "files": {
+    "suggestions_csv": "backlink-url/pricing-review/cooltools-suggestions.csv",
+    "suggestions_json": "backlink-url/pricing-review/cooltools-suggestions.json",
+    "suggestions_md": "backlink-url/pricing-review/cooltools-suggestions.md"
+  }
+}

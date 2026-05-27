@@ -97,6 +97,10 @@ function isFreeOrUnknown(target = {}) {
   return target.pricing === 'free' || target.pricing === 'unknown';
 }
 
+function hasSubmittedAttempt(target = {}) {
+  return Boolean(target.submission?.last_submitted_at);
+}
+
 function summarizeAutomationReadiness(targets = []) {
   const audit = auditTargets(targets);
   const targetIdsWithBlockers = new Set(
@@ -110,6 +114,7 @@ function summarizeAutomationReadiness(targets = []) {
   const executeReadyFree = autoSafe.filter(target =>
     target.pricing === 'free' &&
     target.quality?.risk !== 'high' &&
+    !hasSubmittedAttempt(target) &&
     hasNoAuditBlockers(target)
   );
   const pricingReview = autoSafe.filter(target =>

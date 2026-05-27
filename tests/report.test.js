@@ -265,6 +265,47 @@ targets:
     }
   });
 
+  it('does not count previously submitted auto_safe free targets as execute-ready', () => {
+    const dir = tempDir();
+    try {
+      const registry = join(dir, 'registry.yaml');
+      writeFileSync(registry, `
+version: 1
+targets:
+  - id: submitted
+    name: Submitted Free
+    domain: submitted.example
+    submit_url: https://submitted.example/submit
+    pricing: free
+    submission:
+      mode: auto_safe
+      status: mapped
+      last_submitted_at: 2026-05-22T00:00:00.000Z
+    technical:
+      last_scouted_at: 2026-05-22T00:00:00.000Z
+      auth: none
+      captcha: none
+      reachable: yes
+    forms:
+      - fields:
+          - mapped_to: product.name
+          - mapped_to: product.url
+          - mapped_to: product.description
+        submit_buttons:
+          - selector: button[type="submit"]
+    quality:
+      risk: low
+`);
+
+      const report = buildReport({ registry });
+
+      assert.equal(report.registry.automation.execute_ready_auto_safe_free, 0);
+      assert.ok(!report.next_actions.some(action => action.id === 'dry_run_auto_safe_targets'));
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
   it('uses stable fallback target keys for rows without target IDs', () => {
     const latest = latestByTarget([
       { submit_url: 'https://dir.example/submit', status: 'failed' },

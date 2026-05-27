@@ -90,6 +90,7 @@ import {
   writeCoverageReviewQueue,
   writeCoverageReviewCsv,
 } from './coverage.js';
+import { buildBacklogLanes, writeBacklogLanes } from './backlog-lanes.js';
 
 function printStats(stats) {
   console.log(`Total: ${stats.total}`);
@@ -1509,6 +1510,62 @@ export async function coverageReviewManualPackCommand(queuePath, opts = {}) {
   console.log(`P0 manual review CSV: ${written.files.p0_manual_review_csv}`);
   console.log(`Next manual review CSV: ${written.files.next_manual_review_csv}`);
   console.log(`Summary: ${written.files.summary_md}`);
+
+  return result;
+}
+
+export async function backlogLanesCommand(opts = {}) {
+  const plan = buildBacklogLanes({
+    registry: opts.registry || DEFAULT_REGISTRY_FILE,
+    outputDir: opts.outputDir,
+    workers: opts.workers,
+    pricingStatus: opts.pricingStatus,
+    pricingManual: opts.pricingManual,
+    pricingDraft: opts.pricingDraft,
+    pricingLaneSize: opts.pricingLaneSize,
+    authSummary: opts.authSummary,
+    authLaneSize: opts.authLaneSize,
+    coverageSummary: opts.coverageSummary,
+    coverageManual: opts.coverageManual,
+    coverageReview: opts.coverageReview,
+    coverageLaneSize: opts.coverageLaneSize,
+    coverageP0LaneSize: opts.coverageP0LaneSize,
+    authRefreshCommand: opts.authRefreshCommand,
+  });
+  const files = writeBacklogLanes(plan, {
+    outputDir: opts.outputDir,
+  });
+
+  const result = {
+    generated_at: plan.generated_at,
+    registry_backlog: plan.registry_backlog,
+    workflow_backlog: plan.workflow_backlog,
+    lane_policy: plan.lane_policy,
+    lanes_summary: plan.lanes_summary,
+    workers: plan.workers,
+    files,
+  };
+
+  if (opts.json) {
+    console.log(JSON.stringify(result, null, 2));
+    return result;
+  }
+
+  console.log(`Generated: ${plan.generated_at}`);
+  console.log(`Registry: ${plan.registry_backlog.registry}`);
+  console.log(`Non-skip targets: ${plan.registry_backlog.non_skip_targets}`);
+  console.log(`Workflow backlog: ${plan.workflow_backlog.total_workflow_rows}`);
+  console.log(`Pricing manual rows: ${plan.workflow_backlog.pricing_manual_rows}`);
+  console.log(`Auth manual login rows: ${plan.workflow_backlog.auth_manual_login_rows}`);
+  console.log(`Coverage manual review rows: ${plan.workflow_backlog.coverage_manual_review_rows}`);
+  console.log(`Lane count: ${plan.lanes_summary.lane_count}`);
+  console.log(`Lane types: ${JSON.stringify(plan.lanes_summary.by_type)}`);
+  console.log(`Workers: ${plan.lane_policy.workers_requested}`);
+  console.log(`Summary JSON: ${files.summary_json}`);
+  console.log(`Summary Markdown: ${files.summary_md}`);
+  for (const worker of plan.workers) {
+    console.log(`${worker.worker_id}\tlanes=${worker.lane_count}\trows=${worker.row_count}\test_minutes=${worker.estimated_total_minutes}`);
+  }
 
   return result;
 }
