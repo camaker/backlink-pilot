@@ -209,6 +209,7 @@ export async function runPipeline(opts = {}) {
     results: paths.results,
     verification: opts.verify ? paths.verification : undefined,
     registry,
+    backlog: opts.backlog,
   });
   writeJson(paths.report, report);
   summary.steps.report = {

@@ -208,13 +208,17 @@ targets:
       assert.equal(report.registry.automation.auto_safe_pricing_review, 1);
       assert.equal(report.registry.automation.scout_queue_free_or_unknown, 1);
       assert.equal(report.registry.automation.assisted_targets, 1);
-      assert.deepEqual(ids, [
+      assert.deepEqual(ids.slice(0, 5), [
         'verify_submitted_results',
         'execute_dry_run_ready_targets',
         'scout_unverified_targets',
         'review_unknown_pricing',
         'prepare_assisted_sessions',
       ]);
+      assert.ok(ids.includes('work_auth_manual_login_backlog'));
+      assert.ok(ids.includes('work_auth_needs_scout_backlog'));
+      assert.ok(ids.includes('work_auth_manual_review_backlog'));
+      assert.ok(ids.includes('work_directory_coverage_backlog'));
       assert.match(report.next_actions[0].command, /verify-results/);
       assert.match(report.next_actions[1].command, /--execute/);
       assert.match(report.next_actions[2].command, /--scout-queue --update-registry/);
@@ -260,6 +264,73 @@ targets:
       assert.equal(report.next_actions[0].id, 'dry_run_auto_safe_targets');
       assert.match(report.next_actions[0].command, /--mode auto_safe/);
       assert.doesNotMatch(report.next_actions[0].command, /--execute/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('surfaces backlog lanes and manual workflow actions in the report', () => {
+    const dir = tempDir();
+    try {
+      const registry = join(dir, 'registry.yaml');
+      const backlog = join(dir, 'backlog-lanes.json');
+      writeFileSync(registry, `
+version: 1
+targets:
+  - id: assisted
+    name: Assisted
+    domain: assisted.example
+    submit_url: https://assisted.example/submit
+    pricing: free
+    submission:
+      mode: assisted
+    quality:
+      risk: medium
+`);
+      writeFileSync(backlog, JSON.stringify({
+        generated_at: '2026-05-27T13:56:14.161Z',
+        workflow_backlog: {
+          pricing_manual_rows: 3,
+          auth_manual_login_rows: 20,
+          auth_resolved_needs_scout_rows: 1,
+          auth_resolved_manual_review_rows: 2,
+          coverage_manual_review_rows: 132,
+          total_workflow_rows: 158,
+        },
+        lanes_summary: {
+          lane_count: 11,
+          by_type: {
+            auth_manual_login: 2,
+            auth_resolved_needs_scout: 1,
+            auth_manual_review_fail_closed: 1,
+            auth_manual_review_classification: 1,
+            coverage_manual_review_p0: 1,
+            coverage_manual_review_p2: 5,
+            pricing_review_manual: 1,
+          },
+        },
+        lane_policy: {
+          workers_requested: 4,
+        },
+        source_files: {
+          auth_summary: 'backlink-url/assisted-submission-pack/resolved-direct-login/auth-workflow-refresh-resolved-summary.json',
+        },
+      }, null, 2));
+
+      const report = buildReport({ registry, backlog });
+      const formatted = formatReport(report);
+      const ids = report.next_actions.map(action => action.id);
+
+      assert.equal(report.backlog.workflow_backlog.total_workflow_rows, 158);
+      assert.equal(report.backlog.lanes_summary.by_type.auth_manual_login, 2);
+      assert.ok(ids.includes('work_auth_manual_login_backlog'));
+      assert.ok(ids.includes('work_auth_needs_scout_backlog'));
+      assert.ok(ids.includes('work_auth_manual_review_backlog'));
+      assert.ok(ids.includes('work_directory_coverage_backlog'));
+      assert.ok(ids.includes('work_pricing_review_backlog'));
+      assert.match(formatted, /Manual backlog/);
+      assert.match(formatted, /Auth manual login: 20/);
+      assert.match(formatted, /Lane count: 11/);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

@@ -4,6 +4,7 @@ import { auditTargets } from '../targets/audit.js';
 
 const SUBMITTED_OR_PENDING_STATUSES = new Set(['submitted', 'pending_review', 'accepted']);
 const SCOUT_QUEUE_MODES = new Set(['auto_candidate', 'needs_scout']);
+const DEFAULT_BACKLOG_PATH = 'backlink-url/backlog-lanes/backlog-lanes.json';
 
 function nowIso() {
   return new Date().toISOString();
@@ -26,6 +27,15 @@ function readJsonl(path, label) {
     .map(line => line.trim())
     .filter(Boolean)
     .map(line => JSON.parse(line));
+}
+
+function readJson(path, label, opts = {}) {
+  if (!path) return null;
+  if (!existsSync(path)) {
+    if (opts.optional) return null;
+    throw new Error(`${label} file not found: ${path}`);
+  }
+  return JSON.parse(readFileSync(path, 'utf-8'));
 }
 
 function targetKeyFor(row = {}, index = 0) {
@@ -177,17 +187,30 @@ function summarizePipeline(runSummary, verificationSummary, registrySummary) {
   };
 }
 
+function summarizeBacklog(backlog = {}) {
+  if (!backlog) return null;
+  return {
+    generated_at: backlog.generated_at || '',
+    workflow_backlog: backlog.workflow_backlog || {},
+    lanes_summary: backlog.lanes_summary || {},
+    lane_policy: backlog.lane_policy || {},
+    source_files: backlog.source_files || {},
+  };
+}
+
 function action(priority, id, title, reason, command = '') {
   return { priority, id, title, reason, command };
 }
 
-function buildNextActions(runSummary, verificationSummary, registrySummary, inputs = {}) {
+function buildNextActions(runSummary, verificationSummary, registrySummary, backlogSummary, inputs = {}) {
   const actions = [];
   const registry = inputs.registry || DEFAULT_REGISTRY_FILE;
   const results = inputs.results || '<results.jsonl>';
   const automation = registrySummary.automation || {};
   const submittedWithoutVerification = summarizePipeline(runSummary, verificationSummary, registrySummary)
     .submitted_without_verification;
+  const backlogWorkflow = backlogSummary?.workflow_backlog || {};
+  const backlogSource = inputs.backlog || DEFAULT_BACKLOG_PATH;
 
   if (submittedWithoutVerification > 0) {
     actions.push(action(
@@ -249,12 +272,62 @@ function buildNextActions(runSummary, verificationSummary, registrySummary, inpu
     ));
   }
 
-  if (!actions.length) {
+  if ((backlogWorkflow.auth_manual_login_rows || 0) > 0) {
+    actions.push(action(
+      7,
+      'work_auth_manual_login_backlog',
+      'Work the manual auth login backlog',
+      `${backlogWorkflow.auth_manual_login_rows} auth login row(s) are queued in the current backlog lanes and still require human login capture.`,
+      `node src/cli.js targets backlog-lanes --output-dir ${backlogSource.replace(/\\/g, '/').replace(/\/backlog-lanes\.json$/i, '')}`
+    ));
+  }
+
+  if ((backlogWorkflow.auth_resolved_needs_scout_rows || 0) > 0) {
+    actions.push(action(
+      8,
+      'work_auth_needs_scout_backlog',
+      'Refresh public scout evidence for auth-exited targets',
+      `${backlogWorkflow.auth_resolved_needs_scout_rows} target(s) were intentionally moved out of auth and need fresh public scout evidence before reclassification.`,
+      `node src/cli.js targets backlog-lanes --output-dir ${backlogSource.replace(/\\/g, '/').replace(/\/backlog-lanes\.json$/i, '')}`
+    ));
+  }
+
+  if ((backlogWorkflow.auth_resolved_manual_review_rows || 0) > 0) {
     actions.push(action(
       9,
+      'work_auth_manual_review_backlog',
+      'Resolve fail-closed auth manual review backlog',
+      `${backlogWorkflow.auth_resolved_manual_review_rows} auth target(s) remain in fail-closed/manual classification review lanes.`,
+      `node src/cli.js targets backlog-lanes --output-dir ${backlogSource.replace(/\\/g, '/').replace(/\/backlog-lanes\.json$/i, '')}`
+    ));
+  }
+
+  if ((backlogWorkflow.coverage_manual_review_rows || 0) > 0) {
+    actions.push(action(
+      10,
+      'work_directory_coverage_backlog',
+      'Process manual directory coverage review backlog',
+      `${backlogWorkflow.coverage_manual_review_rows} coverage review row(s) still need human validation before any scout/import follow-up.`,
+      `node src/cli.js targets backlog-lanes --output-dir ${backlogSource.replace(/\\/g, '/').replace(/\/backlog-lanes\.json$/i, '')}`
+    ));
+  }
+
+  if ((backlogWorkflow.pricing_manual_rows || 0) > 0) {
+    actions.push(action(
+      11,
+      'work_pricing_review_backlog',
+      'Process manual pricing review backlog',
+      `${backlogWorkflow.pricing_manual_rows} pricing review row(s) still need manual free-vs-paid validation.`,
+      `node src/cli.js targets backlog-lanes --output-dir ${backlogSource.replace(/\\/g, '/').replace(/\/backlog-lanes\.json$/i, '')}`
+    ));
+  }
+
+  if (!actions.length) {
+    actions.push(action(
+      99,
       'no_automation_backlog',
       'No immediate automation backlog detected',
-      'No submitted verification backlog, dry-run queue, auto_safe queue, or unscouted free/unknown queue was detected.',
+      'No submitted verification backlog, dry-run queue, scout queue, pricing review queue, or manual backlog lane queue was detected.',
       ''
     ));
   }
@@ -266,9 +339,11 @@ export function buildReport(opts = {}) {
   const resultRows = readJsonl(opts.results, 'results');
   const verificationRows = readJsonl(opts.verification, 'verification');
   const registryPath = opts.registry || DEFAULT_REGISTRY_FILE;
+  const backlogPath = opts.backlog || DEFAULT_BACKLOG_PATH;
   const run = summarizeRunRows(resultRows);
   const verification = summarizeVerificationRows(verificationRows);
   const registry = summarizeRegistry(registryPath, { explicit: Boolean(opts.registry) });
+  const backlog = summarizeBacklog(readJson(backlogPath, 'backlog', { optional: true }));
 
   return {
     generated_at: nowIso(),
@@ -276,14 +351,17 @@ export function buildReport(opts = {}) {
       results: opts.results || null,
       verification: opts.verification || null,
       registry: registryPath,
+      backlog: backlog ? backlogPath : null,
     },
     run,
     verification,
     registry,
+    backlog,
     pipeline: summarizePipeline(run, verification, registry),
-    next_actions: buildNextActions(run, verification, registry, {
+    next_actions: buildNextActions(run, verification, registry, backlog, {
       results: opts.results,
       registry: registryPath,
+      backlog: backlogPath,
     }),
   };
 }
@@ -301,6 +379,7 @@ export function formatReport(report = {}) {
     `Results: ${report.inputs?.results || '(none)'}`,
     `Verification: ${report.inputs?.verification || '(none)'}`,
     `Registry: ${report.inputs?.registry || '(none)'}`,
+    `Backlog: ${report.inputs?.backlog || '(none)'}`,
     '',
     'Run results',
     `Events: ${report.run?.events || 0}`,
@@ -335,6 +414,16 @@ export function formatReport(report = {}) {
     `Execute-ready free auto_safe: ${report.registry?.automation?.execute_ready_auto_safe_free || 0}`,
     `Auto-safe pricing review: ${report.registry?.automation?.auto_safe_pricing_review || 0}`,
     `Assisted targets: ${report.registry?.automation?.assisted_targets || 0}`,
+    '',
+    'Manual backlog',
+    `Workflow rows: ${report.backlog?.workflow_backlog?.total_workflow_rows || 0}`,
+    `Auth manual login: ${report.backlog?.workflow_backlog?.auth_manual_login_rows || 0}`,
+    `Auth resolved needs-scout: ${report.backlog?.workflow_backlog?.auth_resolved_needs_scout_rows || 0}`,
+    `Auth resolved manual-review: ${report.backlog?.workflow_backlog?.auth_resolved_manual_review_rows || 0}`,
+    `Coverage manual review: ${report.backlog?.workflow_backlog?.coverage_manual_review_rows || 0}`,
+    `Pricing manual review: ${report.backlog?.workflow_backlog?.pricing_manual_rows || 0}`,
+    `Lane count: ${report.backlog?.lanes_summary?.lane_count || 0}`,
+    `Lane types: ${formatCounts(report.backlog?.lanes_summary?.by_type)}`,
     '',
     'Next actions',
     ...((report.next_actions || []).map(item =>
