@@ -4,7 +4,9 @@ import { mkdtempSync, rmSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import {
+  buildOpsStatus,
   buildReport,
+  formatOpsStatus,
   formatReport,
   latestByTarget,
   summarizeRunRows,
@@ -315,6 +317,104 @@ targets:
         source_files: {
           auth_summary: 'backlink-url/assisted-submission-pack/resolved-direct-login/auth-workflow-refresh-resolved-summary.json',
         },
+        workers: [
+          {
+            worker_id: 'worker-02',
+            lane_count: 1,
+            row_count: 20,
+            estimated_total_minutes: 120,
+            lanes: [
+              {
+                lane_id: 'auth-login-001',
+                lane_type: 'auth_manual_login',
+                priority: 'P0',
+                row_count: 10,
+                estimated_total_minutes: 60,
+              },
+            ],
+          },
+        ],
+        lanes: [
+          {
+            lane_id: 'auth-login-001',
+            lane_type: 'auth_manual_login',
+            row_count: 10,
+            priority: 'P0',
+            validate_command: '',
+            merge_command: '',
+            refresh_command: 'node src/cli.js targets auth-workflow-refresh demo',
+            rows: [
+              {
+                auth_login_command: 'node src/cli.js auth login --profile "demo" --url "https://example.com/login"',
+                lane_csv_path: 'backlink-url/backlog-lanes/lanes/auth-login-001.csv',
+              },
+            ],
+          },
+          {
+            lane_id: 'auth-needs-scout-001',
+            lane_type: 'auth_resolved_needs_scout',
+            row_count: 1,
+            priority: 'P1',
+            rows: [
+              {
+                auth_scout_command: 'node src/cli.js scout "https://example.com/submit" --target-id "mergeek"',
+                lane_csv_path: 'backlink-url/backlog-lanes/lanes/auth-needs-scout-001.csv',
+              },
+            ],
+          },
+          {
+            lane_id: 'auth-manual-review-fail-closed-001',
+            lane_type: 'auth_manual_review_fail_closed',
+            row_count: 2,
+            priority: 'P0',
+            rows: [
+              {
+                lane_csv_path: 'backlink-url/backlog-lanes/lanes/auth-manual-review-fail-closed-001.csv',
+              },
+            ],
+          },
+          {
+            lane_id: 'coverage-review-p0-001',
+            lane_type: 'coverage_manual_review_p0',
+            row_count: 25,
+            priority: 'P0',
+            validate_command: 'node src/cli.js targets validate-coverage-review-batch "backlink-url/backlog-lanes/lanes/coverage-review-p0-001.csv" --fail-on-blockers',
+            rows: [
+              {
+                lane_csv_path: 'backlink-url/backlog-lanes/lanes/coverage-review-p0-001.csv',
+              },
+            ],
+          },
+          {
+            lane_id: 'pricing-review-001',
+            lane_type: 'pricing_review_manual',
+            row_count: 3,
+            priority: 'P0',
+            validate_command: 'node src/cli.js targets validate-pricing-review-decisions "backlink-url/backlog-lanes/lanes/pricing-review-001.csv" --fail-on-blockers',
+            rows: [
+              {
+                lane_csv_path: 'backlink-url/backlog-lanes/lanes/pricing-review-001.csv',
+              },
+            ],
+          },
+        ],
+        files: {
+          summary_json: backlog,
+          workers: [
+            {
+              worker_id: 'worker-02',
+              markdown: 'backlink-url/backlog-lanes/workers/worker-02.md',
+              json: 'backlink-url/backlog-lanes/workers/worker-02.json',
+            },
+          ],
+          lanes: [
+            {
+              lane_id: 'auth-login-001',
+              csv: 'backlink-url/backlog-lanes/lanes/auth-login-001.csv',
+              json: 'backlink-url/backlog-lanes/lanes/auth-login-001.json',
+            },
+          ],
+        },
       }, null, 2));
 
       const report = buildReport({ registry, backlog });
@@ -328,6 +428,10 @@ targets:
       assert.ok(ids.includes('work_auth_manual_review_backlog'));
       assert.ok(ids.includes('work_directory_coverage_backlog'));
       assert.ok(ids.includes('work_pricing_review_backlog'));
+      assert.match(report.next_actions.find(action => action.id === 'work_auth_manual_login_backlog').command, /worker-02\.md/);
+      assert.match(report.next_actions.find(action => action.id === 'work_auth_needs_scout_backlog').command, /scout/);
+      assert.match(report.next_actions.find(action => action.id === 'work_directory_coverage_backlog').command, /validate-coverage-review-batch/);
+      assert.equal(report.backlog_freshness.is_stale, false);
       assert.match(formatted, /Manual backlog/);
       assert.match(formatted, /Auth manual login: 20/);
       assert.match(formatted, /Lane count: 11/);
@@ -387,5 +491,122 @@ targets:
     assert.equal(latest.length, 2);
     assert.equal(latest[0].status, 'pending_review');
     assert.equal(latest[1].target_key, 'https://dir.example/tools/demo');
+  });
+
+  it('builds ops status with blocker summary, worker leads, and formatted output', () => {
+    const dir = tempDir();
+    try {
+      const registry = join(dir, 'registry.yaml');
+      const backlog = join(dir, 'backlog-lanes.json');
+      writeFileSync(registry, `
+version: 1
+targets:
+  - id: ready
+    name: Ready Free
+    domain: ready.example
+    submit_url: https://ready.example/submit
+    pricing: free
+    submission:
+      mode: auto_safe
+      status: mapped
+    technical:
+      last_scouted_at: 2026-05-22T00:00:00.000Z
+      auth: none
+      captcha: none
+      reachable: yes
+    forms:
+      - fields:
+          - mapped_to: product.name
+          - mapped_to: product.url
+          - mapped_to: product.description
+        submit_buttons:
+          - selector: button[type="submit"]
+    quality:
+      risk: low
+  - id: blocked
+    name: Blocked Unknown Pricing
+    domain: blocked.example
+    submit_url: https://blocked.example/submit
+    pricing: unknown
+    submission:
+      mode: auto_safe
+      status: new
+    technical:
+      last_scouted_at: null
+      auth: unknown
+      captcha: unknown
+      reachable: unknown
+    forms: []
+    quality:
+      risk: low
+`);
+      writeFileSync(backlog, JSON.stringify({
+        generated_at: new Date().toISOString(),
+        workflow_backlog: {
+          auth_manual_login_rows: 2,
+          total_workflow_rows: 2,
+        },
+        lanes_summary: {
+          lane_count: 1,
+          by_type: {
+            auth_manual_login: 1,
+          },
+        },
+        workers: [
+          {
+            worker_id: 'worker-01',
+            lane_count: 1,
+            row_count: 2,
+            estimated_total_minutes: 12,
+            lanes: [
+              {
+                lane_id: 'auth-login-001',
+                lane_type: 'auth_manual_login',
+                priority: 'P0',
+                row_count: 2,
+                estimated_total_minutes: 12,
+              },
+            ],
+          },
+        ],
+        lanes: [
+          {
+            lane_id: 'auth-login-001',
+            lane_type: 'auth_manual_login',
+            row_count: 2,
+            priority: 'P0',
+            rows: [
+              {
+                auth_login_command: 'node src/cli.js auth login --profile "ready" --url "https://ready.example/login"',
+                lane_csv_path: 'backlink-url/backlog-lanes/lanes/auth-login-001.csv',
+              },
+            ],
+          },
+        ],
+        files: {
+          summary_json: backlog,
+          workers: [
+            {
+              worker_id: 'worker-01',
+              markdown: 'backlink-url/backlog-lanes/workers/worker-01.md',
+            },
+          ],
+        },
+      }, null, 2));
+
+      const status = buildOpsStatus({ registry, backlog });
+      const formatted = formatOpsStatus(status);
+
+      assert.equal(status.headline.registry_targets, 2);
+      assert.equal(status.headline.backlog_rows, 2);
+      assert.equal(status.readiness.automation_ready, false);
+      assert.ok(status.readiness.top.blocker_codes.length > 0);
+      assert.equal(status.backlog.worker_leads[0].worker_id, 'worker-01');
+      assert.match(formatted, /Backlink Pilot Ops Status/);
+      assert.match(formatted, /Automation ready: no/);
+      assert.match(formatted, /worker-01/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 });

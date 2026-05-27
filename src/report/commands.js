@@ -1,4 +1,4 @@
-import { buildReport, formatReport } from './summary.js';
+import { buildOpsStatus, buildReport, formatOpsStatus, formatReport } from './summary.js';
 
 export async function reportCommand(opts = {}) {
   const report = buildReport(opts);
@@ -9,4 +9,15 @@ export async function reportCommand(opts = {}) {
 
   console.log(formatReport(report));
   return report;
+}
+
+export async function opsStatusCommand(opts = {}) {
+  const status = buildOpsStatus(opts);
+  if (opts.json) {
+    console.log(JSON.stringify(status, null, 2));
+    return status;
+  }
+
+  console.log(formatOpsStatus(status));
+  return status;
 }

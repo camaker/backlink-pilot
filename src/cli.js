@@ -67,7 +67,7 @@ import { scoutQueueCommand } from './planner/commands.js';
 import { pipelineCommand } from './pipeline/commands.js';
 import { runPlan } from './runner/run.js';
 import { verifyBacklinkCommand, verifyResultsCommand } from './verification/commands.js';
-import { reportCommand } from './report/commands.js';
+import { opsStatusCommand, reportCommand } from './report/commands.js';
 import { scoutPlan } from './scout/plan.js';
 import { readinessCommand } from './readiness/commands.js';
 import {
@@ -1134,6 +1134,19 @@ program
   .option('--json', 'Output as JSON')
   .action(async (opts) => {
     await reportCommand(opts);
+  });
+
+program
+  .command('ops-status')
+  .description('Show a unified operational control-tower view across registry readiness, backlog lanes, and next actions')
+  .option('--results <path>', 'run-plan results.jsonl path')
+  .option('--verification <path>', 'verify-results JSONL path')
+  .option('--registry <path>', 'Canonical registry path')
+  .option('--backlog <path>', 'Backlog lanes summary JSON path')
+  .option('--backlog-stale-after-hours <n>', 'Treat backlog artifacts older than this threshold as stale', '24')
+  .option('--json', 'Output as JSON')
+  .action(async (opts) => {
+    await opsStatusCommand(opts);
   });
 
 program
