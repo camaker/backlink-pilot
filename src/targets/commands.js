@@ -23,7 +23,9 @@ import {
 } from './assisted-pack.js';
 import {
   buildAuthLoginPlan,
+  buildAuthLoginPlanBatches,
   writeAuthLoginPlan,
+  writeAuthLoginPlanBatches,
 } from './auth-login-plan.js';
 import {
   buildAuthLoginNext,
@@ -832,6 +834,7 @@ export async function crossDomainFinalUrlDecisionDraftCommand(manualReviewPath, 
 export async function authLoginPlanCommand(queuePath, opts = {}) {
   const plan = buildAuthLoginPlan(queuePath, {
     registry: opts.registry || DEFAULT_REGISTRY_FILE,
+    registryFilter: true,
     productConfig: opts.productConfig,
     authDir: opts.authDir,
     offset: opts.offset,
@@ -863,6 +866,44 @@ export async function authLoginPlanCommand(queuePath, opts = {}) {
   }
 
   return plan;
+}
+
+export async function authLoginPlanBatchesCommand(queuePath, opts = {}) {
+  const report = buildAuthLoginPlanBatches(queuePath, {
+    registry: opts.registry || DEFAULT_REGISTRY_FILE,
+    registryFilter: true,
+    productConfig: opts.productConfig,
+    authDir: opts.authDir,
+    batchSize: opts.batchSize || opts.limit,
+    maxBatches: opts.maxBatches,
+  });
+  const written = writeAuthLoginPlanBatches(report, {
+    outputDir: opts.outputDir,
+    namePrefix: opts.namePrefix,
+    summaryName: opts.summaryName,
+  });
+
+  if (opts.json) {
+    console.log(JSON.stringify({ ...report, files: written }, null, 2));
+    return report;
+  }
+
+  console.log(`Queue: ${report.source_queue}`);
+  console.log(`Registry: ${report.registry}`);
+  console.log(`Pending login rows: ${report.summary.pending_rows}`);
+  console.log(`Completed profiles: ${report.summary.completed_rows}`);
+  console.log(`Excluded rows: ${report.summary.excluded_rows}`);
+  console.log(`Batch size: ${report.summary.batch_size}`);
+  console.log(`Batches written: ${report.summary.batch_count}`);
+  console.log(`Generated target rows: ${report.summary.generated_target_rows}`);
+  console.log(`Remaining unbatched rows: ${report.summary.remaining_unbatched_rows}`);
+  console.log(`Output dir: ${written.output_dir}`);
+  console.log(`Summary: ${written.summary}`);
+  for (const batch of written.batches.slice(0, Number.parseInt(opts.preview || 10, 10))) {
+    console.log(`${batch.batch_id}\trows=${batch.target_rows}\tremaining=${batch.remaining_after_batch}\t${batch.output}`);
+  }
+
+  return report;
 }
 
 export async function authLoginStatusCommand(batchPath, opts = {}) {

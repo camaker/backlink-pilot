@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "created_at": "2026-05-27T09:33:07.473Z",
+  "created_at": "2026-05-27T09:53:14.358Z",
   "source_batches": [
     "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
     "backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json",
@@ -671,17 +671,6 @@
     {
       "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
       "batch_order": 51,
-      "target_id": "stackdirectory-com",
-      "name": "https://stackdirectory.com/",
-      "domain": "stackdirectory.com",
-      "auth_profile": "stackdirectory-com",
-      "status": "manual_login_required",
-      "next_action": "run_auth_login_command",
-      "exclusion_reason": "after_batch_limit"
-    },
-    {
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
-      "batch_order": 52,
       "target_id": "startupvessel-com",
       "name": "https://startupvessel.com/",
       "domain": "startupvessel.com",
@@ -692,7 +681,7 @@
     },
     {
       "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
-      "batch_order": 53,
+      "batch_order": 52,
       "target_id": "theapptools-com",
       "name": "https://theapptools.com/",
       "domain": "theapptools.com",
@@ -703,7 +692,7 @@
     },
     {
       "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
-      "batch_order": 54,
+      "batch_order": 53,
       "target_id": "thecoretools-com",
       "name": "https://thecoretools.com",
       "domain": "thecoretools.com",
@@ -714,7 +703,7 @@
     },
     {
       "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
-      "batch_order": 55,
+      "batch_order": 54,
       "target_id": "tinytoolhub-com",
       "name": "https://tinytoolhub.com",
       "domain": "tinytoolhub.com",
@@ -725,7 +714,7 @@
     },
     {
       "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
-      "batch_order": 56,
+      "batch_order": 55,
       "target_id": "toolcosmos-com",
       "name": "https://toolcosmos.com",
       "domain": "toolcosmos.com",
@@ -736,7 +725,7 @@
     },
     {
       "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
-      "batch_order": 57,
+      "batch_order": 56,
       "target_id": "toolfinddir-com",
       "name": "https://toolfinddir.com",
       "domain": "toolfinddir.com",
@@ -747,7 +736,7 @@
     },
     {
       "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
-      "batch_order": 58,
+      "batch_order": 57,
       "target_id": "toolsignal-com",
       "name": "https://toolsignal.com/",
       "domain": "toolsignal.com",
@@ -758,7 +747,7 @@
     },
     {
       "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
-      "batch_order": 59,
+      "batch_order": 58,
       "target_id": "toolslisthq-com",
       "name": "https://toolslisthq.com",
       "domain": "toolslisthq.com",
@@ -769,7 +758,7 @@
     },
     {
       "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
-      "batch_order": 60,
+      "batch_order": 59,
       "target_id": "toolsunderradar-com",
       "name": "https://toolsunderradar.com",
       "domain": "toolsunderradar.com",
@@ -780,7 +769,7 @@
     },
     {
       "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
-      "batch_order": 61,
+      "batch_order": 60,
       "target_id": "toptrendtools-com",
       "name": "https://toptrendtools.com/",
       "domain": "toptrendtools.com",
@@ -791,7 +780,7 @@
     },
     {
       "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
-      "batch_order": 62,
+      "batch_order": 61,
       "target_id": "toshilist-com",
       "name": "https://toshilist.com",
       "domain": "toshilist.com",
@@ -802,7 +791,7 @@
     },
     {
       "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
-      "batch_order": 63,
+      "batch_order": 62,
       "target_id": "trustiner-com",
       "name": "https://trustiner.com",
       "domain": "trustiner.com",
@@ -813,7 +802,7 @@
     },
     {
       "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
-      "batch_order": 64,
+      "batch_order": 63,
       "target_id": "weliketools-com",
       "name": "https://weliketools.com",
       "domain": "weliketools.com",
@@ -824,7 +813,7 @@
     },
     {
       "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
-      "batch_order": 65,
+      "batch_order": 64,
       "target_id": "orbic-ai",
       "name": "Orbic AI",
       "domain": "orbic.ai",
@@ -835,7 +824,7 @@
     },
     {
       "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
-      "batch_order": 66,
+      "batch_order": 65,
       "target_id": "promoteproject",
       "name": "PromoteProject",
       "domain": "promoteproject.com",
@@ -846,7 +835,7 @@
     },
     {
       "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
-      "batch_order": 67,
+      "batch_order": 66,
       "target_id": "tool-ai",
       "name": "Tool AI",
       "domain": "toolai.io",
@@ -857,7 +846,7 @@
     },
     {
       "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
-      "batch_order": 68,
+      "batch_order": 67,
       "target_id": "aitoptools",
       "name": "AITopTools",
       "domain": "aitoptools.com",
@@ -868,7 +857,7 @@
     },
     {
       "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
-      "batch_order": 69,
+      "batch_order": 68,
       "target_id": "betalist",
       "name": "Betalist",
       "domain": "betalist.com",
@@ -879,7 +868,7 @@
     },
     {
       "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
-      "batch_order": 70,
+      "batch_order": 69,
       "target_id": "broadwise-org",
       "name": "Broadwise.org",
       "domain": "broadwise.org",
@@ -891,20 +880,20 @@
   ],
   "summary": {
     "source_batches": 3,
-    "actionable_rows": 69,
+    "actionable_rows": 68,
     "task_rows": 10,
-    "excluded_rows": 60,
+    "excluded_rows": 59,
     "offset": 0,
     "limit": 10,
     "current_batch_start": 1,
     "current_batch_end": 10,
-    "remaining_after_batch": 59,
+    "remaining_after_batch": 58,
     "by_priority": {
       "P0": 10
     },
     "by_exclusion_reason": {
       "drop_non_assisted_registry_target": 1,
-      "after_batch_limit": 59
+      "after_batch_limit": 58
     }
   }
 }

@@ -17,6 +17,7 @@ import {
   authLoginNextCommand,
   authLoginOperatorPackCommand,
   authLoginPlanCommand,
+  authLoginPlanBatchesCommand,
   authLoginStatusCommand,
   authRescoutPlanCommand,
   authWorkflowRefreshCommand,
@@ -576,6 +577,23 @@ targets
   .option('--json', 'Output full plan as JSON')
   .action(async (queue, opts) => {
     await authLoginPlanCommand(queue, opts);
+  });
+
+targets
+  .command('auth-login-plan-batches <queue>')
+  .description('Rebuild rolling manual login batch artifacts from auth-login-rescout-queue.csv using the current registry')
+  .option('--registry <path>', 'Canonical registry path')
+  .option('--product-config <path>', 'Product config path to include in each batch plan')
+  .option('--auth-dir <path>', 'Auth profile directory')
+  .option('--batch-size <n>', 'Maximum targets per batch', '25')
+  .option('--max-batches <n>', 'Maximum number of batch files to generate')
+  .option('--output-dir <path>', 'Directory to write batch JSON/CSV files')
+  .option('--name-prefix <name>', 'Base filename prefix for batch JSON/CSV outputs', 'auth-login-plan-batch')
+  .option('--summary-name <name>', 'Base filename for batch summary JSON output', 'auth-login-plan-batches-summary')
+  .option('--preview <n>', 'Batches to preview in text output', '10')
+  .option('--json', 'Output full batch summary as JSON')
+  .action(async (queue, opts) => {
+    await authLoginPlanBatchesCommand(queue, opts);
   });
 
 targets

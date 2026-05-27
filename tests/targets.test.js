@@ -27,7 +27,9 @@ import {
 import {
   buildAuthLoginPlan,
   authLoginPlanCsv,
+  buildAuthLoginPlanBatches,
   writeAuthLoginPlan,
+  writeAuthLoginPlanBatches,
 } from '../src/targets/auth-login-plan.js';
 import {
   authLoginNextCsv,
@@ -3683,6 +3685,96 @@ describe('auth login plan', () => {
       assert.equal(plan.summary.remaining_after_batch, 1);
       assert.equal(plan.summary.by_exclusion_reason.before_offset, 1);
       assert.equal(plan.summary.by_exclusion_reason.after_batch_limit, 1);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('filters stale auth login rows whose registry mode is no longer assisted', () => {
+    const dir = tempDir();
+    try {
+      const queue = join(dir, 'auth-login-rescout-queue.csv');
+      const registry = join(dir, 'registry.yaml');
+      writeFileSync(registry, `
+version: 1
+targets:
+  - id: active
+    name: Active
+    domain: active.example
+    submit_url: https://active.example/submit
+    pricing: free
+    submission:
+      mode: assisted
+  - id: stale-skip
+    name: Stale Skip
+    domain: stale.example
+    submit_url: https://stale.example/submit
+    pricing: paid
+    submission:
+      mode: skip
+`);
+      writeFileSync(queue, [
+        'rank,priority,priority_score,target_id,name,domain,mode,status,pricing,risk,lang,manual_bucket,automation_after_human,submission_policy,safety_blockers,recommended_next_step,auth_profile,auth_login_command,auth_scout_command,submit_url,final_url,root_url,last_scouted_at,last_submitted_at,form_count,field_count,required_fields,unmapped_required_fields,submit_button_count,source,reason,notes',
+        '1,P0,270,active,Active,active.example,assisted,auth_required,free,low,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required,login,active,node src/cli.js auth login --profile "active" --url "https://active.example/login",scout,https://active.example/submit,https://active.example/login,https://active.example,,,,,,,,test,auth_signal,',
+        '2,P0,260,stale-skip,Stale Skip,stale.example,assisted,auth_required,paid,low,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required,login,stale-skip,node src/cli.js auth login --profile "stale-skip" --url "https://stale.example/login",scout,https://stale.example/submit,https://stale.example/login,https://stale.example,,,,,,,,test,auth_signal,',
+      ].join('\n'));
+
+      const plan = buildAuthLoginPlan(queue, {
+        authDir: join(dir, 'auth'),
+        registry,
+        registryFilter: true,
+        limit: 10,
+      });
+
+      assert.equal(plan.targets.length, 1);
+      assert.equal(plan.targets[0].target_id, 'active');
+      assert.equal(plan.summary.pending_rows, 1);
+      assert.equal(plan.excluded.length, 1);
+      assert.equal(plan.excluded[0].target_id, 'stale-skip');
+      assert.equal(plan.excluded[0].exclusion_reason, 'registry_mode_not_assisted:skip');
+      assert.equal(plan.summary.by_exclusion_reason['registry_mode_not_assisted:skip'], 1);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('builds and writes rolling auth login batch artifacts from the current queue', () => {
+    const dir = tempDir();
+    try {
+      const queue = join(dir, 'auth-login-rescout-queue.csv');
+      const outputDir = join(dir, 'out');
+      writeFileSync(queue, [
+        'rank,priority,priority_score,target_id,name,domain,mode,status,pricing,risk,lang,manual_bucket,automation_after_human,submission_policy,safety_blockers,recommended_next_step,auth_profile,auth_login_command,auth_scout_command,submit_url,final_url,root_url,last_scouted_at,last_submitted_at,form_count,field_count,required_fields,unmapped_required_fields,submit_button_count,source,reason,notes',
+        '1,P0,270,a,A,a.example,assisted,auth_required,free,low,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required,login,a,node src/cli.js auth login --profile "a" --url "https://a.example/login",scout,https://a.example/submit,,https://a.example,,,,,,,,test,auth_signal,',
+        '2,P0,260,b,B,b.example,assisted,auth_required,free,low,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required,login,b,node src/cli.js auth login --profile "b" --url "https://b.example/login",scout,https://b.example/submit,,https://b.example,,,,,,,,test,auth_signal,',
+        '3,P0,250,c,C,c.example,assisted,auth_required,free,low,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required,login,c,node src/cli.js auth login --profile "c" --url "https://c.example/login",scout,https://c.example/submit,,https://c.example,,,,,,,,test,auth_signal,',
+      ].join('\n'));
+
+      const report = buildAuthLoginPlanBatches(queue, {
+        authDir: join(dir, 'auth'),
+        batchSize: 2,
+      });
+      const written = writeAuthLoginPlanBatches(report, {
+        outputDir,
+        namePrefix: 'auth-login-plan-batch',
+        summaryName: 'auth-login-plan-batches-summary',
+      });
+      const summary = JSON.parse(readFileSync(written.summary, 'utf-8'));
+      const batchOne = JSON.parse(readFileSync(join(outputDir, 'auth-login-plan-batch-001.json'), 'utf-8'));
+      const batchTwo = JSON.parse(readFileSync(join(outputDir, 'auth-login-plan-batch-002.json'), 'utf-8'));
+
+      assert.equal(report.summary.pending_rows, 3);
+      assert.equal(report.summary.batch_count, 2);
+      assert.equal(report.summary.generated_target_rows, 3);
+      assert.equal(report.batches.length, 2);
+      assert.equal(report.batches[0].plan.targets.length, 2);
+      assert.equal(report.batches[1].plan.targets.length, 1);
+      assert.equal(batchOne.targets.length, 2);
+      assert.equal(batchTwo.targets.length, 1);
+      assert.equal(summary.summary.batch_count, 2);
+      assert.equal(summary.files.batches.length, 2);
+      assert.equal(existsSync(join(outputDir, 'auth-login-plan-batch-001.csv')), true);
+      assert.equal(existsSync(join(outputDir, 'auth-login-plan-batch-002.csv')), true);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

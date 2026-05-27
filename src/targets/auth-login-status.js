@@ -1,8 +1,11 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { dirname } from 'path';
 import { parse as parseYaml, stringify } from 'yaml';
 import { DEFAULT_AUTH_DIR, authMetaPath, authProfileStatus } from '../auth/session.js';
-import { loadRegistry } from './registry.js';
+import {
+  loadRegistryTargetMap,
+  registryBlockerForAuthRow,
+} from './auth-registry-filter.js';
 import { parseCsv } from './importers/csv.js';
 import { cleanTrackingUrl } from './normalize.js';
 import { authLoginDomainBlocker } from './auth-login-safety.js';
@@ -98,17 +101,6 @@ function parsePositive(value, fallback = 10) {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 }
 
-function loadRegistryTargetMap(registryPath = '') {
-  const path = String(registryPath || '').trim();
-  if (!path || !existsSync(path)) return null;
-  const registry = loadRegistry(path);
-  return new Map(
-    (registry.targets || [])
-      .map(target => [String(target.id || '').trim(), target])
-      .filter(([id]) => id)
-  );
-}
-
 function parseStructuredRows(raw, batchPath) {
   const trimmed = String(raw || '').trim();
   if (!trimmed) return { sourceType: 'empty', rows: [] };
@@ -134,32 +126,6 @@ function rowProfile(row = {}) {
 
 function rowTargetId(row = {}) {
   return row.target_id || row.id || '';
-}
-
-function registryBlockerForRow(row = {}, registryTargetMap = null) {
-  if (!registryTargetMap) return '';
-  const targetId = String(rowTargetId(row) || '').trim();
-  if (!targetId) return '';
-
-  const target = registryTargetMap.get(targetId);
-  if (!target) return 'registry_target_missing';
-
-  const currentMode = String(target.submission?.mode || '').trim() || 'unknown';
-  if (currentMode !== 'assisted') return `registry_mode_not_assisted:${currentMode}`;
-
-  const rowDomain = String(row.domain || '').trim();
-  const targetDomain = String(target.domain || '').trim();
-  if (rowDomain && targetDomain && rowDomain !== targetDomain) {
-    return `registry_domain_changed:${rowDomain}->${targetDomain}`;
-  }
-
-  const rowSubmitUrl = cleanUrl(row.submit_url || '');
-  const targetSubmitUrl = cleanUrl(target.submit_url || '');
-  if (rowSubmitUrl && targetSubmitUrl && rowSubmitUrl !== targetSubmitUrl) {
-    return `registry_submit_url_changed:${rowSubmitUrl}->${targetSubmitUrl}`;
-  }
-
-  return '';
 }
 
 function statusForRow(row = {}, status = {}) {
@@ -200,7 +166,7 @@ function statusRow(row = {}, index = 0, opts = {}) {
       };
   const login = cleanUrl(row.login_url || '');
   const submit = cleanUrl(row.submit_url || '');
-  const registryBlocker = registryBlockerForRow({
+  const registryBlocker = registryBlockerForAuthRow({
     ...row,
     login_url: login,
     submit_url: submit,

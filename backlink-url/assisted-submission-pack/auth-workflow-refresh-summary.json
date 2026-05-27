@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "created_at": "2026-05-27T09:33:08.275Z",
+  "created_at": "2026-05-27T09:53:15.076Z",
   "source_queue": "backlink-url/assisted-submission-pack/auth-login-rescout-queue.csv",
   "source_batches": [
     "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
@@ -101,20 +101,20 @@
     ],
     "next_login": {
       "source_batches": 3,
-      "actionable_rows": 69,
+      "actionable_rows": 68,
       "task_rows": 10,
-      "excluded_rows": 60,
+      "excluded_rows": 59,
       "offset": 0,
       "limit": 10,
       "current_batch_start": 1,
       "current_batch_end": 10,
-      "remaining_after_batch": 59,
+      "remaining_after_batch": 58,
       "by_priority": {
         "P0": 10
       },
       "by_exclusion_reason": {
         "drop_non_assisted_registry_target": 1,
-        "after_batch_limit": 59
+        "after_batch_limit": 58
       }
     },
     "auth_rescout": {

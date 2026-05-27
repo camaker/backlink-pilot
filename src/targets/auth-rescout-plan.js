@@ -1,8 +1,12 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { dirname } from 'path';
 import { parse, stringify } from 'yaml';
 import { DEFAULT_AUTH_DIR, authProfileStatus } from '../auth/session.js';
-import { DEFAULT_REGISTRY_FILE, loadRegistry } from './registry.js';
+import { DEFAULT_REGISTRY_FILE } from './registry.js';
+import {
+  loadRegistryTargetMap,
+  registryBlockerForAuthRow,
+} from './auth-registry-filter.js';
 import { parseCsv } from './importers/csv.js';
 import { cleanTrackingUrl } from './normalize.js';
 
@@ -47,17 +51,6 @@ function loadProductIdentity(configPath) {
   }
 }
 
-function loadRegistryTargetMap(registryPath = '') {
-  const path = String(registryPath || '').trim();
-  if (!path || !existsSync(path)) return null;
-  const registry = loadRegistry(path);
-  return new Map(
-    (registry.targets || [])
-      .map(target => [String(target.id || '').trim(), target])
-      .filter(([id]) => id)
-  );
-}
-
 function isAuthRescoutRow(row = {}) {
   return row.automation_after_human === 'rescout_after_saved_login_profile' ||
     row.manual_bucket === 'manual_login_then_rescout';
@@ -67,11 +60,8 @@ function exclusionReason(row = {}, status = {}, registryTargetMap = null) {
   if (!String(row.target_id || '').trim()) return 'missing_target_id';
   if (!String(row.submit_url || '').trim()) return 'missing_submit_url';
   if (!isAuthRescoutRow(row)) return 'not_auth_rescout_row';
-  if (registryTargetMap) {
-    const target = registryTargetMap.get(String(row.target_id || '').trim());
-    if (!target) return 'registry_target_missing';
-    if (target.submission?.mode !== 'assisted') return `registry_mode_not_assisted:${target.submission?.mode || 'unknown'}`;
-  }
+  const registryBlocker = registryBlockerForAuthRow(row, registryTargetMap);
+  if (registryBlocker) return registryBlocker;
   if (!String(row.auth_profile || '').trim()) return 'missing_auth_profile';
   if (!status.exists) return 'auth_profile_missing';
   return '';
