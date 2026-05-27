@@ -43,7 +43,9 @@
       "auth_status_command": "node src/cli.js auth status --profile \"beta-list\"",
       "auth_scout_command": "node src/cli.js scout \"https://betalist.com/submissions/new\" --auth-profile \"beta-list\" --target-id \"beta-list\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
       "safety_blocker": "",
-      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-001.csv"
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-001.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/auth-login-001.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "auth-login-001",
@@ -72,7 +74,9 @@
       "auth_status_command": "node src/cli.js auth status --profile \"chatgptdemo\"",
       "auth_scout_command": "node src/cli.js scout \"https://chatgptdemo.com/submit-new-ai-tool\" --auth-profile \"chatgptdemo\" --target-id \"chatgptdemo\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
       "safety_blocker": "",
-      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-001.csv"
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-001.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/auth-login-001.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "auth-login-001",
@@ -101,7 +105,9 @@
       "auth_status_command": "node src/cli.js auth status --profile \"promptzone\"",
       "auth_scout_command": "node src/cli.js scout \"https://www.promptzone.com/new\" --auth-profile \"promptzone\" --target-id \"promptzone\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
       "safety_blocker": "",
-      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-001.csv"
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-001.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/auth-login-001.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "auth-login-001",
@@ -130,7 +136,9 @@
       "auth_status_command": "node src/cli.js auth status --profile \"resource-fyi\"",
       "auth_scout_command": "node src/cli.js scout \"https://resource.fyi/account/submit\" --auth-profile \"resource-fyi\" --target-id \"resource-fyi\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
       "safety_blocker": "",
-      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-001.csv"
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-001.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/auth-login-001.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "auth-login-001",
@@ -159,7 +167,9 @@
       "auth_status_command": "node src/cli.js auth status --profile \"sitelike\"",
       "auth_scout_command": "node src/cli.js scout \"https://www.sitelike.org/add-site\" --auth-profile \"sitelike\" --target-id \"sitelike\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
       "safety_blocker": "",
-      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-001.csv"
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-001.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/auth-login-001.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "auth-login-001",
@@ -188,7 +198,9 @@
       "auth_status_command": "node src/cli.js auth status --profile \"ai-tool-guru\"",
       "auth_scout_command": "node src/cli.js scout \"https://aitoolguru.com/submit-ai-tool\" --auth-profile \"ai-tool-guru\" --target-id \"ai-tool-guru\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
       "safety_blocker": "",
-      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-001.csv"
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-001.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/auth-login-001.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "auth-login-001",
@@ -217,7 +229,9 @@
       "auth_status_command": "node src/cli.js auth status --profile \"ai-tools-arena\"",
       "auth_scout_command": "node src/cli.js scout \"https://aitoolsarena.com/\" --auth-profile \"ai-tools-arena\" --target-id \"ai-tools-arena\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
       "safety_blocker": "",
-      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-001.csv"
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-001.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/auth-login-001.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "auth-login-001",
@@ -246,7 +260,9 @@
       "auth_status_command": "node src/cli.js auth status --profile \"alternative-me\"",
       "auth_scout_command": "node src/cli.js scout \"https://alternative.me/how-to/submit-software\" --auth-profile \"alternative-me\" --target-id \"alternative-me\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
       "safety_blocker": "",
-      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-001.csv"
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-001.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/auth-login-001.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "auth-login-001",
@@ -275,7 +291,9 @@
       "auth_status_command": "node src/cli.js auth status --profile \"bestofai\"",
       "auth_scout_command": "node src/cli.js scout \"https://bestofai.com/tool/add\" --auth-profile \"bestofai\" --target-id \"bestofai\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
       "safety_blocker": "",
-      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-001.csv"
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-001.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/auth-login-001.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "auth-login-001",
@@ -304,7 +322,44 @@
       "auth_status_command": "node src/cli.js auth status --profile \"f6s\"",
       "auth_scout_command": "node src/cli.js scout \"https://www.f6s.com/\" --auth-profile \"f6s\" --target-id \"f6s\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
       "safety_blocker": "",
-      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-001.csv"
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-001.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/auth-login-001.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
+    }
+  ],
+  "files": {
+    "csv": "backlink-url/backlog-lanes/lanes/auth-login-001.csv",
+    "json": "backlink-url/backlog-lanes/lanes/auth-login-001.json",
+    "merge_output": ""
+  },
+  "open_command": "node src/cli.js targets backlog-lane \"auth-login-001\" --backlog \"backlink-url/backlog-lanes/backlog-lanes.json\"",
+  "action_command": "node src/cli.js auth login --profile \"beta-list\" --url \"https://betalist.com/sign_in\"",
+  "steps": [
+    {
+      "step_id": "open",
+      "step_kind": "open",
+      "title": "Open backlog lane runbook",
+      "command": "node src/cli.js targets backlog-lane \"auth-login-001\" --backlog \"backlink-url/backlog-lanes/backlog-lanes.json\"",
+      "default_selected": false,
+      "depends_on_step_ids": []
+    },
+    {
+      "step_id": "action",
+      "step_kind": "action",
+      "title": "Complete manual auth login capture",
+      "command": "node src/cli.js auth login --profile \"beta-list\" --url \"https://betalist.com/sign_in\"",
+      "default_selected": true,
+      "depends_on_step_ids": []
+    },
+    {
+      "step_id": "refresh",
+      "step_kind": "refresh",
+      "title": "Refresh downstream backlog artifacts",
+      "command": "\"node\" \"src/cli.js\" \"targets\" \"auth-workflow-refresh\" \"backlink-url/assisted-submission-pack/resolved-auth-login/auth-login-resolved-direct-login-queue.csv\" \"backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-plan-batch-resolved-001.json\" \"backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-plan-batch-resolved-002.json\" \"--registry\" \"resources/targets.canonical.yaml\" \"--auth-dir\" \"playwright/.auth\" \"--output-dir\" \"backlink-url/assisted-submission-pack/resolved-direct-login\" \"--next-name\" \"auth-login-next-resolved-current\" \"--summary-name\" \"auth-workflow-refresh-resolved-summary\" \"--next-limit\" \"10\" \"--rescout-limit\" \"100\"",
+      "default_selected": true,
+      "depends_on_step_ids": [
+        "action"
+      ]
     }
   ]
 }

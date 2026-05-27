@@ -39,7 +39,26 @@
       "disallowed_outcomes": "direct_login_ready_without_new_scout | success_claim_without_listing_evidence",
       "next_step": "Classify the surface manually and only re-enter another lane after explicit evidence exists.",
       "notes": "top-best-alternatives should stay out of direct-login until manual surface classification is resolved.",
-      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-manual-review-classification-002.csv"
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-manual-review-classification-002.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/auth-manual-review-classification-002.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
+    }
+  ],
+  "files": {
+    "csv": "backlink-url/backlog-lanes/lanes/auth-manual-review-classification-002.csv",
+    "json": "backlink-url/backlog-lanes/lanes/auth-manual-review-classification-002.json",
+    "merge_output": ""
+  },
+  "open_command": "node src/cli.js targets backlog-lane \"auth-manual-review-classification-002\" --backlog \"backlink-url/backlog-lanes/backlog-lanes.json\"",
+  "action_command": "node src/cli.js targets backlog-lane \"auth-manual-review-classification-002\" --backlog \"backlink-url/backlog-lanes/backlog-lanes.json\"",
+  "steps": [
+    {
+      "step_id": "open",
+      "step_kind": "open",
+      "title": "Open backlog lane runbook",
+      "command": "node src/cli.js targets backlog-lane \"auth-manual-review-classification-002\" --backlog \"backlink-url/backlog-lanes/backlog-lanes.json\"",
+      "default_selected": false,
+      "depends_on_step_ids": []
     }
   ]
 }

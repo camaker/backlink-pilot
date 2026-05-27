@@ -39,7 +39,26 @@
       "disallowed_outcomes": "direct_login_ready | auto_ready | success_claim_without_evidence",
       "next_step": "Retry manual surface inspection in a normal browser and keep fail-closed unless evidence is explicit.",
       "notes": "orbic-ai must remain fail-closed. Fetch failure or ambiguous login callback evidence is not enough to restore auth execution.",
-      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-manual-review-fail-closed-001.csv"
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-manual-review-fail-closed-001.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/auth-manual-review-fail-closed-001.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
+    }
+  ],
+  "files": {
+    "csv": "backlink-url/backlog-lanes/lanes/auth-manual-review-fail-closed-001.csv",
+    "json": "backlink-url/backlog-lanes/lanes/auth-manual-review-fail-closed-001.json",
+    "merge_output": ""
+  },
+  "open_command": "node src/cli.js targets backlog-lane \"auth-manual-review-fail-closed-001\" --backlog \"backlink-url/backlog-lanes/backlog-lanes.json\"",
+  "action_command": "node src/cli.js targets backlog-lane \"auth-manual-review-fail-closed-001\" --backlog \"backlink-url/backlog-lanes/backlog-lanes.json\"",
+  "steps": [
+    {
+      "step_id": "open",
+      "step_kind": "open",
+      "title": "Open backlog lane runbook",
+      "command": "node src/cli.js targets backlog-lane \"auth-manual-review-fail-closed-001\" --backlog \"backlink-url/backlog-lanes/backlog-lanes.json\"",
+      "default_selected": false,
+      "depends_on_step_ids": []
     }
   ]
 }

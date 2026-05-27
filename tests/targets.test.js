@@ -89,6 +89,10 @@ import {
   writeBacklogLanes,
 } from '../src/targets/backlog-lanes.js';
 import {
+  backlogLaneExecCommand,
+  backlogWorkerExecCommand,
+} from '../src/targets/commands.js';
+import {
   applyPricingReviewDecisionPatch,
   buildPricingReviewDecisionBatch,
   buildPricingReviewDecisionBatchMerge,
@@ -420,13 +424,161 @@ pricing-001,3,3,gamma,Gamma,gamma.example,assisted,https://gamma.example/submit,
       const workerRunbook = buildBacklogWorkerRunbook(summary, 'worker-01');
       assert.match(laneRunbook.open_command, /targets backlog-lane "auth-login-001"/);
       assert.ok(laneRunbook.action_command);
+      assert.ok(Array.isArray(laneRunbook.steps));
+      assert.ok(laneRunbook.steps.some(step => step.step_kind === 'action'));
+      assert.ok(laneRunbook.steps.some(step => step.step_kind === 'refresh'));
       assert.equal(workerRunbook.worker_id, 'worker-01');
       assert.ok(workerRunbook.lanes.length > 0);
+      assert.ok(workerRunbook.lanes.every(lane => Array.isArray(lane.steps)));
 
       const workerDoc = readFileSync(join(dir, 'lanes-out', 'workers', 'worker-01.md'), 'utf-8');
       assert.match(workerDoc, /worker-01/i);
       assert.match(workerDoc, /resolved-auth-login-queue\.csv/);
       assert.match(workerDoc, /auth-login-plan-batch-resolved-002\.json/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('executes only allowlisted local backlog steps and blocks unsafe auth actions', async () => {
+    const dir = tempDir();
+    try {
+      const backlog = join(dir, 'backlog-lanes.json');
+      const laneCsv = join(dir, 'coverage-review-p0-001.csv').replace(/\\/g, '/');
+      const reviewCsv = join(dir, 'coverage-review.csv').replace(/\\/g, '/');
+      const updatedReviewCsv = join(dir, 'coverage-review.updated.csv').replace(/\\/g, '/');
+      writeFileSync(reviewCsv, `manual_rank,priority,review_row,review_decision,review_notes,reviewed_by,domain,url
+1,P0,,,,,alpha.example,https://alpha.example/submit
+`, 'utf-8');
+      writeFileSync(laneCsv, `manual_rank,priority,review_row,review_decision,review_notes,reviewed_by,domain,url
+1,P0,2,reject_not_submit,Confirmed not a directory submit surface.,reviewer,alpha.example,https://alpha.example/submit
+`, 'utf-8');
+
+      writeFileSync(backlog, JSON.stringify({
+        generated_at: '2026-05-27T00:00:00.000Z',
+        workers: [
+          {
+            worker_id: 'worker-01',
+            lane_count: 2,
+            row_count: 2,
+            estimated_total_minutes: 10,
+            lanes: [
+              {
+                lane_id: 'coverage-review-p0-001',
+                lane_type: 'coverage_manual_review_p0',
+                priority: 'P0',
+                row_count: 1,
+                estimated_total_minutes: 5,
+              },
+              {
+                lane_id: 'auth-login-001',
+                lane_type: 'auth_manual_login',
+                priority: 'P0',
+                row_count: 1,
+                estimated_total_minutes: 5,
+              },
+            ],
+          },
+        ],
+        lanes: [
+          {
+            lane_id: 'coverage-review-p0-001',
+            lane_type: 'coverage_manual_review_p0',
+            priority: 'P0',
+            row_count: 1,
+            estimated_total_minutes: 5,
+            open_command: 'node src/cli.js targets backlog-lane "coverage-review-p0-001" --backlog "backlink-url/backlog-lanes/backlog-lanes.json"',
+            action_command: `node src/cli.js targets validate-coverage-review-batch "${laneCsv}" --fail-on-blockers`,
+            validate_command: `node src/cli.js targets validate-coverage-review-batch "${laneCsv}" --fail-on-blockers`,
+            merge_command: `node src/cli.js targets promote-coverage-review-batch "${reviewCsv}" "${laneCsv}" --registry "resources/targets.canonical.yaml" --output "${updatedReviewCsv}" --dry-run`,
+            refresh_command: '',
+            steps: [
+              {
+                step_id: 'validate',
+                step_kind: 'validate',
+                title: 'Validate lane artifacts',
+                command: `node src/cli.js targets validate-coverage-review-batch "${laneCsv}" --fail-on-blockers`,
+                default_selected: true,
+                depends_on_step_ids: [],
+              },
+              {
+                step_id: 'merge',
+                step_kind: 'merge',
+                title: 'Run merge or follow-up preview',
+                command: `node src/cli.js targets promote-coverage-review-batch "${reviewCsv}" "${laneCsv}" --registry "resources/targets.canonical.yaml" --output "${updatedReviewCsv}" --dry-run`,
+                default_selected: true,
+                depends_on_step_ids: ['validate'],
+              },
+            ],
+            rows: [
+              {
+                lane_csv_path: laneCsv,
+              },
+            ],
+          },
+          {
+            lane_id: 'auth-login-001',
+            lane_type: 'auth_manual_login',
+            priority: 'P0',
+            row_count: 1,
+            estimated_total_minutes: 5,
+            open_command: 'node src/cli.js targets backlog-lane "auth-login-001" --backlog "backlink-url/backlog-lanes/backlog-lanes.json"',
+            action_command: 'node src/cli.js auth login --profile "demo" --url "https://example.com/login"',
+            validate_command: '',
+            merge_command: '',
+            refresh_command: 'node src/cli.js targets auth-workflow-refresh demo',
+            steps: [
+              {
+                step_id: 'action',
+                step_kind: 'action',
+                title: 'Complete manual auth login capture',
+                command: 'node src/cli.js auth login --profile "demo" --url "https://example.com/login"',
+                default_selected: true,
+                depends_on_step_ids: [],
+              },
+              {
+                step_id: 'refresh',
+                step_kind: 'refresh',
+                title: 'Refresh downstream backlog artifacts',
+                command: 'node src/cli.js targets auth-workflow-refresh demo',
+                default_selected: true,
+                depends_on_step_ids: ['action'],
+              },
+            ],
+            rows: [
+              {
+                auth_login_command: 'node src/cli.js auth login --profile "demo" --url "https://example.com/login"',
+                lane_csv_path: 'backlink-url/backlog-lanes/lanes/auth-login-001.csv',
+              },
+            ],
+          },
+        ],
+      }, null, 2), 'utf-8');
+
+      const dryRun = await backlogLaneExecCommand('coverage-review-p0-001', {
+        backlog,
+        json: true,
+      });
+      assert.equal(dryRun.dry_run, true);
+      assert.equal(dryRun.summary.blocked_steps, 0);
+      assert.equal(dryRun.summary.dry_run_steps, 2);
+
+      const executed = await backlogLaneExecCommand('coverage-review-p0-001', {
+        backlog,
+        execute: true,
+        json: true,
+      });
+      assert.equal(executed.dry_run, false);
+      assert.equal(executed.summary.executed_steps, 2);
+      assert.equal(executed.summary.failed_steps, 0);
+
+      const workerResult = await backlogWorkerExecCommand('worker-01', {
+        backlog,
+        json: true,
+      });
+      assert.equal(workerResult.summary.blocked_steps, 1);
+      assert.ok(workerResult.steps.some(step => step.reason === 'blocked_prefix_or_flag'));
+      assert.ok(workerResult.steps.some(step => step.step_kind === 'refresh' && step.status === 'dry_run'));
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

@@ -72,7 +72,10 @@
       "safety_gate_reason": "",
       "safety_gate_batch_id": "",
       "safety_gate_report": "",
-      "checked_at": "2026-05-22T10:46:00.976Z"
+      "checked_at": "2026-05-22T10:46:00.976Z",
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "coverage-review-p2-004",
@@ -130,7 +133,10 @@
       "safety_gate_reason": "",
       "safety_gate_batch_id": "",
       "safety_gate_report": "",
-      "checked_at": "2026-05-22T10:46:19.151Z"
+      "checked_at": "2026-05-22T10:46:19.151Z",
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "coverage-review-p2-004",
@@ -188,7 +194,10 @@
       "safety_gate_reason": "",
       "safety_gate_batch_id": "",
       "safety_gate_report": "",
-      "checked_at": "2026-05-22T10:46:20.475Z"
+      "checked_at": "2026-05-22T10:46:20.475Z",
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "coverage-review-p2-004",
@@ -246,7 +255,10 @@
       "safety_gate_reason": "",
       "safety_gate_batch_id": "",
       "safety_gate_report": "",
-      "checked_at": "2026-05-22T10:46:26.669Z"
+      "checked_at": "2026-05-22T10:46:26.669Z",
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "coverage-review-p2-004",
@@ -304,7 +316,10 @@
       "safety_gate_reason": "",
       "safety_gate_batch_id": "",
       "safety_gate_report": "",
-      "checked_at": "2026-05-22T10:46:41.420Z"
+      "checked_at": "2026-05-22T10:46:41.420Z",
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "coverage-review-p2-004",
@@ -362,7 +377,10 @@
       "safety_gate_reason": "",
       "safety_gate_batch_id": "",
       "safety_gate_report": "",
-      "checked_at": "2026-05-22T10:46:53.284Z"
+      "checked_at": "2026-05-22T10:46:53.284Z",
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "coverage-review-p2-004",
@@ -420,7 +438,10 @@
       "safety_gate_reason": "",
       "safety_gate_batch_id": "",
       "safety_gate_report": "",
-      "checked_at": "2026-05-22T10:46:55.744Z"
+      "checked_at": "2026-05-22T10:46:55.744Z",
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "coverage-review-p2-004",
@@ -478,7 +499,10 @@
       "safety_gate_reason": "",
       "safety_gate_batch_id": "",
       "safety_gate_report": "",
-      "checked_at": "2026-05-22T10:46:57.258Z"
+      "checked_at": "2026-05-22T10:46:57.258Z",
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "coverage-review-p2-004",
@@ -536,7 +560,10 @@
       "safety_gate_reason": "",
       "safety_gate_batch_id": "",
       "safety_gate_report": "",
-      "checked_at": "2026-05-22T10:47:09.908Z"
+      "checked_at": "2026-05-22T10:47:09.908Z",
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "coverage-review-p2-004",
@@ -594,7 +621,10 @@
       "safety_gate_reason": "",
       "safety_gate_batch_id": "",
       "safety_gate_report": "",
-      "checked_at": "2026-05-22T10:47:21.681Z"
+      "checked_at": "2026-05-22T10:47:21.681Z",
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "coverage-review-p2-004",
@@ -652,7 +682,10 @@
       "safety_gate_reason": "",
       "safety_gate_batch_id": "",
       "safety_gate_report": "",
-      "checked_at": "2026-05-22T10:47:24.729Z"
+      "checked_at": "2026-05-22T10:47:24.729Z",
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "coverage-review-p2-004",
@@ -710,7 +743,10 @@
       "safety_gate_reason": "",
       "safety_gate_batch_id": "",
       "safety_gate_report": "",
-      "checked_at": "2026-05-22T10:47:25.354Z"
+      "checked_at": "2026-05-22T10:47:25.354Z",
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "coverage-review-p2-004",
@@ -768,7 +804,10 @@
       "safety_gate_reason": "",
       "safety_gate_batch_id": "",
       "safety_gate_report": "",
-      "checked_at": "2026-05-22T10:47:28.948Z"
+      "checked_at": "2026-05-22T10:47:28.948Z",
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "coverage-review-p2-004",
@@ -826,7 +865,10 @@
       "safety_gate_reason": "",
       "safety_gate_batch_id": "",
       "safety_gate_report": "",
-      "checked_at": "2026-05-22T10:47:30.740Z"
+      "checked_at": "2026-05-22T10:47:30.740Z",
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "coverage-review-p2-004",
@@ -884,7 +926,10 @@
       "safety_gate_reason": "",
       "safety_gate_batch_id": "",
       "safety_gate_report": "",
-      "checked_at": "2026-05-22T10:47:43.169Z"
+      "checked_at": "2026-05-22T10:47:43.169Z",
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "coverage-review-p2-004",
@@ -942,7 +987,10 @@
       "safety_gate_reason": "",
       "safety_gate_batch_id": "",
       "safety_gate_report": "",
-      "checked_at": "2026-05-22T10:47:45.394Z"
+      "checked_at": "2026-05-22T10:47:45.394Z",
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "coverage-review-p2-004",
@@ -1000,7 +1048,10 @@
       "safety_gate_reason": "",
       "safety_gate_batch_id": "",
       "safety_gate_report": "",
-      "checked_at": "2026-05-22T10:47:55.896Z"
+      "checked_at": "2026-05-22T10:47:55.896Z",
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "coverage-review-p2-004",
@@ -1058,7 +1109,10 @@
       "safety_gate_reason": "",
       "safety_gate_batch_id": "",
       "safety_gate_report": "",
-      "checked_at": "2026-05-22T10:47:59.644Z"
+      "checked_at": "2026-05-22T10:47:59.644Z",
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "coverage-review-p2-004",
@@ -1116,7 +1170,10 @@
       "safety_gate_reason": "",
       "safety_gate_batch_id": "",
       "safety_gate_report": "",
-      "checked_at": "2026-05-22T10:48:02.992Z"
+      "checked_at": "2026-05-22T10:48:02.992Z",
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "coverage-review-p2-004",
@@ -1174,7 +1231,10 @@
       "safety_gate_reason": "",
       "safety_gate_batch_id": "",
       "safety_gate_report": "",
-      "checked_at": "2026-05-22T10:48:05.275Z"
+      "checked_at": "2026-05-22T10:48:05.275Z",
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "coverage-review-p2-004",
@@ -1232,7 +1292,10 @@
       "safety_gate_reason": "",
       "safety_gate_batch_id": "",
       "safety_gate_report": "",
-      "checked_at": "2026-05-22T10:48:15.779Z"
+      "checked_at": "2026-05-22T10:48:15.779Z",
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "coverage-review-p2-004",
@@ -1290,7 +1353,10 @@
       "safety_gate_reason": "",
       "safety_gate_batch_id": "",
       "safety_gate_report": "",
-      "checked_at": "2026-05-22T10:48:33.556Z"
+      "checked_at": "2026-05-22T10:48:33.556Z",
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "coverage-review-p2-004",
@@ -1348,7 +1414,10 @@
       "safety_gate_reason": "",
       "safety_gate_batch_id": "",
       "safety_gate_report": "",
-      "checked_at": "2026-05-22T10:48:47.444Z"
+      "checked_at": "2026-05-22T10:48:47.444Z",
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "coverage-review-p2-004",
@@ -1406,7 +1475,10 @@
       "safety_gate_reason": "",
       "safety_gate_batch_id": "",
       "safety_gate_report": "",
-      "checked_at": "2026-05-22T10:48:49.890Z"
+      "checked_at": "2026-05-22T10:48:49.890Z",
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "coverage-review-p2-004",
@@ -1464,7 +1536,45 @@
       "safety_gate_reason": "",
       "safety_gate_batch_id": "",
       "safety_gate_report": "",
-      "checked_at": "2026-05-22T10:48:50.342Z"
+      "checked_at": "2026-05-22T10:48:50.342Z",
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
+    }
+  ],
+  "files": {
+    "csv": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.csv",
+    "json": "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.json",
+    "merge_output": "backlink-url/backlog-lanes/merge/coverage-review-p2-004-coverage-review.updated.csv"
+  },
+  "open_command": "node src/cli.js targets backlog-lane \"coverage-review-p2-004\" --backlog \"backlink-url/backlog-lanes/backlog-lanes.json\"",
+  "action_command": "node src/cli.js targets validate-coverage-review-batch \"backlink-url/backlog-lanes/lanes/coverage-review-p2-004.csv\" --fail-on-blockers",
+  "steps": [
+    {
+      "step_id": "open",
+      "step_kind": "open",
+      "title": "Open backlog lane runbook",
+      "command": "node src/cli.js targets backlog-lane \"coverage-review-p2-004\" --backlog \"backlink-url/backlog-lanes/backlog-lanes.json\"",
+      "default_selected": false,
+      "depends_on_step_ids": []
+    },
+    {
+      "step_id": "action",
+      "step_kind": "action",
+      "title": "Run directory coverage review action",
+      "command": "node src/cli.js targets validate-coverage-review-batch \"backlink-url/backlog-lanes/lanes/coverage-review-p2-004.csv\" --fail-on-blockers",
+      "default_selected": true,
+      "depends_on_step_ids": []
+    },
+    {
+      "step_id": "merge",
+      "step_kind": "merge",
+      "title": "Run merge or follow-up preview",
+      "command": "node src/cli.js targets promote-coverage-review-batch \"backlink-url/coverage-review.csv\" \"backlink-url/backlog-lanes/lanes/coverage-review-p2-004.csv\" --registry \"resources/targets.canonical.yaml\" --output \"backlink-url/backlog-lanes/merge/coverage-review-p2-004-coverage-review.updated.csv\" --dry-run",
+      "default_selected": true,
+      "depends_on_step_ids": [
+        "action"
+      ]
     }
   ]
 }

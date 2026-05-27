@@ -29,8 +29,10 @@ import {
   authRescoutPlanCommand,
   authWorkflowRefreshCommand,
   backlogLaneCommand,
+  backlogLaneExecCommand,
   backlogLanesCommand,
   backlogWorkerCommand,
+  backlogWorkerExecCommand,
   crossDomainFinalUrlDecisionDraftCommand,
   crossDomainFinalUrlEvidenceCommand,
   crossDomainFinalUrlManualPackCommand,
@@ -782,6 +784,19 @@ targets
   });
 
 targets
+  .command('backlog-lane-exec <laneId>')
+  .description('Safely execute allowlisted local steps from a single backlog lane runbook; defaults to dry-run')
+  .option('--backlog <path>', 'Backlog lanes summary JSON path')
+  .option('--output-dir <path>', 'Fallback backlog output directory')
+  .option('--step-kinds <items>', 'Comma-separated step kinds to select; defaults to each step marked default_selected')
+  .option('--execute', 'Actually run allowlisted local steps; without this flag the executor only prints a dry-run plan')
+  .option('--timeout-ms <n>', 'Per-step timeout in milliseconds', '600000')
+  .option('--json', 'Output full execution result as JSON')
+  .action(async (laneId, opts) => {
+    await backlogLaneExecCommand(laneId, { ...opts, setExitCode: true });
+  });
+
+targets
   .command('backlog-worker <workerId>')
   .description('Show the execution runbook for a single backlog worker assignment')
   .option('--backlog <path>', 'Backlog lanes summary JSON path')
@@ -789,6 +804,19 @@ targets
   .option('--json', 'Output full worker runbook as JSON')
   .action(async (workerId, opts) => {
     await backlogWorkerCommand(workerId, opts);
+  });
+
+targets
+  .command('backlog-worker-exec <workerId>')
+  .description('Safely execute allowlisted local steps across a backlog worker assignment; defaults to dry-run')
+  .option('--backlog <path>', 'Backlog lanes summary JSON path')
+  .option('--output-dir <path>', 'Fallback backlog output directory')
+  .option('--step-kinds <items>', 'Comma-separated step kinds to select; defaults to each step marked default_selected')
+  .option('--execute', 'Actually run allowlisted local steps; without this flag the executor only prints a dry-run plan')
+  .option('--timeout-ms <n>', 'Per-step timeout in milliseconds', '600000')
+  .option('--json', 'Output full execution result as JSON')
+  .action(async (workerId, opts) => {
+    await backlogWorkerExecCommand(workerId, { ...opts, setExitCode: true });
   });
 
 targets

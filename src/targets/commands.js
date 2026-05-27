@@ -128,6 +128,251 @@ import {
   loadBacklogLanesSummary,
   writeBacklogLanes,
 } from './backlog-lanes.js';
+import { spawnSync } from 'child_process';
+import { join } from 'path';
+
+const BACKLOG_EXEC_ALLOWED_PREFIXES = [
+  ['node', 'src/cli.js', 'targets', 'validate-coverage-review-batch'],
+  ['node', 'src/cli.js', 'targets', 'promote-coverage-review-batch'],
+  ['node', 'src/cli.js', 'targets', 'validate-pricing-review-decisions'],
+  ['node', 'src/cli.js', 'targets', 'merge-pricing-review-decision-batch'],
+  ['node', 'src/cli.js', 'targets', 'auth-workflow-refresh'],
+  ['node', 'src/cli.js', 'targets', 'backlog-lane'],
+  ['node', 'src/cli.js', 'targets', 'backlog-worker'],
+];
+
+const BACKLOG_EXEC_BLOCKED_PREFIXES = [
+  ['node', 'src/cli.js', 'auth', 'login'],
+  ['node', 'src/cli.js', 'scout'],
+  ['node', 'src/cli.js', 'submit'],
+  ['node', 'src/cli.js', 'pipeline', '--execute'],
+  ['node', 'src/cli.js', 'run-plan', '--execute'],
+];
+
+function shellSplit(command = '') {
+  const input = String(command || '').trim();
+  if (!input) return [];
+  const tokens = [];
+  let current = '';
+  let quote = '';
+  for (let index = 0; index < input.length; index += 1) {
+    const char = input[index];
+    const previous = index > 0 ? input[index - 1] : '';
+    if (quote) {
+      if (char === quote && previous !== '\\') {
+        quote = '';
+      } else if (char === '\\' && quote === '"' && input[index + 1] === '"') {
+        current += '"';
+        index += 1;
+      } else {
+        current += char;
+      }
+      continue;
+    }
+    if ((char === '"' || char === '\'') && previous !== '\\') {
+      quote = char;
+      continue;
+    }
+    if (/\s/.test(char)) {
+      if (current) {
+        tokens.push(current);
+        current = '';
+      }
+      continue;
+    }
+    current += char;
+  }
+  if (quote) {
+    throw new Error(`unclosed quote in command: ${command}`);
+  }
+  if (current) tokens.push(current);
+  return tokens;
+}
+
+function startsWithSequence(parts = [], prefix = []) {
+  if (parts.length < prefix.length) return false;
+  return prefix.every((value, index) => parts[index] === value);
+}
+
+function isBacklogCommandBlocked(parts = []) {
+  return BACKLOG_EXEC_BLOCKED_PREFIXES.some(prefix =>
+    startsWithSequence(parts, prefix)
+      || prefix.some(flag => flag.startsWith('--') && parts.includes(flag))
+  );
+}
+
+function classifyBacklogCommand(parts = [], step = {}) {
+  if (!parts.length) {
+    return {
+      allowed: false,
+      reason: 'empty_command',
+      policy: 'blocked',
+      writes_network: false,
+      writes_registry: false,
+      requires_human_browser: false,
+    };
+  }
+  if (isBacklogCommandBlocked(parts)) {
+    return {
+      allowed: false,
+      reason: 'blocked_prefix_or_flag',
+      policy: 'blocked',
+      writes_network: true,
+      writes_registry: parts.includes('--update-registry') || parts.includes('--write-registry'),
+      requires_human_browser: true,
+    };
+  }
+  const matchedPrefix = BACKLOG_EXEC_ALLOWED_PREFIXES.find(prefix => startsWithSequence(parts, prefix));
+  if (!matchedPrefix) {
+    return {
+      allowed: false,
+      reason: 'command_not_allowlisted',
+      policy: 'blocked',
+      writes_network: false,
+      writes_registry: false,
+      requires_human_browser: false,
+    };
+  }
+
+  const kind = String(step.step_kind || '').trim();
+  const writesRegistry = parts.includes('--update-registry') || parts.includes('--write-registry');
+  const writesNetwork = false;
+  const requiresHumanBrowser = kind === 'open';
+
+  if (writesRegistry) {
+    return {
+      allowed: false,
+      reason: 'registry_write_not_allowed',
+      policy: 'blocked',
+      writes_network: writesNetwork,
+      writes_registry: true,
+      requires_human_browser: requiresHumanBrowser,
+    };
+  }
+
+  if (matchedPrefix[3] === 'promote-coverage-review-batch' && !parts.includes('--dry-run')) {
+    return {
+      allowed: false,
+      reason: 'coverage_promotion_requires_dry_run',
+      policy: 'blocked',
+      writes_network: false,
+      writes_registry: false,
+      requires_human_browser: false,
+    };
+  }
+
+  return {
+    allowed: true,
+    reason: '',
+    policy: matchedPrefix[3] === 'auth-workflow-refresh' || matchedPrefix[3] === 'merge-pricing-review-decision-batch'
+      ? 'allowlisted_local_artifact_write'
+      : 'allowlisted_local_safe',
+    writes_network: writesNetwork,
+    writes_registry: false,
+    requires_human_browser: requiresHumanBrowser,
+  };
+}
+
+function backlogExecutionPlanForStep(step = {}) {
+  const command = String(step.command || '').trim();
+  const parts = shellSplit(command);
+  const classification = classifyBacklogCommand(parts, step);
+  return {
+    step_id: step.step_id || '',
+    step_kind: step.step_kind || '',
+    title: step.title || '',
+    command,
+    command_parts: parts,
+    ...classification,
+  };
+}
+
+function formatBacklogStepSelection(steps = [], selectedKinds = []) {
+  const kindFilter = new Set((selectedKinds || []).map(value => String(value || '').trim()).filter(Boolean));
+  return steps.filter(step => {
+    if (!step.command) return false;
+    if (kindFilter.size > 0) return kindFilter.has(step.step_kind);
+    return Boolean(step.default_selected);
+  });
+}
+
+function executeBacklogStep(stepPlan = {}, opts = {}) {
+  if (!stepPlan.allowed) {
+    return {
+      ...stepPlan,
+      dry_run: Boolean(opts.dryRun),
+      executed: false,
+      status: 'blocked',
+      exit_code: null,
+      stdout: '',
+      stderr: '',
+    };
+  }
+
+  if (opts.dryRun) {
+    return {
+      ...stepPlan,
+      dry_run: true,
+      executed: false,
+      status: 'dry_run',
+      exit_code: null,
+      stdout: '',
+      stderr: '',
+    };
+  }
+
+  const command = stepPlan.command_parts[0];
+  const args = stepPlan.command_parts.slice(1);
+  const child = spawnSync(command, args, {
+    cwd: opts.cwd,
+    encoding: 'utf-8',
+    stdio: 'pipe',
+    timeout: Number.parseInt(opts.timeoutMs || '600000', 10),
+  });
+  const exitCode = typeof child.status === 'number' ? child.status : (child.error ? 1 : 0);
+  return {
+    ...stepPlan,
+    dry_run: false,
+    executed: true,
+    status: exitCode === 0 ? 'executed' : 'failed',
+    exit_code: exitCode,
+    stdout: child.stdout || '',
+    stderr: child.stderr || child.error?.message || '',
+  };
+}
+
+function summarizeExecutionResults(results = []) {
+  return {
+    total_steps: results.length,
+    allowed_steps: results.filter(item => item.allowed).length,
+    blocked_steps: results.filter(item => item.status === 'blocked').length,
+    dry_run_steps: results.filter(item => item.status === 'dry_run').length,
+    executed_steps: results.filter(item => item.status === 'executed').length,
+    failed_steps: results.filter(item => item.status === 'failed').length,
+  };
+}
+
+function printBacklogExecution(result = {}) {
+  console.log(`Mode: ${result.execute ? 'execute' : 'dry-run'}`);
+  console.log(`Target: ${result.target_type} ${result.target_id}`);
+  console.log(`Selected steps: ${result.summary.total_steps}`);
+  console.log(`Allowed: ${result.summary.allowed_steps}`);
+  console.log(`Blocked: ${result.summary.blocked_steps}`);
+  console.log(`Dry-run: ${result.summary.dry_run_steps}`);
+  console.log(`Executed: ${result.summary.executed_steps}`);
+  console.log(`Failed: ${result.summary.failed_steps}`);
+  for (const step of result.steps) {
+    console.log([
+      step.step_id || '(step)',
+      step.step_kind || '(kind)',
+      step.status,
+      step.command,
+    ].join('\t'));
+    if (step.status === 'blocked') {
+      console.log(`BLOCKED\t${step.reason}`);
+    }
+  }
+}
 
 function printStats(stats) {
   console.log(`Total: ${stats.total}`);
@@ -1930,4 +2175,99 @@ export async function backlogWorkerCommand(workerId, opts = {}) {
     console.log(`${lane.lane_id}\t${lane.lane_type}\tpriority=${lane.priority}\trows=${lane.row_count}\taction=${lane.action_command || '(none)'}`);
   }
   return runbook;
+}
+
+function parseStepKinds(value) {
+  if (Array.isArray(value)) return value.flatMap(item => parseStepKinds(item));
+  return String(value || '')
+    .split(',')
+    .map(item => item.trim())
+    .filter(Boolean);
+}
+
+function shouldSetExitCode(opts = {}) {
+  return Boolean(opts.setExitCode);
+}
+
+function backlogExecOptions(opts = {}) {
+  return {
+    dryRun: !opts.execute,
+    timeoutMs: opts.timeoutMs,
+    cwd: opts.cwd,
+  };
+}
+
+function buildLaneExecutionResult(runbook = {}, opts = {}) {
+  const selectedSteps = formatBacklogStepSelection(runbook.steps || [], parseStepKinds(opts.stepKinds));
+  const stepPlans = selectedSteps.map(step => backlogExecutionPlanForStep(step));
+  const results = stepPlans.map(step => executeBacklogStep(step, backlogExecOptions(opts)));
+  const summary = summarizeExecutionResults(results);
+  return {
+    generated_at: new Date().toISOString(),
+    execute: Boolean(opts.execute),
+    dry_run: !opts.execute,
+    target_type: 'lane',
+    target_id: runbook.lane_id,
+    backlog_generated_at: runbook.backlog_generated_at || '',
+    lane_id: runbook.lane_id,
+    lane_type: runbook.lane_type,
+    selected_step_kinds: parseStepKinds(opts.stepKinds),
+    steps: results,
+    summary,
+  };
+}
+
+export async function backlogLaneExecCommand(laneId, opts = {}) {
+  const backlogPath = opts.backlog || join(opts.outputDir || 'backlink-url/backlog-lanes', 'backlog-lanes.json');
+  const summary = loadBacklogLanesSummary(backlogPath);
+  const runbook = buildBacklogLaneRunbook(summary, laneId);
+  const result = buildLaneExecutionResult(runbook, opts);
+
+  if (opts.json) {
+    console.log(JSON.stringify(result, null, 2));
+  } else {
+    printBacklogExecution(result);
+  }
+
+  if (shouldSetExitCode(opts) && (result.summary.failed_steps > 0 || result.summary.blocked_steps > 0)) {
+    process.exitCode = 1;
+  }
+  return result;
+}
+
+export async function backlogWorkerExecCommand(workerId, opts = {}) {
+  const backlogPath = opts.backlog || join(opts.outputDir || 'backlink-url/backlog-lanes', 'backlog-lanes.json');
+  const summary = loadBacklogLanesSummary(backlogPath);
+  const runbook = buildBacklogWorkerRunbook(summary, workerId);
+  const laneResults = runbook.lanes.map(lane => buildLaneExecutionResult({
+    backlog_generated_at: runbook.backlog_generated_at || '',
+    lane_id: lane.lane_id,
+    lane_type: lane.lane_type,
+    steps: lane.steps || [],
+  }, opts));
+  const allSteps = laneResults.flatMap(item => item.steps);
+  const result = {
+    generated_at: new Date().toISOString(),
+    execute: Boolean(opts.execute),
+    dry_run: !opts.execute,
+    target_type: 'worker',
+    target_id: runbook.worker_id,
+    backlog_generated_at: runbook.backlog_generated_at || '',
+    worker_id: runbook.worker_id,
+    selected_step_kinds: parseStepKinds(opts.stepKinds),
+    lanes: laneResults,
+    steps: allSteps,
+    summary: summarizeExecutionResults(allSteps),
+  };
+
+  if (opts.json) {
+    console.log(JSON.stringify(result, null, 2));
+  } else {
+    printBacklogExecution(result);
+  }
+
+  if (shouldSetExitCode(opts) && (result.summary.failed_steps > 0 || result.summary.blocked_steps > 0)) {
+    process.exitCode = 1;
+  }
+  return result;
 }

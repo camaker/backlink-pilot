@@ -42,7 +42,34 @@
       "operator_goal": "capture current public submit surface and reclassify target before any auth workflow re-entry",
       "strict_policy": "read_only_plan_only; no_login_execution; no_submission; no_registry_write",
       "next_step": "Collect public scout evidence first. Re-enter auth only if a later scout confirms auth is genuinely required.",
-      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-needs-scout-001.csv"
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-needs-scout-001.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/auth-needs-scout-001.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
+    }
+  ],
+  "files": {
+    "csv": "backlink-url/backlog-lanes/lanes/auth-needs-scout-001.csv",
+    "json": "backlink-url/backlog-lanes/lanes/auth-needs-scout-001.json",
+    "merge_output": ""
+  },
+  "open_command": "node src/cli.js targets backlog-lane \"auth-needs-scout-001\" --backlog \"backlink-url/backlog-lanes/backlog-lanes.json\"",
+  "action_command": "node src/cli.js scout \"https://mergeek.com/publish_project\" --auth-profile \"mergeek\" --target-id \"mergeek\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
+  "steps": [
+    {
+      "step_id": "open",
+      "step_kind": "open",
+      "title": "Open backlog lane runbook",
+      "command": "node src/cli.js targets backlog-lane \"auth-needs-scout-001\" --backlog \"backlink-url/backlog-lanes/backlog-lanes.json\"",
+      "default_selected": false,
+      "depends_on_step_ids": []
+    },
+    {
+      "step_id": "action",
+      "step_kind": "action",
+      "title": "Refresh public scout evidence before reclassification",
+      "command": "node src/cli.js scout \"https://mergeek.com/publish_project\" --auth-profile \"mergeek\" --target-id \"mergeek\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
+      "default_selected": true,
+      "depends_on_step_ids": []
     }
   ]
 }

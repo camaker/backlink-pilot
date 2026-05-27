@@ -43,7 +43,9 @@
       "auth_status_command": "node src/cli.js auth status --profile \"favird\"",
       "auth_scout_command": "node src/cli.js scout \"https://favird.com/\" --auth-profile \"favird\" --target-id \"favird\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
       "safety_blocker": "",
-      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-002.csv"
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-002.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/auth-login-002.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "auth-login-002",
@@ -72,7 +74,9 @@
       "auth_status_command": "node src/cli.js auth status --profile \"ai-infinity\"",
       "auth_scout_command": "node src/cli.js scout \"https://forms.gle/Ze6pdWzmweCfKWnLA\" --auth-profile \"ai-infinity\" --target-id \"ai-infinity\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
       "safety_blocker": "",
-      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-002.csv"
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-002.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/auth-login-002.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "auth-login-002",
@@ -101,7 +105,9 @@
       "auth_status_command": "node src/cli.js auth status --profile \"gpt-forge\"",
       "auth_scout_command": "node src/cli.js scout \"https://forms.gle/8h1SokDHfcPwkbaZ8\" --auth-profile \"gpt-forge\" --target-id \"gpt-forge\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
       "safety_blocker": "",
-      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-002.csv"
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-002.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/auth-login-002.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "auth-login-002",
@@ -130,7 +136,9 @@
       "auth_status_command": "node src/cli.js auth status --profile \"nextpedia\"",
       "auth_scout_command": "node src/cli.js scout \"https://www.nextpedia.io/submit-tool\" --auth-profile \"nextpedia\" --target-id \"nextpedia\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
       "safety_blocker": "",
-      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-002.csv"
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-002.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/auth-login-002.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "auth-login-002",
@@ -159,7 +167,9 @@
       "auth_status_command": "node src/cli.js auth status --profile \"startup-collections\"",
       "auth_scout_command": "node src/cli.js scout \"https://startupcollections.com/submit-product\" --auth-profile \"startup-collections\" --target-id \"startup-collections\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
       "safety_blocker": "",
-      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-002.csv"
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-002.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/auth-login-002.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "auth-login-002",
@@ -188,7 +198,9 @@
       "auth_status_command": "node src/cli.js auth status --profile \"startuptracker\"",
       "auth_scout_command": "node src/cli.js scout \"https://startuptracker.io/crowdsourcing\" --auth-profile \"startuptracker\" --target-id \"startuptracker\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
       "safety_blocker": "",
-      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-002.csv"
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-002.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/auth-login-002.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "auth-login-002",
@@ -217,7 +229,9 @@
       "auth_status_command": "node src/cli.js auth status --profile \"the-hack-stack\"",
       "auth_scout_command": "node src/cli.js scout \"https://thehackstack.com/\" --auth-profile \"the-hack-stack\" --target-id \"the-hack-stack\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
       "safety_blocker": "",
-      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-002.csv"
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-002.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/auth-login-002.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "auth-login-002",
@@ -246,7 +260,9 @@
       "auth_status_command": "node src/cli.js auth status --profile \"tools-robingood-com\"",
       "auth_scout_command": "node src/cli.js scout \"https://tools.robingood.com/\" --auth-profile \"tools-robingood-com\" --target-id \"tools-robingood-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
       "safety_blocker": "",
-      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-002.csv"
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-002.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/auth-login-002.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "auth-login-002",
@@ -275,7 +291,9 @@
       "auth_status_command": "node src/cli.js auth status --profile \"promoteproject\"",
       "auth_scout_command": "node src/cli.js scout \"https://www.promoteproject.com/login\" --auth-profile \"promoteproject\" --target-id \"promoteproject\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
       "safety_blocker": "",
-      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-002.csv"
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-002.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/auth-login-002.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
     },
     {
       "lane_id": "auth-login-002",
@@ -304,7 +322,44 @@
       "auth_status_command": "node src/cli.js auth status --profile \"tool-ai\"",
       "auth_scout_command": "node src/cli.js scout \"https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit\" --auth-profile \"tool-ai\" --target-id \"tool-ai\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
       "safety_blocker": "",
-      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-002.csv"
+      "lane_csv_path": "backlink-url/backlog-lanes/lanes/auth-login-002.csv",
+      "lane_json_path": "backlink-url/backlog-lanes/lanes/auth-login-002.json",
+      "backlog_output_dir": "backlink-url/backlog-lanes"
+    }
+  ],
+  "files": {
+    "csv": "backlink-url/backlog-lanes/lanes/auth-login-002.csv",
+    "json": "backlink-url/backlog-lanes/lanes/auth-login-002.json",
+    "merge_output": ""
+  },
+  "open_command": "node src/cli.js targets backlog-lane \"auth-login-002\" --backlog \"backlink-url/backlog-lanes/backlog-lanes.json\"",
+  "action_command": "node src/cli.js auth login --profile \"favird\" --url \"https://favird.com/\"",
+  "steps": [
+    {
+      "step_id": "open",
+      "step_kind": "open",
+      "title": "Open backlog lane runbook",
+      "command": "node src/cli.js targets backlog-lane \"auth-login-002\" --backlog \"backlink-url/backlog-lanes/backlog-lanes.json\"",
+      "default_selected": false,
+      "depends_on_step_ids": []
+    },
+    {
+      "step_id": "action",
+      "step_kind": "action",
+      "title": "Complete manual auth login capture",
+      "command": "node src/cli.js auth login --profile \"favird\" --url \"https://favird.com/\"",
+      "default_selected": true,
+      "depends_on_step_ids": []
+    },
+    {
+      "step_id": "refresh",
+      "step_kind": "refresh",
+      "title": "Refresh downstream backlog artifacts",
+      "command": "\"node\" \"src/cli.js\" \"targets\" \"auth-workflow-refresh\" \"backlink-url/assisted-submission-pack/resolved-auth-login/auth-login-resolved-direct-login-queue.csv\" \"backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-plan-batch-resolved-001.json\" \"backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-plan-batch-resolved-002.json\" \"--registry\" \"resources/targets.canonical.yaml\" \"--auth-dir\" \"playwright/.auth\" \"--output-dir\" \"backlink-url/assisted-submission-pack/resolved-direct-login\" \"--next-name\" \"auth-login-next-resolved-current\" \"--summary-name\" \"auth-workflow-refresh-resolved-summary\" \"--next-limit\" \"10\" \"--rescout-limit\" \"100\"",
+      "default_selected": true,
+      "depends_on_step_ids": [
+        "action"
+      ]
     }
   ]
 }

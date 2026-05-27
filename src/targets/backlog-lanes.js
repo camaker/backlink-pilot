@@ -308,6 +308,116 @@ function buildCoverageLanes(rows = [], opts = {}) {
   return lanes;
 }
 
+function laneActionTitle(lane = {}) {
+  const laneType = String(lane.lane_type || '').trim();
+  if (laneType === 'auth_manual_login') return 'Complete manual auth login capture';
+  if (laneType === 'auth_resolved_needs_scout') return 'Refresh public scout evidence before reclassification';
+  if (laneType === 'auth_manual_review_fail_closed') return 'Resolve fail-closed manual review decision';
+  if (laneType === 'auth_manual_review_classification') return 'Complete manual surface classification review';
+  if (laneType === 'coverage_manual_review_p0' || laneType === 'coverage_manual_review_p2') {
+    return 'Run directory coverage review action';
+  }
+  if (laneType === 'pricing_review_manual') return 'Run pricing review action';
+  return 'Run primary lane action';
+}
+
+function buildLaneSteps(lane = {}) {
+  const steps = [];
+  const seenCommands = new Set();
+
+  function pushStep(step = {}) {
+    const command = String(step.command || '').trim();
+    if (!command || seenCommands.has(command)) return false;
+    seenCommands.add(command);
+    steps.push({
+      step_id: step.step_id || '',
+      step_kind: step.step_kind || '',
+      title: step.title || '',
+      command,
+      default_selected: Boolean(step.default_selected),
+      depends_on_step_ids: Array.isArray(step.depends_on_step_ids) ? step.depends_on_step_ids.filter(Boolean) : [],
+    });
+    return true;
+  }
+
+  pushStep({
+    step_id: 'open',
+    step_kind: 'open',
+    title: 'Open backlog lane runbook',
+    command: lane.open_command,
+    default_selected: false,
+  });
+
+  const hasAction = pushStep({
+    step_id: 'action',
+    step_kind: 'action',
+    title: laneActionTitle(lane),
+    command: lane.action_command,
+    default_selected: true,
+  });
+
+  const hasValidate = pushStep({
+    step_id: 'validate',
+    step_kind: 'validate',
+    title: 'Validate lane artifacts',
+    command: lane.validate_command,
+    default_selected: true,
+    depends_on_step_ids: hasAction ? ['action'] : [],
+  });
+
+  const hasMerge = pushStep({
+    step_id: 'merge',
+    step_kind: 'merge',
+    title: 'Run merge or follow-up preview',
+    command: lane.merge_command,
+    default_selected: true,
+    depends_on_step_ids: hasValidate ? ['validate'] : (hasAction ? ['action'] : []),
+  });
+
+  pushStep({
+    step_id: 'refresh',
+    step_kind: 'refresh',
+    title: 'Refresh downstream backlog artifacts',
+    command: lane.refresh_command,
+    default_selected: true,
+    depends_on_step_ids: hasMerge
+      ? ['merge']
+      : (hasValidate ? ['validate'] : (hasAction ? ['action'] : [])),
+  });
+
+  return steps;
+}
+
+function selectLaneActionCommand(lane = {}, firstRow = {}, openCommand = '') {
+  const laneType = String(lane.lane_type || '').trim();
+  if (laneType === 'auth_manual_login') {
+    return firstRow.auth_login_command
+      || lane.refresh_command
+      || openCommand;
+  }
+  if (laneType === 'auth_resolved_needs_scout') {
+    return firstRow.auth_scout_command
+      || lane.refresh_command
+      || openCommand;
+  }
+  if (laneType === 'pricing_review_manual') {
+    return lane.validate_command
+      || lane.merge_command
+      || openCommand;
+  }
+  if (laneType === 'coverage_manual_review_p0' || laneType === 'coverage_manual_review_p2') {
+    return lane.validate_command
+      || lane.merge_command
+      || openCommand;
+  }
+  return firstRow.auth_login_command
+    || firstRow.auth_scout_command
+    || lane.validate_command
+    || lane.merge_command
+    || lane.refresh_command
+    || openCommand;
+}
+
 function attachDerivedArtifactsToLane(lane = {}, outputDir = DEFAULT_OUTPUT_DIR) {
   const normalizedOutputDir = normalizePath(outputDir);
   const laneCsvPath = normalizePath(join(outputDir, 'lanes', `${lane.lane_id}.csv`));
@@ -328,14 +438,9 @@ function attachDerivedArtifactsToLane(lane = {}, outputDir = DEFAULT_OUTPUT_DIR)
   }));
 
   const openCommand = `node src/cli.js targets backlog-lane ${shellQuote(lane.lane_id)} --backlog ${shellQuote(normalizePath(join(outputDir, 'backlog-lanes.json')))}`;
-  const workerActionCommand = firstRow.auth_login_command
-    || firstRow.auth_scout_command
-    || lane.validate_command
-    || lane.merge_command
-    || lane.refresh_command
-    || openCommand;
+  const workerActionCommand = selectLaneActionCommand(lane, firstRow, openCommand);
 
-  return {
+  const derivedLane = {
     ...lane,
     files: {
       csv: laneCsvPath,
@@ -345,6 +450,11 @@ function attachDerivedArtifactsToLane(lane = {}, outputDir = DEFAULT_OUTPUT_DIR)
     open_command: openCommand,
     action_command: workerActionCommand,
     rows: safeRows,
+  };
+
+  return {
+    ...derivedLane,
+    steps: buildLaneSteps(derivedLane),
   };
 }
 
@@ -616,6 +726,10 @@ export function buildBacklogLaneRunbook(summary = {}, laneId = '') {
     throw new Error(`backlog lane not found: ${laneId}`);
   }
 
+  const steps = Array.isArray(lane.steps) && lane.steps.length
+    ? lane.steps
+    : buildLaneSteps(lane);
+
   return {
     generated_at: nowIso(),
     backlog_generated_at: summary.generated_at || '',
@@ -631,6 +745,7 @@ export function buildBacklogLaneRunbook(summary = {}, laneId = '') {
     validate_command: lane.validate_command || '',
     merge_command: lane.merge_command || '',
     refresh_command: lane.refresh_command || '',
+    steps,
     rows: lane.rows || [],
   };
 }
@@ -652,6 +767,9 @@ export function buildBacklogWorkerRunbook(summary = {}, workerId = '') {
       validate_command: lane?.validate_command || '',
       merge_command: lane?.merge_command || '',
       refresh_command: lane?.refresh_command || '',
+      steps: Array.isArray(lane?.steps) && lane.steps.length
+        ? lane.steps
+        : buildLaneSteps(lane || laneSummary),
     };
   });
 
