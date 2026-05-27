@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "created_at": "2026-05-27T07:05:35.795Z",
+  "created_at": "2026-05-27T09:33:08.275Z",
   "source_queue": "backlink-url/assisted-submission-pack/auth-login-rescout-queue.csv",
   "source_batches": [
     "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
@@ -43,9 +43,9 @@
     "status": {
       "source_rows": 70,
       "auth_profiles_found": 0,
-      "auth_profiles_missing": 70,
+      "auth_profiles_missing": 69,
       "ready_for_auth_rescout_rows": 0,
-      "manual_login_rows": 70
+      "manual_login_rows": 69
     },
     "by_batch": [
       {
@@ -54,14 +54,16 @@
         "source_type": "plan_targets",
         "source_rows": 25,
         "auth_profiles_found": 0,
-        "auth_profiles_missing": 25,
+        "auth_profiles_missing": 24,
         "ready_for_auth_rescout_rows": 0,
-        "manual_login_rows": 25,
+        "manual_login_rows": 24,
         "by_status": {
-          "manual_login_required": 25
+          "manual_login_required": 24,
+          "blocked_registry_filtered": 1
         },
         "by_next_action": {
-          "run_auth_login_command": 25
+          "run_auth_login_command": 24,
+          "drop_non_assisted_registry_target": 1
         }
       },
       {
@@ -99,19 +101,20 @@
     ],
     "next_login": {
       "source_batches": 3,
-      "actionable_rows": 70,
+      "actionable_rows": 69,
       "task_rows": 10,
       "excluded_rows": 60,
       "offset": 0,
       "limit": 10,
       "current_batch_start": 1,
       "current_batch_end": 10,
-      "remaining_after_batch": 60,
+      "remaining_after_batch": 59,
       "by_priority": {
         "P0": 10
       },
       "by_exclusion_reason": {
-        "after_batch_limit": 60
+        "drop_non_assisted_registry_target": 1,
+        "after_batch_limit": 59
       }
     },
     "auth_rescout": {
@@ -120,9 +123,10 @@
       "queued_rows": 0,
       "excluded_rows": 70,
       "auth_profiles_found": 0,
-      "auth_profiles_missing": 70,
+      "auth_profiles_missing": 69,
       "by_exclusion_reason": {
-        "auth_profile_missing": 70
+        "auth_profile_missing": 69,
+        "registry_mode_not_assisted:skip": 1
       }
     }
   }

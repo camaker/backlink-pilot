@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "created_at": "2026-05-27T07:05:35.758Z",
+  "created_at": "2026-05-27T09:33:07.473Z",
   "source_batches": [
     "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
     "backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json",
@@ -187,27 +187,6 @@
     {
       "task_order": "9",
       "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
-      "batch_order": 9,
-      "priority": "P0",
-      "target_id": "changelog",
-      "name": "Changelog",
-      "domain": "changelog.com",
-      "pricing": "unknown",
-      "risk": "unknown",
-      "auth_profile": "changelog",
-      "status": "manual_login_required",
-      "login_url": "https://changelog.com/news/submit",
-      "submit_url": "https://changelog.com/news/submit",
-      "auth_state_path": "playwright/.auth/changelog.storage-state.json",
-      "auth_meta_path": "playwright/.auth/changelog.meta.json",
-      "auth_login_command": "node src/cli.js auth login --profile \"changelog\" --url \"https://changelog.com/news/submit\"",
-      "auth_status_command": "node src/cli.js auth status --profile \"changelog\"",
-      "auth_scout_command": "node src/cli.js scout \"https://changelog.com/news/submit\" --auth-profile \"changelog\" --target-id \"changelog\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "manual_login_safety_policy": "human_only_login; no_captcha_or_2fa_bypass; no_payment; no_real_submission; save_profile_then_rescout"
-    },
-    {
-      "task_order": "10",
-      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
       "batch_order": 10,
       "priority": "P0",
       "target_id": "top-best-alternatives",
@@ -225,19 +204,40 @@
       "auth_status_command": "node src/cli.js auth status --profile \"top-best-alternatives\"",
       "auth_scout_command": "node src/cli.js scout \"https://www.topbestalternatives.com/\" --auth-profile \"top-best-alternatives\" --target-id \"top-best-alternatives\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
       "manual_login_safety_policy": "human_only_login; no_captcha_or_2fa_bypass; no_payment; no_real_submission; save_profile_then_rescout"
+    },
+    {
+      "task_order": "10",
+      "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
+      "batch_order": 11,
+      "priority": "P0",
+      "target_id": "xinquji-com",
+      "name": "新趣集",
+      "domain": "xinquji.com",
+      "pricing": "unknown",
+      "risk": "unknown",
+      "auth_profile": "xinquji-com",
+      "status": "manual_login_required",
+      "login_url": "https://xinquji.com/submit",
+      "submit_url": "https://xinquji.com/",
+      "auth_state_path": "playwright/.auth/xinquji-com.storage-state.json",
+      "auth_meta_path": "playwright/.auth/xinquji-com.meta.json",
+      "auth_login_command": "node src/cli.js auth login --profile \"xinquji-com\" --url \"https://xinquji.com/submit\"",
+      "auth_status_command": "node src/cli.js auth status --profile \"xinquji-com\"",
+      "auth_scout_command": "node src/cli.js scout \"https://xinquji.com/\" --auth-profile \"xinquji-com\" --target-id \"xinquji-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
+      "manual_login_safety_policy": "human_only_login; no_captcha_or_2fa_bypass; no_payment; no_real_submission; save_profile_then_rescout"
     }
   ],
   "excluded": [
     {
       "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
-      "batch_order": 11,
-      "target_id": "xinquji-com",
-      "name": "新趣集",
-      "domain": "xinquji.com",
-      "auth_profile": "xinquji-com",
-      "status": "manual_login_required",
-      "next_action": "run_auth_login_command",
-      "exclusion_reason": "after_batch_limit"
+      "batch_order": 9,
+      "target_id": "changelog",
+      "name": "Changelog",
+      "domain": "changelog.com",
+      "auth_profile": "changelog",
+      "status": "blocked_registry_filtered",
+      "next_action": "drop_non_assisted_registry_target",
+      "exclusion_reason": "drop_non_assisted_registry_target"
     },
     {
       "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
@@ -891,19 +891,20 @@
   ],
   "summary": {
     "source_batches": 3,
-    "actionable_rows": 70,
+    "actionable_rows": 69,
     "task_rows": 10,
     "excluded_rows": 60,
     "offset": 0,
     "limit": 10,
     "current_batch_start": 1,
     "current_batch_end": 10,
-    "remaining_after_batch": 60,
+    "remaining_after_batch": 59,
     "by_priority": {
       "P0": 10
     },
     "by_exclusion_reason": {
-      "after_batch_limit": 60
+      "drop_non_assisted_registry_target": 1,
+      "after_batch_limit": 59
     }
   }
 }
