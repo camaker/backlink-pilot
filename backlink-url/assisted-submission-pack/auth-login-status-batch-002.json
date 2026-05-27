@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "created_at": "2026-05-27T09:53:10.758Z",
+  "created_at": "2026-05-27T09:59:41.278Z",
   "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json",
   "source_type": "plan_targets",
   "constraints": {
@@ -13,30 +13,6 @@
   "rows": [
     {
       "order": 26,
-      "priority": "P0",
-      "target_id": "ai-nav",
-      "name": "AI NAV",
-      "domain": "ainavpro.com",
-      "pricing": "unknown",
-      "risk": "unknown",
-      "auth_profile": "ai-nav",
-      "auth_state_path": "playwright/.auth/ai-nav.storage-state.json",
-      "auth_meta_path": "playwright/.auth/ai-nav.meta.json",
-      "status": "manual_login_required",
-      "next_action": "run_auth_login_command",
-      "ready_for_auth_rescout": "no",
-      "saved_at": "",
-      "size_bytes": 0,
-      "login_url": "https://www.ainavpro.com/contribute",
-      "submit_url": "https://www.ainavpro.com/contribute",
-      "auth_login_command": "node src/cli.js auth login --profile \"ai-nav\" --url \"https://www.ainavpro.com/contribute\"",
-      "auth_status_command": "node src/cli.js auth status --profile \"ai-nav\"",
-      "auth_scout_command": "node src/cli.js scout \"https://www.ainavpro.com/contribute\" --auth-profile \"ai-nav\" --target-id \"ai-nav\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "safety_blocker": "",
-      "registry_blocker": ""
-    },
-    {
-      "order": 27,
       "priority": "P0",
       "target_id": "dizkaz-com",
       "name": "笛卡",
@@ -60,7 +36,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 28,
+      "order": 27,
       "priority": "P0",
       "target_id": "foundr-ai",
       "name": "Foundr.ai",
@@ -84,7 +60,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 29,
+      "order": 28,
       "priority": "P0",
       "target_id": "gainweb-org",
       "name": "GainWeb.org",
@@ -108,7 +84,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 30,
+      "order": 29,
       "priority": "P0",
       "target_id": "hhlink-com",
       "name": "海外导航网",
@@ -132,7 +108,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 31,
+      "order": 30,
       "priority": "P0",
       "target_id": "iforai",
       "name": "iforai",
@@ -156,7 +132,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 32,
+      "order": 31,
       "priority": "P0",
       "target_id": "mergeek",
       "name": "Mergeek",
@@ -180,7 +156,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 33,
+      "order": 32,
       "priority": "P0",
       "target_id": "offpagesavvy",
       "name": "Offpagesavvy",
@@ -204,7 +180,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 34,
+      "order": 33,
       "priority": "P0",
       "target_id": "wechalet-cn",
       "name": "小木屋",
@@ -228,7 +204,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 35,
+      "order": 34,
       "priority": "P0",
       "target_id": "appalist-com",
       "name": "https://appalist.com/",
@@ -252,7 +228,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 36,
+      "order": 35,
       "priority": "P0",
       "target_id": "ashlist-com",
       "name": "https://ashlist.com",
@@ -276,7 +252,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 37,
+      "order": 36,
       "priority": "P0",
       "target_id": "launchscroll-com",
       "name": "https://launchscroll.com/",
@@ -300,7 +276,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 38,
+      "order": 37,
       "priority": "P0",
       "target_id": "mylaunchstash-com",
       "name": "https://mylaunchstash.com/",
@@ -324,7 +300,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 39,
+      "order": 38,
       "priority": "P0",
       "target_id": "openfuture-ai",
       "name": "OpenFuture AI",
@@ -348,7 +324,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 40,
+      "order": 39,
       "priority": "P0",
       "target_id": "poweruptools-com",
       "name": "https://poweruptools.com",
@@ -372,7 +348,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 41,
+      "order": 40,
       "priority": "P0",
       "target_id": "productlistdir-com",
       "name": "https://productlistdir.com",
@@ -396,7 +372,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 42,
+      "order": 41,
       "priority": "P0",
       "target_id": "productwing-com",
       "name": "https://productwing.com/",
@@ -420,7 +396,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 43,
+      "order": 42,
       "priority": "P0",
       "target_id": "www-ruanyifeng-com",
       "name": "https://www.ruanyifeng.com",
@@ -444,7 +420,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 44,
+      "order": 43,
       "priority": "P0",
       "target_id": "saasfield-com",
       "name": "https://saasfield.com/",
@@ -468,7 +444,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 45,
+      "order": 44,
       "priority": "P0",
       "target_id": "saashubdirectory-com",
       "name": "https://saashubdirectory.com",
@@ -492,7 +468,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 46,
+      "order": 45,
       "priority": "P0",
       "target_id": "saasroots-com",
       "name": "https://saasroots.com/",
@@ -516,7 +492,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 47,
+      "order": 46,
       "priority": "P0",
       "target_id": "smartkithub-com",
       "name": "https://smartkithub.com",
@@ -540,7 +516,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 48,
+      "order": 47,
       "priority": "P0",
       "target_id": "softwarebolt-com",
       "name": "访问官网",
@@ -564,7 +540,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 49,
+      "order": 48,
       "priority": "P0",
       "target_id": "solvertools-com",
       "name": "🔗 访问我们的网站",
@@ -588,7 +564,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 50,
+      "order": 49,
       "priority": "P0",
       "target_id": "sourcedir-com",
       "name": "https://sourcedir.com/",
@@ -608,6 +584,30 @@
       "auth_login_command": "node src/cli.js auth login --profile \"sourcedir-com\" --url \"https://sourcedir.com/get-started\"",
       "auth_status_command": "node src/cli.js auth status --profile \"sourcedir-com\"",
       "auth_scout_command": "node src/cli.js scout \"https://sourcedir.com/\" --auth-profile \"sourcedir-com\" --target-id \"sourcedir-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
+      "safety_blocker": "",
+      "registry_blocker": ""
+    },
+    {
+      "order": 50,
+      "priority": "P0",
+      "target_id": "stackdirectory-com",
+      "name": "https://stackdirectory.com/",
+      "domain": "stackdirectory.com",
+      "pricing": "unknown",
+      "risk": "unknown",
+      "auth_profile": "stackdirectory-com",
+      "auth_state_path": "playwright/.auth/stackdirectory-com.storage-state.json",
+      "auth_meta_path": "playwright/.auth/stackdirectory-com.meta.json",
+      "status": "manual_login_required",
+      "next_action": "run_auth_login_command",
+      "ready_for_auth_rescout": "no",
+      "saved_at": "",
+      "size_bytes": 0,
+      "login_url": "https://stackdirectory.com/get-started",
+      "submit_url": "https://stackdirectory.com/",
+      "auth_login_command": "node src/cli.js auth login --profile \"stackdirectory-com\" --url \"https://stackdirectory.com/get-started\"",
+      "auth_status_command": "node src/cli.js auth status --profile \"stackdirectory-com\"",
+      "auth_scout_command": "node src/cli.js scout \"https://stackdirectory.com/\" --auth-profile \"stackdirectory-com\" --target-id \"stackdirectory-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
       "safety_blocker": "",
       "registry_blocker": ""
     }

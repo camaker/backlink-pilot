@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "created_at": "2026-05-27T09:53:15.076Z",
+  "created_at": "2026-05-27T09:59:45.545Z",
   "source_queue": "backlink-url/assisted-submission-pack/auth-login-rescout-queue.csv",
   "source_batches": [
     "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
@@ -41,7 +41,7 @@
   },
   "summary": {
     "status": {
-      "source_rows": 70,
+      "source_rows": 69,
       "auth_profiles_found": 0,
       "auth_profiles_missing": 69,
       "ready_for_auth_rescout_rows": 0,
@@ -54,16 +54,14 @@
         "source_type": "plan_targets",
         "source_rows": 25,
         "auth_profiles_found": 0,
-        "auth_profiles_missing": 24,
+        "auth_profiles_missing": 25,
         "ready_for_auth_rescout_rows": 0,
-        "manual_login_rows": 24,
+        "manual_login_rows": 25,
         "by_status": {
-          "manual_login_required": 24,
-          "blocked_registry_filtered": 1
+          "manual_login_required": 25
         },
         "by_next_action": {
-          "run_auth_login_command": 24,
-          "drop_non_assisted_registry_target": 1
+          "run_auth_login_command": 25
         }
       },
       {
@@ -86,47 +84,45 @@
         "suffix": "batch-003",
         "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
         "source_type": "plan_targets",
-        "source_rows": 20,
+        "source_rows": 19,
         "auth_profiles_found": 0,
-        "auth_profiles_missing": 20,
+        "auth_profiles_missing": 19,
         "ready_for_auth_rescout_rows": 0,
-        "manual_login_rows": 20,
+        "manual_login_rows": 19,
         "by_status": {
-          "manual_login_required": 20
+          "manual_login_required": 19
         },
         "by_next_action": {
-          "run_auth_login_command": 20
+          "run_auth_login_command": 19
         }
       }
     ],
     "next_login": {
       "source_batches": 3,
-      "actionable_rows": 68,
+      "actionable_rows": 69,
       "task_rows": 10,
       "excluded_rows": 59,
       "offset": 0,
       "limit": 10,
       "current_batch_start": 1,
       "current_batch_end": 10,
-      "remaining_after_batch": 58,
+      "remaining_after_batch": 59,
       "by_priority": {
         "P0": 10
       },
       "by_exclusion_reason": {
-        "drop_non_assisted_registry_target": 1,
-        "after_batch_limit": 58
+        "after_batch_limit": 59
       }
     },
     "auth_rescout": {
-      "source_rows": 70,
+      "source_rows": 69,
       "eligible_rows": 0,
       "queued_rows": 0,
-      "excluded_rows": 70,
+      "excluded_rows": 69,
       "auth_profiles_found": 0,
       "auth_profiles_missing": 69,
       "by_exclusion_reason": {
-        "auth_profile_missing": 69,
-        "registry_mode_not_assisted:skip": 1
+        "auth_profile_missing": 69
       }
     }
   }

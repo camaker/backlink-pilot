@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "created_at": "2026-05-27T09:53:12.613Z",
+  "created_at": "2026-05-27T09:59:43.047Z",
   "registry": "resources/targets.canonical.yaml",
   "source_queue": "backlink-url/assisted-submission-pack/auth-login-rescout-queue.csv",
   "product": {
@@ -517,23 +517,6 @@
   "completed": [],
   "excluded": [
     {
-      "target_id": "changelog",
-      "name": "Changelog",
-      "domain": "changelog.com",
-      "submit_url": "https://changelog.com/news/submit",
-      "priority": "P0",
-      "pricing": "unknown",
-      "risk": "unknown",
-      "auth_profile": "changelog",
-      "auth_state_path": "playwright/.auth/changelog.storage-state.json",
-      "login_url": "https://changelog.com/news/submit",
-      "auth_login_command": "node src/cli.js auth login --profile \"changelog\" --url \"https://changelog.com/news/submit\"",
-      "auth_scout_command": "node src/cli.js scout \"https://changelog.com/news/submit\" --auth-profile \"changelog\" --target-id \"changelog\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "safety_blocker": "registry_mode_not_assisted:skip",
-      "registry_blocker": "registry_mode_not_assisted:skip",
-      "exclusion_reason": "registry_mode_not_assisted:skip"
-    },
-    {
       "target_id": "beta-list",
       "name": "Beta List",
       "domain": "betalist.com",
@@ -670,23 +653,6 @@
       "exclusion_reason": "before_offset"
     },
     {
-      "target_id": "top-best-alternatives",
-      "name": "Top Best Alternatives",
-      "domain": "topbestalternatives.com",
-      "submit_url": "https://www.topbestalternatives.com/",
-      "priority": "P0",
-      "pricing": "unknown",
-      "risk": "unknown",
-      "auth_profile": "top-best-alternatives",
-      "auth_state_path": "playwright/.auth/top-best-alternatives.storage-state.json",
-      "login_url": "https://www.topbestalternatives.com/",
-      "auth_login_command": "node src/cli.js auth login --profile \"top-best-alternatives\" --url \"https://www.topbestalternatives.com/\"",
-      "auth_scout_command": "node src/cli.js scout \"https://www.topbestalternatives.com/\" --auth-profile \"top-best-alternatives\" --target-id \"top-best-alternatives\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "safety_blocker": "",
-      "registry_blocker": "",
-      "exclusion_reason": "before_offset"
-    },
-    {
       "target_id": "xinquji-com",
       "name": "新趣集",
       "domain": "xinquji.com",
@@ -716,6 +682,40 @@
       "login_url": "https://betalist.com/sign_in",
       "auth_login_command": "node src/cli.js auth login --profile \"betalist-com\" --url \"https://betalist.com/sign_in\"",
       "auth_scout_command": "node src/cli.js scout \"https://betalist.com/\" --auth-profile \"betalist-com\" --target-id \"betalist-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
+      "safety_blocker": "",
+      "registry_blocker": "",
+      "exclusion_reason": "before_offset"
+    },
+    {
+      "target_id": "mergeek",
+      "name": "Mergeek",
+      "domain": "mergeek.com",
+      "submit_url": "https://mergeek.com/publish_project",
+      "priority": "P0",
+      "pricing": "free",
+      "risk": "unknown",
+      "auth_profile": "mergeek",
+      "auth_state_path": "playwright/.auth/mergeek.storage-state.json",
+      "login_url": "https://mergeek.com/publish_project",
+      "auth_login_command": "node src/cli.js auth login --profile \"mergeek\" --url \"https://mergeek.com/publish_project\"",
+      "auth_scout_command": "node src/cli.js scout \"https://mergeek.com/publish_project\" --auth-profile \"mergeek\" --target-id \"mergeek\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
+      "safety_blocker": "",
+      "registry_blocker": "",
+      "exclusion_reason": "before_offset"
+    },
+    {
+      "target_id": "top-best-alternatives",
+      "name": "Top Best Alternatives",
+      "domain": "topbestalternatives.com",
+      "submit_url": "https://www.topbestalternatives.com/",
+      "priority": "P0",
+      "pricing": "freemium",
+      "risk": "unknown",
+      "auth_profile": "top-best-alternatives",
+      "auth_state_path": "playwright/.auth/top-best-alternatives.storage-state.json",
+      "login_url": "https://www.topbestalternatives.com/",
+      "auth_login_command": "node src/cli.js auth login --profile \"top-best-alternatives\" --url \"https://www.topbestalternatives.com/\"",
+      "auth_scout_command": "node src/cli.js scout \"https://www.topbestalternatives.com/\" --auth-profile \"top-best-alternatives\" --target-id \"top-best-alternatives\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
       "safety_blocker": "",
       "registry_blocker": "",
       "exclusion_reason": "before_offset"
@@ -1039,23 +1039,6 @@
       "login_url": "https://iforai.com/submit_website",
       "auth_login_command": "node src/cli.js auth login --profile \"iforai\" --url \"https://iforai.com/submit_website\"",
       "auth_scout_command": "node src/cli.js scout \"https://iforai.com/submit_website\" --auth-profile \"iforai\" --target-id \"iforai\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "safety_blocker": "",
-      "registry_blocker": "",
-      "exclusion_reason": "before_offset"
-    },
-    {
-      "target_id": "mergeek",
-      "name": "Mergeek",
-      "domain": "mergeek.com",
-      "submit_url": "https://mergeek.com/publish_project",
-      "priority": "P0",
-      "pricing": "unknown",
-      "risk": "unknown",
-      "auth_profile": "mergeek",
-      "auth_state_path": "playwright/.auth/mergeek.storage-state.json",
-      "login_url": "https://mergeek.com/publish_project",
-      "auth_login_command": "node src/cli.js auth login --profile \"mergeek\" --url \"https://mergeek.com/publish_project\"",
-      "auth_scout_command": "node src/cli.js scout \"https://mergeek.com/publish_project\" --auth-profile \"mergeek\" --target-id \"mergeek\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
       "safety_blocker": "",
       "registry_blocker": "",
       "exclusion_reason": "before_offset"
@@ -1385,8 +1368,8 @@
     }
   ],
   "summary": {
-    "source_rows": 70,
-    "auth_login_rows": 70,
+    "source_rows": 69,
+    "auth_login_rows": 69,
     "pending_rows": 69,
     "offset": 50,
     "limit": 25,
@@ -1395,11 +1378,10 @@
     "queued_rows": 19,
     "remaining_after_batch": 0,
     "completed_rows": 0,
-    "excluded_rows": 51,
+    "excluded_rows": 50,
     "auth_profiles_found": 0,
     "auth_profiles_missing": 69,
     "by_exclusion_reason": {
-      "registry_mode_not_assisted:skip": 1,
       "before_offset": 50
     }
   }

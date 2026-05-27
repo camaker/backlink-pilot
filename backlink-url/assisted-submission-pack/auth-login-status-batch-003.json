@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "created_at": "2026-05-27T09:53:11.592Z",
+  "created_at": "2026-05-27T09:59:42.088Z",
   "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json",
   "source_type": "plan_targets",
   "constraints": {
@@ -13,30 +13,6 @@
   "rows": [
     {
       "order": 51,
-      "priority": "P0",
-      "target_id": "stackdirectory-com",
-      "name": "https://stackdirectory.com/",
-      "domain": "stackdirectory.com",
-      "pricing": "unknown",
-      "risk": "unknown",
-      "auth_profile": "stackdirectory-com",
-      "auth_state_path": "playwright/.auth/stackdirectory-com.storage-state.json",
-      "auth_meta_path": "playwright/.auth/stackdirectory-com.meta.json",
-      "status": "manual_login_required",
-      "next_action": "run_auth_login_command",
-      "ready_for_auth_rescout": "no",
-      "saved_at": "",
-      "size_bytes": 0,
-      "login_url": "https://stackdirectory.com/get-started",
-      "submit_url": "https://stackdirectory.com/",
-      "auth_login_command": "node src/cli.js auth login --profile \"stackdirectory-com\" --url \"https://stackdirectory.com/get-started\"",
-      "auth_status_command": "node src/cli.js auth status --profile \"stackdirectory-com\"",
-      "auth_scout_command": "node src/cli.js scout \"https://stackdirectory.com/\" --auth-profile \"stackdirectory-com\" --target-id \"stackdirectory-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
-      "safety_blocker": "",
-      "registry_blocker": ""
-    },
-    {
-      "order": 52,
       "priority": "P0",
       "target_id": "startupvessel-com",
       "name": "https://startupvessel.com/",
@@ -60,7 +36,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 53,
+      "order": 52,
       "priority": "P0",
       "target_id": "theapptools-com",
       "name": "https://theapptools.com/",
@@ -84,7 +60,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 54,
+      "order": 53,
       "priority": "P0",
       "target_id": "thecoretools-com",
       "name": "https://thecoretools.com",
@@ -108,7 +84,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 55,
+      "order": 54,
       "priority": "P0",
       "target_id": "tinytoolhub-com",
       "name": "https://tinytoolhub.com",
@@ -132,7 +108,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 56,
+      "order": 55,
       "priority": "P0",
       "target_id": "toolcosmos-com",
       "name": "https://toolcosmos.com",
@@ -156,7 +132,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 57,
+      "order": 56,
       "priority": "P0",
       "target_id": "toolfinddir-com",
       "name": "https://toolfinddir.com",
@@ -180,7 +156,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 58,
+      "order": 57,
       "priority": "P0",
       "target_id": "toolsignal-com",
       "name": "https://toolsignal.com/",
@@ -204,7 +180,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 59,
+      "order": 58,
       "priority": "P0",
       "target_id": "toolslisthq-com",
       "name": "https://toolslisthq.com",
@@ -228,7 +204,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 60,
+      "order": 59,
       "priority": "P0",
       "target_id": "toolsunderradar-com",
       "name": "https://toolsunderradar.com",
@@ -252,7 +228,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 61,
+      "order": 60,
       "priority": "P0",
       "target_id": "toptrendtools-com",
       "name": "https://toptrendtools.com/",
@@ -276,7 +252,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 62,
+      "order": 61,
       "priority": "P0",
       "target_id": "toshilist-com",
       "name": "https://toshilist.com",
@@ -300,7 +276,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 63,
+      "order": 62,
       "priority": "P0",
       "target_id": "trustiner-com",
       "name": "https://trustiner.com",
@@ -324,7 +300,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 64,
+      "order": 63,
       "priority": "P0",
       "target_id": "weliketools-com",
       "name": "https://weliketools.com",
@@ -348,7 +324,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 65,
+      "order": 64,
       "priority": "P1",
       "target_id": "orbic-ai",
       "name": "Orbic AI",
@@ -372,7 +348,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 66,
+      "order": 65,
       "priority": "P1",
       "target_id": "promoteproject",
       "name": "PromoteProject",
@@ -396,7 +372,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 67,
+      "order": 66,
       "priority": "P1",
       "target_id": "tool-ai",
       "name": "Tool AI",
@@ -420,7 +396,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 68,
+      "order": 67,
       "priority": "P1",
       "target_id": "aitoptools",
       "name": "AITopTools",
@@ -444,7 +420,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 69,
+      "order": 68,
       "priority": "P1",
       "target_id": "betalist",
       "name": "Betalist",
@@ -468,7 +444,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 70,
+      "order": 69,
       "priority": "P1",
       "target_id": "broadwise-org",
       "name": "Broadwise.org",
@@ -493,18 +469,18 @@
     }
   ],
   "summary": {
-    "source_rows": 20,
+    "source_rows": 19,
     "auth_profiles_found": 0,
-    "auth_profiles_missing": 20,
+    "auth_profiles_missing": 19,
     "missing_auth_profile_rows": 0,
     "safety_blocked_rows": 0,
     "ready_for_auth_rescout_rows": 0,
-    "manual_login_rows": 20,
+    "manual_login_rows": 19,
     "by_status": {
-      "manual_login_required": 20
+      "manual_login_required": 19
     },
     "by_next_action": {
-      "run_auth_login_command": 20
+      "run_auth_login_command": 19
     }
   }
 }

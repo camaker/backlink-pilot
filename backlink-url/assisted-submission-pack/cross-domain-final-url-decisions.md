@@ -1,6 +1,6 @@
 # Cross-Domain Final URL Decisions
 
-Generated: 2026-05-23T10:37:34.246Z
+Generated: 2026-05-27T09:58:30.328Z
 
 Policy: this is an editable human decision template. It does not approve automation by itself, does not write the registry, and does not authorize real submissions.
 

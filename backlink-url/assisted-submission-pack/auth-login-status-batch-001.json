@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "created_at": "2026-05-27T09:53:09.906Z",
+  "created_at": "2026-05-27T09:59:40.168Z",
   "source_batch": "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json",
   "source_type": "plan_targets",
   "constraints": {
@@ -206,30 +206,6 @@
     {
       "order": 9,
       "priority": "P0",
-      "target_id": "changelog",
-      "name": "Changelog",
-      "domain": "changelog.com",
-      "pricing": "unknown",
-      "risk": "unknown",
-      "auth_profile": "changelog",
-      "auth_state_path": "playwright/.auth/changelog.storage-state.json",
-      "auth_meta_path": "playwright/.auth/changelog.meta.json",
-      "status": "blocked_registry_filtered",
-      "next_action": "drop_non_assisted_registry_target",
-      "ready_for_auth_rescout": "no",
-      "saved_at": "",
-      "size_bytes": 0,
-      "login_url": "https://changelog.com/news/submit",
-      "submit_url": "https://changelog.com/news/submit",
-      "auth_login_command": "",
-      "auth_status_command": "",
-      "auth_scout_command": "",
-      "safety_blocker": "registry_mode_not_assisted:skip",
-      "registry_blocker": "registry_mode_not_assisted:skip"
-    },
-    {
-      "order": 10,
-      "priority": "P0",
       "target_id": "top-best-alternatives",
       "name": "Top Best Alternatives",
       "domain": "topbestalternatives.com",
@@ -252,7 +228,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 11,
+      "order": 10,
       "priority": "P0",
       "target_id": "xinquji-com",
       "name": "新趣集",
@@ -276,7 +252,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 12,
+      "order": 11,
       "priority": "P0",
       "target_id": "betalist-com",
       "name": "https://betalist.com",
@@ -300,7 +276,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 13,
+      "order": 12,
       "priority": "P0",
       "target_id": "ai-tool-guru",
       "name": "AI Tool guru",
@@ -324,7 +300,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 14,
+      "order": 13,
       "priority": "P0",
       "target_id": "ai-tools-arena",
       "name": "AI Tools Arena",
@@ -348,7 +324,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 15,
+      "order": 14,
       "priority": "P0",
       "target_id": "alternative-me",
       "name": "Alternative",
@@ -372,7 +348,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 16,
+      "order": 15,
       "priority": "P0",
       "target_id": "bestofai",
       "name": "BestOfAI",
@@ -396,7 +372,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 17,
+      "order": 16,
       "priority": "P0",
       "target_id": "f6s",
       "name": "F6S",
@@ -420,7 +396,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 18,
+      "order": 17,
       "priority": "P0",
       "target_id": "favird",
       "name": "Favird",
@@ -444,7 +420,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 19,
+      "order": 18,
       "priority": "P0",
       "target_id": "ai-infinity",
       "name": "AI Infinity",
@@ -468,7 +444,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 20,
+      "order": 19,
       "priority": "P0",
       "target_id": "gpt-forge",
       "name": "Gpt Forge",
@@ -492,7 +468,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 21,
+      "order": 20,
       "priority": "P0",
       "target_id": "nextpedia",
       "name": "Nextpedia",
@@ -516,7 +492,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 22,
+      "order": 21,
       "priority": "P0",
       "target_id": "startup-collections",
       "name": "Startup Collections",
@@ -540,7 +516,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 23,
+      "order": 22,
       "priority": "P0",
       "target_id": "startuptracker",
       "name": "StartupTracker",
@@ -564,7 +540,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 24,
+      "order": 23,
       "priority": "P0",
       "target_id": "the-hack-stack",
       "name": "The Hack Stack",
@@ -588,7 +564,7 @@
       "registry_blocker": ""
     },
     {
-      "order": 25,
+      "order": 24,
       "priority": "P0",
       "target_id": "tools-robingood-com",
       "name": "tools.robingood.com",
@@ -610,23 +586,45 @@
       "auth_scout_command": "node src/cli.js scout \"https://tools.robingood.com/\" --auth-profile \"tools-robingood-com\" --target-id \"tools-robingood-com\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
       "safety_blocker": "",
       "registry_blocker": ""
+    },
+    {
+      "order": 25,
+      "priority": "P0",
+      "target_id": "ai-nav",
+      "name": "AI NAV",
+      "domain": "ainavpro.com",
+      "pricing": "unknown",
+      "risk": "unknown",
+      "auth_profile": "ai-nav",
+      "auth_state_path": "playwright/.auth/ai-nav.storage-state.json",
+      "auth_meta_path": "playwright/.auth/ai-nav.meta.json",
+      "status": "manual_login_required",
+      "next_action": "run_auth_login_command",
+      "ready_for_auth_rescout": "no",
+      "saved_at": "",
+      "size_bytes": 0,
+      "login_url": "https://www.ainavpro.com/contribute",
+      "submit_url": "https://www.ainavpro.com/contribute",
+      "auth_login_command": "node src/cli.js auth login --profile \"ai-nav\" --url \"https://www.ainavpro.com/contribute\"",
+      "auth_status_command": "node src/cli.js auth status --profile \"ai-nav\"",
+      "auth_scout_command": "node src/cli.js scout \"https://www.ainavpro.com/contribute\" --auth-profile \"ai-nav\" --target-id \"ai-nav\" --registry \"resources/targets.canonical.yaml\" --persist --scout-dir \"resources/scout-results\" --update-registry --engine playwright",
+      "safety_blocker": "",
+      "registry_blocker": ""
     }
   ],
   "summary": {
     "source_rows": 25,
     "auth_profiles_found": 0,
-    "auth_profiles_missing": 24,
+    "auth_profiles_missing": 25,
     "missing_auth_profile_rows": 0,
-    "safety_blocked_rows": 1,
+    "safety_blocked_rows": 0,
     "ready_for_auth_rescout_rows": 0,
-    "manual_login_rows": 24,
+    "manual_login_rows": 25,
     "by_status": {
-      "manual_login_required": 24,
-      "blocked_registry_filtered": 1
+      "manual_login_required": 25
     },
     "by_next_action": {
-      "run_auth_login_command": 24,
-      "drop_non_assisted_registry_target": 1
+      "run_auth_login_command": 25
     }
   }
 }

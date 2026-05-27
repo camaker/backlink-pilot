@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "created_at": "2026-05-27T09:53:15.073Z",
+  "created_at": "2026-05-27T09:59:45.543Z",
   "registry": "resources/targets.canonical.yaml",
   "source_queue": "backlink-url/assisted-submission-pack/auth-login-rescout-queue.csv",
   "product": {
@@ -216,36 +216,6 @@
       "auth_login_command": "node src/cli.js auth login --profile \"ai-ailookme\" --url \"https://www.ailookme.com/%e7%bd%91%e5%9d%80%e6%8f%90%e4%ba%a4\""
     },
     {
-      "target_id": "changelog",
-      "name": "Changelog",
-      "domain": "changelog.com",
-      "submit_url": "https://changelog.com/news/submit",
-      "mode": "assisted",
-      "pricing": "unknown",
-      "risk": "unknown",
-      "manual_bucket": "manual_login_then_rescout",
-      "automation_after_human": "rescout_after_saved_login_profile",
-      "auth_profile": "changelog",
-      "auth_state_path": "playwright/.auth/changelog.storage-state.json",
-      "exclusion_reason": "registry_mode_not_assisted:skip",
-      "auth_login_command": "node src/cli.js auth login --profile \"changelog\" --url \"https://changelog.com/news/submit\""
-    },
-    {
-      "target_id": "top-best-alternatives",
-      "name": "Top Best Alternatives",
-      "domain": "topbestalternatives.com",
-      "submit_url": "https://www.topbestalternatives.com/",
-      "mode": "assisted",
-      "pricing": "unknown",
-      "risk": "unknown",
-      "manual_bucket": "manual_login_then_rescout",
-      "automation_after_human": "rescout_after_saved_login_profile",
-      "auth_profile": "top-best-alternatives",
-      "auth_state_path": "playwright/.auth/top-best-alternatives.storage-state.json",
-      "exclusion_reason": "auth_profile_missing",
-      "auth_login_command": "node src/cli.js auth login --profile \"top-best-alternatives\" --url \"https://www.topbestalternatives.com/\""
-    },
-    {
       "target_id": "xinquji-com",
       "name": "新趣集",
       "domain": "xinquji.com",
@@ -274,6 +244,36 @@
       "auth_state_path": "playwright/.auth/betalist-com.storage-state.json",
       "exclusion_reason": "auth_profile_missing",
       "auth_login_command": "node src/cli.js auth login --profile \"betalist-com\" --url \"https://betalist.com/sign_in\""
+    },
+    {
+      "target_id": "mergeek",
+      "name": "Mergeek",
+      "domain": "mergeek.com",
+      "submit_url": "https://mergeek.com/publish_project",
+      "mode": "assisted",
+      "pricing": "free",
+      "risk": "unknown",
+      "manual_bucket": "manual_login_then_rescout",
+      "automation_after_human": "rescout_after_saved_login_profile",
+      "auth_profile": "mergeek",
+      "auth_state_path": "playwright/.auth/mergeek.storage-state.json",
+      "exclusion_reason": "auth_profile_missing",
+      "auth_login_command": "node src/cli.js auth login --profile \"mergeek\" --url \"https://mergeek.com/publish_project\""
+    },
+    {
+      "target_id": "top-best-alternatives",
+      "name": "Top Best Alternatives",
+      "domain": "topbestalternatives.com",
+      "submit_url": "https://www.topbestalternatives.com/",
+      "mode": "assisted",
+      "pricing": "freemium",
+      "risk": "unknown",
+      "manual_bucket": "manual_login_then_rescout",
+      "automation_after_human": "rescout_after_saved_login_profile",
+      "auth_profile": "top-best-alternatives",
+      "auth_state_path": "playwright/.auth/top-best-alternatives.storage-state.json",
+      "exclusion_reason": "auth_profile_missing",
+      "auth_login_command": "node src/cli.js auth login --profile \"top-best-alternatives\" --url \"https://www.topbestalternatives.com/\""
     },
     {
       "target_id": "ai-tool-guru",
@@ -559,21 +559,6 @@
       "auth_state_path": "playwright/.auth/iforai.storage-state.json",
       "exclusion_reason": "auth_profile_missing",
       "auth_login_command": "node src/cli.js auth login --profile \"iforai\" --url \"https://iforai.com/submit_website\""
-    },
-    {
-      "target_id": "mergeek",
-      "name": "Mergeek",
-      "domain": "mergeek.com",
-      "submit_url": "https://mergeek.com/publish_project",
-      "mode": "assisted",
-      "pricing": "unknown",
-      "risk": "unknown",
-      "manual_bucket": "manual_login_then_rescout",
-      "automation_after_human": "rescout_after_saved_login_profile",
-      "auth_profile": "mergeek",
-      "auth_state_path": "playwright/.auth/mergeek.storage-state.json",
-      "exclusion_reason": "auth_profile_missing",
-      "auth_login_command": "node src/cli.js auth login --profile \"mergeek\" --url \"https://mergeek.com/publish_project\""
     },
     {
       "target_id": "offpagesavvy",
@@ -1147,15 +1132,14 @@
     }
   ],
   "summary": {
-    "source_rows": 70,
+    "source_rows": 69,
     "eligible_rows": 0,
     "queued_rows": 0,
-    "excluded_rows": 70,
+    "excluded_rows": 69,
     "auth_profiles_found": 0,
     "auth_profiles_missing": 69,
     "by_exclusion_reason": {
-      "auth_profile_missing": 69,
-      "registry_mode_not_assisted:skip": 1
+      "auth_profile_missing": 69
     }
   }
 }

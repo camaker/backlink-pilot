@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "created_at": "2026-05-27T09:53:12.623Z",
+  "created_at": "2026-05-27T09:59:43.053Z",
   "registry": "resources/targets.canonical.yaml",
   "source_queue": "backlink-url/assisted-submission-pack/auth-login-rescout-queue.csv",
   "product": {
@@ -128,16 +128,14 @@
     "summary": "backlink-url/assisted-submission-pack/auth-login-plan-batches-summary.json"
   },
   "summary": {
-    "source_rows": 70,
-    "auth_login_rows": 70,
+    "source_rows": 69,
+    "auth_login_rows": 69,
     "pending_rows": 69,
     "completed_rows": 0,
-    "excluded_rows": 1,
+    "excluded_rows": 0,
     "auth_profiles_found": 0,
     "auth_profiles_missing": 69,
-    "by_exclusion_reason": {
-      "registry_mode_not_assisted:skip": 1
-    },
+    "by_exclusion_reason": {},
     "batch_size": 25,
     "batch_count": 3,
     "generated_target_rows": 69,
