@@ -1130,6 +1130,7 @@ program
   .option('--results <path>', 'run-plan results.jsonl path')
   .option('--verification <path>', 'verify-results JSONL path')
   .option('--registry <path>', 'Canonical registry path')
+  .option('--backlog <path>', 'Backlog lanes summary JSON path')
   .option('--json', 'Output as JSON')
   .action(async (opts) => {
     await reportCommand(opts);
@@ -1140,6 +1141,7 @@ program
   .description('Run a safe batch workflow: plan, optional scout, dry-run or execute, optional verify, report')
   .option('--run-dir <path>', 'Directory for all batch artifacts')
   .option('--registry <path>', 'Canonical registry path')
+  .option('--backlog <path>', 'Backlog lanes summary JSON path for report synthesis')
   .option('--config <path>', 'Config file path')
   .option('--product-config <path>', 'Product config path')
   .option('--product-url <url>', 'Product URL used for verification when config is not embedded in the plan')
