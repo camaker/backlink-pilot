@@ -41,6 +41,12 @@ import {
   writeAuthLoginTriage,
 } from '../src/targets/auth-login-triage.js';
 import {
+  authResidualShrinkCsv,
+  authResidualSurfaceEvidenceCsv,
+  buildAuthResidualShrink,
+  writeAuthResidualShrink,
+} from '../src/targets/auth-residual-shrink.js';
+import {
   authLoginNextCsv,
   buildAuthLoginNext,
   authLoginStatusCsv,
@@ -3922,6 +3928,223 @@ describe('auth login triage', () => {
       assert.equal(parsed.summary.by_suggested_pre_login_action.dedupe_same_site_before_login, 2);
       assert.equal(existsSync(written.triage_md), true);
       assert.equal(existsSync(written.pricing_review_queue_csv), true);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe('auth residual shrink', () => {
+  it('builds read-only shrink decisions for dedupe, registry recheck, and manual surface review rows', async () => {
+    const dir = tempDir();
+    try {
+      const triagePath = join(dir, 'auth-login-triage.json');
+      const dedupeQueue = join(dir, 'auth-login-dedupe-before-login.csv');
+      const registryQueue = join(dir, 'auth-login-registry-recheck-before-login.csv');
+      const manualQueue = join(dir, 'auth-login-manual-surface-review-before-login.csv');
+      const scoutDir = join(dir, 'scout-results');
+      const registry = join(dir, 'registry.yaml');
+      const outputDir = join(dir, 'out');
+      mkdirSync(scoutDir, { recursive: true });
+
+      writeFileSync(triagePath, JSON.stringify({
+        source_queue: 'queue.csv',
+        files: {
+          dedupe_queue_csv: dedupeQueue.replace(/\\/g, '/'),
+          registry_recheck_queue_csv: registryQueue.replace(/\\/g, '/'),
+          manual_surface_review_queue_csv: manualQueue.replace(/\\/g, '/'),
+        },
+      }, null, 2));
+
+      writeFileSync(dedupeQueue, [
+        'triage_order,suggested_pre_login_action,priority,target_id,name,domain,pricing,risk,status,source,submit_url,final_url,audit_flags,safety_blockers,reason,duplicate_group_key,duplicate_group_size,related_target_ids,notes',
+        '1,dedupe_same_site_before_login,P0,beta-list,Beta List,betalist.com,free,unknown,auth_required,notion,https://betalist.com/submissions/new,https://betalist.com/sign_in,duplicate_domain_candidate,auth_or_oauth_required,auth_signal,betalist.com,3,betalist-com; betalist,',
+        '2,dedupe_same_site_before_login,P0,betalist-com,https://betalist.com,betalist.com,unknown,unknown,auth_required,91wink,https://betalist.com/,https://betalist.com/sign_in,duplicate_domain_candidate,auth_or_oauth_required,auth_signal,betalist.com,3,beta-list; betalist,',
+        '3,dedupe_same_site_before_login,P1,betalist,Betalist,betalist.com,unknown,medium,new,targets.yaml,https://betalist.com/users/sign_in,,duplicate_domain_candidate,auth_or_oauth_required,auth_or_manual_signal,betalist.com,3,beta-list; betalist-com,',
+      ].join('\n'));
+
+      writeFileSync(registryQueue, [
+        'triage_order,suggested_pre_login_action,priority,target_id,name,domain,pricing,risk,status,source,submit_url,final_url,audit_flags,safety_blockers,reason,duplicate_group_key,duplicate_group_size,related_target_ids,notes',
+        '1,registry_recheck_before_login,P0,mergeek,Mergeek,mergeek.com,free,unknown,auth_required,targets.yaml,https://mergeek.com/publish_project,https://mergeek.com/publish_project,classification_mismatch; required_fields_unmapped,auth_or_oauth_required; required_fields_unmapped,auth_signal; classification_mismatch:assisted->needs_scout,,,,',
+        '2,registry_recheck_before_login,P0,top-best-alternatives,Top Best Alternatives,topbestalternatives.com,freemium,unknown,auth_required,targets.yaml,https://www.topbestalternatives.com/,https://www.topbestalternatives.com/,classification_mismatch,auth_or_oauth_required,auth_signal; classification_mismatch:assisted->assisted,,,,',
+      ].join('\n'));
+
+      writeFileSync(manualQueue, [
+        'triage_order,suggested_pre_login_action,priority,target_id,name,domain,pricing,risk,status,source,submit_url,final_url,audit_flags,safety_blockers,reason,duplicate_group_key,duplicate_group_size,related_target_ids,notes',
+        '1,manual_surface_review_before_login,P1,orbic-ai,Orbic AI,orbic.ai,free,medium,new,notion,https://orbic.ai/login?callbackUrl=https%3A%2F%2Forbic.ai%2Fsubmit%2Ftools,,status_new; no_persisted_form_evidence; manual_surface_review_required,auth_or_oauth_required; manual_surface_review_required; no_persisted_form_evidence,auth_or_manual_signal,,,,',
+        '2,manual_surface_review_before_login,P1,promoteproject,PromoteProject,promoteproject.com,free,medium,new,notion,https://www.promoteproject.com/login,,status_new; no_persisted_form_evidence; manual_surface_review_required,auth_or_oauth_required; manual_surface_review_required; no_persisted_form_evidence,auth_or_manual_signal,,,,',
+        '3,manual_surface_review_before_login,P1,tool-ai,Tool AI,toolai.io,free,medium,new,notion,https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit,,status_new; no_persisted_form_evidence; manual_surface_review_required,auth_or_oauth_required; manual_surface_review_required; no_persisted_form_evidence,auth_or_manual_signal,,,,',
+      ].join('\n'));
+
+      writeFileSync(join(scoutDir, 'beta-list.json'), JSON.stringify({
+        target_id: 'beta-list',
+        submit_url: 'https://betalist.com/submissions/new',
+        final_url: 'https://betalist.com/sign_in',
+        http_status: 200,
+        submit_links: [{ text: 'Submit Startup', href: 'https://betalist.com/sign_in' }],
+        signals: { login_required: true, oauth_available: true, captcha: false, payment: false },
+        forms: [{ fields: [{ required: false, mapped_to: 'product.email' }], submit_buttons: [{ text: 'Sign in with email' }] }],
+      }, null, 2));
+      writeFileSync(join(scoutDir, 'betalist-com.json'), JSON.stringify({
+        target_id: 'betalist-com',
+        submit_url: 'https://betalist.com/',
+        final_url: 'https://betalist.com/sign_in',
+        http_status: 200,
+        submit_links: [{ text: 'Submit startup', href: 'https://betalist.com/submit' }],
+        signals: { login_required: true, oauth_available: true, captcha: false, payment: false },
+        forms: [{ fields: [{ required: false, mapped_to: 'product.email' }], submit_buttons: [{ text: 'Sign in with email' }] }],
+      }, null, 2));
+      writeFileSync(join(scoutDir, 'mergeek.json'), JSON.stringify({
+        target_id: 'mergeek',
+        submit_url: 'https://mergeek.com/publish_project',
+        final_url: 'https://mergeek.com/publish_project',
+        http_status: 200,
+        submit_links: [],
+        signals: { login_required: false, oauth_available: false, captcha: false, payment: false },
+        forms: [{
+          fields: [
+            { required: true, mapped_to: 'product.name' },
+            { required: true, mapped_to: 'product.url' },
+            { required: true, mapped_to: '' },
+            { required: true, mapped_to: 'product.email' },
+          ],
+          submit_buttons: [{ text: '提交产品，开启首发之旅' }],
+        }],
+      }, null, 2));
+      writeFileSync(join(scoutDir, 'top-best-alternatives.json'), JSON.stringify({
+        target_id: 'top-best-alternatives',
+        submit_url: 'https://www.topbestalternatives.com/',
+        final_url: 'https://www.topbestalternatives.com/',
+        http_status: 200,
+        submit_links: [],
+        signals: { login_required: false, oauth_available: true, captcha: false, payment: false },
+        forms: [{
+          fields: [{ name: 's', placeholder: 'Find alternatives to...', required: false, mapped_to: '' }],
+          submit_buttons: [{ text: 'Search' }],
+        }],
+      }, null, 2));
+
+      writeFileSync(registry, `
+version: 1
+targets:
+  - id: mergeek
+    domain: mergeek.com
+    submit_url: https://mergeek.com/publish_project
+    source_meta:
+      scout_classification_mismatch: true
+  - id: top-best-alternatives
+    domain: topbestalternatives.com
+    submit_url: https://www.topbestalternatives.com/
+    source_meta:
+      scout_classification_mismatch: true
+`, 'utf-8');
+
+      const fetchMap = new Map([
+        ['https://orbic.ai/login?callbackUrl=https%3A%2F%2Forbic.ai%2Fsubmit%2Ftools', {
+          ok: true,
+          status: 200,
+          url: 'https://orbic.ai/login?callbackUrl=https%3A%2F%2Forbic.ai%2Fsubmit%2Ftools',
+          headers: new Map([['content-type', 'text/html']]),
+          text: async () => '<html><head><title>Login</title></head><body>Sign in with Google</body></html>',
+        }],
+        ['https://orbic.ai/submit/tools', {
+          ok: true,
+          status: 200,
+          url: 'https://orbic.ai/submit/tools',
+          headers: new Map([['content-type', 'text/html']]),
+          text: async () => '<html><head><title>Submit Tool</title></head><body>Submit your tool directory</body></html>',
+        }],
+        ['https://orbic.ai/', {
+          ok: true,
+          status: 200,
+          url: 'https://orbic.ai/',
+          headers: new Map([['content-type', 'text/html']]),
+          text: async () => '<html><body>Directory</body></html>',
+        }],
+        ['https://www.promoteproject.com/login', {
+          ok: true,
+          status: 200,
+          url: 'https://www.promoteproject.com/login',
+          headers: new Map([['content-type', 'text/html']]),
+          text: async () => '<html><head><title>Login</title></head><body>Log in to submit startup</body></html>',
+        }],
+        ['https://www.promoteproject.com/', {
+          ok: true,
+          status: 200,
+          url: 'https://www.promoteproject.com/',
+          headers: new Map([['content-type', 'text/html']]),
+          text: async () => '<html><head><title>PromoteProject</title></head><body>Startup growth platform</body></html>',
+        }],
+        ['https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit', {
+          ok: true,
+          status: 200,
+          url: 'https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit',
+          headers: new Map([['content-type', 'text/html']]),
+          text: async () => '<html><head><title>Login</title></head><body>Login to continue</body></html>',
+        }],
+        ['https://toolai.io/en/submit', {
+          ok: true,
+          status: 200,
+          url: 'https://toolai.io/en/submit',
+          headers: new Map([['content-type', 'text/html']]),
+          text: async () => '<html><head><title>Submit</title></head><body>Submit your AI tool</body></html>',
+        }],
+        ['https://toolai.io/', {
+          ok: true,
+          status: 200,
+          url: 'https://toolai.io/',
+          headers: new Map([['content-type', 'text/html']]),
+          text: async () => '<html><body>AI tools</body></html>',
+        }],
+      ]);
+      const fetchFn = async (url) => {
+        const response = fetchMap.get(url);
+        if (!response) throw new Error(`unexpected_url:${url}`);
+        return {
+          ok: response.ok,
+          status: response.status,
+          url: response.url,
+          headers: { get: (key) => response.headers.get(String(key).toLowerCase()) || response.headers.get(key) || '' },
+          text: response.text,
+        };
+      };
+
+      const report = await buildAuthResidualShrink(triagePath, {
+        registry,
+        scoutDir,
+        fetchFn,
+      });
+      const written = writeAuthResidualShrink(report, {
+        outputDir,
+        name: 'auth-residual-shrink',
+      });
+      const parsed = JSON.parse(readFileSync(written.residual_json, 'utf-8'));
+      const residualRows = parseCsv(readFileSync(written.residual_csv, 'utf-8'));
+      const evidenceRows = parseCsv(readFileSync(written.manual_surface_evidence_csv, 'utf-8'));
+
+      assert.equal(report.summary.rows, 8);
+      assert.equal(report.summary.dedupe_rows, 3);
+      assert.equal(report.summary.registry_recheck_rows, 2);
+      assert.equal(report.summary.manual_surface_review_rows, 3);
+      assert.equal(report.summary.manual_surface_checked_urls, 8);
+      assert.equal(report.summary.by_suggested_resolution.keep_primary_auth_candidate, 1);
+      assert.equal(report.summary.by_suggested_resolution.drop_duplicate_before_login, 2);
+      assert.equal(report.summary.by_suggested_resolution.move_out_of_auth_to_needs_scout, 1);
+      assert.equal(report.summary.by_suggested_resolution.move_out_of_auth_to_manual_surface_review, 1);
+      assert.equal(report.summary.by_suggested_resolution.keep_in_auth_queue_after_surface_review, 3);
+      assert.equal(report.rows.find(row => row.target_id === 'beta-list').suggested_resolution, 'keep_primary_auth_candidate');
+      assert.equal(report.rows.find(row => row.target_id === 'betalist-com').suggested_resolution, 'drop_duplicate_before_login');
+      assert.equal(report.rows.find(row => row.target_id === 'mergeek').suggested_resolution, 'move_out_of_auth_to_needs_scout');
+      assert.equal(report.rows.find(row => row.target_id === 'top-best-alternatives').suggested_resolution, 'move_out_of_auth_to_manual_surface_review');
+      assert.equal(report.rows.find(row => row.target_id === 'orbic-ai').suggested_resolution, 'keep_in_auth_queue_after_surface_review');
+      assert.equal(report.rows.find(row => row.target_id === 'promoteproject').suggested_resolution, 'keep_in_auth_queue_after_surface_review');
+      assert.equal(report.rows.find(row => row.target_id === 'tool-ai').suggested_resolution, 'keep_in_auth_queue_after_surface_review');
+      assert.equal(parsed.summary.rows, 8);
+      assert.equal(residualRows.length, 8);
+      assert.equal(evidenceRows.length, 8);
+      assert.equal(existsSync(written.residual_md), true);
+      assert.match(authResidualShrinkCsv(report), /suggested_resolution/);
+      assert.match(authResidualSurfaceEvidenceCsv(report.manual_surface_evidence_rows), /url_kind/);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

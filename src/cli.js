@@ -18,6 +18,7 @@ import {
   authLoginOperatorPackCommand,
   authLoginAuditCommand,
   authLoginTriageCommand,
+  authResidualShrinkCommand,
   authLoginPlanCommand,
   authLoginPlanBatchesCommand,
   authLoginStatusCommand,
@@ -618,6 +619,20 @@ targets
   .option('--json', 'Output full triage as JSON')
   .action(async (queue, opts) => {
     await authLoginTriageCommand(queue, opts);
+  });
+
+targets
+  .command('auth-residual-shrink <triage>')
+  .description('Build a read-only shrink review for the residual auth pre-login queues: dedupe, registry recheck, and manual surface review')
+  .option('--registry <path>', 'Canonical registry path')
+  .option('--scout-dir <path>', 'Directory containing persisted scout JSON results')
+  .option('--output-dir <path>', 'Directory to write residual shrink artifacts')
+  .option('--name <name>', 'Base filename for residual shrink outputs', 'auth-residual-shrink')
+  .option('--timeout-ms <n>', 'Per-URL fetch timeout for manual surface GET-only evidence', '15000')
+  .option('--user-agent <value>', 'HTTP user-agent for manual surface GET-only evidence')
+  .option('--json', 'Output full residual shrink report as JSON')
+  .action(async (triage, opts) => {
+    await authResidualShrinkCommand(triage, opts);
   });
 
 targets

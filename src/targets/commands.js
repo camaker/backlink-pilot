@@ -36,6 +36,10 @@ import {
   writeAuthLoginTriage,
 } from './auth-login-triage.js';
 import {
+  buildAuthResidualShrink,
+  writeAuthResidualShrink,
+} from './auth-residual-shrink.js';
+import {
   buildAuthLoginNext,
   buildAuthLoginStatus,
   writeAuthLoginNext,
@@ -967,6 +971,40 @@ export async function authLoginTriageCommand(queuePath, opts = {}) {
   console.log(`Triage CSV: ${written.triage_csv}`);
   console.log(`Pricing review queue CSV: ${written.pricing_review_queue_csv}`);
   console.log(`Direct login queue CSV: ${written.direct_login_queue_csv}`);
+  return report;
+}
+
+export async function authResidualShrinkCommand(triagePath, opts = {}) {
+  const report = await buildAuthResidualShrink(triagePath, {
+    registry: opts.registry || DEFAULT_REGISTRY_FILE,
+    scoutDir: opts.scoutDir,
+    timeoutMs: opts.timeoutMs,
+    userAgent: opts.userAgent,
+  });
+  const written = writeAuthResidualShrink(report, {
+    outputDir: opts.outputDir,
+    name: opts.name,
+  });
+
+  if (opts.json) {
+    console.log(JSON.stringify({ ...report, files: written }, null, 2));
+    return report;
+  }
+
+  console.log(`Triage: ${report.source_triage}`);
+  console.log(`Rows: ${report.summary.rows}`);
+  console.log(`Dedupe rows: ${report.summary.dedupe_rows}`);
+  console.log(`Registry recheck rows: ${report.summary.registry_recheck_rows}`);
+  console.log(`Manual surface review rows: ${report.summary.manual_surface_review_rows}`);
+  console.log(`Shrink auth queue rows: ${report.summary.shrink_auth_rows}`);
+  console.log(`Keep auth rows: ${report.summary.keep_auth_rows}`);
+  console.log(`Needs manual review rows: ${report.summary.needs_manual_review_rows}`);
+  console.log(`Manual surface checked URLs: ${report.summary.manual_surface_checked_urls}`);
+  console.log(`Suggested resolutions: ${JSON.stringify(report.summary.by_suggested_resolution)}`);
+  console.log(`Output dir: ${written.output_dir}`);
+  console.log(`Residual CSV: ${written.residual_csv}`);
+  console.log(`Manual surface evidence CSV: ${written.manual_surface_evidence_csv}`);
+  console.log('Policy: read-only residual shrink only; no login, no submission, no registry writes.');
   return report;
 }
 
