@@ -430,7 +430,8 @@ targets:
       assert.ok(ids.includes('work_pricing_review_backlog'));
       assert.match(report.next_actions.find(action => action.id === 'work_auth_manual_login_backlog').command, /targets backlog-worker "worker-02"/);
       assert.match(report.next_actions.find(action => action.id === 'work_auth_needs_scout_backlog').command, /scout|targets backlog-worker|targets backlog-lane/);
-      assert.match(report.next_actions.find(action => action.id === 'work_directory_coverage_backlog').command, /validate-coverage-review-batch|targets backlog-worker-exec|targets backlog-lane/);
+      assert.match(report.next_actions.find(action => action.id === 'work_directory_coverage_backlog').command, /targets backlog-lane-exec "coverage-review-p0-001"/);
+      assert.match(report.next_actions.find(action => action.id === 'work_pricing_review_backlog').command, /targets backlog-lane-exec "pricing-review-001"/);
       assert.equal(report.backlog_freshness.is_stale, false);
       assert.match(formatted, /Manual backlog/);
       assert.match(formatted, /Auth manual login: 20/);

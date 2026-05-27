@@ -309,6 +309,12 @@ function workerExecCommand(backlogSummary = {}, worker = null) {
   return `node src/cli.js targets backlog-worker-exec ${shellQuote(worker.worker_id)} --backlog ${shellQuote(normalizePath(backlogSummaryPath))}`;
 }
 
+function laneExecCommand(backlogSummary = {}, lane = null) {
+  if (!lane) return '';
+  const backlogSummaryPath = backlogSummary?.files?.summary_json || DEFAULT_BACKLOG_PATH;
+  return `node src/cli.js targets backlog-lane-exec ${shellQuote(lane.lane_id)} --backlog ${shellQuote(normalizePath(backlogSummaryPath))}`;
+}
+
 function laneFollowupCommand(backlogSummary = {}, lane = null) {
   if (!lane) return '';
   const files = laneFileIndex(backlogSummary).get(lane.lane_id) || {};
@@ -519,7 +525,8 @@ function buildNextActions(runSummary, verificationSummary, registrySummary, back
     const assigned = describeLaneAssignment(backlogSummary, 'coverage_manual_review_p0').lane
       ? describeLaneAssignment(backlogSummary, 'coverage_manual_review_p0')
       : describeLaneAssignment(backlogSummary, 'coverage_manual_review_p2');
-    const command = workerExecCommand(backlogSummary, assigned.worker) ||
+    const command = laneExecCommand(backlogSummary, assigned.lane) ||
+      workerExecCommand(backlogSummary, assigned.worker) ||
       laneFollowupCommand(backlogSummary, assigned.lane) ||
       `node src/cli.js targets backlog-lanes --output-dir ${normalizePath(backlogDir)}`;
     actions.push(action(
@@ -533,7 +540,8 @@ function buildNextActions(runSummary, verificationSummary, registrySummary, back
 
   if ((backlogWorkflow.pricing_manual_rows || 0) > 0) {
     const assigned = describeLaneAssignment(backlogSummary, 'pricing_review_manual');
-    const command = workerExecCommand(backlogSummary, assigned.worker) ||
+    const command = laneExecCommand(backlogSummary, assigned.lane) ||
+      workerExecCommand(backlogSummary, assigned.worker) ||
       laneFollowupCommand(backlogSummary, assigned.lane) ||
       `node src/cli.js targets backlog-lanes --output-dir ${normalizePath(backlogDir)}`;
     actions.push(action(
