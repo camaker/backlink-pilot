@@ -32,6 +32,11 @@ import {
   writeAuthLoginPlanBatches,
 } from '../src/targets/auth-login-plan.js';
 import {
+  buildAuthLoginAudit,
+  authLoginAuditCsv,
+  writeAuthLoginAudit,
+} from '../src/targets/auth-login-audit.js';
+import {
   authLoginNextCsv,
   buildAuthLoginNext,
   authLoginStatusCsv,
@@ -3775,6 +3780,48 @@ targets:
       assert.equal(summary.files.batches.length, 2);
       assert.equal(existsSync(join(outputDir, 'auth-login-plan-batch-001.csv')), true);
       assert.equal(existsSync(join(outputDir, 'auth-login-plan-batch-002.csv')), true);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe('auth login audit', () => {
+  it('finds duplicate domains, pricing unknown rows, and shared form hosts without mutating the queue', () => {
+    const dir = tempDir();
+    try {
+      const queue = join(dir, 'auth-login-rescout-queue.csv');
+      const outputDir = join(dir, 'out');
+      writeFileSync(queue, [
+        'rank,priority,priority_score,target_id,name,domain,mode,status,pricing,risk,lang,manual_bucket,automation_after_human,submission_policy,safety_blockers,recommended_next_step,auth_profile,auth_login_command,auth_scout_command,submit_url,final_url,root_url,last_scouted_at,last_submitted_at,form_count,field_count,required_fields,unmapped_required_fields,submit_button_count,source,reason,notes',
+        '1,P0,270,beta-list,Beta List,betalist.com,assisted,auth_required,free,low,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required,login,beta-list,login,scout,https://betalist.com/submissions/new,https://betalist.com/sign_in,https://betalist.com,,,,,,,,notion,auth_signal,',
+        '2,P0,260,betalist-com,https://betalist.com,betalist.com,assisted,auth_required,unknown,low,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,pricing_unknown_verify_free_path; auth_or_oauth_required,login,betalist-com,login,scout,https://betalist.com/,https://betalist.com/sign_in,https://betalist.com,,,,,,,,91wink,auth_signal,',
+        '3,P0,250,ai-infinity,AI Infinity,forms.gle,assisted,auth_required,free,low,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required; no_persisted_form_evidence,login,ai-infinity,login,scout,https://forms.gle/a,https://forms.gle/a,https://forms.gle,,,,,,,,notion,auth_signal,',
+        '4,P0,240,gpt-forge,GPT Forge,forms.gle,assisted,new,free,low,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required; no_persisted_form_evidence,login,gpt-forge,login,scout,https://forms.gle/b,https://forms.gle/b,https://forms.gle,,,,,,,,notion,auth_signal; classification_mismatch:assisted->needs_scout,',
+      ].join('\n'));
+
+      const report = buildAuthLoginAudit(queue);
+      const written = writeAuthLoginAudit(report, { outputDir, name: 'auth-login-audit' });
+      const parsed = JSON.parse(readFileSync(written.audit_json, 'utf-8'));
+
+      assert.equal(report.summary.rows, 4);
+      assert.equal(report.summary.duplicate_domain_groups, 1);
+      assert.equal(report.summary.shared_form_host_groups, 1);
+      assert.equal(report.summary.pricing_unknown_rows, 1);
+      assert.equal(report.summary.classification_mismatch_rows, 1);
+      assert.equal(report.summary.by_suggested_pre_login_action.dedupe_same_site_before_login, 2);
+      assert.equal(report.summary.by_suggested_pre_login_action.manual_login_then_rescout, 1);
+      assert.equal(report.summary.by_suggested_pre_login_action.registry_recheck_before_login, 1);
+      assert.equal(report.rows[0].suggested_pre_login_action, 'dedupe_same_site_before_login');
+      assert.equal(report.rows[1].duplicate_group_size, '2');
+      assert.equal(report.rows[2].audit_flags.includes('shared_form_host'), true);
+      assert.equal(report.rows[2].audit_flags.includes('duplicate_domain_candidate'), false);
+      assert.equal(report.rows[3].suggested_pre_login_action, 'registry_recheck_before_login');
+      assert.equal(parsed.summary.duplicate_domain_groups, 1);
+      assert.equal(existsSync(written.audit_csv), true);
+      assert.equal(existsSync(written.audit_json), true);
+      assert.equal(existsSync(written.audit_md), true);
+      assert.match(authLoginAuditCsv(report.rows), /suggested_pre_login_action/);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

@@ -28,6 +28,10 @@ import {
   writeAuthLoginPlanBatches,
 } from './auth-login-plan.js';
 import {
+  buildAuthLoginAudit,
+  writeAuthLoginAudit,
+} from './auth-login-audit.js';
+import {
   buildAuthLoginNext,
   buildAuthLoginStatus,
   writeAuthLoginNext,
@@ -903,6 +907,32 @@ export async function authLoginPlanBatchesCommand(queuePath, opts = {}) {
     console.log(`${batch.batch_id}\trows=${batch.target_rows}\tremaining=${batch.remaining_after_batch}\t${batch.output}`);
   }
 
+  return report;
+}
+
+export async function authLoginAuditCommand(queuePath, opts = {}) {
+  const report = buildAuthLoginAudit(queuePath);
+  const written = writeAuthLoginAudit(report, {
+    outputDir: opts.outputDir,
+    name: opts.name,
+  });
+
+  if (opts.json) {
+    console.log(JSON.stringify({ ...report, files: written }, null, 2));
+    return report;
+  }
+
+  console.log(`Queue: ${report.source_queue}`);
+  console.log(`Rows: ${report.summary.rows}`);
+  console.log(`Duplicate domain groups: ${report.summary.duplicate_domain_groups}`);
+  console.log(`Shared form host groups: ${report.summary.shared_form_host_groups}`);
+  console.log(`Pricing unknown rows: ${report.summary.pricing_unknown_rows}`);
+  console.log(`Classification mismatch rows: ${report.summary.classification_mismatch_rows}`);
+  console.log(`Evidence gap rows: ${report.summary.evidence_gap_rows}`);
+  console.log(`Suggested actions: ${JSON.stringify(report.summary.by_suggested_pre_login_action)}`);
+  console.log(`Output dir: ${written.output_dir}`);
+  console.log(`Audit CSV: ${written.audit_csv}`);
+  console.log(`Audit Markdown: ${written.audit_md}`);
   return report;
 }
 

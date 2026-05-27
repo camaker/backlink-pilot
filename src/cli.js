@@ -16,6 +16,7 @@ import {
   assistedSubmissionPackCommand,
   authLoginNextCommand,
   authLoginOperatorPackCommand,
+  authLoginAuditCommand,
   authLoginPlanCommand,
   authLoginPlanBatchesCommand,
   authLoginStatusCommand,
@@ -594,6 +595,16 @@ targets
   .option('--json', 'Output full batch summary as JSON')
   .action(async (queue, opts) => {
     await authLoginPlanBatchesCommand(queue, opts);
+  });
+
+targets
+  .command('auth-login-audit <queue>')
+  .description('Build a read-only audit that identifies auth login rows better handled by dedupe, pricing review, or registry recheck first')
+  .option('--output-dir <path>', 'Directory to write audit artifacts')
+  .option('--name <name>', 'Base filename for audit outputs', 'auth-login-audit')
+  .option('--json', 'Output full audit as JSON')
+  .action(async (queue, opts) => {
+    await authLoginAuditCommand(queue, opts);
   });
 
 targets
