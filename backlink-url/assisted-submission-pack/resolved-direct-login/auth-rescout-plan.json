@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "created_at": "2026-05-27T12:17:16.074Z",
+  "created_at": "2026-05-27T12:38:42.602Z",
   "registry": "resources/targets.canonical.yaml",
   "source_queue": "backlink-url/assisted-submission-pack/resolved-auth-login/auth-login-resolved-direct-login-queue.csv",
   "product": {

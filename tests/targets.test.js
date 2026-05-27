@@ -51,6 +51,9 @@ import {
   writeAuthResidualResolve,
 } from '../src/targets/auth-residual-resolve.js';
 import {
+  runAuthResidualRebuild,
+} from '../src/targets/auth-residual-rebuild.js';
+import {
   authLoginNextCsv,
   buildAuthLoginNext,
   authLoginStatusCsv,
@@ -4210,6 +4213,109 @@ describe('auth residual resolve', () => {
       assert.deepEqual(droppedRows.map(row => row.target_id), ['betalist-com']);
       assert.equal(summary.summary.resolved_direct_login_rows, 5);
       assert.equal(existsSync(written.summary_md), true);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('rebuilds downstream batch, next-login, operator-pack, and refresh artifacts from residual decisions', () => {
+    const dir = tempDir();
+    try {
+      const sourceQueue = join(dir, 'auth-login-rescout-queue.csv');
+      const triagePath = join(dir, 'auth-login-triage.json');
+      const residualPath = join(dir, 'auth-residual-shrink.json');
+      const registry = join(dir, 'registry.yaml');
+      const authDir = join(dir, 'auth');
+      const resolveOutputDir = join(dir, 'resolved-auth');
+      const rebuildOutputDir = join(dir, 'rebuilt');
+      mkdirSync(authDir, { recursive: true });
+
+      writeFileSync(sourceQueue, [
+        'rank,priority,priority_score,target_id,name,domain,mode,status,pricing,risk,lang,manual_bucket,automation_after_human,submission_policy,safety_blockers,recommended_next_step,auth_profile,auth_login_command,auth_scout_command,submit_url,final_url,root_url,last_scouted_at,last_submitted_at,form_count,field_count,required_fields,unmapped_required_fields,submit_button_count,source,reason,notes',
+        '1,P0,315,beta-list,Beta List,betalist.com,assisted,auth_required,free,unknown,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required,login,beta-list,node src/cli.js auth login --profile "beta-list" --url "https://betalist.com/sign_in",node src/cli.js scout "https://betalist.com/submissions/new" --auth-profile "beta-list",https://betalist.com/submissions/new,https://betalist.com/sign_in,https://betalist.com/,2026-05-22T14:54:22.927Z,,2,5,0,0,2,notion,auth_signal,',
+        '2,P0,315,chatgptdemo,ChatGPT demo,chatgptdemo.com,assisted,auth_required,free,unknown,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required,login,chatgptdemo,node src/cli.js auth login --profile "chatgptdemo" --url "https://chatgptdemo.com/submit-new-ai-tool",node src/cli.js scout "https://chatgptdemo.com/submit-new-ai-tool" --auth-profile "chatgptdemo",https://chatgptdemo.com/submit-new-ai-tool,https://chatgptdemo.com/submit-new-ai-tool,https://chatgptdemo.com/,2026-05-22T15:01:30.932Z,,3,9,0,0,3,targets.yaml,auth_signal,',
+        '3,P1,210,promoteproject,PromoteProject,promoteproject.com,assisted,new,free,medium,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required; manual_surface_review_required; no_persisted_form_evidence,login,promoteproject,node src/cli.js auth login --profile "promoteproject" --url "https://www.promoteproject.com/login",node src/cli.js scout "https://www.promoteproject.com/login" --auth-profile "promoteproject",https://www.promoteproject.com/login,,https://www.promoteproject.com/,,,0,0,0,0,0,notion,auth_or_manual_signal,',
+        '4,P0,280,mergeek,Mergeek,mergeek.com,assisted,auth_required,free,unknown,zh,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required; required_fields_unmapped,login,mergeek,node src/cli.js auth login --profile "mergeek" --url "https://mergeek.com/publish_project",node src/cli.js scout "https://mergeek.com/publish_project" --auth-profile "mergeek",https://mergeek.com/publish_project,https://mergeek.com/publish_project,https://mergeek.com/,2026-05-23T03:38:04.478Z,,1,5,4,1,1,targets.yaml,auth_signal; classification_mismatch:assisted->needs_scout,',
+        '5,P1,210,orbic-ai,Orbic AI,orbic.ai,assisted,new,free,medium,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required; manual_surface_review_required; no_persisted_form_evidence,login,orbic-ai,node src/cli.js auth login --profile "orbic-ai" --url "https://orbic.ai/login?callbackUrl=https%3A%2F%2Forbic.ai%2Fsubmit%2Ftools",node src/cli.js scout "https://orbic.ai/login?callbackUrl=https%3A%2F%2Forbic.ai%2Fsubmit%2Ftools" --auth-profile "orbic-ai",https://orbic.ai/login?callbackUrl=https%3A%2F%2Forbic.ai%2Fsubmit%2Ftools,,https://orbic.ai/,,,0,0,0,0,0,notion,auth_or_manual_signal,',
+      ].join('\n'));
+
+      writeFileSync(triagePath, JSON.stringify({
+        source_queue: sourceQueue.replace(/\\/g, '/'),
+        queues: {
+          direct_login: [
+            { target_id: 'chatgptdemo' },
+          ],
+        },
+      }, null, 2));
+
+      writeFileSync(residualPath, JSON.stringify({
+        source_triage: triagePath.replace(/\\/g, '/'),
+        source_queue: sourceQueue.replace(/\\/g, '/'),
+        rows: [
+          { review_type: 'dedupe', target_id: 'beta-list', suggested_resolution: 'keep_primary_auth_candidate', resolution_bucket: 'keep_auth', notes: 'keep canonical' },
+          { review_type: 'registry_recheck', target_id: 'mergeek', suggested_resolution: 'move_out_of_auth_to_needs_scout', resolution_bucket: 'shrink_auth_queue', notes: 'needs scout' },
+          { review_type: 'manual_surface_review', target_id: 'orbic-ai', suggested_resolution: 'manual_surface_review_required_continue', resolution_bucket: 'needs_manual_review', notes: 'fetch failed' },
+          { review_type: 'manual_surface_review', target_id: 'promoteproject', suggested_resolution: 'keep_in_auth_queue_after_surface_review', resolution_bucket: 'keep_auth', notes: 'auth confirmed' },
+        ],
+      }, null, 2));
+
+      writeFileSync(registry, `
+version: 1
+targets:
+  - id: beta-list
+    name: Beta List
+    domain: betalist.com
+    submit_url: https://betalist.com/submissions/new
+    pricing: free
+    submission:
+      mode: assisted
+  - id: chatgptdemo
+    name: ChatGPT demo
+    domain: chatgptdemo.com
+    submit_url: https://chatgptdemo.com/submit-new-ai-tool
+    pricing: free
+    submission:
+      mode: assisted
+  - id: promoteproject
+    name: PromoteProject
+    domain: promoteproject.com
+    submit_url: https://www.promoteproject.com/login
+    pricing: free
+    submission:
+      mode: assisted
+`, 'utf-8');
+
+      const report = runAuthResidualRebuild(triagePath, residualPath, {
+        registry,
+        authDir,
+        resolveOutputDir,
+        rebuildOutputDir,
+        batchSize: 2,
+        nextLimit: 2,
+        rescoutLimit: 10,
+      });
+
+      const rebuildSummary = JSON.parse(readFileSync(join(rebuildOutputDir, 'auth-residual-rebuild-summary.json'), 'utf-8'));
+      const batchSummary = JSON.parse(readFileSync(join(rebuildOutputDir, 'auth-login-plan-batches-resolved-summary.json'), 'utf-8'));
+      const nextLogin = JSON.parse(readFileSync(join(rebuildOutputDir, 'auth-login-next-resolved.json'), 'utf-8'));
+      const operatorPack = JSON.parse(readFileSync(join(rebuildOutputDir, 'auth-login-operator-resolved.json'), 'utf-8'));
+      const refreshSummary = JSON.parse(readFileSync(join(rebuildOutputDir, 'auth-workflow-refresh-resolved-summary.json'), 'utf-8'));
+
+      assert.equal(report.summary.resolved_direct_login_rows, 3);
+      assert.equal(report.summary.resolved_needs_scout_rows, 1);
+      assert.equal(report.summary.resolved_manual_review_rows, 1);
+      assert.equal(report.summary.batch_count, 2);
+      assert.equal(report.summary.next_login_task_rows, 2);
+      assert.equal(report.summary.auth_profiles_missing, 3);
+      assert.equal(batchSummary.summary.pending_rows, 3);
+      assert.equal(batchSummary.summary.batch_count, 2);
+      assert.equal(nextLogin.summary.task_rows, 2);
+      assert.equal(operatorPack.summary.task_rows, 2);
+      assert.match(operatorPack.refresh_command, /auth-workflow-refresh/);
+      assert.equal(refreshSummary.summary.status.auth_profiles_missing, 3);
+      assert.equal(refreshSummary.summary.next_login.task_rows, 2);
+      assert.equal(rebuildSummary.summary.resolved_direct_login_rows, 3);
+      assert.equal(existsSync(join(rebuildOutputDir, 'auth-residual-rebuild-summary.md')), true);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

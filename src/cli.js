@@ -18,6 +18,7 @@ import {
   authLoginOperatorPackCommand,
   authLoginAuditCommand,
   authLoginTriageCommand,
+  authResidualRebuildCommand,
   authResidualResolveCommand,
   authResidualShrinkCommand,
   authLoginPlanCommand,
@@ -644,6 +645,32 @@ targets
   .option('--json', 'Output full residual resolution report as JSON')
   .action(async (triage, residual, opts) => {
     await authResidualResolveCommand(triage, residual, opts);
+  });
+
+targets
+  .command('auth-residual-rebuild <triage> <residual>')
+  .description('Resolve residual auth shrink decisions and rebuild the downstream direct-login workflow artifacts in one read-only pass')
+  .option('--registry <path>', 'Canonical registry path')
+  .option('--product-config <path>', 'Product config path to include in rebuilt batch plans')
+  .option('--auth-dir <path>', 'Auth profile directory')
+  .option('--resolve-output-dir <path>', 'Directory to write resolved auth queue artifacts')
+  .option('--rebuild-output-dir <path>', 'Directory to write rebuilt batch, next-login, operator-pack, and refresh artifacts')
+  .option('--resolve-name <name>', 'Base filename for resolve summary outputs', 'auth-residual-resolve')
+  .option('--batch-name-prefix <name>', 'Base filename prefix for rebuilt batch JSON/CSV outputs', 'auth-login-plan-batch-resolved')
+  .option('--batch-summary-name <name>', 'Base filename for rebuilt batch summary JSON output', 'auth-login-plan-batches-resolved-summary')
+  .option('--batch-size <n>', 'Maximum targets per rebuilt batch', '10')
+  .option('--max-batches <n>', 'Maximum number of rebuilt batch files to generate')
+  .option('--next-name <name>', 'Base filename for rebuilt next-login JSON/CSV outputs', 'auth-login-next-resolved')
+  .option('--next-offset <n>', 'Zero-based offset within rebuilt actionable manual login rows', '0')
+  .option('--next-limit <n>', 'Maximum rebuilt next-login tasks to select', '10')
+  .option('--operator-name <name>', 'Base filename for rebuilt operator pack outputs', 'auth-login-operator-resolved')
+  .option('--refresh-next-name <name>', 'Base filename for rebuilt refresh next-login JSON/CSV outputs', 'auth-login-next-resolved-current')
+  .option('--refresh-summary-name <name>', 'Base filename for rebuilt workflow refresh summary JSON output', 'auth-workflow-refresh-resolved-summary')
+  .option('--rescout-limit <n>', 'Maximum rebuilt authenticated rescout targets to queue', '100')
+  .option('--summary-name <name>', 'Base filename for rebuild summary outputs', 'auth-residual-rebuild-summary')
+  .option('--json', 'Output full residual rebuild report as JSON')
+  .action(async (triage, residual, opts) => {
+    await authResidualRebuildCommand(triage, residual, opts);
   });
 
 targets

@@ -1,6 +1,6 @@
 # Auth Login Operator Pack
 
-Generated: 2026-05-27T12:16:50.402Z
+Generated: 2026-05-27T12:38:38.500Z
 Source: backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-next-resolved.json
 
 ## Safety Policy
@@ -45,5 +45,5 @@ Source: backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-n
 Run this after completing manual login tasks:
 
 ```bash
-node src/cli.js targets auth-workflow-refresh backlink-url/assisted-submission-pack/resolved-auth-login/auth-login-resolved-direct-login-queue.csv backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-plan-batch-resolved-001.json backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-plan-batch-resolved-002.json --registry resources/targets.canonical.yaml --product-config backlink-url/submission-materials/xtimer.config.yaml --auth-dir playwright/.auth --output-dir backlink-url/assisted-submission-pack/resolved-direct-login --next-name auth-login-next-resolved-current --summary-name auth-workflow-refresh-resolved-summary --next-limit 10 --rescout-limit 100
+"node" "src/cli.js" "targets" "auth-workflow-refresh" "backlink-url/assisted-submission-pack/resolved-auth-login/auth-login-resolved-direct-login-queue.csv" "backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-plan-batch-resolved-001.json" "backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-plan-batch-resolved-002.json" "--registry" "resources/targets.canonical.yaml" "--auth-dir" "playwright/.auth" "--output-dir" "backlink-url/assisted-submission-pack/resolved-direct-login" "--next-name" "auth-login-next-resolved-current" "--summary-name" "auth-workflow-refresh-resolved-summary" "--next-limit" "10" "--rescout-limit" "100" "--product-config" "backlink-url/submission-materials/xtimer.config.yaml"
 ```

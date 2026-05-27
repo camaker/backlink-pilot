@@ -1,0 +1,255 @@
+{
+  "version": 1,
+  "created_at": "2026-05-27T12:38:42.610Z",
+  "source_triage": "backlink-url/assisted-submission-pack/auth-login-triage.json",
+  "source_residual": "backlink-url/assisted-submission-pack/residual-shrink/auth-residual-shrink.json",
+  "constraints": {
+    "purpose": "read_only_auth_residual_rebuild",
+    "registry": "resources/targets.canonical.yaml",
+    "auth_dir": "playwright/.auth",
+    "no_real_submission": true,
+    "no_browser_launch": true,
+    "no_registry_write": true,
+    "no_command_execution": true
+  },
+  "files": {
+    "resolve": {
+      "output_dir": "backlink-url/assisted-submission-pack/resolved-auth-login",
+      "summary_json": "backlink-url/assisted-submission-pack/resolved-auth-login/auth-residual-resolve.json",
+      "summary_md": "backlink-url/assisted-submission-pack/resolved-auth-login/auth-residual-resolve.md",
+      "direct_login_queue_csv": "backlink-url/assisted-submission-pack/resolved-auth-login/auth-login-resolved-direct-login-queue.csv",
+      "needs_scout_queue_csv": "backlink-url/assisted-submission-pack/resolved-auth-login/auth-login-resolved-needs-scout.csv",
+      "manual_review_queue_csv": "backlink-url/assisted-submission-pack/resolved-auth-login/auth-login-resolved-manual-review.csv",
+      "dropped_queue_csv": "backlink-url/assisted-submission-pack/resolved-auth-login/auth-login-resolved-dropped.csv"
+    },
+    "plan_batches": {
+      "output_dir": "backlink-url/assisted-submission-pack/resolved-direct-login",
+      "batches": [
+        {
+          "batch_index": 1,
+          "batch_id": "batch-001",
+          "target_rows": 10,
+          "remaining_after_batch": 10,
+          "output": "backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-plan-batch-resolved-001.json",
+          "csv_output": "backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-plan-batch-resolved-001.csv"
+        },
+        {
+          "batch_index": 2,
+          "batch_id": "batch-002",
+          "target_rows": 10,
+          "remaining_after_batch": 0,
+          "output": "backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-plan-batch-resolved-002.json",
+          "csv_output": "backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-plan-batch-resolved-002.csv"
+        }
+      ],
+      "summary": "backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-plan-batches-resolved-summary.json"
+    },
+    "next_login": {
+      "output": "backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-next-resolved.json",
+      "csv_output": "backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-next-resolved.csv"
+    },
+    "operator_pack": {
+      "output_dir": "backlink-url/assisted-submission-pack/resolved-direct-login",
+      "markdown": "backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-operator-resolved.md",
+      "powershell": "backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-operator-resolved.ps1",
+      "summary": "backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-operator-resolved.json"
+    },
+    "workflow_refresh": {
+      "output_dir": "backlink-url/assisted-submission-pack/resolved-direct-login",
+      "status_reports": [
+        {
+          "output": "backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-status-batch-001.json",
+          "csv_output": "backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-status-batch-001.csv"
+        },
+        {
+          "output": "backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-status-batch-002.json",
+          "csv_output": "backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-status-batch-002.csv"
+        }
+      ],
+      "next_login": {
+        "output": "backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-next-resolved-current.json",
+        "csv_output": "backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-next-resolved-current.csv"
+      },
+      "auth_rescout": "backlink-url/assisted-submission-pack/resolved-direct-login/auth-rescout-plan.json",
+      "summary": "backlink-url/assisted-submission-pack/resolved-direct-login/auth-workflow-refresh-resolved-summary.json"
+    },
+    "summary": "backlink-url/assisted-submission-pack/resolved-direct-login/auth-residual-rebuild-summary.json",
+    "summary_md": "backlink-url/assisted-submission-pack/resolved-direct-login/auth-residual-rebuild-summary.md"
+  },
+  "reports": {
+    "resolve": {
+      "summary": {
+        "source_queue_rows": 69,
+        "triage_direct_login_rows": 17,
+        "residual_rows": 8,
+        "residual_keep_auth_rows": 3,
+        "residual_needs_scout_rows": 1,
+        "residual_manual_review_rows": 2,
+        "residual_drop_rows": 2,
+        "resolved_direct_login_rows": 20,
+        "resolved_needs_scout_rows": 1,
+        "resolved_manual_review_rows": 2,
+        "resolved_dropped_rows": 2,
+        "unresolved_manual_review_rows": 1,
+        "direct_login_delta_vs_triage": 3,
+        "by_review_type": {
+          "dedupe": 3,
+          "registry_recheck": 2,
+          "manual_surface_review": 3
+        },
+        "by_suggested_resolution": {
+          "keep_primary_auth_candidate": 1,
+          "drop_duplicate_before_login": 2,
+          "move_out_of_auth_to_needs_scout": 1,
+          "move_out_of_auth_to_manual_surface_review": 1,
+          "manual_surface_review_required_continue": 1,
+          "keep_in_auth_queue_after_surface_review": 2
+        },
+        "by_lane": {
+          "direct_login": 3,
+          "dropped": 2,
+          "needs_scout": 1,
+          "manual_review": 2
+        }
+      }
+    },
+    "plan_batches": {
+      "summary": {
+        "source_rows": 20,
+        "auth_login_rows": 20,
+        "pending_rows": 20,
+        "completed_rows": 0,
+        "excluded_rows": 0,
+        "auth_profiles_found": 0,
+        "auth_profiles_missing": 20,
+        "by_exclusion_reason": {},
+        "batch_size": 10,
+        "batch_count": 2,
+        "generated_target_rows": 20,
+        "remaining_unbatched_rows": 0
+      }
+    },
+    "next_login": {
+      "summary": {
+        "source_batches": 2,
+        "actionable_rows": 20,
+        "task_rows": 10,
+        "excluded_rows": 10,
+        "offset": 0,
+        "limit": 10,
+        "current_batch_start": 1,
+        "current_batch_end": 10,
+        "remaining_after_batch": 10,
+        "by_priority": {
+          "P0": 10
+        },
+        "by_exclusion_reason": {
+          "after_batch_limit": 10
+        }
+      }
+    },
+    "operator_pack": {
+      "summary": {
+        "task_rows": 10,
+        "runnable_manual_login_rows": 10,
+        "blocked_rows": 0,
+        "by_priority": {
+          "P0": 10
+        },
+        "by_pricing": {
+          "free": 10
+        },
+        "by_risk": {
+          "unknown": 10
+        },
+        "by_blocker": {}
+      },
+      "refresh_command": "\"node\" \"src/cli.js\" \"targets\" \"auth-workflow-refresh\" \"backlink-url/assisted-submission-pack/resolved-auth-login/auth-login-resolved-direct-login-queue.csv\" \"backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-plan-batch-resolved-001.json\" \"backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-plan-batch-resolved-002.json\" \"--registry\" \"resources/targets.canonical.yaml\" \"--auth-dir\" \"playwright/.auth\" \"--output-dir\" \"backlink-url/assisted-submission-pack/resolved-direct-login\" \"--next-name\" \"auth-login-next-resolved-current\" \"--summary-name\" \"auth-workflow-refresh-resolved-summary\" \"--next-limit\" \"10\" \"--rescout-limit\" \"100\" \"--product-config\" \"backlink-url/submission-materials/xtimer.config.yaml\""
+    },
+    "workflow_refresh": {
+      "summary": {
+        "status": {
+          "source_rows": 20,
+          "auth_profiles_found": 0,
+          "auth_profiles_missing": 20,
+          "ready_for_auth_rescout_rows": 0,
+          "manual_login_rows": 20
+        },
+        "by_batch": [
+          {
+            "suffix": "batch-001",
+            "source_batch": "backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-plan-batch-resolved-001.json",
+            "source_type": "plan_targets",
+            "source_rows": 10,
+            "auth_profiles_found": 0,
+            "auth_profiles_missing": 10,
+            "ready_for_auth_rescout_rows": 0,
+            "manual_login_rows": 10,
+            "by_status": {
+              "manual_login_required": 10
+            },
+            "by_next_action": {
+              "run_auth_login_command": 10
+            }
+          },
+          {
+            "suffix": "batch-002",
+            "source_batch": "backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-plan-batch-resolved-002.json",
+            "source_type": "plan_targets",
+            "source_rows": 10,
+            "auth_profiles_found": 0,
+            "auth_profiles_missing": 10,
+            "ready_for_auth_rescout_rows": 0,
+            "manual_login_rows": 10,
+            "by_status": {
+              "manual_login_required": 10
+            },
+            "by_next_action": {
+              "run_auth_login_command": 10
+            }
+          }
+        ],
+        "next_login": {
+          "source_batches": 2,
+          "actionable_rows": 20,
+          "task_rows": 10,
+          "excluded_rows": 10,
+          "offset": 0,
+          "limit": 10,
+          "current_batch_start": 1,
+          "current_batch_end": 10,
+          "remaining_after_batch": 10,
+          "by_priority": {
+            "P0": 10
+          },
+          "by_exclusion_reason": {
+            "after_batch_limit": 10
+          }
+        },
+        "auth_rescout": {
+          "source_rows": 20,
+          "eligible_rows": 0,
+          "queued_rows": 0,
+          "excluded_rows": 20,
+          "auth_profiles_found": 0,
+          "auth_profiles_missing": 20,
+          "by_exclusion_reason": {
+            "auth_profile_missing": 20
+          }
+        }
+      }
+    }
+  },
+  "summary": {
+    "resolved_direct_login_rows": 20,
+    "resolved_needs_scout_rows": 1,
+    "resolved_manual_review_rows": 2,
+    "resolved_dropped_rows": 2,
+    "pending_login_rows": 20,
+    "batch_count": 2,
+    "next_login_task_rows": 10,
+    "next_login_remaining_rows": 10,
+    "auth_rescout_queued_rows": 0,
+    "auth_profiles_missing": 20
+  }
+}

@@ -44,6 +44,9 @@ import {
   writeAuthResidualResolve,
 } from './auth-residual-resolve.js';
 import {
+  runAuthResidualRebuild,
+} from './auth-residual-rebuild.js';
+import {
   buildAuthLoginNext,
   buildAuthLoginStatus,
   writeAuthLoginNext,
@@ -1040,6 +1043,55 @@ export async function authResidualResolveCommand(triagePath, residualPath, opts 
   console.log(`Needs-scout queue CSV: ${written.needs_scout_queue_csv}`);
   console.log(`Manual-review queue CSV: ${written.manual_review_queue_csv}`);
   console.log('Policy: read-only residual resolution only; no login, no submission, no registry writes.');
+
+  return report;
+}
+
+export async function authResidualRebuildCommand(triagePath, residualPath, opts = {}) {
+  const report = runAuthResidualRebuild(triagePath, residualPath, {
+    registry: opts.registry || DEFAULT_REGISTRY_FILE,
+    productConfig: opts.productConfig,
+    authDir: opts.authDir,
+    resolveOutputDir: opts.resolveOutputDir,
+    rebuildOutputDir: opts.rebuildOutputDir,
+    resolveName: opts.resolveName,
+    batchNamePrefix: opts.batchNamePrefix,
+    batchSummaryName: opts.batchSummaryName,
+    batchSize: opts.batchSize || opts.limit,
+    maxBatches: opts.maxBatches,
+    nextName: opts.nextName,
+    nextOffset: opts.nextOffset,
+    nextLimit: opts.nextLimit || opts.limit,
+    operatorName: opts.operatorName,
+    refreshNextName: opts.refreshNextName,
+    refreshSummaryName: opts.refreshSummaryName,
+    rescoutLimit: opts.rescoutLimit,
+    summaryName: opts.summaryName,
+  });
+
+  if (opts.json) {
+    console.log(JSON.stringify(report, null, 2));
+    return report;
+  }
+
+  console.log(`Triage: ${report.source_triage}`);
+  console.log(`Residual: ${report.source_residual}`);
+  console.log(`Resolved direct-login rows: ${report.summary.resolved_direct_login_rows}`);
+  console.log(`Needs-scout rows: ${report.summary.resolved_needs_scout_rows}`);
+  console.log(`Manual-review rows: ${report.summary.resolved_manual_review_rows}`);
+  console.log(`Dropped rows: ${report.summary.resolved_dropped_rows}`);
+  console.log(`Pending login rows: ${report.summary.pending_login_rows}`);
+  console.log(`Batch count: ${report.summary.batch_count}`);
+  console.log(`Next login task rows: ${report.summary.next_login_task_rows}`);
+  console.log(`Next login remaining rows: ${report.summary.next_login_remaining_rows}`);
+  console.log(`Auth profiles missing: ${report.summary.auth_profiles_missing}`);
+  console.log(`Resolve summary: ${report.files.resolve.summary_json}`);
+  console.log(`Batch summary: ${report.files.plan_batches.summary}`);
+  console.log(`Next login JSON: ${report.files.next_login.output}`);
+  console.log(`Operator pack JSON: ${report.files.operator_pack.summary}`);
+  console.log(`Workflow refresh summary: ${report.files.workflow_refresh.summary}`);
+  console.log(`Rebuild summary: ${report.files.summary}`);
+  console.log('Policy: read-only auth residual rebuild only; no login, no submission, no registry writes.');
 
   return report;
 }
