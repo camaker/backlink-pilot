@@ -622,9 +622,16 @@ targets:
       assert.ok(status.readiness.top.blocker_codes.length > 0);
       assert.equal(status.backlog.worker_leads[0].worker_id, 'worker-01');
       assert.equal(status.backlog.worker_leads[0].operator_summary.disposition, 'blocked');
+      assert.equal(status.backlog.worker_leads[0].recommended_mode, 'open');
+      assert.match(status.backlog.worker_leads[0].recommended_command, /targets backlog-worker "worker-01"/);
+      assert.equal(status.backlog.dispatch.by_disposition.blocked, 1);
+      assert.equal(status.backlog.dispatch.workers[0].lanes[0].recommended_mode, 'open');
+      assert.match(status.backlog.dispatch.workers[0].lanes[0].recommended_command, /targets backlog-lane "auth-login-001"/);
       assert.match(formatted, /Backlink Pilot Ops Status/);
       assert.match(formatted, /Automation ready: no/);
       assert.match(formatted, /disposition=blocked/);
+      assert.match(formatted, /Dispatch/);
+      assert.match(formatted, /Worker commands/);
       assert.match(formatted, /worker-01/);
     } finally {
       rmSync(dir, { recursive: true, force: true });

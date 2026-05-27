@@ -316,6 +316,12 @@ function workerExecCommand(backlogSummary = {}, worker = null) {
   return `node src/cli.js targets backlog-worker-exec ${shellQuote(worker.worker_id)} --backlog ${shellQuote(normalizePath(backlogSummaryPath))}`;
 }
 
+function laneOpenCommand(backlogSummary = {}, lane = null) {
+  if (!lane) return '';
+  const backlogSummaryPath = backlogSummary?.files?.summary_json || DEFAULT_BACKLOG_PATH;
+  return `node src/cli.js targets backlog-lane ${shellQuote(lane.lane_id)} --backlog ${shellQuote(normalizePath(backlogSummaryPath))}`;
+}
+
 function laneExecCommand(backlogSummary = {}, lane = null) {
   if (!lane) return '';
   const backlogSummaryPath = backlogSummary?.files?.summary_json || DEFAULT_BACKLOG_PATH;
@@ -353,6 +359,12 @@ function describeLaneAssignment(backlogSummary = {}, laneType = '') {
   };
 }
 
+function backlogLaneOperatorSummary(lane = {}) {
+  const plannedSteps = selectBacklogSteps(lane.steps || [], []).map(step => planBacklogStep(step));
+  const dryRunResults = runBacklogStepPlans(plannedSteps, { dryRun: true });
+  return buildBacklogOperatorSummary(dryRunResults);
+}
+
 function backlogWorkerOperatorSummary(backlogSummary = {}, worker = {}) {
   const lanes = Array.isArray(worker?.lanes) ? worker.lanes : [];
   const plannedSteps = lanes.flatMap(laneSummary => {
@@ -366,6 +378,77 @@ function backlogWorkerOperatorSummary(backlogSummary = {}, worker = {}) {
 function findLaneById(backlogSummary = {}, laneId = '') {
   const lanes = Array.isArray(backlogSummary?.lanes) ? backlogSummary.lanes : [];
   return lanes.find(lane => lane.lane_id === laneId) || null;
+}
+
+function recommendedCommandMode(disposition = '') {
+  return disposition === 'safe_local_exec' ? 'exec' : 'open';
+}
+
+function buildBacklogDispatch(backlogSummary = {}) {
+  const workers = Array.isArray(backlogSummary?.workers) ? backlogSummary.workers : [];
+  const dispatchWorkers = workers.map(worker => {
+    const files = workerFileIndex(backlogSummary).get(worker.worker_id) || {};
+    const laneDispatch = (worker.lanes || []).map(laneSummary => {
+      const lane = findLaneById(backlogSummary, laneSummary.lane_id) || laneSummary;
+      const operatorSummary = backlogLaneOperatorSummary(lane);
+      const recommendedMode = recommendedCommandMode(operatorSummary.disposition);
+      return {
+        lane_id: laneSummary.lane_id,
+        lane_type: laneSummary.lane_type || lane.lane_type || '',
+        priority: laneSummary.priority || lane.priority || '',
+        row_count: laneSummary.row_count || lane.row_count || 0,
+        estimated_total_minutes: laneSummary.estimated_total_minutes || lane.estimated_total_minutes || 0,
+        operator_summary: operatorSummary,
+        recommended_mode: recommendedMode,
+        recommended_command: recommendedMode === 'exec'
+          ? laneExecCommand(backlogSummary, lane)
+          : laneOpenCommand(backlogSummary, lane),
+      };
+    });
+    const operatorSummary = backlogWorkerOperatorSummary(backlogSummary, worker);
+    const recommendedMode = recommendedCommandMode(operatorSummary.disposition);
+    return {
+      worker_id: worker.worker_id,
+      lane_count: worker.lane_count || 0,
+      row_count: worker.row_count || 0,
+      estimated_total_minutes: worker.estimated_total_minutes || 0,
+      markdown: files.markdown || '',
+      json: files.json || '',
+      first_lane: worker.lanes?.[0] || null,
+      operator_summary: operatorSummary,
+      recommended_mode: recommendedMode,
+      recommended_command: recommendedMode === 'exec'
+        ? workerExecCommand(backlogSummary, worker)
+        : workerOpenCommand(backlogSummary, worker),
+      lanes: laneDispatch,
+    };
+  }).sort((a, b) =>
+    backlogDispositionRank(a.operator_summary?.disposition) - backlogDispositionRank(b.operator_summary?.disposition) ||
+    priorityRank(a.first_lane?.priority) - priorityRank(b.first_lane?.priority) ||
+    a.estimated_total_minutes - b.estimated_total_minutes ||
+    a.worker_id.localeCompare(b.worker_id)
+  );
+
+  const dispatchLanes = dispatchWorkers.flatMap(worker =>
+    (worker.lanes || []).map(lane => ({
+      worker_id: worker.worker_id,
+      ...lane,
+    }))
+  );
+
+  return {
+    worker_count: dispatchWorkers.length,
+    by_disposition: countBy(dispatchWorkers, worker => worker.operator_summary?.disposition || 'unknown'),
+    workers: dispatchWorkers,
+    lanes: dispatchLanes,
+    parallel_safe_exec_commands: dispatchLanes
+      .filter(lane => lane.recommended_mode === 'exec' && lane.recommended_command)
+      .map(lane => ({
+        worker_id: lane.worker_id,
+        lane_id: lane.lane_id,
+        command: lane.recommended_command,
+      })),
+  };
 }
 
 function summarizeBacklogFreshness(backlogPath, backlogSummary, opts = {}) {
@@ -637,33 +720,8 @@ export function buildOpsStatus(opts = {}) {
   const audit = auditRegistry(registryPath);
   const backlog = report.backlog || null;
   const backlogFreshness = report.backlog_freshness || null;
-  const workerLeads = (backlog?.workers || [])
-    .slice()
-    .sort((a, b) =>
-      priorityRank(a.lanes?.[0]?.priority) - priorityRank(b.lanes?.[0]?.priority) ||
-      a.estimated_total_minutes - b.estimated_total_minutes ||
-      a.worker_id.localeCompare(b.worker_id)
-    )
-    .map(worker => {
-      const files = workerFileIndex(backlog).get(worker.worker_id) || {};
-      const operatorSummary = backlogWorkerOperatorSummary(backlog, worker);
-      return {
-        worker_id: worker.worker_id,
-        lane_count: worker.lane_count || 0,
-        row_count: worker.row_count || 0,
-        estimated_total_minutes: worker.estimated_total_minutes || 0,
-        markdown: files.markdown || '',
-        json: files.json || '',
-        first_lane: worker.lanes?.[0] || null,
-        operator_summary: operatorSummary,
-      };
-    })
-    .sort((a, b) =>
-      backlogDispositionRank(a.operator_summary?.disposition) - backlogDispositionRank(b.operator_summary?.disposition) ||
-      priorityRank(a.first_lane?.priority) - priorityRank(b.first_lane?.priority) ||
-      a.estimated_total_minutes - b.estimated_total_minutes ||
-      a.worker_id.localeCompare(b.worker_id)
-    );
+  const dispatch = backlog ? buildBacklogDispatch(backlog) : null;
+  const workerLeads = dispatch?.workers || [];
 
   return {
     generated_at: nowIso(),
@@ -686,6 +744,7 @@ export function buildOpsStatus(opts = {}) {
       lanes_summary: backlog.lanes_summary || {},
       freshness: backlogFreshness,
       worker_leads: workerLeads,
+      dispatch,
     } : null,
     pipeline: report.pipeline,
     registry: {
@@ -768,6 +827,13 @@ export function formatOpsStatus(status = {}) {
   const workerLines = (status.backlog?.worker_leads || []).map(worker =>
     `- ${worker.worker_id}: disposition=${worker.operator_summary?.disposition || 'unknown'} lanes=${worker.lane_count} rows=${worker.row_count} est_minutes=${worker.estimated_total_minutes}${worker.markdown ? ` file=${worker.markdown}` : ''}`
   );
+  const dispatchSummary = formatCounts(status.backlog?.dispatch?.by_disposition || {});
+  const dispatchLines = (status.backlog?.dispatch?.workers || []).map(worker =>
+    `- ${worker.worker_id}: ${worker.recommended_mode} ${worker.recommended_command}${worker.lanes?.length ? ` ; lanes=${worker.lanes.map(lane => `${lane.lane_id}:${lane.recommended_mode}`).join(', ')}` : ''}`
+  );
+  const safeExecLines = (status.backlog?.dispatch?.parallel_safe_exec_commands || []).map(item =>
+    `- ${item.worker_id}/${item.lane_id}: ${item.command}`
+  );
   const blockerLines = (status.readiness?.top?.blocker_codes || []).map(item =>
     `- ${item.code}: ${item.count}`
   );
@@ -799,6 +865,13 @@ export function formatOpsStatus(status = {}) {
     `Freshness: ${status.backlog?.freshness ? `${status.backlog.freshness.is_stale ? 'stale' : 'fresh'}${status.backlog.freshness.age_hours !== null ? ` (${status.backlog.freshness.age_hours}h)` : ''}` : '(none)'}`,
     'Worker leads',
     ...(workerLines.length ? workerLines : ['- (none)']),
+    '',
+    'Dispatch',
+    `Workers by disposition: ${dispatchSummary}`,
+    'Worker commands',
+    ...(dispatchLines.length ? dispatchLines : ['- (none)']),
+    'Safe parallel lane commands',
+    ...(safeExecLines.length ? safeExecLines : ['- (none)']),
     '',
     'Next actions',
     ...((status.next_actions || []).map(item =>
