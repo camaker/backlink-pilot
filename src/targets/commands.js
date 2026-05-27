@@ -40,6 +40,10 @@ import {
   writeAuthResidualShrink,
 } from './auth-residual-shrink.js';
 import {
+  buildAuthResidualResolve,
+  writeAuthResidualResolve,
+} from './auth-residual-resolve.js';
+import {
   buildAuthLoginNext,
   buildAuthLoginStatus,
   writeAuthLoginNext,
@@ -1005,6 +1009,38 @@ export async function authResidualShrinkCommand(triagePath, opts = {}) {
   console.log(`Residual CSV: ${written.residual_csv}`);
   console.log(`Manual surface evidence CSV: ${written.manual_surface_evidence_csv}`);
   console.log('Policy: read-only residual shrink only; no login, no submission, no registry writes.');
+  return report;
+}
+
+export async function authResidualResolveCommand(triagePath, residualPath, opts = {}) {
+  const report = buildAuthResidualResolve(triagePath, residualPath);
+  const written = writeAuthResidualResolve(report, {
+    outputDir: opts.outputDir,
+    name: opts.name,
+  });
+
+  if (opts.json) {
+    console.log(JSON.stringify({ ...report, files: written }, null, 2));
+    return report;
+  }
+
+  console.log(`Triage: ${report.source_triage}`);
+  console.log(`Residual: ${report.source_residual}`);
+  console.log(`Source queue: ${report.source_queue}`);
+  console.log(`Triage direct-login rows: ${report.summary.triage_direct_login_rows}`);
+  console.log(`Residual keep-auth rows: ${report.summary.residual_keep_auth_rows}`);
+  console.log(`Resolved direct-login rows: ${report.summary.resolved_direct_login_rows}`);
+  console.log(`Resolved needs-scout rows: ${report.summary.resolved_needs_scout_rows}`);
+  console.log(`Resolved manual-review rows: ${report.summary.resolved_manual_review_rows}`);
+  console.log(`Dropped duplicate rows: ${report.summary.resolved_dropped_rows}`);
+  console.log(`Direct-login delta vs triage: ${report.summary.direct_login_delta_vs_triage}`);
+  console.log(`Lanes: ${JSON.stringify(report.summary.by_lane)}`);
+  console.log(`Output dir: ${written.output_dir}`);
+  console.log(`Resolved direct-login queue CSV: ${written.direct_login_queue_csv}`);
+  console.log(`Needs-scout queue CSV: ${written.needs_scout_queue_csv}`);
+  console.log(`Manual-review queue CSV: ${written.manual_review_queue_csv}`);
+  console.log('Policy: read-only residual resolution only; no login, no submission, no registry writes.');
+
   return report;
 }
 

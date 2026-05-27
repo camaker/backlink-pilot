@@ -47,6 +47,10 @@ import {
   writeAuthResidualShrink,
 } from '../src/targets/auth-residual-shrink.js';
 import {
+  buildAuthResidualResolve,
+  writeAuthResidualResolve,
+} from '../src/targets/auth-residual-resolve.js';
+import {
   authLoginNextCsv,
   buildAuthLoginNext,
   authLoginStatusCsv,
@@ -4040,27 +4044,6 @@ targets:
 `, 'utf-8');
 
       const fetchMap = new Map([
-        ['https://orbic.ai/login?callbackUrl=https%3A%2F%2Forbic.ai%2Fsubmit%2Ftools', {
-          ok: true,
-          status: 200,
-          url: 'https://orbic.ai/login?callbackUrl=https%3A%2F%2Forbic.ai%2Fsubmit%2Ftools',
-          headers: new Map([['content-type', 'text/html']]),
-          text: async () => '<html><head><title>Login</title></head><body>Sign in with Google</body></html>',
-        }],
-        ['https://orbic.ai/submit/tools', {
-          ok: true,
-          status: 200,
-          url: 'https://orbic.ai/submit/tools',
-          headers: new Map([['content-type', 'text/html']]),
-          text: async () => '<html><head><title>Submit Tool</title></head><body>Submit your tool directory</body></html>',
-        }],
-        ['https://orbic.ai/', {
-          ok: true,
-          status: 200,
-          url: 'https://orbic.ai/',
-          headers: new Map([['content-type', 'text/html']]),
-          text: async () => '<html><body>Directory</body></html>',
-        }],
         ['https://www.promoteproject.com/login', {
           ok: true,
           status: 200,
@@ -4131,12 +4114,13 @@ targets:
       assert.equal(report.summary.by_suggested_resolution.drop_duplicate_before_login, 2);
       assert.equal(report.summary.by_suggested_resolution.move_out_of_auth_to_needs_scout, 1);
       assert.equal(report.summary.by_suggested_resolution.move_out_of_auth_to_manual_surface_review, 1);
-      assert.equal(report.summary.by_suggested_resolution.keep_in_auth_queue_after_surface_review, 3);
+      assert.equal(report.summary.by_suggested_resolution.keep_in_auth_queue_after_surface_review, 2);
+      assert.equal(report.summary.by_suggested_resolution.manual_surface_review_required_continue, 1);
       assert.equal(report.rows.find(row => row.target_id === 'beta-list').suggested_resolution, 'keep_primary_auth_candidate');
       assert.equal(report.rows.find(row => row.target_id === 'betalist-com').suggested_resolution, 'drop_duplicate_before_login');
       assert.equal(report.rows.find(row => row.target_id === 'mergeek').suggested_resolution, 'move_out_of_auth_to_needs_scout');
       assert.equal(report.rows.find(row => row.target_id === 'top-best-alternatives').suggested_resolution, 'move_out_of_auth_to_manual_surface_review');
-      assert.equal(report.rows.find(row => row.target_id === 'orbic-ai').suggested_resolution, 'keep_in_auth_queue_after_surface_review');
+      assert.equal(report.rows.find(row => row.target_id === 'orbic-ai').suggested_resolution, 'manual_surface_review_required_continue');
       assert.equal(report.rows.find(row => row.target_id === 'promoteproject').suggested_resolution, 'keep_in_auth_queue_after_surface_review');
       assert.equal(report.rows.find(row => row.target_id === 'tool-ai').suggested_resolution, 'keep_in_auth_queue_after_surface_review');
       assert.equal(parsed.summary.rows, 8);
@@ -4145,6 +4129,87 @@ targets:
       assert.equal(existsSync(written.residual_md), true);
       assert.match(authResidualShrinkCsv(report), /suggested_resolution/);
       assert.match(authResidualSurfaceEvidenceCsv(report.manual_surface_evidence_rows), /url_kind/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe('auth residual resolve', () => {
+  it('rebuilds a resolved direct-login queue from triage direct-login rows plus residual keep-auth rows', () => {
+    const dir = tempDir();
+    try {
+      const sourceQueue = join(dir, 'auth-login-rescout-queue.csv');
+      const triagePath = join(dir, 'auth-login-triage.json');
+      const residualPath = join(dir, 'auth-residual-shrink.json');
+      const outputDir = join(dir, 'out');
+
+      writeFileSync(sourceQueue, [
+        'rank,priority,priority_score,target_id,name,domain,mode,status,pricing,risk,lang,manual_bucket,automation_after_human,submission_policy,safety_blockers,recommended_next_step,auth_profile,auth_login_command,auth_scout_command,submit_url,final_url,root_url,last_scouted_at,last_submitted_at,form_count,field_count,required_fields,unmapped_required_fields,submit_button_count,source,reason,notes',
+        '1,P0,315,beta-list,Beta List,betalist.com,assisted,auth_required,free,unknown,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required,login,beta-list,node src/cli.js auth login --profile "beta-list" --url "https://betalist.com/sign_in",node src/cli.js scout "https://betalist.com/submissions/new" --auth-profile "beta-list",https://betalist.com/submissions/new,https://betalist.com/sign_in,https://betalist.com/,2026-05-22T14:54:22.927Z,,2,5,0,0,2,notion,auth_signal,',
+        '2,P0,315,betalist-com,https://betalist.com,betalist.com,assisted,auth_required,unknown,unknown,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,pricing_unknown_verify_free_path; auth_or_oauth_required,login,betalist-com,node src/cli.js auth login --profile "betalist-com" --url "https://betalist.com/sign_in",node src/cli.js scout "https://betalist.com/" --auth-profile "betalist-com",https://betalist.com/,https://betalist.com/sign_in,https://betalist.com/,2026-05-22T14:54:22.927Z,,2,5,0,0,2,91wink,auth_signal,',
+        '3,P0,315,chatgptdemo,ChatGPT demo,chatgptdemo.com,assisted,auth_required,free,unknown,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required,login,chatgptdemo,node src/cli.js auth login --profile "chatgptdemo" --url "https://chatgptdemo.com/submit-new-ai-tool",node src/cli.js scout "https://chatgptdemo.com/submit-new-ai-tool" --auth-profile "chatgptdemo",https://chatgptdemo.com/submit-new-ai-tool,https://chatgptdemo.com/submit-new-ai-tool,https://chatgptdemo.com/,2026-05-22T15:01:30.932Z,,3,9,0,0,3,targets.yaml,auth_signal,',
+        '4,P0,315,promptzone,Promptzone,promptzone.com,assisted,auth_required,free,unknown,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required,login,promptzone,node src/cli.js auth login --profile "promptzone" --url "https://www.promptzone.com/new",node src/cli.js scout "https://www.promptzone.com/new" --auth-profile "promptzone",https://www.promptzone.com/new,https://www.promptzone.com/new,https://www.promptzone.com/,2026-05-22T17:22:54.870Z,,4,12,0,0,4,notion,auth_signal,',
+        '5,P0,280,mergeek,Mergeek,mergeek.com,assisted,auth_required,free,unknown,zh,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required; required_fields_unmapped,login,mergeek,node src/cli.js auth login --profile "mergeek" --url "https://mergeek.com/publish_project",node src/cli.js scout "https://mergeek.com/publish_project" --auth-profile "mergeek",https://mergeek.com/publish_project,https://mergeek.com/publish_project,https://mergeek.com/,2026-05-23T03:38:04.478Z,,1,5,4,1,1,targets.yaml,auth_signal; classification_mismatch:assisted->needs_scout,',
+        '6,P0,280,top-best-alternatives,Top Best Alternatives,topbestalternatives.com,assisted,auth_required,freemium,unknown,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required,login,top-best-alternatives,node src/cli.js auth login --profile "top-best-alternatives" --url "https://www.topbestalternatives.com/",node src/cli.js scout "https://www.topbestalternatives.com/" --auth-profile "top-best-alternatives",https://www.topbestalternatives.com/,https://www.topbestalternatives.com/,https://www.topbestalternatives.com/,2026-05-23T02:23:36.763Z,,1,2,0,0,1,targets.yaml,auth_signal; classification_mismatch:assisted->assisted,',
+        '7,P1,210,orbic-ai,Orbic AI,orbic.ai,assisted,new,free,medium,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required; manual_surface_review_required; no_persisted_form_evidence,login,orbic-ai,node src/cli.js auth login --profile "orbic-ai" --url "https://orbic.ai/login?callbackUrl=https%3A%2F%2Forbic.ai%2Fsubmit%2Ftools",node src/cli.js scout "https://orbic.ai/login?callbackUrl=https%3A%2F%2Forbic.ai%2Fsubmit%2Ftools" --auth-profile "orbic-ai",https://orbic.ai/login?callbackUrl=https%3A%2F%2Forbic.ai%2Fsubmit%2Ftools,,https://orbic.ai/,,,0,0,0,0,0,notion,auth_or_manual_signal,',
+        '8,P1,210,promoteproject,PromoteProject,promoteproject.com,assisted,new,free,medium,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required; manual_surface_review_required; no_persisted_form_evidence,login,promoteproject,node src/cli.js auth login --profile "promoteproject" --url "https://www.promoteproject.com/login",node src/cli.js scout "https://www.promoteproject.com/login" --auth-profile "promoteproject",https://www.promoteproject.com/login,,https://www.promoteproject.com/,,,0,0,0,0,0,notion,auth_or_manual_signal,',
+        '9,P1,210,tool-ai,Tool AI,toolai.io,assisted,new,free,medium,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required; manual_surface_review_required; no_persisted_form_evidence,login,tool-ai,node src/cli.js auth login --profile "tool-ai" --url "https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit",node src/cli.js scout "https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit" --auth-profile "tool-ai",https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit,,https://toolai.io/,,,0,0,0,0,0,notion,auth_or_manual_signal,',
+      ].join('\n'));
+
+      writeFileSync(triagePath, JSON.stringify({
+        source_queue: sourceQueue.replace(/\\/g, '/'),
+        queues: {
+          direct_login: [
+            { target_id: 'chatgptdemo' },
+            { target_id: 'promptzone' },
+          ],
+        },
+      }, null, 2));
+
+      writeFileSync(residualPath, JSON.stringify({
+        source_triage: triagePath.replace(/\\/g, '/'),
+        source_queue: sourceQueue.replace(/\\/g, '/'),
+        rows: [
+          { review_type: 'dedupe', target_id: 'beta-list', suggested_resolution: 'keep_primary_auth_candidate', resolution_bucket: 'keep_auth', notes: 'keep canonical' },
+          { review_type: 'dedupe', target_id: 'betalist-com', suggested_resolution: 'drop_duplicate_before_login', resolution_bucket: 'shrink_auth_queue', notes: 'drop dup' },
+          { review_type: 'registry_recheck', target_id: 'mergeek', suggested_resolution: 'move_out_of_auth_to_needs_scout', resolution_bucket: 'shrink_auth_queue', notes: 'needs scout' },
+          { review_type: 'registry_recheck', target_id: 'top-best-alternatives', suggested_resolution: 'move_out_of_auth_to_manual_surface_review', resolution_bucket: 'shrink_auth_queue', notes: 'manual review' },
+          { review_type: 'manual_surface_review', target_id: 'orbic-ai', suggested_resolution: 'manual_surface_review_required_continue', resolution_bucket: 'needs_manual_review', notes: 'fetch failed' },
+          { review_type: 'manual_surface_review', target_id: 'promoteproject', suggested_resolution: 'keep_in_auth_queue_after_surface_review', resolution_bucket: 'keep_auth', notes: 'auth confirmed' },
+          { review_type: 'manual_surface_review', target_id: 'tool-ai', suggested_resolution: 'keep_in_auth_queue_after_surface_review', resolution_bucket: 'keep_auth', notes: 'auth confirmed' },
+        ],
+      }, null, 2));
+
+      const report = buildAuthResidualResolve(triagePath, residualPath);
+      const written = writeAuthResidualResolve(report, {
+        outputDir,
+        name: 'auth-residual-resolve',
+      });
+      const summary = JSON.parse(readFileSync(written.summary_json, 'utf-8'));
+      const directRows = parseCsv(readFileSync(written.direct_login_queue_csv, 'utf-8'));
+      const needsScoutRows = parseCsv(readFileSync(written.needs_scout_queue_csv, 'utf-8'));
+      const manualRows = parseCsv(readFileSync(written.manual_review_queue_csv, 'utf-8'));
+      const droppedRows = parseCsv(readFileSync(written.dropped_queue_csv, 'utf-8'));
+
+      assert.equal(report.summary.triage_direct_login_rows, 2);
+      assert.equal(report.summary.residual_keep_auth_rows, 3);
+      assert.equal(report.summary.resolved_direct_login_rows, 5);
+      assert.equal(report.summary.resolved_needs_scout_rows, 1);
+      assert.equal(report.summary.resolved_manual_review_rows, 2);
+      assert.equal(report.summary.resolved_dropped_rows, 1);
+      assert.equal(report.summary.unresolved_manual_review_rows, 1);
+      assert.equal(report.summary.direct_login_delta_vs_triage, 3);
+      assert.equal(report.summary.by_lane.direct_login, 3);
+      assert.equal(report.summary.by_lane.needs_scout, 1);
+      assert.equal(report.summary.by_lane.manual_review, 2);
+      assert.equal(report.summary.by_lane.dropped, 1);
+      assert.deepEqual(directRows.map(row => row.target_id), ['beta-list', 'chatgptdemo', 'promptzone', 'promoteproject', 'tool-ai']);
+      assert.deepEqual(needsScoutRows.map(row => row.target_id), ['mergeek']);
+      assert.deepEqual(manualRows.map(row => row.target_id), ['top-best-alternatives', 'orbic-ai']);
+      assert.deepEqual(droppedRows.map(row => row.target_id), ['betalist-com']);
+      assert.equal(summary.summary.resolved_direct_login_rows, 5);
+      assert.equal(existsSync(written.summary_md), true);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

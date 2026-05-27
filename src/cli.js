@@ -18,6 +18,7 @@ import {
   authLoginOperatorPackCommand,
   authLoginAuditCommand,
   authLoginTriageCommand,
+  authResidualResolveCommand,
   authResidualShrinkCommand,
   authLoginPlanCommand,
   authLoginPlanBatchesCommand,
@@ -633,6 +634,16 @@ targets
   .option('--json', 'Output full residual shrink report as JSON')
   .action(async (triage, opts) => {
     await authResidualShrinkCommand(triage, opts);
+  });
+
+targets
+  .command('auth-residual-resolve <triage> <residual>')
+  .description('Resolve triaged auth work into a rebuilt direct-login queue plus read-only needs-scout/manual-review outputs')
+  .option('--output-dir <path>', 'Directory to write resolved auth queue artifacts')
+  .option('--name <name>', 'Base filename for residual resolve summary outputs', 'auth-residual-resolve')
+  .option('--json', 'Output full residual resolution report as JSON')
+  .action(async (triage, residual, opts) => {
+    await authResidualResolveCommand(triage, residual, opts);
   });
 
 targets
