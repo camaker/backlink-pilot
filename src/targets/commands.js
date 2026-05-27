@@ -1816,6 +1816,13 @@ export async function backlogLanesCommand(opts = {}) {
     pricingLaneSize: opts.pricingLaneSize,
     authSummary: opts.authSummary,
     authLaneSize: opts.authLaneSize,
+    authNeedsScoutSummary: opts.authNeedsScoutSummary,
+    authNeedsScout: opts.authNeedsScout,
+    authNeedsScoutLaneSize: opts.authNeedsScoutLaneSize,
+    authManualReviewSummary: opts.authManualReviewSummary,
+    authManualReview: opts.authManualReview,
+    authManualReviewLaneSize: opts.authManualReviewLaneSize,
+    authManualReviewFailClosedLaneSize: opts.authManualReviewFailClosedLaneSize,
     coverageSummary: opts.coverageSummary,
     coverageManual: opts.coverageManual,
     coverageReview: opts.coverageReview,
@@ -1848,6 +1855,8 @@ export async function backlogLanesCommand(opts = {}) {
   console.log(`Workflow backlog: ${plan.workflow_backlog.total_workflow_rows}`);
   console.log(`Pricing manual rows: ${plan.workflow_backlog.pricing_manual_rows}`);
   console.log(`Auth manual login rows: ${plan.workflow_backlog.auth_manual_login_rows}`);
+  console.log(`Auth resolved needs-scout rows: ${plan.workflow_backlog.auth_resolved_needs_scout_rows}`);
+  console.log(`Auth resolved manual-review rows: ${plan.workflow_backlog.auth_resolved_manual_review_rows}`);
   console.log(`Coverage manual review rows: ${plan.workflow_backlog.coverage_manual_review_rows}`);
   console.log(`Lane count: ${plan.lanes_summary.lane_count}`);
   console.log(`Lane types: ${JSON.stringify(plan.lanes_summary.by_type)}`);

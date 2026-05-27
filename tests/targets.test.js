@@ -229,7 +229,7 @@ describe('target URL normalization', () => {
 });
 
 describe('backlog lanes', () => {
-  it('builds worker-balanced lanes from pricing, auth, and coverage artifacts', () => {
+  it('builds worker-balanced lanes from pricing, auth, resolved auth side queues, and coverage artifacts', () => {
     const dir = tempDir();
     try {
       const registryPath = join(dir, 'registry.yaml');
@@ -289,6 +289,31 @@ pricing-001,3,3,gamma,Gamma,gamma.example,assisted,https://gamma.example/submit,
         },
       }, null, 2), 'utf-8');
 
+      const authNeedsScout = join(dir, 'auth-resolved-needs-scout.csv');
+      writeFileSync(authNeedsScout, `scout_order,target_id,name,domain,pricing,risk,lang,current_mode,current_status,current_manual_bucket,current_automation_after_human,submit_url,auth_profile,auth_login_command,auth_scout_command,recommended_route,reason_for_exit_from_auth,operator_goal,strict_policy,next_step
+1,mergeek,Mergeek,mergeek.com,free,unknown,zh,assisted,auth_required,manual_login_then_rescout,rescout_after_saved_login_profile,https://mergeek.com/publish_project,mergeek,login,scout,needs_scout_outside_auth_lane,classification_mismatch_or_missing_submit_evidence_requires_fresh_scout,goal,policy,next
+`, 'utf-8');
+
+      const authNeedsScoutSummary = join(dir, 'auth-needs-scout-summary.json');
+      writeFileSync(authNeedsScoutSummary, JSON.stringify({
+        files: {
+          pack_csv: authNeedsScout.replace(/\\/g, '/'),
+        },
+      }, null, 2), 'utf-8');
+
+      const authManualReview = join(dir, 'auth-resolved-manual-review.csv');
+      writeFileSync(authManualReview, `manual_rank,target_id,name,domain,pricing,risk,lang,submit_url,auth_profile,review_route,review_bucket,strict_policy,required_human_question,allowed_outcomes,disallowed_outcomes,next_step,notes
+1,top-best-alternatives,Top Best Alternatives,topbestalternatives.com,freemium,unknown,en,https://www.topbestalternatives.com/,top-best-alternatives,manual_surface_classification_review,move_out_of_auth_to_manual_surface_review,policy,q,allow,disallow,next,notes
+2,orbic-ai,Orbic AI,orbic.ai,free,medium,unknown,https://orbic.ai/login?callbackUrl=https%3A%2F%2Forbic.ai%2Fsubmit%2Ftools,orbic-ai,manual_surface_review_fail_closed,manual_surface_review_required_continue,policy,q,allow,disallow,next,notes
+`, 'utf-8');
+
+      const authManualReviewSummary = join(dir, 'auth-manual-review-summary.json');
+      writeFileSync(authManualReviewSummary, JSON.stringify({
+        files: {
+          pack_csv: authManualReview.replace(/\\/g, '/'),
+        },
+      }, null, 2), 'utf-8');
+
       const coverageManual = join(dir, 'coverage-manual.csv');
       writeFileSync(coverageManual, `manual_rank,priority,review_row,review_decision,target_id,domain,url
 1,P0,11,,alpha,alpha.example,https://alpha.example/submit
@@ -311,6 +336,11 @@ pricing-001,3,3,gamma,Gamma,gamma.example,assisted,https://gamma.example/submit,
         pricingLaneSize: 1,
         authSummary,
         authLaneSize: 1,
+        authNeedsScoutSummary,
+        authNeedsScoutLaneSize: 1,
+        authManualReviewSummary,
+        authManualReviewLaneSize: 1,
+        authManualReviewFailClosedLaneSize: 1,
         coverageSummary,
         coverageReview: join(dir, 'coverage-review.csv'),
         coverageLaneSize: 1,
@@ -321,18 +351,23 @@ pricing-001,3,3,gamma,Gamma,gamma.example,assisted,https://gamma.example/submit,
       assert.equal(plan.registry_backlog.non_skip_targets, 3);
       assert.equal(plan.workflow_backlog.pricing_manual_rows, 2);
       assert.equal(plan.workflow_backlog.auth_manual_login_rows, 2);
+      assert.equal(plan.workflow_backlog.auth_resolved_needs_scout_rows, 1);
+      assert.equal(plan.workflow_backlog.auth_resolved_manual_review_rows, 2);
       assert.equal(plan.workflow_backlog.coverage_manual_review_rows, 2);
-      assert.equal(plan.lanes.length, 6);
+      assert.equal(plan.lanes.length, 9);
       assert.equal(plan.workers.length, 3);
       assert.equal(plan.lanes_summary.by_type.pricing_review_manual, 2);
       assert.equal(plan.lanes_summary.by_type.auth_manual_login, 2);
+      assert.equal(plan.lanes_summary.by_type.auth_resolved_needs_scout, 1);
+      assert.equal(plan.lanes_summary.by_type.auth_manual_review_classification, 1);
+      assert.equal(plan.lanes_summary.by_type.auth_manual_review_fail_closed, 1);
       assert.equal(plan.lanes_summary.by_type.coverage_manual_review_p0, 1);
       assert.equal(plan.lanes_summary.by_type.coverage_manual_review_p2, 1);
 
       const files = writeBacklogLanes(plan, { outputDir: join(dir, 'lanes-out') });
       assert.equal(existsSync(join(dir, 'lanes-out', 'backlog-lanes.json')), true);
       assert.equal(existsSync(join(dir, 'lanes-out', 'backlog-lanes.md')), true);
-      assert.equal(files.lanes.length, 6);
+      assert.equal(files.lanes.length, 9);
       assert.equal(files.workers.length, 3);
 
       const workerDoc = readFileSync(join(dir, 'lanes-out', 'workers', 'worker-01.md'), 'utf-8');

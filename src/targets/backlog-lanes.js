@@ -9,6 +9,8 @@ const DEFAULT_COVERAGE_SUMMARY = 'backlink-url/manual-review/manual-review-summa
 const DEFAULT_COVERAGE_MANUAL = 'backlink-url/manual-review/remaining-manual-review.csv';
 const DEFAULT_COVERAGE_REVIEW = 'backlink-url/coverage-review.csv';
 const DEFAULT_AUTH_SUMMARY = 'backlink-url/assisted-submission-pack/auth-workflow-refresh-summary.json';
+const DEFAULT_AUTH_NEEDS_SCOUT_SUMMARY = 'backlink-url/assisted-submission-pack/resolved-needs-scout-pack/auth-resolved-needs-scout-pack.json';
+const DEFAULT_AUTH_MANUAL_REVIEW_SUMMARY = 'backlink-url/assisted-submission-pack/resolved-manual-review-pack/auth-resolved-manual-review-pack.json';
 const DEFAULT_OUTPUT_DIR = 'backlink-url/backlog-lanes';
 
 function nowIso() {
@@ -227,6 +229,74 @@ function buildCoverageLanes(rows = [], opts = {}) {
   return lanes;
 }
 
+function buildAuthNeedsScoutLanes(rows = [], opts = {}) {
+  const chunks = chunkRows(rows, parsePositiveInt(opts.laneSize, 10));
+  return chunks.map((chunk, index) => {
+    const id = laneId('auth-needs-scout', index);
+    const lanePath = join(opts.outputDir, 'lanes', `${id}.csv`);
+    return {
+      lane_id: id,
+      ...laneBase('auth_resolved_needs_scout', chunk, {
+        estimatedMinutesPerRow: 5,
+        priority: 'P1',
+        sourceFile: opts.sourceFile,
+        sourceKind: 'auth_resolved_needs_scout',
+        executionMode: 'manual_or_read_only_scout_planning',
+        requiresHumanBrowser: false,
+        notes: 'Targets were explicitly moved out of auth. Refresh public scout evidence and reclassify before any auth re-entry.',
+      }),
+      rows: chunk.map((row, indexInLane) => ({
+        lane_order: String(indexInLane + 1),
+        ...row,
+        lane_csv_path: normalizePath(lanePath),
+      })),
+    };
+  });
+}
+
+function buildAuthManualReviewLanes(rows = [], opts = {}) {
+  const failClosedRows = rows.filter(row => row.review_route === 'manual_surface_review_fail_closed');
+  const classificationRows = rows.filter(row => row.review_route !== 'manual_surface_review_fail_closed');
+  const laneEntries = [
+    ...chunkRows(failClosedRows, parsePositiveInt(opts.failClosedLaneSize, 10)).map(rowsChunk => ({
+      type: 'auth_manual_review_fail_closed',
+      priority: 'P0',
+      estimatedMinutesPerRow: 7,
+      rows: rowsChunk,
+    })),
+    ...chunkRows(classificationRows, parsePositiveInt(opts.laneSize, 10)).map(rowsChunk => ({
+      type: 'auth_manual_review_classification',
+      priority: highestPriority(rowsChunk, 'P1'),
+      estimatedMinutesPerRow: 6,
+      rows: rowsChunk,
+    })),
+  ];
+
+  return laneEntries.map((entry, index) => {
+    const id = laneId(entry.type.replace(/_/g, '-'), index);
+    const lanePath = join(opts.outputDir, 'lanes', `${id}.csv`);
+    return {
+      lane_id: id,
+      ...laneBase(entry.type, entry.rows, {
+        estimatedMinutesPerRow: entry.estimatedMinutesPerRow,
+        priority: entry.priority,
+        sourceFile: opts.sourceFile,
+        sourceKind: 'auth_resolved_manual_review',
+        executionMode: 'manual_review_fail_closed',
+        requiresHumanBrowser: true,
+        notes: entry.type === 'auth_manual_review_fail_closed'
+          ? 'Fail-closed manual surface review only. Do not restore direct-login without explicit verified evidence.'
+          : 'Manual surface classification only. Keep targets out of direct-login until route is re-established.',
+      }),
+      rows: entry.rows.map((row, indexInLane) => ({
+        lane_order: String(indexInLane + 1),
+        ...row,
+        lane_csv_path: normalizePath(lanePath),
+      })),
+    };
+  });
+}
+
 function assignWorkers(lanes = [], workers = 4) {
   const count = parsePositiveInt(workers, 4);
   const workerRows = Array.from({ length: count }, (_, index) => ({
@@ -287,6 +357,14 @@ export function buildBacklogLanes(opts = {}) {
   const authSummary = parseJsonFile(authSummaryPath);
   const authCsvPaths = authStatusCsvPaths(authSummary, opts);
   const authRows = authCsvPaths.flatMap(path => parseCsvFile(path));
+  const authNeedsScoutSummaryPath = opts.authNeedsScoutSummary || DEFAULT_AUTH_NEEDS_SCOUT_SUMMARY;
+  const authNeedsScoutSummary = parseJsonFile(authNeedsScoutSummaryPath);
+  const authNeedsScoutPath = opts.authNeedsScout || authNeedsScoutSummary?.files?.pack_csv || '';
+  const authNeedsScoutRows = parseCsvFile(authNeedsScoutPath);
+  const authManualReviewSummaryPath = opts.authManualReviewSummary || DEFAULT_AUTH_MANUAL_REVIEW_SUMMARY;
+  const authManualReviewSummary = parseJsonFile(authManualReviewSummaryPath);
+  const authManualReviewPath = opts.authManualReview || authManualReviewSummary?.files?.pack_csv || '';
+  const authManualReviewRows = parseCsvFile(authManualReviewPath);
 
   const coverageSummaryPath = opts.coverageSummary || DEFAULT_COVERAGE_SUMMARY;
   const coverageSummary = parseJsonFile(coverageSummaryPath);
@@ -310,6 +388,17 @@ export function buildBacklogLanes(opts = {}) {
     sourceFile: authSummaryPath,
     refreshCommand: opts.authRefreshCommand || refreshCommand,
   });
+  const authNeedsScoutLanes = buildAuthNeedsScoutLanes(authNeedsScoutRows, {
+    outputDir,
+    laneSize: opts.authNeedsScoutLaneSize,
+    sourceFile: authNeedsScoutPath || authNeedsScoutSummaryPath,
+  });
+  const authManualReviewLanes = buildAuthManualReviewLanes(authManualReviewRows, {
+    outputDir,
+    laneSize: opts.authManualReviewLaneSize,
+    failClosedLaneSize: opts.authManualReviewFailClosedLaneSize,
+    sourceFile: authManualReviewPath || authManualReviewSummaryPath,
+  });
   const coverageLanes = buildCoverageLanes(coverageRows, {
     outputDir,
     laneSize: opts.coverageLaneSize,
@@ -318,11 +407,13 @@ export function buildBacklogLanes(opts = {}) {
     coverageReviewPath,
     registry: registryPath,
   });
-  const lanes = [...pricingLanes, ...authLanes, ...coverageLanes];
+  const lanes = [...pricingLanes, ...authLanes, ...authNeedsScoutLanes, ...authManualReviewLanes, ...coverageLanes];
   const workers = assignWorkers(lanes, opts.workers || 4);
 
   const pricingPending = pricingRows.filter(row => blank(row.review_decision));
   const authPending = authRows.filter(row => row.status === 'manual_login_required');
+  const authNeedsScoutPending = authNeedsScoutRows;
+  const authManualReviewPending = authManualReviewRows;
   const coveragePending = coverageRows.filter(row => blank(row.review_decision));
 
   return {
@@ -331,8 +422,10 @@ export function buildBacklogLanes(opts = {}) {
     workflow_backlog: {
       pricing_manual_rows: pricingPending.length,
       auth_manual_login_rows: authPending.length,
+      auth_resolved_needs_scout_rows: authNeedsScoutPending.length,
+      auth_resolved_manual_review_rows: authManualReviewPending.length,
       coverage_manual_review_rows: coveragePending.length,
-      total_workflow_rows: pricingPending.length + authPending.length + coveragePending.length,
+      total_workflow_rows: pricingPending.length + authPending.length + authNeedsScoutPending.length + authManualReviewPending.length + coveragePending.length,
       overlaps: {
         pricing_auth_shared_target_ids: intersectCount(
           pricingPending.map(row => row.target_id),
@@ -346,6 +439,10 @@ export function buildBacklogLanes(opts = {}) {
       pricing_draft: normalizePath(pricingDraft),
       auth_summary: normalizePath(authSummaryPath),
       auth_status_csvs: authCsvPaths.map(normalizePath),
+      auth_needs_scout_summary: normalizePath(authNeedsScoutSummaryPath),
+      auth_needs_scout: normalizePath(authNeedsScoutPath),
+      auth_manual_review_summary: normalizePath(authManualReviewSummaryPath),
+      auth_manual_review: normalizePath(authManualReviewPath),
       coverage_summary: normalizePath(coverageSummaryPath),
       coverage_manual: normalizePath(coverageManualPath),
       coverage_review: normalizePath(coverageReviewPath),
@@ -354,6 +451,9 @@ export function buildBacklogLanes(opts = {}) {
       workers_requested: parsePositiveInt(opts.workers || 4, 4),
       pricing_lane_size: parsePositiveInt(opts.pricingLaneSize, 10),
       auth_lane_size: parsePositiveInt(opts.authLaneSize, 10),
+      auth_needs_scout_lane_size: parsePositiveInt(opts.authNeedsScoutLaneSize, 10),
+      auth_manual_review_lane_size: parsePositiveInt(opts.authManualReviewLaneSize, 10),
+      auth_manual_review_fail_closed_lane_size: parsePositiveInt(opts.authManualReviewFailClosedLaneSize, 10),
       coverage_lane_size: parsePositiveInt(opts.coverageLaneSize, 25),
       coverage_p0_lane_size: parsePositiveInt(opts.coverageP0LaneSize, Math.max(coveragePending.filter(row => String(row.priority || '').trim().toUpperCase() === 'P0').length, 1)),
       read_only: true,
@@ -395,6 +495,8 @@ function backlogMarkdown(plan = {}) {
     '',
     `- Pricing manual rows: ${plan.workflow_backlog?.pricing_manual_rows || 0}`,
     `- Auth manual login rows: ${plan.workflow_backlog?.auth_manual_login_rows || 0}`,
+    `- Auth resolved needs-scout rows: ${plan.workflow_backlog?.auth_resolved_needs_scout_rows || 0}`,
+    `- Auth resolved manual-review rows: ${plan.workflow_backlog?.auth_resolved_manual_review_rows || 0}`,
     `- Coverage manual review rows: ${plan.workflow_backlog?.coverage_manual_review_rows || 0}`,
     `- Total workflow rows: ${plan.workflow_backlog?.total_workflow_rows || 0}`,
     `- Pricing/Auth shared target IDs: ${plan.workflow_backlog?.overlaps?.pricing_auth_shared_target_ids || 0}`,
