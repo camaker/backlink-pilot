@@ -8,7 +8,7 @@ const DEFAULT_PRICING_MANUAL = 'backlink-url/pricing-review/manual-review/pricin
 const DEFAULT_COVERAGE_SUMMARY = 'backlink-url/manual-review/manual-review-summary.json';
 const DEFAULT_COVERAGE_MANUAL = 'backlink-url/manual-review/remaining-manual-review.csv';
 const DEFAULT_COVERAGE_REVIEW = 'backlink-url/coverage-review.csv';
-const DEFAULT_AUTH_SUMMARY = 'backlink-url/assisted-submission-pack/auth-workflow-refresh-summary.json';
+const DEFAULT_AUTH_SUMMARY = 'backlink-url/assisted-submission-pack/resolved-direct-login/auth-workflow-refresh-resolved-summary.json';
 const DEFAULT_AUTH_NEEDS_SCOUT_SUMMARY = 'backlink-url/assisted-submission-pack/resolved-needs-scout-pack/auth-resolved-needs-scout-pack.json';
 const DEFAULT_AUTH_MANUAL_REVIEW_SUMMARY = 'backlink-url/assisted-submission-pack/resolved-manual-review-pack/auth-resolved-manual-review-pack.json';
 const DEFAULT_OUTPUT_DIR = 'backlink-url/backlog-lanes';
@@ -34,6 +34,78 @@ function parseJsonFile(path) {
 function parseCsvFile(path) {
   if (!path || !existsSync(path)) return [];
   return parseCsv(readFileSync(path, 'utf-8'));
+}
+
+function shellQuote(value = '') {
+  return `"${String(value || '').replace(/"/g, '\\"')}"`;
+}
+
+function stripKnownExtension(value = '') {
+  return String(value || '').replace(/\.(json|csv|ya?ml)$/i, '');
+}
+
+function baseNameWithoutExtension(value = '') {
+  return stripKnownExtension(basename(String(value || '')));
+}
+
+function deriveAuthRefreshCommand(summary, opts = {}) {
+  if (opts.authRefreshCommand) return opts.authRefreshCommand;
+
+  const queuePath = summary?.source_queue || '';
+  const batchPaths = Array.isArray(summary?.source_batches)
+    ? summary.source_batches.filter(Boolean)
+    : [];
+  if (!queuePath || !batchPaths.length) return '';
+
+  const registryPath = opts.registry || DEFAULT_REGISTRY_FILE;
+  const authDir = opts.authDir || summary?.constraints?.auth_dir || '';
+  const outputDir = summary?.files?.output_dir || dirname(summary?.files?.summary || '');
+  const nextName = baseNameWithoutExtension(summary?.files?.next_login?.output || 'auth-login-next-current');
+  const summaryName = baseNameWithoutExtension(summary?.files?.summary || 'auth-workflow-refresh-summary');
+  const nextLimit = String(
+    opts.authNextLimit
+    ?? summary?.summary?.next_login?.limit
+    ?? summary?.summary?.next_login?.task_rows
+    ?? 10
+  );
+  const rescoutLimit = String(
+    opts.authRescoutLimit
+    ?? summary?.auth_rescout?.constraints?.limit
+    ?? summary?.constraints?.rescout_limit
+    ?? 100
+  );
+
+  const args = [
+    'node',
+    'src/cli.js',
+    'targets',
+    'auth-workflow-refresh',
+    queuePath,
+    ...batchPaths,
+    '--registry',
+    normalizePath(registryPath),
+  ];
+
+  if (authDir) {
+    args.push('--auth-dir', normalizePath(authDir));
+  }
+  if (outputDir) {
+    args.push('--output-dir', normalizePath(outputDir));
+  }
+  if (nextName) {
+    args.push('--next-name', nextName);
+  }
+  if (summaryName) {
+    args.push('--summary-name', summaryName);
+  }
+  if (nextLimit) {
+    args.push('--next-limit', nextLimit);
+  }
+  if (rescoutLimit) {
+    args.push('--rescout-limit', rescoutLimit);
+  }
+
+  return args.map(shellQuote).join(' ');
 }
 
 function chunkRows(rows = [], size = 25) {
@@ -373,8 +445,13 @@ export function buildBacklogLanes(opts = {}) {
 
   const pricingRows = parseCsvFile(pricingManualPath);
   const coverageRows = parseCsvFile(coverageManualPath);
-
-  const refreshCommand = `node src/cli.js targets auth-workflow-refresh "backlink-url/assisted-submission-pack/auth-login-rescout-queue.csv" "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json" "backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json" "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json" --registry "${normalizePath(registryPath)}" --product-config "backlink-url/submission-materials/xtimer.config.yaml" --output-dir "backlink-url/assisted-submission-pack" --next-name auth-login-next-current --summary-name auth-workflow-refresh-summary --next-limit 10`;
+  const refreshCommand = deriveAuthRefreshCommand(authSummary, {
+    authRefreshCommand: opts.authRefreshCommand,
+    registry: registryPath,
+    authDir: opts.authDir,
+    authNextLimit: opts.authNextLimit,
+    authRescoutLimit: opts.authRescoutLimit,
+  });
 
   const pricingLanes = buildPricingLanes(pricingRows, {
     outputDir,
@@ -386,7 +463,7 @@ export function buildBacklogLanes(opts = {}) {
     outputDir,
     laneSize: opts.authLaneSize,
     sourceFile: authSummaryPath,
-    refreshCommand: opts.authRefreshCommand || refreshCommand,
+    refreshCommand,
   });
   const authNeedsScoutLanes = buildAuthNeedsScoutLanes(authNeedsScoutRows, {
     outputDir,

@@ -1,29 +1,43 @@
 {
   "worker_id": "worker-04",
-  "estimated_total_minutes": 220,
-  "row_count": 45,
-  "lane_count": 3,
+  "estimated_total_minutes": 178,
+  "row_count": 43,
+  "lane_count": 5,
   "lanes": [
     {
-      "lane_id": "auth-login-003",
-      "lane_type": "auth_manual_login",
+      "lane_id": "auth-manual-review-fail-closed-001",
+      "lane_type": "auth_manual_review_fail_closed",
       "priority": "P0",
-      "row_count": 10,
-      "estimated_total_minutes": 60
+      "row_count": 1,
+      "estimated_total_minutes": 7
     },
     {
-      "lane_id": "auth-login-006",
-      "lane_type": "auth_manual_login",
-      "priority": "P0",
-      "row_count": 10,
-      "estimated_total_minutes": 60
+      "lane_id": "auth-manual-review-classification-002",
+      "lane_type": "auth_manual_review_classification",
+      "priority": "P1",
+      "row_count": 1,
+      "estimated_total_minutes": 6
     },
     {
-      "lane_id": "coverage-review-p2-004",
+      "lane_id": "auth-needs-scout-001",
+      "lane_type": "auth_resolved_needs_scout",
+      "priority": "P1",
+      "row_count": 1,
+      "estimated_total_minutes": 5
+    },
+    {
+      "lane_id": "coverage-review-p2-002",
       "lane_type": "coverage_manual_review_p2",
       "priority": "P2",
       "row_count": 25,
       "estimated_total_minutes": 100
+    },
+    {
+      "lane_id": "coverage-review-p2-006",
+      "lane_type": "coverage_manual_review_p2",
+      "priority": "P2",
+      "row_count": 15,
+      "estimated_total_minutes": 60
     }
   ]
 }

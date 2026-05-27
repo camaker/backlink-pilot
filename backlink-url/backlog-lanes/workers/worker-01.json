@@ -1,8 +1,8 @@
 {
   "worker_id": "worker-01",
-  "estimated_total_minutes": 245,
-  "row_count": 52,
-  "lane_count": 3,
+  "estimated_total_minutes": 185,
+  "row_count": 42,
+  "lane_count": 2,
   "lanes": [
     {
       "lane_id": "coverage-review-p0-001",
@@ -10,13 +10,6 @@
       "priority": "P0",
       "row_count": 17,
       "estimated_total_minutes": 85
-    },
-    {
-      "lane_id": "auth-login-007",
-      "lane_type": "auth_manual_login",
-      "priority": "P0",
-      "row_count": 10,
-      "estimated_total_minutes": 60
     },
     {
       "lane_id": "coverage-review-p2-005",

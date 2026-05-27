@@ -1,6 +1,6 @@
 # Backlog Lanes
 
-Generated: 2026-05-27T07:01:29.207Z
+Generated: 2026-05-27T13:56:14.161Z
 
 ## Registry Backlog
 
@@ -12,9 +12,11 @@ Generated: 2026-05-27T07:01:29.207Z
 ## Workflow Backlog
 
 - Pricing manual rows: 0
-- Auth manual login rows: 70
+- Auth manual login rows: 20
+- Auth resolved needs-scout rows: 1
+- Auth resolved manual-review rows: 2
 - Coverage manual review rows: 132
-- Total workflow rows: 202
+- Total workflow rows: 155
 - Pricing/Auth shared target IDs: 0
 
 ## Lanes
@@ -23,11 +25,9 @@ Generated: 2026-05-27T07:01:29.207Z
 |---|---|---|---:|---:|
 | auth-login-001 | auth_manual_login | P0 | 10 | 60 |
 | auth-login-002 | auth_manual_login | P0 | 10 | 60 |
-| auth-login-003 | auth_manual_login | P0 | 10 | 60 |
-| auth-login-004 | auth_manual_login | P0 | 10 | 60 |
-| auth-login-005 | auth_manual_login | P0 | 10 | 60 |
-| auth-login-006 | auth_manual_login | P0 | 10 | 60 |
-| auth-login-007 | auth_manual_login | P0 | 10 | 60 |
+| auth-needs-scout-001 | auth_resolved_needs_scout | P1 | 1 | 5 |
+| auth-manual-review-fail-closed-001 | auth_manual_review_fail_closed | P0 | 1 | 7 |
+| auth-manual-review-classification-002 | auth_manual_review_classification | P1 | 1 | 6 |
 | coverage-review-p0-001 | coverage_manual_review_p0 | P0 | 17 | 85 |
 | coverage-review-p2-002 | coverage_manual_review_p2 | P2 | 25 | 100 |
 | coverage-review-p2-003 | coverage_manual_review_p2 | P2 | 25 | 100 |
@@ -39,9 +39,9 @@ Generated: 2026-05-27T07:01:29.207Z
 
 | Worker | Lanes | Rows | Est. Minutes | Lane IDs |
 |---|---:|---:|---:|---|
-| worker-01 | 3 | 52 | 245 | coverage-review-p0-001, auth-login-007, coverage-review-p2-005 |
-| worker-02 | 4 | 60 | 280 | auth-login-001, auth-login-004, coverage-review-p2-002, coverage-review-p2-006 |
-| worker-03 | 3 | 45 | 220 | auth-login-002, auth-login-005, coverage-review-p2-003 |
-| worker-04 | 3 | 45 | 220 | auth-login-003, auth-login-006, coverage-review-p2-004 |
+| worker-01 | 2 | 42 | 185 | coverage-review-p0-001, coverage-review-p2-005 |
+| worker-02 | 2 | 35 | 160 | auth-login-001, coverage-review-p2-003 |
+| worker-03 | 2 | 35 | 160 | auth-login-002, coverage-review-p2-004 |
+| worker-04 | 5 | 43 | 178 | auth-manual-review-fail-closed-001, auth-manual-review-classification-002, auth-needs-scout-001, coverage-review-p2-002, coverage-review-p2-006 |
 
 All lanes remain manual/read-only. Nothing here performs real submissions, login bypass, or registry writes.

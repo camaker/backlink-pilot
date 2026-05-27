@@ -280,12 +280,38 @@ pricing-001,3,3,gamma,Gamma,gamma.example,assisted,https://gamma.example/submit,
 3,P1,gamma,Gamma,gamma.example,ready_for_auth_rescout,run_auth_scout_command,https://gamma.example/login,https://gamma.example/submit,cmd gamma
 `, 'utf-8');
 
+      const resolvedQueue = join(dir, 'resolved-auth-login-queue.csv');
+      const resolvedBatchOne = join(dir, 'auth-login-plan-batch-resolved-001.json');
+      const resolvedBatchTwo = join(dir, 'auth-login-plan-batch-resolved-002.json');
       const authSummary = join(dir, 'auth-summary.json');
       writeFileSync(authSummary, JSON.stringify({
+        source_queue: resolvedQueue.replace(/\\/g, '/'),
+        source_batches: [
+          resolvedBatchOne.replace(/\\/g, '/'),
+          resolvedBatchTwo.replace(/\\/g, '/'),
+        ],
+        constraints: {
+          auth_dir: 'playwright/.auth',
+        },
+        auth_rescout: {
+          constraints: {
+            limit: 100,
+          },
+        },
         files: {
+          output_dir: 'backlink-url/assisted-submission-pack/resolved-direct-login',
           status_reports: [
             { csv_output: authBatchCsv.replace(/\\/g, '/') },
           ],
+          next_login: {
+            output: 'backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-next-resolved-current.json',
+          },
+          summary: 'backlink-url/assisted-submission-pack/resolved-direct-login/auth-workflow-refresh-resolved-summary.json',
+        },
+        summary: {
+          next_login: {
+            task_rows: 10,
+          },
         },
       }, null, 2), 'utf-8');
 
@@ -363,6 +389,22 @@ pricing-001,3,3,gamma,Gamma,gamma.example,assisted,https://gamma.example/submit,
       assert.equal(plan.lanes_summary.by_type.auth_manual_review_fail_closed, 1);
       assert.equal(plan.lanes_summary.by_type.coverage_manual_review_p0, 1);
       assert.equal(plan.lanes_summary.by_type.coverage_manual_review_p2, 1);
+      assert.match(
+        plan.lanes.find(lane => lane.lane_type === 'auth_manual_login').refresh_command,
+        /resolved-auth-login-queue\.csv/
+      );
+      assert.match(
+        plan.lanes.find(lane => lane.lane_type === 'auth_manual_login').refresh_command,
+        /auth-login-plan-batch-resolved-001\.json/
+      );
+      assert.match(
+        plan.lanes.find(lane => lane.lane_type === 'auth_manual_login').refresh_command,
+        /auth-login-next-resolved-current/
+      );
+      assert.match(
+        plan.lanes.find(lane => lane.lane_type === 'auth_manual_login').refresh_command,
+        /auth-workflow-refresh-resolved-summary/
+      );
 
       const files = writeBacklogLanes(plan, { outputDir: join(dir, 'lanes-out') });
       assert.equal(existsSync(join(dir, 'lanes-out', 'backlog-lanes.json')), true);
@@ -372,6 +414,8 @@ pricing-001,3,3,gamma,Gamma,gamma.example,assisted,https://gamma.example/submit,
 
       const workerDoc = readFileSync(join(dir, 'lanes-out', 'workers', 'worker-01.md'), 'utf-8');
       assert.match(workerDoc, /worker-01/i);
+      assert.match(workerDoc, /resolved-auth-login-queue\.csv/);
+      assert.match(workerDoc, /auth-login-plan-batch-resolved-002\.json/);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
@@ -4726,6 +4770,41 @@ describe('auth login operator pack', () => {
       assert.equal(existsSync(written.markdown), true);
       assert.equal(existsSync(written.powershell), true);
       assert.equal(existsSync(written.summary), true);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('uses resolved auth workflow refresh paths by default', () => {
+    const dir = tempDir();
+    try {
+      const input = join(dir, 'auth-login-next.json');
+      writeFileSync(input, JSON.stringify({
+        version: 1,
+        tasks: [
+          {
+            task_order: '1',
+            priority: 'P0',
+            target_id: 'needs-login',
+            name: 'Needs Login',
+            domain: 'login.example',
+            pricing: 'free',
+            risk: 'low',
+            auth_profile: 'needs-login',
+            status: 'manual_login_required',
+            login_url: 'https://login.example/sign-in',
+            submit_url: 'https://login.example/submit',
+          },
+        ],
+      }));
+
+      const pack = buildAuthLoginOperatorPack(input);
+
+      assert.match(pack.refresh_command, /resolved-auth-login\/auth-login-resolved-direct-login-queue\.csv/);
+      assert.match(pack.refresh_command, /resolved-direct-login\/auth-login-plan-batch-resolved-001\.json/);
+      assert.match(pack.refresh_command, /--auth-dir playwright\/\.auth/);
+      assert.match(pack.refresh_command, /auth-workflow-refresh-resolved-summary/);
+      assert.match(pack.refresh_command, /--rescout-limit 100/);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

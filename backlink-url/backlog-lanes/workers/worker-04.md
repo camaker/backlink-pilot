@@ -1,37 +1,57 @@
 # worker-04
 
-Generated: 2026-05-27T07:01:29.207Z
+Generated: 2026-05-27T13:56:14.161Z
 
-- Lane count: 3
-- Rows: 45
-- Estimated minutes: 220
+- Lane count: 5
+- Rows: 43
+- Estimated minutes: 178
 
-### auth-login-003
+### auth-manual-review-fail-closed-001
 
-- Type: auth_manual_login
+- Type: auth_manual_review_fail_closed
 - Priority: P0
-- Rows: 10
-- Estimated minutes: 60
-- Notes: Run manual auth login only. No submission. Refresh auth workflow after login capture.
+- Rows: 1
+- Estimated minutes: 7
+- Notes: Fail-closed manual surface review only. Do not restore direct-login without explicit verified evidence.
 - Validate: (none)
-- Merge/Follow-up: node src/cli.js targets auth-workflow-refresh "backlink-url/assisted-submission-pack/auth-login-rescout-queue.csv" "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json" "backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json" "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json" --registry "resources/targets.canonical.yaml" --product-config "backlink-url/submission-materials/xtimer.config.yaml" --output-dir "backlink-url/assisted-submission-pack" --next-name auth-login-next-current --summary-name auth-workflow-refresh-summary --next-limit 10
+- Merge/Follow-up: (none)
 
-### auth-login-006
+### auth-manual-review-classification-002
 
-- Type: auth_manual_login
-- Priority: P0
-- Rows: 10
-- Estimated minutes: 60
-- Notes: Run manual auth login only. No submission. Refresh auth workflow after login capture.
+- Type: auth_manual_review_classification
+- Priority: P1
+- Rows: 1
+- Estimated minutes: 6
+- Notes: Manual surface classification only. Keep targets out of direct-login until route is re-established.
 - Validate: (none)
-- Merge/Follow-up: node src/cli.js targets auth-workflow-refresh "backlink-url/assisted-submission-pack/auth-login-rescout-queue.csv" "backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json" "backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json" "backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json" --registry "resources/targets.canonical.yaml" --product-config "backlink-url/submission-materials/xtimer.config.yaml" --output-dir "backlink-url/assisted-submission-pack" --next-name auth-login-next-current --summary-name auth-workflow-refresh-summary --next-limit 10
+- Merge/Follow-up: (none)
 
-### coverage-review-p2-004
+### auth-needs-scout-001
+
+- Type: auth_resolved_needs_scout
+- Priority: P1
+- Rows: 1
+- Estimated minutes: 5
+- Notes: Targets were explicitly moved out of auth. Refresh public scout evidence and reclassify before any auth re-entry.
+- Validate: (none)
+- Merge/Follow-up: (none)
+
+### coverage-review-p2-002
 
 - Type: coverage_manual_review_p2
 - Priority: P2
 - Rows: 25
 - Estimated minutes: 100
 - Notes: Validate directory fit and submission surface manually. Approved rows remain non-executable until scout evidence exists.
-- Validate: node src/cli.js targets validate-coverage-review-batch "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.csv" --fail-on-blockers
-- Merge/Follow-up: node src/cli.js targets promote-coverage-review-batch "backlink-url/coverage-review.csv" "backlink-url/backlog-lanes/lanes/coverage-review-p2-004.csv" --registry "resources/targets.canonical.yaml" --output "backlink-url/backlog-lanes/merge/coverage-review-p2-004-coverage-review.updated.csv" --dry-run
+- Validate: node src/cli.js targets validate-coverage-review-batch "backlink-url/backlog-lanes/lanes/coverage-review-p2-002.csv" --fail-on-blockers
+- Merge/Follow-up: node src/cli.js targets promote-coverage-review-batch "backlink-url/coverage-review.csv" "backlink-url/backlog-lanes/lanes/coverage-review-p2-002.csv" --registry "resources/targets.canonical.yaml" --output "backlink-url/backlog-lanes/merge/coverage-review-p2-002-coverage-review.updated.csv" --dry-run
+
+### coverage-review-p2-006
+
+- Type: coverage_manual_review_p2
+- Priority: P2
+- Rows: 15
+- Estimated minutes: 60
+- Notes: Validate directory fit and submission surface manually. Approved rows remain non-executable until scout evidence exists.
+- Validate: node src/cli.js targets validate-coverage-review-batch "backlink-url/backlog-lanes/lanes/coverage-review-p2-006.csv" --fail-on-blockers
+- Merge/Follow-up: node src/cli.js targets promote-coverage-review-batch "backlink-url/coverage-review.csv" "backlink-url/backlog-lanes/lanes/coverage-review-p2-006.csv" --registry "resources/targets.canonical.yaml" --output "backlink-url/backlog-lanes/merge/coverage-review-p2-006-coverage-review.updated.csv" --dry-run

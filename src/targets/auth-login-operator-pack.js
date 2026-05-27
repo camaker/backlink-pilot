@@ -106,16 +106,16 @@ function summaryFor(tasks = []) {
 function defaultRefreshCommand() {
   return [
     'node src/cli.js targets auth-workflow-refresh',
-    'backlink-url/assisted-submission-pack/auth-login-rescout-queue.csv',
-    'backlink-url/assisted-submission-pack/auth-login-plan-batch-001.json',
-    'backlink-url/assisted-submission-pack/auth-login-plan-batch-002.json',
-    'backlink-url/assisted-submission-pack/auth-login-plan-batch-003.json',
+    'backlink-url/assisted-submission-pack/resolved-auth-login/auth-login-resolved-direct-login-queue.csv',
+    'backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-plan-batch-resolved-001.json',
+    'backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-plan-batch-resolved-002.json',
     '--registry resources/targets.canonical.yaml',
-    '--product-config backlink-url/submission-materials/xtimer.config.yaml',
-    '--output-dir backlink-url/assisted-submission-pack',
-    '--next-name auth-login-next-current',
-    '--summary-name auth-workflow-refresh-summary',
+    '--auth-dir playwright/.auth',
+    '--output-dir backlink-url/assisted-submission-pack/resolved-direct-login',
+    '--next-name auth-login-next-resolved-current',
+    '--summary-name auth-workflow-refresh-resolved-summary',
     '--next-limit 10',
+    '--rescout-limit 100',
   ].join(' ');
 }
 
