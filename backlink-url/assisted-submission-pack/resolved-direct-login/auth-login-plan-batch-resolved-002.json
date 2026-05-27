@@ -1,95 +1,15 @@
 {
   "version": 1,
-  "created_at": "2026-05-27T12:38:36.672Z",
+  "created_at": "2026-05-27T13:03:00.638Z",
   "registry": "resources/targets.canonical.yaml",
   "source_queue": "backlink-url/assisted-submission-pack/resolved-auth-login/auth-login-resolved-direct-login-queue.csv",
-  "product": {
-    "name": "XTimer",
-    "url": "https://xtimer.app/en",
-    "description": "Control a fullscreen timer remotely for presentations, workshops, livestreams, and events.",
-    "long_description": "XTimer is a web-based countdown and stage timer for presentations, workshops, livestreams, meetings, and live events. Event producers can run a fullscreen timer on one or more displays and control it remotely from another device, keeping speakers, moderators, and audiences in sync. It supports countdown, count-up, clock, and run-of-show workflows, plus shareable agenda links, moderator links, audience question links, wrap-up cues, and responsive fullscreen display modes. Free users can start with core timer rooms, while Pro and Premium plans add production-grade features such as API control, custom branding, password-protected links, chimes and alerts, overtime behavior, custom themes, backgrounds, fonts, and colors.\n",
-    "email": "privacy@mail.xtimer.app",
-    "categories": [
-      "productivity",
-      "event-tech",
-      "presentation-tools",
-      "meeting-tools",
-      "livestreaming",
-      "remote-work",
-      "timer"
-    ],
-    "pricing": "freemium",
-    "pricing_url": "https://xtimer.app/en#pricing",
-    "privacy_url": "https://xtimer.app/en/legal/privacy-policy",
-    "terms_url": "https://xtimer.app/en/legal/terms",
-    "logo_url": "https://xtimer.app/images/og-image.webp",
-    "square_logo_url": "https://xtimer.app/icon.png?icon.fdd0424d.png",
-    "favicon_url": "https://xtimer.app/favicon.ico?favicon.253cbe48.ico",
-    "demo_video_url": "",
-    "twitter": "",
-    "discord_url": "https://discord.gg/9SnAHhfT",
-    "docs_url": "https://xtimer.app/docs/en",
-    "contact_url": "https://xtimer.app/en/contact",
-    "features": [
-      "Remote timer control",
-      "Fullscreen responsive timer display",
-      "Countdown, count-up, and clock modes",
-      "Run-of-show scheduling and auto-start",
-      "Speaker messages and moderator links",
-      "Shareable agenda and audience question links",
-      "Wrap-up color changes, sounds, and chimes",
-      "API and custom branding on paid plans"
-    ],
-    "screenshot_urls": [
-      "https://xtimer.app/_next/static/media/hero-image.d0cbdb2f.webp",
-      "https://xtimer.app/_next/static/media/hero-image-dark.b9eecaaa.webp"
-    ],
-    "destination_pages": {
-      "alternatives": [
-        "https://xtimer.app/en/vs/stagetimer"
-      ],
-      "use_cases": [
-        "https://xtimer.app/en/for/event-organizers",
-        "https://xtimer.app/en/for/speakers",
-        "https://xtimer.app/en/for/teachers",
-        "https://xtimer.app/en/for/fitness-trainers",
-        "https://xtimer.app/en/for/podcasters",
-        "https://xtimer.app/en/for/streamers",
-        "https://xtimer.app/en/for/meeting-hosts",
-        "https://xtimer.app/en/for/wedding-planners"
-      ],
-      "templates": [
-        "https://xtimer.app/en/templates/presentation-timer",
-        "https://xtimer.app/en/templates/meeting-timer",
-        "https://xtimer.app/en/templates/pomodoro-timer",
-        "https://xtimer.app/en/templates/workout-timer",
-        "https://xtimer.app/en/templates/cooking-timer",
-        "https://xtimer.app/en/templates/keynote-timer"
-      ],
-      "integrations": [
-        "https://xtimer.app/en/integrations/obs-studio",
-        "https://xtimer.app/en/integrations/zoom"
-      ],
-      "blog": [
-        "https://xtimer.app/en/blog/best-event-timer-tools",
-        "https://xtimer.app/en/blog/how-to-create-run-of-show",
-        "https://xtimer.app/en/blog/how-to-time-speakers-at-events",
-        "https://xtimer.app/en/blog/how-use-timer",
-        "https://xtimer.app/en/blog/xtimer-vs-stagetimer"
-      ]
-    },
-    "schema": {
-      "faq": true,
-      "product": true,
-      "software_application": true
-    }
-  },
+  "product": {},
   "constraints": {
     "purpose": "manual_auth_login_collection",
     "limit": 10,
     "offset": 10,
     "auth_dir": "playwright/.auth",
-    "product_config": "backlink-url/submission-materials/xtimer.config.yaml",
+    "product_config": "",
     "no_real_submission": true,
     "no_automated_login": true,
     "no_captcha_or_2fa_bypass": true

@@ -51,6 +51,14 @@ import {
   writeAuthResidualResolve,
 } from '../src/targets/auth-residual-resolve.js';
 import {
+  buildAuthResolvedManualReviewPack,
+  writeAuthResolvedManualReviewPack,
+} from '../src/targets/auth-resolved-manual-review-pack.js';
+import {
+  buildAuthResolvedNeedsScoutPack,
+  writeAuthResolvedNeedsScoutPack,
+} from '../src/targets/auth-resolved-needs-scout-pack.js';
+import {
   runAuthResidualRebuild,
 } from '../src/targets/auth-residual-rebuild.js';
 import {
@@ -4218,6 +4226,75 @@ describe('auth residual resolve', () => {
     }
   });
 
+  it('builds a focused resolved needs-scout pack from resolved auth output', () => {
+    const dir = tempDir();
+    try {
+      const queue = join(dir, 'auth-login-resolved-needs-scout.csv');
+      const outputDir = join(dir, 'pack');
+      writeFileSync(queue, [
+        'rank,priority,priority_score,target_id,name,domain,mode,status,pricing,risk,lang,manual_bucket,automation_after_human,submission_policy,safety_blockers,recommended_next_step,auth_profile,auth_login_command,auth_scout_command,submit_url,final_url,root_url,last_scouted_at,last_submitted_at,form_count,field_count,required_fields,unmapped_required_fields,submit_button_count,source,reason,notes',
+        '11,P0,280,mergeek,Mergeek,mergeek.com,assisted,auth_required,free,unknown,zh,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required; required_fields_unmapped,login,mergeek,node src/cli.js auth login --profile "mergeek" --url "https://mergeek.com/publish_project",node src/cli.js scout "https://mergeek.com/publish_project" --auth-profile "mergeek",https://mergeek.com/publish_project,https://mergeek.com/publish_project,https://mergeek.com/,2026-05-23T03:38:04.478Z,,1,5,4,1,1,targets.yaml,auth_signal; classification_mismatch:assisted->needs_scout,',
+      ].join('\n'));
+
+      const report = buildAuthResolvedNeedsScoutPack(queue);
+      const written = writeAuthResolvedNeedsScoutPack(report, {
+        outputDir,
+        name: 'auth-resolved-needs-scout-pack',
+      });
+      const summary = JSON.parse(readFileSync(written.summary_json, 'utf-8'));
+      const csvRows = parseCsv(readFileSync(written.pack_csv, 'utf-8'));
+
+      assert.equal(report.constraints.no_real_submission, true);
+      assert.equal(report.summary.rows, 1);
+      assert.equal(report.rows[0].target_id, 'mergeek');
+      assert.equal(report.rows[0].recommended_route, 'needs_scout_outside_auth_lane');
+      assert.match(report.rows[0].next_step, /Re-enter auth only if a later scout confirms auth is genuinely required/i);
+      assert.equal(csvRows.length, 1);
+      assert.equal(csvRows[0].target_id, 'mergeek');
+      assert.equal(summary.summary.rows, 1);
+      assert.equal(existsSync(written.summary_md), true);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('builds a fail-closed resolved manual-review pack from resolved auth output', () => {
+    const dir = tempDir();
+    try {
+      const queue = join(dir, 'auth-login-resolved-manual-review.csv');
+      const outputDir = join(dir, 'pack');
+      writeFileSync(queue, [
+        'rank,priority,priority_score,target_id,name,domain,mode,status,pricing,risk,lang,manual_bucket,automation_after_human,submission_policy,safety_blockers,recommended_next_step,auth_profile,auth_login_command,auth_scout_command,submit_url,final_url,root_url,last_scouted_at,last_submitted_at,form_count,field_count,required_fields,unmapped_required_fields,submit_button_count,source,reason,notes',
+        '12,P0,280,top-best-alternatives,Top Best Alternatives,topbestalternatives.com,assisted,auth_required,freemium,unknown,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required,login,top-best-alternatives,node src/cli.js auth login --profile "top-best-alternatives" --url "https://www.topbestalternatives.com/",node src/cli.js scout "https://www.topbestalternatives.com/" --auth-profile "top-best-alternatives",https://www.topbestalternatives.com/,https://www.topbestalternatives.com/,https://www.topbestalternatives.com/,2026-05-23T02:23:36.763Z,,1,2,0,0,1,targets.yaml,auth_signal; classification_mismatch:assisted->assisted,',
+        '70,P1,210,orbic-ai,Orbic AI,orbic.ai,assisted,new,free,medium,unknown,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required; manual_surface_review_required; no_persisted_form_evidence,login,orbic-ai,node src/cli.js auth login --profile "orbic-ai" --url "https://orbic.ai/login?callbackUrl=https%3A%2F%2Forbic.ai%2Fsubmit%2Ftools",node src/cli.js scout "https://orbic.ai/login?callbackUrl=https%3A%2F%2Forbic.ai%2Fsubmit%2Ftools" --auth-profile "orbic-ai",https://orbic.ai/login?callbackUrl=https%3A%2F%2Forbic.ai%2Fsubmit%2Ftools,,https://orbic.ai/,,,0,0,0,0,0,notion,auth_or_manual_signal,',
+      ].join('\n'));
+
+      const report = buildAuthResolvedManualReviewPack(queue);
+      const written = writeAuthResolvedManualReviewPack(report, {
+        outputDir,
+        name: 'auth-resolved-manual-review-pack',
+      });
+      const summary = JSON.parse(readFileSync(written.summary_json, 'utf-8'));
+      const csvRows = parseCsv(readFileSync(written.pack_csv, 'utf-8'));
+      const orbic = report.rows.find(row => row.target_id === 'orbic-ai');
+      const topBest = report.rows.find(row => row.target_id === 'top-best-alternatives');
+
+      assert.equal(report.constraints.fail_closed, true);
+      assert.equal(report.summary.rows, 2);
+      assert.equal(report.summary.fail_closed_rows, 1);
+      assert.equal(orbic.review_route, 'manual_surface_review_fail_closed');
+      assert.match(orbic.disallowed_outcomes, /direct_login_ready/i);
+      assert.match(orbic.notes, /must remain fail-closed/i);
+      assert.equal(topBest.review_route, 'manual_surface_classification_review');
+      assert.match(topBest.next_step, /Classify the surface manually/i);
+      assert.equal(csvRows.length, 2);
+      assert.equal(summary.summary.fail_closed_rows, 1);
+      assert.equal(existsSync(written.summary_md), true);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
   it('rebuilds downstream batch, next-login, operator-pack, and refresh artifacts from residual decisions', () => {
     const dir = tempDir();
     try {
@@ -4227,6 +4304,8 @@ describe('auth residual resolve', () => {
       const registry = join(dir, 'registry.yaml');
       const authDir = join(dir, 'auth');
       const resolveOutputDir = join(dir, 'resolved-auth');
+      const needsScoutOutputDir = join(dir, 'resolved-needs-scout-pack');
+      const manualReviewOutputDir = join(dir, 'resolved-manual-review-pack');
       const rebuildOutputDir = join(dir, 'rebuilt');
       mkdirSync(authDir, { recursive: true });
 
@@ -4289,6 +4368,8 @@ targets:
         registry,
         authDir,
         resolveOutputDir,
+        needsScoutOutputDir,
+        manualReviewOutputDir,
         rebuildOutputDir,
         batchSize: 2,
         nextLimit: 2,
@@ -4296,6 +4377,8 @@ targets:
       });
 
       const rebuildSummary = JSON.parse(readFileSync(join(rebuildOutputDir, 'auth-residual-rebuild-summary.json'), 'utf-8'));
+      const needsScoutSummary = JSON.parse(readFileSync(join(needsScoutOutputDir, 'auth-resolved-needs-scout-pack.json'), 'utf-8'));
+      const manualReviewSummary = JSON.parse(readFileSync(join(manualReviewOutputDir, 'auth-resolved-manual-review-pack.json'), 'utf-8'));
       const batchSummary = JSON.parse(readFileSync(join(rebuildOutputDir, 'auth-login-plan-batches-resolved-summary.json'), 'utf-8'));
       const nextLogin = JSON.parse(readFileSync(join(rebuildOutputDir, 'auth-login-next-resolved.json'), 'utf-8'));
       const operatorPack = JSON.parse(readFileSync(join(rebuildOutputDir, 'auth-login-operator-resolved.json'), 'utf-8'));
@@ -4307,6 +4390,9 @@ targets:
       assert.equal(report.summary.batch_count, 2);
       assert.equal(report.summary.next_login_task_rows, 2);
       assert.equal(report.summary.auth_profiles_missing, 3);
+      assert.equal(needsScoutSummary.summary.rows, 1);
+      assert.equal(manualReviewSummary.summary.rows, 1);
+      assert.equal(manualReviewSummary.summary.fail_closed_rows, 1);
       assert.equal(batchSummary.summary.pending_rows, 3);
       assert.equal(batchSummary.summary.batch_count, 2);
       assert.equal(nextLogin.summary.task_rows, 2);

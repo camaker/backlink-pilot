@@ -18,6 +18,14 @@ import {
   writeAuthResidualResolve,
 } from './auth-residual-resolve.js';
 import {
+  buildAuthResolvedManualReviewPack,
+  writeAuthResolvedManualReviewPack,
+} from './auth-resolved-manual-review-pack.js';
+import {
+  buildAuthResolvedNeedsScoutPack,
+  writeAuthResolvedNeedsScoutPack,
+} from './auth-resolved-needs-scout-pack.js';
+import {
   buildAuthWorkflowRefresh,
   writeAuthWorkflowRefresh,
 } from './auth-workflow-refresh.js';
@@ -96,6 +104,8 @@ function rebuildMarkdown(report = {}, files = {}) {
     '',
     `- Resolve summary: ${files.resolve_summary_json || ''}`,
     `- Direct-login queue: ${files.resolved_direct_login_queue_csv || ''}`,
+    `- Needs-scout pack summary: ${files.needs_scout_pack_summary_json || ''}`,
+    `- Manual-review pack summary: ${files.manual_review_pack_summary_json || ''}`,
     `- Rebuilt batch summary: ${files.batch_summary_json || ''}`,
     `- Rebuilt next-login JSON: ${files.next_login_json || ''}`,
     `- Rebuilt operator pack JSON: ${files.operator_pack_json || ''}`,
@@ -112,8 +122,12 @@ export function runAuthResidualRebuild(triagePath, residualPath, opts = {}) {
   const registry = opts.registry || DEFAULT_REGISTRY_FILE;
   const authDir = opts.authDir || DEFAULT_AUTH_DIR;
   const resolveOutputDir = opts.resolveOutputDir || 'backlink-url/assisted-submission-pack/resolved-auth-login';
+  const needsScoutOutputDir = opts.needsScoutOutputDir || 'backlink-url/assisted-submission-pack/resolved-needs-scout-pack';
+  const manualReviewOutputDir = opts.manualReviewOutputDir || 'backlink-url/assisted-submission-pack/resolved-manual-review-pack';
   const rebuildOutputDir = opts.rebuildOutputDir || 'backlink-url/assisted-submission-pack/resolved-direct-login';
   const resolveName = opts.resolveName || 'auth-residual-resolve';
+  const needsScoutName = opts.needsScoutName || 'auth-resolved-needs-scout-pack';
+  const manualReviewName = opts.manualReviewName || 'auth-resolved-manual-review-pack';
   const batchNamePrefix = opts.batchNamePrefix || 'auth-login-plan-batch-resolved';
   const batchSummaryName = opts.batchSummaryName || 'auth-login-plan-batches-resolved-summary';
   const nextName = opts.nextName || 'auth-login-next-resolved';
@@ -126,6 +140,18 @@ export function runAuthResidualRebuild(triagePath, residualPath, opts = {}) {
   const resolveFiles = writeAuthResidualResolve(resolveReport, {
     outputDir: resolveOutputDir,
     name: resolveName,
+  });
+
+  const needsScoutPack = buildAuthResolvedNeedsScoutPack(resolveFiles.needs_scout_queue_csv);
+  const needsScoutFiles = writeAuthResolvedNeedsScoutPack(needsScoutPack, {
+    outputDir: needsScoutOutputDir,
+    name: needsScoutName,
+  });
+
+  const manualReviewPack = buildAuthResolvedManualReviewPack(resolveFiles.manual_review_queue_csv);
+  const manualReviewFiles = writeAuthResolvedManualReviewPack(manualReviewPack, {
+    outputDir: manualReviewOutputDir,
+    name: manualReviewName,
   });
 
   const planBatchesReport = buildAuthLoginPlanBatches(resolveFiles.direct_login_queue_csv, {
@@ -191,6 +217,8 @@ export function runAuthResidualRebuild(triagePath, residualPath, opts = {}) {
     output_dir: normalizePath(rebuildOutputDir),
     resolve_summary_json: resolveFiles.summary_json,
     resolved_direct_login_queue_csv: resolveFiles.direct_login_queue_csv,
+    needs_scout_pack_summary_json: needsScoutFiles.summary_json,
+    manual_review_pack_summary_json: manualReviewFiles.summary_json,
     batch_summary_json: planBatchesFiles.summary,
     next_login_json: nextFiles.output,
     next_login_csv: nextFiles.csv_output,
@@ -216,6 +244,8 @@ export function runAuthResidualRebuild(triagePath, residualPath, opts = {}) {
     },
     files: {
       resolve: resolveFiles,
+      needs_scout_pack: needsScoutFiles,
+      manual_review_pack: manualReviewFiles,
       plan_batches: planBatchesFiles,
       next_login: nextFiles,
       operator_pack: operatorFiles,
@@ -226,6 +256,12 @@ export function runAuthResidualRebuild(triagePath, residualPath, opts = {}) {
     reports: {
       resolve: {
         summary: resolveReport.summary,
+      },
+      needs_scout_pack: {
+        summary: needsScoutPack.summary,
+      },
+      manual_review_pack: {
+        summary: manualReviewPack.summary,
       },
       plan_batches: {
         summary: planBatchesReport.summary,

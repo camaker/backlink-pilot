@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "created_at": "2026-05-27T12:38:42.610Z",
+  "created_at": "2026-05-27T13:03:06.681Z",
   "source_triage": "backlink-url/assisted-submission-pack/auth-login-triage.json",
   "source_residual": "backlink-url/assisted-submission-pack/residual-shrink/auth-residual-shrink.json",
   "constraints": {
@@ -21,6 +21,20 @@
       "needs_scout_queue_csv": "backlink-url/assisted-submission-pack/resolved-auth-login/auth-login-resolved-needs-scout.csv",
       "manual_review_queue_csv": "backlink-url/assisted-submission-pack/resolved-auth-login/auth-login-resolved-manual-review.csv",
       "dropped_queue_csv": "backlink-url/assisted-submission-pack/resolved-auth-login/auth-login-resolved-dropped.csv"
+    },
+    "needs_scout_pack": {
+      "output_dir": "backlink-url/assisted-submission-pack/resolved-needs-scout-pack",
+      "pack_csv": "backlink-url/assisted-submission-pack/resolved-needs-scout-pack/auth-resolved-needs-scout-pack.csv",
+      "next_queue_csv": "backlink-url/assisted-submission-pack/resolved-needs-scout-pack/next-auth-resolved-needs-scout.csv",
+      "summary_json": "backlink-url/assisted-submission-pack/resolved-needs-scout-pack/auth-resolved-needs-scout-pack.json",
+      "summary_md": "backlink-url/assisted-submission-pack/resolved-needs-scout-pack/auth-resolved-needs-scout-pack.md"
+    },
+    "manual_review_pack": {
+      "output_dir": "backlink-url/assisted-submission-pack/resolved-manual-review-pack",
+      "pack_csv": "backlink-url/assisted-submission-pack/resolved-manual-review-pack/auth-resolved-manual-review-pack.csv",
+      "next_queue_csv": "backlink-url/assisted-submission-pack/resolved-manual-review-pack/next-auth-resolved-manual-review.csv",
+      "summary_json": "backlink-url/assisted-submission-pack/resolved-manual-review-pack/auth-resolved-manual-review-pack.json",
+      "summary_md": "backlink-url/assisted-submission-pack/resolved-manual-review-pack/auth-resolved-manual-review-pack.md"
     },
     "plan_batches": {
       "output_dir": "backlink-url/assisted-submission-pack/resolved-direct-login",
@@ -113,6 +127,45 @@
         }
       }
     },
+    "needs_scout_pack": {
+      "summary": {
+        "rows": 1,
+        "by_pricing": {
+          "free": 1
+        },
+        "by_risk": {
+          "unknown": 1
+        },
+        "by_lang": {
+          "zh": 1
+        },
+        "by_route": {
+          "needs_scout_outside_auth_lane": 1
+        }
+      }
+    },
+    "manual_review_pack": {
+      "summary": {
+        "rows": 2,
+        "fail_closed_rows": 1,
+        "by_route": {
+          "manual_surface_classification_review": 1,
+          "manual_surface_review_fail_closed": 1
+        },
+        "by_bucket": {
+          "move_out_of_auth_to_manual_surface_review": 1,
+          "manual_surface_review_required_continue": 1
+        },
+        "by_pricing": {
+          "freemium": 1,
+          "free": 1
+        },
+        "by_risk": {
+          "unknown": 1,
+          "medium": 1
+        }
+      }
+    },
     "plan_batches": {
       "summary": {
         "source_rows": 20,
@@ -164,7 +217,7 @@
         },
         "by_blocker": {}
       },
-      "refresh_command": "\"node\" \"src/cli.js\" \"targets\" \"auth-workflow-refresh\" \"backlink-url/assisted-submission-pack/resolved-auth-login/auth-login-resolved-direct-login-queue.csv\" \"backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-plan-batch-resolved-001.json\" \"backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-plan-batch-resolved-002.json\" \"--registry\" \"resources/targets.canonical.yaml\" \"--auth-dir\" \"playwright/.auth\" \"--output-dir\" \"backlink-url/assisted-submission-pack/resolved-direct-login\" \"--next-name\" \"auth-login-next-resolved-current\" \"--summary-name\" \"auth-workflow-refresh-resolved-summary\" \"--next-limit\" \"10\" \"--rescout-limit\" \"100\" \"--product-config\" \"backlink-url/submission-materials/xtimer.config.yaml\""
+      "refresh_command": "\"node\" \"src/cli.js\" \"targets\" \"auth-workflow-refresh\" \"backlink-url/assisted-submission-pack/resolved-auth-login/auth-login-resolved-direct-login-queue.csv\" \"backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-plan-batch-resolved-001.json\" \"backlink-url/assisted-submission-pack/resolved-direct-login/auth-login-plan-batch-resolved-002.json\" \"--registry\" \"resources/targets.canonical.yaml\" \"--auth-dir\" \"playwright/.auth\" \"--output-dir\" \"backlink-url/assisted-submission-pack/resolved-direct-login\" \"--next-name\" \"auth-login-next-resolved-current\" \"--summary-name\" \"auth-workflow-refresh-resolved-summary\" \"--next-limit\" \"10\" \"--rescout-limit\" \"100\""
     },
     "workflow_refresh": {
       "summary": {

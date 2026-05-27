@@ -19,6 +19,8 @@ import {
   authLoginAuditCommand,
   authLoginTriageCommand,
   authResidualRebuildCommand,
+  authResolvedManualReviewPackCommand,
+  authResolvedNeedsScoutPackCommand,
   authResidualResolveCommand,
   authResidualShrinkCommand,
   authLoginPlanCommand,
@@ -654,8 +656,12 @@ targets
   .option('--product-config <path>', 'Product config path to include in rebuilt batch plans')
   .option('--auth-dir <path>', 'Auth profile directory')
   .option('--resolve-output-dir <path>', 'Directory to write resolved auth queue artifacts')
+  .option('--needs-scout-output-dir <path>', 'Directory to write the resolved needs-scout planning pack')
+  .option('--manual-review-output-dir <path>', 'Directory to write the resolved manual-review pack')
   .option('--rebuild-output-dir <path>', 'Directory to write rebuilt batch, next-login, operator-pack, and refresh artifacts')
   .option('--resolve-name <name>', 'Base filename for resolve summary outputs', 'auth-residual-resolve')
+  .option('--needs-scout-name <name>', 'Base filename for resolved needs-scout pack outputs', 'auth-resolved-needs-scout-pack')
+  .option('--manual-review-name <name>', 'Base filename for resolved manual-review pack outputs', 'auth-resolved-manual-review-pack')
   .option('--batch-name-prefix <name>', 'Base filename prefix for rebuilt batch JSON/CSV outputs', 'auth-login-plan-batch-resolved')
   .option('--batch-summary-name <name>', 'Base filename for rebuilt batch summary JSON output', 'auth-login-plan-batches-resolved-summary')
   .option('--batch-size <n>', 'Maximum targets per rebuilt batch', '10')
@@ -671,6 +677,26 @@ targets
   .option('--json', 'Output full residual rebuild report as JSON')
   .action(async (triage, residual, opts) => {
     await authResidualRebuildCommand(triage, residual, opts);
+  });
+
+targets
+  .command('auth-resolved-needs-scout-pack <queue>')
+  .description('Build a read-only focused planning pack for targets explicitly moved out of auth into needs-scout')
+  .option('--output-dir <path>', 'Directory to write the resolved needs-scout pack')
+  .option('--name <name>', 'Base filename for resolved needs-scout pack outputs', 'auth-resolved-needs-scout-pack')
+  .option('--json', 'Output full pack as JSON')
+  .action(async (queue, opts) => {
+    await authResolvedNeedsScoutPackCommand(queue, opts);
+  });
+
+targets
+  .command('auth-resolved-manual-review-pack <queue>')
+  .description('Build a fail-closed manual-review pack for targets explicitly kept out of direct-login after residual resolution')
+  .option('--output-dir <path>', 'Directory to write the resolved manual-review pack')
+  .option('--name <name>', 'Base filename for resolved manual-review pack outputs', 'auth-resolved-manual-review-pack')
+  .option('--json', 'Output full pack as JSON')
+  .action(async (queue, opts) => {
+    await authResolvedManualReviewPackCommand(queue, opts);
   });
 
 targets

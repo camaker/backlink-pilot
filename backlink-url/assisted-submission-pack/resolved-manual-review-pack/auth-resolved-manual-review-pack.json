@@ -1,0 +1,80 @@
+{
+  "version": 1,
+  "created_at": "2026-05-27T13:02:57.677Z",
+  "source_queue": "backlink-url/assisted-submission-pack/resolved-auth-login/auth-login-resolved-manual-review.csv",
+  "constraints": {
+    "purpose": "read_only_auth_resolved_manual_review_pack",
+    "no_real_submission": true,
+    "no_browser_launch": true,
+    "no_registry_write": true,
+    "no_login_execution": true,
+    "fail_closed": true
+  },
+  "rows": [
+    {
+      "manual_rank": "1",
+      "target_id": "top-best-alternatives",
+      "name": "Top Best Alternatives",
+      "domain": "topbestalternatives.com",
+      "pricing": "freemium",
+      "risk": "unknown",
+      "lang": "en",
+      "submit_url": "https://www.topbestalternatives.com/",
+      "auth_profile": "top-best-alternatives",
+      "review_route": "manual_surface_classification_review",
+      "review_bucket": "move_out_of_auth_to_manual_surface_review",
+      "strict_policy": "do_not_return_to_direct_login_without_new_classification_evidence; no_login_execution; no_submission; no_registry_write",
+      "required_human_question": "Is this actually a valid product submission surface, or should it be reclassified outside the auth lane?",
+      "allowed_outcomes": "keep_manual_review_only | move_to_needs_scout | move_out_of_submission_scope",
+      "disallowed_outcomes": "direct_login_ready_without_new_scout | success_claim_without_listing_evidence",
+      "next_step": "Classify the surface manually and only re-enter another lane after explicit evidence exists.",
+      "notes": "top-best-alternatives should stay out of direct-login until manual surface classification is resolved."
+    },
+    {
+      "manual_rank": "2",
+      "target_id": "orbic-ai",
+      "name": "Orbic AI",
+      "domain": "orbic.ai",
+      "pricing": "free",
+      "risk": "medium",
+      "lang": "unknown",
+      "submit_url": "https://orbic.ai/login?callbackUrl=https%3A%2F%2Forbic.ai%2Fsubmit%2Ftools",
+      "auth_profile": "orbic-ai",
+      "review_route": "manual_surface_review_fail_closed",
+      "review_bucket": "manual_surface_review_required_continue",
+      "strict_policy": "do_not_reenter_auth_without_verified_surface_evidence; no_login_execution; no_submission; no_registry_write",
+      "required_human_question": "Does a normal browser session reveal a genuine product submission surface after login without CAPTCHA/Cloudflare/OAuth ambiguity?",
+      "allowed_outcomes": "keep_manual_review_only | move_to_needs_scout_after_clear_public_surface",
+      "disallowed_outcomes": "direct_login_ready | auto_ready | success_claim_without_evidence",
+      "next_step": "Retry manual surface inspection in a normal browser and keep fail-closed unless evidence is explicit.",
+      "notes": "orbic-ai must remain fail-closed. Fetch failure or ambiguous login callback evidence is not enough to restore auth execution."
+    }
+  ],
+  "summary": {
+    "rows": 2,
+    "fail_closed_rows": 1,
+    "by_route": {
+      "manual_surface_classification_review": 1,
+      "manual_surface_review_fail_closed": 1
+    },
+    "by_bucket": {
+      "move_out_of_auth_to_manual_surface_review": 1,
+      "manual_surface_review_required_continue": 1
+    },
+    "by_pricing": {
+      "freemium": 1,
+      "free": 1
+    },
+    "by_risk": {
+      "unknown": 1,
+      "medium": 1
+    }
+  },
+  "files": {
+    "output_dir": "backlink-url/assisted-submission-pack/resolved-manual-review-pack",
+    "pack_csv": "backlink-url/assisted-submission-pack/resolved-manual-review-pack/auth-resolved-manual-review-pack.csv",
+    "next_queue_csv": "backlink-url/assisted-submission-pack/resolved-manual-review-pack/next-auth-resolved-manual-review.csv",
+    "summary_json": "backlink-url/assisted-submission-pack/resolved-manual-review-pack/auth-resolved-manual-review-pack.json",
+    "summary_md": "backlink-url/assisted-submission-pack/resolved-manual-review-pack/auth-resolved-manual-review-pack.md"
+  }
+}

@@ -44,6 +44,14 @@ import {
   writeAuthResidualResolve,
 } from './auth-residual-resolve.js';
 import {
+  buildAuthResolvedManualReviewPack,
+  writeAuthResolvedManualReviewPack,
+} from './auth-resolved-manual-review-pack.js';
+import {
+  buildAuthResolvedNeedsScoutPack,
+  writeAuthResolvedNeedsScoutPack,
+} from './auth-resolved-needs-scout-pack.js';
+import {
   runAuthResidualRebuild,
 } from './auth-residual-rebuild.js';
 import {
@@ -1053,8 +1061,12 @@ export async function authResidualRebuildCommand(triagePath, residualPath, opts 
     productConfig: opts.productConfig,
     authDir: opts.authDir,
     resolveOutputDir: opts.resolveOutputDir,
+    needsScoutOutputDir: opts.needsScoutOutputDir,
+    manualReviewOutputDir: opts.manualReviewOutputDir,
     rebuildOutputDir: opts.rebuildOutputDir,
     resolveName: opts.resolveName,
+    needsScoutName: opts.needsScoutName,
+    manualReviewName: opts.manualReviewName,
     batchNamePrefix: opts.batchNamePrefix,
     batchSummaryName: opts.batchSummaryName,
     batchSize: opts.batchSize || opts.limit,
@@ -1086,6 +1098,8 @@ export async function authResidualRebuildCommand(triagePath, residualPath, opts 
   console.log(`Next login remaining rows: ${report.summary.next_login_remaining_rows}`);
   console.log(`Auth profiles missing: ${report.summary.auth_profiles_missing}`);
   console.log(`Resolve summary: ${report.files.resolve.summary_json}`);
+  console.log(`Needs-scout pack summary: ${report.files.needs_scout_pack.summary_json}`);
+  console.log(`Manual-review pack summary: ${report.files.manual_review_pack.summary_json}`);
   console.log(`Batch summary: ${report.files.plan_batches.summary}`);
   console.log(`Next login JSON: ${report.files.next_login.output}`);
   console.log(`Operator pack JSON: ${report.files.operator_pack.summary}`);
@@ -1093,6 +1107,51 @@ export async function authResidualRebuildCommand(triagePath, residualPath, opts 
   console.log(`Rebuild summary: ${report.files.summary}`);
   console.log('Policy: read-only auth residual rebuild only; no login, no submission, no registry writes.');
 
+  return report;
+}
+
+export async function authResolvedNeedsScoutPackCommand(queuePath, opts = {}) {
+  const report = buildAuthResolvedNeedsScoutPack(queuePath);
+  const written = writeAuthResolvedNeedsScoutPack(report, {
+    outputDir: opts.outputDir,
+    name: opts.name,
+  });
+
+  if (opts.json) {
+    console.log(JSON.stringify({ ...report, files: written }, null, 2));
+    return report;
+  }
+
+  console.log(`Queue: ${report.source_queue}`);
+  console.log(`Rows: ${report.summary.rows}`);
+  console.log(`Routes: ${JSON.stringify(report.summary.by_route)}`);
+  console.log(`Output dir: ${written.output_dir}`);
+  console.log(`Pack CSV: ${written.pack_csv}`);
+  console.log(`Summary JSON: ${written.summary_json}`);
+  console.log('Policy: resolved needs-scout planning only; no login, no submission, no registry writes.');
+  return report;
+}
+
+export async function authResolvedManualReviewPackCommand(queuePath, opts = {}) {
+  const report = buildAuthResolvedManualReviewPack(queuePath);
+  const written = writeAuthResolvedManualReviewPack(report, {
+    outputDir: opts.outputDir,
+    name: opts.name,
+  });
+
+  if (opts.json) {
+    console.log(JSON.stringify({ ...report, files: written }, null, 2));
+    return report;
+  }
+
+  console.log(`Queue: ${report.source_queue}`);
+  console.log(`Rows: ${report.summary.rows}`);
+  console.log(`Fail-closed rows: ${report.summary.fail_closed_rows}`);
+  console.log(`Routes: ${JSON.stringify(report.summary.by_route)}`);
+  console.log(`Output dir: ${written.output_dir}`);
+  console.log(`Pack CSV: ${written.pack_csv}`);
+  console.log(`Summary JSON: ${written.summary_json}`);
+  console.log('Policy: resolved manual-review pack only; no login, no submission, no registry writes.');
   return report;
 }
 
