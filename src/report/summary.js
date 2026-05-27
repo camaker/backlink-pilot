@@ -2,6 +2,13 @@ import { existsSync, readFileSync, statSync } from 'fs';
 import { dirname } from 'path';
 import { DEFAULT_REGISTRY_FILE, loadRegistry, registryStats } from '../targets/registry.js';
 import { auditRegistry, auditTargets } from '../targets/audit.js';
+import {
+  backlogDispositionRank,
+  buildBacklogOperatorSummary,
+  planBacklogStep,
+  runBacklogStepPlans,
+  selectBacklogSteps,
+} from '../targets/backlog-exec.js';
 
 const SUBMITTED_OR_PENDING_STATUSES = new Set(['submitted', 'pending_review', 'accepted']);
 const SCOUT_QUEUE_MODES = new Set(['auto_candidate', 'needs_scout']);
@@ -346,6 +353,21 @@ function describeLaneAssignment(backlogSummary = {}, laneType = '') {
   };
 }
 
+function backlogWorkerOperatorSummary(backlogSummary = {}, worker = {}) {
+  const lanes = Array.isArray(worker?.lanes) ? worker.lanes : [];
+  const plannedSteps = lanes.flatMap(laneSummary => {
+    const lane = findLaneById(backlogSummary, laneSummary.lane_id);
+    return selectBacklogSteps(lane?.steps || [], []).map(step => planBacklogStep(step));
+  });
+  const dryRunResults = runBacklogStepPlans(plannedSteps, { dryRun: true });
+  return buildBacklogOperatorSummary(dryRunResults);
+}
+
+function findLaneById(backlogSummary = {}, laneId = '') {
+  const lanes = Array.isArray(backlogSummary?.lanes) ? backlogSummary.lanes : [];
+  return lanes.find(lane => lane.lane_id === laneId) || null;
+}
+
 function summarizeBacklogFreshness(backlogPath, backlogSummary, opts = {}) {
   if (!backlogSummary) return null;
 
@@ -624,6 +646,7 @@ export function buildOpsStatus(opts = {}) {
     )
     .map(worker => {
       const files = workerFileIndex(backlog).get(worker.worker_id) || {};
+      const operatorSummary = backlogWorkerOperatorSummary(backlog, worker);
       return {
         worker_id: worker.worker_id,
         lane_count: worker.lane_count || 0,
@@ -632,8 +655,15 @@ export function buildOpsStatus(opts = {}) {
         markdown: files.markdown || '',
         json: files.json || '',
         first_lane: worker.lanes?.[0] || null,
+        operator_summary: operatorSummary,
       };
-    });
+    })
+    .sort((a, b) =>
+      backlogDispositionRank(a.operator_summary?.disposition) - backlogDispositionRank(b.operator_summary?.disposition) ||
+      priorityRank(a.first_lane?.priority) - priorityRank(b.first_lane?.priority) ||
+      a.estimated_total_minutes - b.estimated_total_minutes ||
+      a.worker_id.localeCompare(b.worker_id)
+    );
 
   return {
     generated_at: nowIso(),
@@ -736,7 +766,7 @@ export function formatReport(report = {}) {
 
 export function formatOpsStatus(status = {}) {
   const workerLines = (status.backlog?.worker_leads || []).map(worker =>
-    `- ${worker.worker_id}: lanes=${worker.lane_count} rows=${worker.row_count} est_minutes=${worker.estimated_total_minutes}${worker.markdown ? ` file=${worker.markdown}` : ''}`
+    `- ${worker.worker_id}: disposition=${worker.operator_summary?.disposition || 'unknown'} lanes=${worker.lane_count} rows=${worker.row_count} est_minutes=${worker.estimated_total_minutes}${worker.markdown ? ` file=${worker.markdown}` : ''}`
   );
   const blockerLines = (status.readiness?.top?.blocker_codes || []).map(item =>
     `- ${item.code}: ${item.count}`

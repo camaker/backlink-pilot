@@ -576,6 +576,24 @@ targets:
             lane_type: 'auth_manual_login',
             row_count: 2,
             priority: 'P0',
+            steps: [
+              {
+                step_id: 'action',
+                step_kind: 'action',
+                title: 'Complete manual auth login capture',
+                command: 'node src/cli.js auth login --profile "ready" --url "https://ready.example/login"',
+                default_selected: true,
+                depends_on_step_ids: [],
+              },
+              {
+                step_id: 'refresh',
+                step_kind: 'refresh',
+                title: 'Refresh downstream backlog artifacts',
+                command: 'node src/cli.js targets auth-workflow-refresh demo',
+                default_selected: true,
+                depends_on_step_ids: ['action'],
+              },
+            ],
             rows: [
               {
                 auth_login_command: 'node src/cli.js auth login --profile "ready" --url "https://ready.example/login"',
@@ -603,8 +621,10 @@ targets:
       assert.equal(status.readiness.automation_ready, false);
       assert.ok(status.readiness.top.blocker_codes.length > 0);
       assert.equal(status.backlog.worker_leads[0].worker_id, 'worker-01');
+      assert.equal(status.backlog.worker_leads[0].operator_summary.disposition, 'blocked');
       assert.match(formatted, /Backlink Pilot Ops Status/);
       assert.match(formatted, /Automation ready: no/);
+      assert.match(formatted, /disposition=blocked/);
       assert.match(formatted, /worker-01/);
     } finally {
       rmSync(dir, { recursive: true, force: true });

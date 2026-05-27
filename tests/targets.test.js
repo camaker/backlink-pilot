@@ -576,9 +576,13 @@ pricing-001,3,3,gamma,Gamma,gamma.example,assisted,https://gamma.example/submit,
         backlog,
         json: true,
       });
-      assert.equal(workerResult.summary.blocked_steps, 1);
+      assert.equal(workerResult.summary.blocked_steps, 2);
+      assert.equal(workerResult.summary.blocked_dependency_steps, 1);
+      assert.equal(workerResult.operator_summary.disposition, 'mixed');
+      assert.equal(workerResult.operator_summary.blocked_reasons.blocked_prefix_or_flag, 1);
+      assert.equal(workerResult.operator_summary.blocked_reasons.blocked_dependency, 1);
       assert.ok(workerResult.steps.some(step => step.reason === 'blocked_prefix_or_flag'));
-      assert.ok(workerResult.steps.some(step => step.step_kind === 'refresh' && step.status === 'dry_run'));
+      assert.ok(workerResult.steps.some(step => step.step_kind === 'refresh' && step.reason === 'blocked_dependency'));
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
