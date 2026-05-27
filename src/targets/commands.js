@@ -32,6 +32,10 @@ import {
   writeAuthLoginAudit,
 } from './auth-login-audit.js';
 import {
+  buildAuthLoginTriage,
+  writeAuthLoginTriage,
+} from './auth-login-triage.js';
+import {
   buildAuthLoginNext,
   buildAuthLoginStatus,
   writeAuthLoginNext,
@@ -192,6 +196,7 @@ export async function pricingReviewQueueCommand(opts = {}) {
   const queue = buildPricingReviewQueue({
     registry: opts.registry || DEFAULT_REGISTRY_FILE,
     modes: opts.modes,
+    targetFile: opts.targetFile,
     offset: opts.offset,
     limit: opts.limit,
   });
@@ -933,6 +938,35 @@ export async function authLoginAuditCommand(queuePath, opts = {}) {
   console.log(`Output dir: ${written.output_dir}`);
   console.log(`Audit CSV: ${written.audit_csv}`);
   console.log(`Audit Markdown: ${written.audit_md}`);
+  return report;
+}
+
+export async function authLoginTriageCommand(queuePath, opts = {}) {
+  const report = buildAuthLoginTriage(queuePath, {
+    auditPath: opts.auditPath,
+  });
+  const written = writeAuthLoginTriage(report, {
+    outputDir: opts.outputDir,
+    name: opts.name,
+  });
+
+  if (opts.json) {
+    console.log(JSON.stringify({ ...report, files: written }, null, 2));
+    return report;
+  }
+
+  console.log(`Queue: ${report.source_queue}`);
+  if (report.source_audit) console.log(`Audit: ${report.source_audit}`);
+  console.log(`Rows: ${report.summary.rows}`);
+  console.log(`Pricing review rows: ${report.summary.pricing_review_rows}`);
+  console.log(`Dedupe rows: ${report.summary.dedupe_rows}`);
+  console.log(`Registry recheck rows: ${report.summary.registry_recheck_rows}`);
+  console.log(`Manual surface review rows: ${report.summary.manual_surface_review_rows}`);
+  console.log(`Direct login rows: ${report.summary.direct_login_rows}`);
+  console.log(`Output dir: ${written.output_dir}`);
+  console.log(`Triage CSV: ${written.triage_csv}`);
+  console.log(`Pricing review queue CSV: ${written.pricing_review_queue_csv}`);
+  console.log(`Direct login queue CSV: ${written.direct_login_queue_csv}`);
   return report;
 }
 

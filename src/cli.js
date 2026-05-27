@@ -17,6 +17,7 @@ import {
   authLoginNextCommand,
   authLoginOperatorPackCommand,
   authLoginAuditCommand,
+  authLoginTriageCommand,
   authLoginPlanCommand,
   authLoginPlanBatchesCommand,
   authLoginStatusCommand,
@@ -342,6 +343,7 @@ targets
   .command('pricing-review-queue')
   .description('Generate a read-only queue of runnable targets whose pricing is unknown')
   .option('--registry <path>', 'Canonical registry path')
+  .option('--target-file <path>', 'Optional CSV file whose target_id rows restrict the queue to a specific subset')
   .option('--output-dir <path>', 'Directory to write the pricing review queue')
   .option('--modes <items>', 'Comma-separated runnable modes to include, e.g. assisted,auto_safe')
   .option('--offset <n>', 'Zero-based offset within the prioritized queue', '0')
@@ -605,6 +607,17 @@ targets
   .option('--json', 'Output full audit as JSON')
   .action(async (queue, opts) => {
     await authLoginAuditCommand(queue, opts);
+  });
+
+targets
+  .command('auth-login-triage <queue>')
+  .description('Split an auth login queue into read-only pre-login work surfaces such as pricing review, dedupe, registry recheck, and direct login')
+  .option('--audit-path <path>', 'Optional auth login audit JSON/CSV path for provenance only')
+  .option('--output-dir <path>', 'Directory to write triage artifacts')
+  .option('--name <name>', 'Base filename for triage outputs', 'auth-login-triage')
+  .option('--json', 'Output full triage as JSON')
+  .action(async (queue, opts) => {
+    await authLoginTriageCommand(queue, opts);
   });
 
 targets

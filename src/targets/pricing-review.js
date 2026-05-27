@@ -224,6 +224,15 @@ function commaSet(value = '') {
   return items.length ? new Set(items) : null;
 }
 
+function targetIdSetFromFile(path = '') {
+  if (!path) return null;
+  const rows = parseCsv(readFileSync(path, 'utf-8'));
+  const ids = rows
+    .map(row => String(row.target_id || row.id || '').trim())
+    .filter(Boolean);
+  return ids.length ? new Set(ids) : new Set();
+}
+
 function targetPriority(target = {}) {
   const mode = target.submission?.mode || '';
   const formCount = Array.isArray(target.forms) ? target.forms.length : 0;
@@ -281,10 +290,12 @@ export function buildPricingReviewQueue(opts = {}) {
   const registryPath = opts.registry || DEFAULT_REGISTRY_FILE;
   const registry = loadRegistry(registryPath);
   const modes = modeSet(opts.modes);
+  const targetIds = targetIdSetFromFile(opts.targetFile);
   const candidates = (registry.targets || [])
     .filter(target => isRunnableMode(target.submission?.mode))
     .filter(target => String(target.pricing || 'unknown').toLowerCase() === 'unknown')
     .filter(target => !modes || modes.has(target.submission?.mode || ''))
+    .filter(target => !targetIds || targetIds.has(target.id || ''))
     .map(queueRowFromTarget)
     .sort((a, b) =>
       parseInteger(b.priority_score, 0) - parseInteger(a.priority_score, 0) ||
@@ -297,6 +308,7 @@ export function buildPricingReviewQueue(opts = {}) {
   return {
     generated_at: nowIso(),
     registry: normalizePath(registryPath),
+    target_file: normalizePath(opts.targetFile || ''),
     constraints: {
       read_only: true,
       no_network: true,

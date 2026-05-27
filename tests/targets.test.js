@@ -37,6 +37,10 @@ import {
   writeAuthLoginAudit,
 } from '../src/targets/auth-login-audit.js';
 import {
+  buildAuthLoginTriage,
+  writeAuthLoginTriage,
+} from '../src/targets/auth-login-triage.js';
+import {
   authLoginNextCsv,
   buildAuthLoginNext,
   authLoginStatusCsv,
@@ -656,6 +660,53 @@ targets:
 
       const after = loadRegistry(registry);
       assert.equal(after.targets.find(target => target.id === 'auto-safe-unknown').pricing, 'unknown');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('can restrict pricing review queue rows with a target file', () => {
+    const dir = tempDir();
+    try {
+      const registry = join(dir, 'registry.yaml');
+      const targetFile = join(dir, 'pricing-subset.csv');
+      writeFileSync(registry, `
+version: 1
+targets:
+  - id: keep-me
+    name: Keep Me
+    domain: keep.example
+    submit_url: https://keep.example/submit
+    pricing: unknown
+    submission:
+      mode: assisted
+      status: auth_required
+    quality:
+      risk: low
+  - id: skip-me
+    name: Skip Me
+    domain: skip.example
+    submit_url: https://skip.example/submit
+    pricing: unknown
+    submission:
+      mode: assisted
+      status: auth_required
+    quality:
+      risk: low
+`);
+      writeFileSync(targetFile, [
+        'target_id',
+        'keep-me',
+      ].join('\n') + '\n');
+
+      const queue = buildPricingReviewQueue({
+        registry,
+        targetFile,
+      });
+
+      assert.equal(queue.summary.rows, 1);
+      assert.equal(queue.rows[0].target_id, 'keep-me');
+      assert.equal(queue.target_file, targetFile.replace(/\\/g, '/'));
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
@@ -3822,6 +3873,55 @@ describe('auth login audit', () => {
       assert.equal(existsSync(written.audit_json), true);
       assert.equal(existsSync(written.audit_md), true);
       assert.match(authLoginAuditCsv(report.rows), /suggested_pre_login_action/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe('auth login triage', () => {
+  it('splits auth login rows into pricing, dedupe, registry recheck, surface review, and direct login queues', () => {
+    const dir = tempDir();
+    try {
+      const queue = join(dir, 'auth-login-rescout-queue.csv');
+      const outputDir = join(dir, 'out');
+      writeFileSync(queue, [
+        'rank,priority,priority_score,target_id,name,domain,mode,status,pricing,risk,lang,manual_bucket,automation_after_human,submission_policy,safety_blockers,recommended_next_step,auth_profile,auth_login_command,auth_scout_command,submit_url,final_url,root_url,last_scouted_at,last_submitted_at,form_count,field_count,required_fields,unmapped_required_fields,submit_button_count,source,reason,notes',
+        '1,P0,270,beta-list,Beta List,betalist.com,assisted,auth_required,free,low,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required,login,beta-list,login,scout,https://betalist.com/submissions/new,https://betalist.com/sign_in,https://betalist.com,,,,,,,,notion,auth_signal,',
+        '2,P0,260,betalist-com,https://betalist.com,betalist.com,assisted,auth_required,unknown,low,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,pricing_unknown_verify_free_path; auth_or_oauth_required,login,betalist-com,login,scout,https://betalist.com/,https://betalist.com/sign_in,https://betalist.com,,,,,,,,91wink,auth_signal,',
+        '3,P0,250,asr,ASR,activesearchresults.com,assisted,auth_required,unknown,low,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,pricing_unknown_verify_free_path; auth_or_oauth_required,login,asr,login,scout,https://www.activesearchresults.com/addwebsite.php,https://www.activesearchresults.com/addwebsite.php,https://www.activesearchresults.com,,,,,,,,targets.yaml,auth_signal,',
+        '4,P0,245,mergeek,Mergeek,mergeek.com,assisted,auth_required,free,low,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required; required_fields_unmapped,login,mergeek,login,scout,https://mergeek.com/publish_project,https://mergeek.com/publish_project,https://mergeek.com,,,,,,,,targets.yaml,auth_signal; classification_mismatch:assisted->needs_scout,',
+        '5,P1,240,orbic-ai,Orbic AI,orbic.ai,assisted,new,free,medium,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required; manual_surface_review_required; no_persisted_form_evidence,login,orbic-ai,login,scout,https://orbic.ai/login?callbackUrl=https%3A%2F%2Forbic.ai%2Fsubmit%2Ftools,,https://orbic.ai,,,,,,,,notion,auth_or_manual_signal,',
+        '6,P0,230,chatgptdemo,ChatGPT demo,chatgptdemo.com,assisted,auth_required,free,low,en,manual_login_then_rescout,rescout_after_saved_login_profile,no_real_submission_from_pack,auth_or_oauth_required,login,chatgptdemo,login,scout,https://chatgptdemo.com/submit-new-ai-tool,https://chatgptdemo.com/submit-new-ai-tool,https://chatgptdemo.com,,,,,,,,targets.yaml,auth_signal,',
+      ].join('\n'));
+
+      const report = buildAuthLoginTriage(queue, { auditPath: join(dir, 'auth-login-audit.json') });
+      const written = writeAuthLoginTriage(report, { outputDir, name: 'auth-login-triage' });
+      const parsed = JSON.parse(readFileSync(written.triage_json, 'utf-8'));
+      const pricingRows = parseCsv(readFileSync(written.pricing_review_queue_csv, 'utf-8'));
+      const dedupeRows = parseCsv(readFileSync(written.dedupe_queue_csv, 'utf-8'));
+      const registryRows = parseCsv(readFileSync(written.registry_recheck_queue_csv, 'utf-8'));
+      const manualSurfaceRows = parseCsv(readFileSync(written.manual_surface_review_queue_csv, 'utf-8'));
+      const directRows = parseCsv(readFileSync(written.direct_login_queue_csv, 'utf-8'));
+
+      assert.equal(report.summary.rows, 6);
+      assert.equal(report.summary.pricing_review_rows, 1);
+      assert.equal(report.summary.dedupe_rows, 2);
+      assert.equal(report.summary.registry_recheck_rows, 1);
+      assert.equal(report.summary.manual_surface_review_rows, 1);
+      assert.equal(report.summary.direct_login_rows, 1);
+      assert.equal(report.queues.pricing_review[0].target_id, 'asr');
+      assert.equal(report.queues.direct_login[0].target_id, 'chatgptdemo');
+      assert.equal(pricingRows.length, 1);
+      assert.equal(pricingRows[0].target_id, 'asr');
+      assert.equal(dedupeRows.length, 2);
+      assert.equal(registryRows[0].target_id, 'mergeek');
+      assert.equal(manualSurfaceRows[0].target_id, 'orbic-ai');
+      assert.equal(directRows.length, 1);
+      assert.equal(directRows[0].target_id, 'chatgptdemo');
+      assert.equal(parsed.summary.by_suggested_pre_login_action.dedupe_same_site_before_login, 2);
+      assert.equal(existsSync(written.triage_md), true);
+      assert.equal(existsSync(written.pricing_review_queue_csv), true);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
