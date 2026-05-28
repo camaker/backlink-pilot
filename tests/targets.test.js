@@ -153,6 +153,9 @@ import {
   writeCoverageReviewCsv,
 } from '../src/targets/coverage.js';
 import {
+  buildDiscoveryCoverageArtifacts,
+} from '../src/targets/discovery-intake.js';
+import {
   dedupeRegistryIds,
   filterTargets,
   importTargets,
@@ -1629,6 +1632,101 @@ targets:
     }
   });
 
+  it('builds coverage artifacts from a 7deer discovery platforms file', () => {
+    const dir = tempDir();
+    try {
+      const registry = join(dir, 'registry.yaml');
+      const discovery = join(dir, 'platforms.json');
+      const outputDir = join(dir, 'out');
+      writeFileSync(registry, `
+version: 1
+targets:
+  - id: exact-directory
+    domain: exact.example
+    submit_url: https://exact.example/submit
+    normalized_key: exact.example/submit
+`);
+      writeFileSync(discovery, JSON.stringify({
+        last_updated: '2026-05-28T00:00:00.000Z',
+        platforms: [
+          {
+            url: 'https://exact.example/submit?ref=discovery',
+            domain: 'exact.example',
+            title: 'Exact Submit',
+            method: 'directory',
+            platform_type: 'Directory',
+            relevance: 0.9,
+            discovered_round: 1,
+            found_at: '2026-05-28T00:00:00.000Z',
+          },
+          {
+            url: 'https://new.example/add-tool?utm_source=ddg',
+            domain: 'new.example',
+            title: 'New Tool Directory',
+            method: 'directory',
+            platform_type: 'Directory',
+            relevance: 0.8,
+            discovered_round: 2,
+            found_at: '2026-05-28T00:01:00.000Z',
+            lang: 'en',
+            pricing: 'free',
+            notes: 'High-fit AI directory from discovery search.',
+            query_used: 'submit ai tool directory',
+          },
+        ],
+      }, null, 2));
+
+      const result = buildDiscoveryCoverageArtifacts(discovery, {
+        registry,
+        outputDir,
+      });
+
+      assert.equal(result.intake_rows, 2);
+      assert.equal(result.coverage.summary.unique_urls_in_input, 2);
+      assert.equal(result.coverage.summary.exact_in_registry, 1);
+      assert.equal(result.coverage.summary.missing_domain, 1);
+      assert.equal(result.queue.queue_rows, 1);
+      assert.equal(result.queue.rows[0].domain, 'new.example');
+      assert.equal(existsSync(result.files.intake_csv), true);
+      assert.equal(existsSync(result.files.coverage_report), true);
+      assert.equal(existsSync(result.files.coverage_candidates), true);
+      assert.equal(existsSync(result.files.coverage_review), true);
+      assert.equal(existsSync(result.files.coverage_review_queue), true);
+
+      const intakeCsv = readFileSync(result.files.intake_csv, 'utf-8');
+      assert.match(intakeCsv, /submission_link/);
+      assert.match(intakeCsv, /https:\/\/new\.example\/add-tool/);
+      assert.doesNotMatch(intakeCsv, /utm_source/);
+      assert.doesNotMatch(intakeCsv, /\?ref=discovery/);
+
+      const reviewRows = parseCsv(readFileSync(result.files.coverage_review, 'utf-8'));
+      assert.equal(reviewRows.length, 1);
+      assert.equal(reviewRows[0].domain, 'new.example');
+      assert.equal(reviewRows[0].discovery_sources, '7deer-discovery');
+      assert.equal(reviewRows[0].discovery_source_types, '7deer_discovery_platform');
+      assert.equal(reviewRows[0].discovery_titles, 'New Tool Directory');
+      assert.equal(reviewRows[0].discovery_platform_types, 'Directory');
+      assert.equal(reviewRows[0].discovery_methods, 'directory');
+      assert.equal(reviewRows[0].discovery_relevance_max, '0.80');
+      assert.equal(reviewRows[0].discovery_relevance_values, '0.80');
+      assert.equal(reviewRows[0].discovery_pricing_signals, 'free');
+      assert.equal(reviewRows[0].discovery_lang_signals, 'en');
+      assert.equal(reviewRows[0].discovery_queries, 'submit ai tool directory');
+      assert.equal(reviewRows[0].discovery_discovered_rounds, '2');
+      assert.equal(reviewRows[0].discovery_discovered_ats, '2026-05-28T00:01:00.000Z');
+      assert.equal(reviewRows[0].discovery_notes, 'High-fit AI directory from discovery search.');
+
+      const queueRows = parseCsv(readFileSync(result.files.coverage_review_queue, 'utf-8'));
+      assert.equal(queueRows.length, 1);
+      assert.equal(queueRows[0].domain, 'new.example');
+      assert.equal(queueRows[0].discovery_platform_types, 'Directory');
+      assert.equal(queueRows[0].discovery_relevance_max, '0.80');
+      assert.equal(queueRows[0].discovery_queries, 'submit ai tool directory');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
   it('imports only approved coverage review rows as non-executable scout targets', () => {
     const dir = tempDir();
     try {
@@ -2491,6 +2589,145 @@ targets:
       assert.match(csv, /possible_approval_decision/);
       assert.match(readFileSync(output, 'utf-8'), /approved_domain_variant/);
       assert.equal(json.mode_policy, 'suggestions_are_non_binding_and_do_not_modify_review_decisions');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('carries discovery context into coverage review suggestions', () => {
+    const dir = tempDir();
+    try {
+      const batch = join(dir, 'coverage-review-batch.csv');
+      const evidence = join(dir, 'coverage-review-evidence.csv');
+      writeFileSync(batch, [
+        [
+          'batch_id',
+          'batch_order',
+          'priority',
+          'priority_score',
+          'review_row',
+          'review_decision',
+          'review_decision_options',
+          'review_action',
+          'review_instruction',
+          'review_notes',
+          'reviewed_by',
+          'submission_url_override',
+          'canonical_name',
+          'pricing',
+          'lang',
+          'classification',
+          'candidate_import_recommendation',
+          'url',
+          'domain',
+          'occurrence_count',
+          'source_files',
+          'source_locations',
+          'registry_target_ids',
+          'registry_submit_urls',
+          'discovery_sources',
+          'discovery_source_types',
+          'discovery_source_urls',
+          'discovery_titles',
+          'discovery_platform_types',
+          'discovery_methods',
+          'discovery_relevance_max',
+          'discovery_relevance_values',
+          'discovery_pricing_signals',
+          'discovery_lang_signals',
+          'discovery_queries',
+          'discovery_discovered_rounds',
+          'discovery_discovered_ats',
+          'discovery_notes',
+        ].join(','),
+        [
+          'p0-ctx',
+          '1',
+          'P0',
+          '200',
+          '42',
+          '',
+          'approved | reject_not_submit | reject_paid | reject_auth_required',
+          'verify_submit_form_then_approve_or_reject',
+          'verify submit form',
+          '',
+          '',
+          '',
+          'Context Directory',
+          'unknown',
+          'unknown',
+          'missing_domain',
+          'review_submit_url',
+          'https://ctx.example/submit',
+          'ctx.example',
+          '1',
+          '7deer-discovery.csv',
+          '7deer-discovery.csv:json:platforms[0]',
+          '',
+          '',
+          '7deer-discovery',
+          '7deer_discovery_platform',
+          'D:/tmp/platforms.json',
+          'Context Directory',
+          'Directory',
+          'directory',
+          '0.95',
+          '0.95',
+          'free',
+          'en',
+          'submit ai tool directory',
+          '3',
+          '2026-05-28T00:03:00.000Z',
+          'Strong discovery context',
+        ].join(','),
+      ].join('\n'));
+      writeFileSync(evidence, [
+        [
+          'batch_id',
+          'batch_order',
+          'review_row',
+          'review_action',
+          'url',
+          'domain',
+          'http_status',
+          'fetch_ok',
+          'final_url',
+          'final_domain',
+          'domain_changed',
+          'content_type',
+          'title',
+          'form_count',
+          'input_count',
+          'submit_button_signal',
+          'submit_path_signal',
+          'directory_signal',
+          'auth_signal',
+          'oauth_signal',
+          'captcha_signal',
+          'cloudflare_signal',
+          'payment_signal',
+          'duplicate_registry_url',
+          'suggested_decision',
+          'evidence_notes',
+          'fetch_error',
+          'checked_at',
+        ].join(','),
+        'p0-ctx,1,42,verify_submit_form_then_approve_or_reject,https://ctx.example/submit,ctx.example,200,yes,https://ctx.example/submit,ctx.example,no,text/html,Submit,1,2,yes,yes,yes,no,no,no,no,no,no,review_possible_submit,form found,,2026-05-28T00:04:00.000Z',
+      ].join('\n'));
+
+      const suggestions = buildCoverageReviewSuggestions(batch, evidence);
+      const csv = coverageReviewSuggestionsCsv(suggestions);
+      const rows = parseCsv(csv);
+
+      assert.equal(rows.length, 1);
+      assert.equal(rows[0].domain, 'ctx.example');
+      assert.equal(rows[0].discovery_sources, '7deer-discovery');
+      assert.equal(rows[0].discovery_platform_types, 'Directory');
+      assert.equal(rows[0].discovery_relevance_max, '0.95');
+      assert.equal(rows[0].discovery_pricing_signals, 'free');
+      assert.equal(rows[0].discovery_lang_signals, 'en');
+      assert.equal(rows[0].discovery_queries, 'submit ai tool directory');
+      assert.equal(rows[0].discovery_notes, 'Strong discovery context');
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

@@ -45,6 +45,7 @@ import {
   auditTargetsCommand,
   coverageReviewQueueCommand,
   coverageTargetsCommand,
+  discoveryIntakeCommand,
   dedupeTargetIdsCommand,
   importCoverageReviewCommand,
   listTargetsCommand,
@@ -847,6 +848,25 @@ targets
   .option('--json', 'Output summary as JSON')
   .action(async (opts) => {
     await backlogLanesCommand(opts);
+  });
+
+targets
+  .command('discovery-intake <file>')
+  .description('Convert 7deer discovery platforms.json into coverage review artifacts without importing or submitting')
+  .option('--registry <path>', 'Canonical registry path')
+  .option('--output-dir <path>', 'Directory to write generated intake and coverage artifacts')
+  .option('--intake-csv <path>', 'Write normalized intake CSV')
+  .option('--output <path>', 'Write full coverage report JSON')
+  .option('--candidates <path>', 'Write coverage candidates CSV')
+  .option('--review <path>', 'Write coverage review CSV')
+  .option('--queue <path>', 'Write prioritized coverage review queue CSV')
+  .option('--source <name>', 'Source label recorded in generated intake rows', '7deer-discovery')
+  .option('--source-file-label <name>', 'Synthetic source file label stored in provenance fields')
+  .option('--include-exact', 'Include already-covered exact matches in the review CSV')
+  .option('--include-skipped', 'Include rejected/source/already-covered rows in the generated queue')
+  .option('--json', 'Output as JSON')
+  .action(async (file, opts) => {
+    await discoveryIntakeCommand(file, opts);
   });
 
 targets

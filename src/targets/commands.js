@@ -120,6 +120,9 @@ import {
   writeCoverageReviewCsv,
 } from './coverage.js';
 import {
+  buildDiscoveryCoverageArtifacts,
+} from './discovery-intake.js';
+import {
   buildBacklogLaneRunbook,
   buildBacklogLanes,
   buildBacklogWorkerRunbook,
@@ -1434,6 +1437,35 @@ export async function coverageTargetsCommand(inputDir, opts = {}) {
   if (opts.review) console.log(`Review CSV: ${opts.review}`);
 
   return report;
+}
+
+export async function discoveryIntakeCommand(filePath, opts = {}) {
+  const result = buildDiscoveryCoverageArtifacts(filePath, {
+    ...opts,
+    registry: opts.registry || DEFAULT_REGISTRY_FILE,
+  });
+
+  if (opts.json) {
+    console.log(JSON.stringify(result, null, 2));
+    return result;
+  }
+
+  console.log(`Discovery file: ${result.discovery_file}`);
+  console.log(`Source: ${result.source}`);
+  console.log(`Output dir: ${result.output_dir}`);
+  console.log(`Intake rows: ${result.intake_rows}`);
+  console.log(`Coverage unique URLs: ${result.coverage.summary.unique_urls_in_input}`);
+  console.log(`Exact in registry: ${result.coverage.summary.exact_in_registry}`);
+  console.log(`Domain in registry only: ${result.coverage.summary.domain_in_registry_only}`);
+  console.log(`Missing domain: ${result.coverage.summary.missing_domain}`);
+  console.log(`Queue rows: ${result.queue.queue_rows}`);
+  console.log(`Intake CSV: ${result.files.intake_csv}`);
+  console.log(`Coverage report: ${result.files.coverage_report}`);
+  console.log(`Candidates CSV: ${result.files.coverage_candidates}`);
+  console.log(`Review CSV: ${result.files.coverage_review}`);
+  console.log(`Review queue CSV: ${result.files.coverage_review_queue}`);
+
+  return result;
 }
 
 export async function importCoverageReviewCommand(reviewPath, opts = {}) {

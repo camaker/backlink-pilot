@@ -100,6 +100,38 @@ const APPROVED_DECISIONS = new Set(['approved', 'approve', 'yes', 'y', 'true', '
 const DOMAIN_VARIANT_APPROVALS = new Set(['approved_domain_variant', 'approve_domain_variant']);
 const DOMAIN_CHANGE_APPROVALS = new Set(['approved_domain_change', 'approve_domain_change']);
 const REJECTED_DECISION_PATTERN = /^(reject|rejected|skip|skipped|already|duplicate)/;
+const DISCOVERY_CONTEXT_FIELD_MAP = [
+  ['source', 'discovery_sources'],
+  ['source_type', 'discovery_source_types'],
+  ['source_url', 'discovery_source_urls'],
+  ['title', 'discovery_titles'],
+  ['platform_type', 'discovery_platform_types'],
+  ['method', 'discovery_methods'],
+  ['relevance', 'discovery_relevance_values'],
+  ['pricing', 'discovery_pricing_signals'],
+  ['lang', 'discovery_lang_signals'],
+  ['query_used', 'discovery_queries'],
+  ['discovered_round', 'discovery_discovered_rounds'],
+  ['discovered_at', 'discovery_discovered_ats'],
+  ['notes', 'discovery_notes'],
+];
+const DISCOVERY_CONTEXT_FIELDS = DISCOVERY_CONTEXT_FIELD_MAP.map(([, output]) => output);
+const DISCOVERY_OUTPUT_FIELDS = [
+  'discovery_sources',
+  'discovery_source_types',
+  'discovery_source_urls',
+  'discovery_titles',
+  'discovery_platform_types',
+  'discovery_methods',
+  'discovery_relevance_max',
+  'discovery_relevance_values',
+  'discovery_pricing_signals',
+  'discovery_lang_signals',
+  'discovery_queries',
+  'discovery_discovered_rounds',
+  'discovery_discovered_ats',
+  'discovery_notes',
+];
 const COVERAGE_REVIEW_HEADERS = [
   'review_decision',
   'review_instruction',
@@ -118,6 +150,7 @@ const COVERAGE_REVIEW_HEADERS = [
   'registry_target_ids',
   'registry_submit_urls',
   'occurrence_count',
+  ...DISCOVERY_OUTPUT_FIELDS,
 ];
 const REVIEW_QUEUE_HEADERS = [
   'priority',
@@ -142,6 +175,7 @@ const REVIEW_QUEUE_HEADERS = [
   'source_locations',
   'registry_target_ids',
   'registry_submit_urls',
+  ...DISCOVERY_OUTPUT_FIELDS,
 ];
 const REVIEW_BATCH_HEADERS = [
   'batch_id',
@@ -215,6 +249,7 @@ const REVIEW_SUGGESTION_HEADERS = [
   'duplicate_registry_url',
   'fetch_error',
   'checked_at',
+  ...DISCOVERY_OUTPUT_FIELDS,
 ];
 const REVIEW_QUEUE_EDITABLE_FIELDS = [
   'review_decision',
@@ -277,6 +312,7 @@ const MANUAL_REVIEW_HEADERS = [
   'safety_gate_batch_id',
   'safety_gate_report',
   'checked_at',
+  ...DISCOVERY_OUTPUT_FIELDS,
 ];
 
 function normalizePath(value) {
@@ -296,12 +332,28 @@ function unique(values) {
   return [...new Set(values.filter(Boolean))];
 }
 
+function uniqueMergedValues(...values) {
+  return unique(values.flatMap(splitSemicolonValues));
+}
+
 function splitSemicolonValues(value) {
   if (Array.isArray(value)) return value.flatMap(splitSemicolonValues);
   return String(value || '')
     .split(/\s*;\s*/)
     .map(item => item.trim())
     .filter(Boolean);
+}
+
+function numericValues(values) {
+  return splitSemicolonValues(values)
+    .map(value => Number.parseFloat(String(value)))
+    .filter(Number.isFinite);
+}
+
+function maxNumericValue(values) {
+  const numbers = numericValues(values);
+  if (!numbers.length) return '';
+  return Math.max(...numbers).toFixed(2);
 }
 
 function sourceFileFromLocation(location) {
@@ -385,7 +437,51 @@ function addRecord(records, rawValue, context = {}) {
     source_location: context.source_location || context.source_file || '',
     source_field: context.source_field || '',
     source_type: context.source_type || '',
+    discovery_context: context.discovery_context || {},
   });
+}
+
+function discoveryContextFromCsvRow(row = {}) {
+  const context = {};
+  for (const [inputField, outputField] of DISCOVERY_CONTEXT_FIELD_MAP) {
+    const value = String(row[inputField] ?? '').trim();
+    if (value) context[outputField] = value;
+  }
+  for (const outputField of DISCOVERY_OUTPUT_FIELDS) {
+    const value = String(row[outputField] ?? '').trim();
+    if (value) context[outputField] = value;
+  }
+  if (context.discovery_relevance_values && !context.discovery_relevance_max) {
+    context.discovery_relevance_max = maxNumericValue(context.discovery_relevance_values);
+  }
+  return context;
+}
+
+function emptyDiscoveryContext() {
+  return Object.fromEntries(DISCOVERY_CONTEXT_FIELDS.map(field => [field, []]));
+}
+
+function mergeDiscoveryContext(target, context = {}) {
+  for (const field of DISCOVERY_CONTEXT_FIELDS) {
+    target[field] = uniqueMergedValues(target[field], context[field]);
+  }
+
+  const relevanceValues = uniqueMergedValues(
+    target.discovery_relevance_values,
+    context.discovery_relevance_values,
+    context.discovery_relevance_max
+  );
+  target.discovery_relevance_values = relevanceValues;
+  target.discovery_relevance_max = maxNumericValue(relevanceValues);
+
+  return target;
+}
+
+function discoveryContextForOutput(item = {}) {
+  return {
+    ...Object.fromEntries(DISCOVERY_CONTEXT_FIELDS.map(field => [field, item[field] || []])),
+    discovery_relevance_max: item.discovery_relevance_max || maxNumericValue(item.discovery_relevance_values),
+  };
 }
 
 function extractUrlsFromText(text, context = {}) {
@@ -409,6 +505,7 @@ function extractUrlsFromCsv(text, context = {}) {
   const rows = parseCsv(text);
 
   rows.forEach((row, rowIndex) => {
+    const discoveryContext = discoveryContextFromCsvRow(row);
     for (const column of CSV_URL_COLUMNS) {
       if (!Object.prototype.hasOwnProperty.call(row, column)) continue;
       const sourceFiles = splitSemicolonValues(row.source_files || row.source_file);
@@ -429,6 +526,7 @@ function extractUrlsFromCsv(text, context = {}) {
           source_location: sourceLocation || `${context.source_file}:row ${rowIndex + 2}:${column}`,
           source_field: column,
           source_type: sourceLocations.length || sourceFiles.length ? 'csv_nested' : 'csv',
+          discovery_context: discoveryContext,
         });
       }
     }
@@ -580,6 +678,7 @@ function aggregateRecords(records) {
         source_fields: [record.source_field].filter(Boolean),
         source_types: [record.source_type].filter(Boolean),
         occurrence_count: 1,
+        ...mergeDiscoveryContext(emptyDiscoveryContext(), record.discovery_context),
       });
       continue;
     }
@@ -589,6 +688,7 @@ function aggregateRecords(records) {
     existing.source_locations = unique([...existing.source_locations, record.source_location]);
     existing.source_fields = unique([...existing.source_fields, record.source_field]);
     existing.source_types = unique([...existing.source_types, record.source_type]);
+    mergeDiscoveryContext(existing, record.discovery_context);
   }
 
   return [...byKey.values()].sort((a, b) =>
@@ -754,6 +854,7 @@ export function coverageCandidatesCsv(report) {
     'registry_target_ids',
     'registry_submit_urls',
     'occurrence_count',
+    ...DISCOVERY_OUTPUT_FIELDS,
   ];
 
   const rows = report.items.map(item => [
@@ -766,6 +867,7 @@ export function coverageCandidatesCsv(report) {
     item.registry_target_ids,
     item.registry_submit_urls,
     item.occurrence_count,
+    ...DISCOVERY_OUTPUT_FIELDS.map(field => discoveryContextForOutput(item)[field]),
   ]);
 
   return [
@@ -825,6 +927,7 @@ function coverageReviewRows(report, opts = {}) {
       registry_target_ids: item.registry_target_ids,
       registry_submit_urls: item.registry_submit_urls,
       occurrence_count: item.occurrence_count,
+      ...discoveryContextForOutput(item),
     }));
 }
 
@@ -1596,6 +1699,7 @@ function suggestionRow(row, evidenceMatch) {
     duplicate_registry_url: evidence?.duplicate_registry_url || '',
     fetch_error: evidence?.fetch_error || '',
     checked_at: evidence?.checked_at || '',
+    ...discoveryContextForOutput(row),
   };
 }
 
@@ -3033,6 +3137,7 @@ function manualReviewRowsFromQueue(queueRows, history) {
       safety_gate_batch_id: blocked?.batch_id || '',
       safety_gate_report: blocked?.source_draft_report_file || '',
       checked_at: suggestion?.checked_at || evidence?.checked_at || '',
+      ...discoveryContextForOutput(queueRow),
     };
   });
 }
