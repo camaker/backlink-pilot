@@ -1,0 +1,422 @@
+{
+  "generated_at": "2026-05-28T05:00:31.191Z",
+  "batch": "backlink-url/review-batches/p2-007.csv",
+  "suggestions": "backlink-url/review-batches/p2-007-suggestions.csv",
+  "batch_id": "p2-007",
+  "mode_policy": "drafts_rejections_only_no_approvals_no_registry_changes",
+  "min_confidence": "high",
+  "reviewed_by": "read_only_evidence",
+  "enabled_rejection_decisions": [
+    "reject_auth_required",
+    "reject_duplicate",
+    "reject_not_directory",
+    "reject_not_submit",
+    "reject_paid"
+  ],
+  "batch_rows": 50,
+  "suggestion_rows": 50,
+  "drafted_rows": 15,
+  "skipped_rows": 35,
+  "blocked_rows": 0,
+  "priority_counts": {
+    "P2": 50
+  },
+  "action_counts": {
+    "verify_directory_fit_before_any_approval": 50
+  },
+  "drafted": [
+    {
+      "line": 22,
+      "review_row": "210",
+      "url": "https://www.diigo.com/",
+      "domain": "diigo.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:210"
+    },
+    {
+      "line": 23,
+      "review_row": "215",
+      "url": "https://directory.com/your-listing",
+      "domain": "directory.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:215"
+    },
+    {
+      "line": 26,
+      "review_row": "219",
+      "url": "https://www.dnb.com/",
+      "domain": "dnb.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:219"
+    },
+    {
+      "line": 27,
+      "review_row": "223",
+      "url": "https://www.ebay.com/",
+      "domain": "ebay.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:223"
+    },
+    {
+      "line": 29,
+      "review_row": "226",
+      "url": "https://elocal.com/",
+      "domain": "elocal.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:226"
+    },
+    {
+      "line": 32,
+      "review_row": "229",
+      "url": "https://evensi.com/",
+      "domain": "evensi.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:229"
+    },
+    {
+      "line": 35,
+      "review_row": "239",
+      "url": "https://www.ezlocal.com/",
+      "domain": "ezlocal.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:239"
+    },
+    {
+      "line": 36,
+      "review_row": "247",
+      "url": "https://www.feedough.com/",
+      "domain": "feedough.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:247"
+    },
+    {
+      "line": 37,
+      "review_row": "248",
+      "url": "https://www.feedspot.com/",
+      "domain": "feedspot.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:248"
+    },
+    {
+      "line": 39,
+      "review_row": "258",
+      "url": "https://fitprofessionals.net/",
+      "domain": "fitprofessionals.net",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:258"
+    },
+    {
+      "line": 41,
+      "review_row": "263",
+      "url": "https://www.folkd.com/",
+      "domain": "folkd.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:263"
+    },
+    {
+      "line": 42,
+      "review_row": "267",
+      "url": "https://forums.digitalpoint.com/",
+      "domain": "forums.digitalpoint.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:267"
+    },
+    {
+      "line": 43,
+      "review_row": "269",
+      "url": "https://www.freeindex.co.uk/",
+      "domain": "freeindex.co.uk",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:269"
+    },
+    {
+      "line": 44,
+      "review_row": "275",
+      "url": "https://ghost.org/",
+      "domain": "ghost.org",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:275"
+    },
+    {
+      "line": 50,
+      "review_row": "298",
+      "url": "https://gust.com/",
+      "domain": "gust.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:298"
+    }
+  ],
+  "skipped": [
+    {
+      "line": 2,
+      "review_row": "3",
+      "url": "https://www.2findlocal.com/",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 3,
+      "review_row": "4",
+      "url": "https://www.4shared.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 4,
+      "review_row": "5",
+      "url": "https://500px.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 5,
+      "review_row": "56",
+      "url": "https://about.me/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 6,
+      "review_row": "59",
+      "url": "https://activerain.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 7,
+      "review_row": "71",
+      "url": "https://aiforme.wiki/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 8,
+      "review_row": "80",
+      "url": "https://aitoolsguide.com/",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 9,
+      "review_row": "95",
+      "url": "https://apitracker.io/mcp-servers",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 10,
+      "review_row": "100",
+      "url": "https://www.artstation.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 11,
+      "review_row": "101",
+      "url": "https://www.athlinks.com/",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 12,
+      "review_row": "111",
+      "url": "https://bandcamp.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 13,
+      "review_row": "114",
+      "url": "https://www.behance.net/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 14,
+      "review_row": "125",
+      "url": "https://www.bizcommunity.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 15,
+      "review_row": "126",
+      "url": "https://www.bizsugar.com/",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 16,
+      "review_row": "142",
+      "url": "https://www.blogarama.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 17,
+      "review_row": "146",
+      "url": "https://www.blogger.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 18,
+      "review_row": "169",
+      "url": "https://businesshunt.co/",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 19,
+      "review_row": "172",
+      "url": "https://www.cabinetm.com/",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 20,
+      "review_row": "173",
+      "url": "https://www.calameo.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 21,
+      "review_row": "202",
+      "url": "https://www.cuspera.com/",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 24,
+      "review_row": "216",
+      "url": "https://www.directory.ldmstudio.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 25,
+      "review_row": "217",
+      "url": "https://disqus.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 28,
+      "review_row": "224",
+      "url": "https://ecosystem.hubspot.com/marketplace",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 30,
+      "review_row": "227",
+      "url": "https://www.etsy.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 31,
+      "review_row": "228",
+      "url": "https://www.eu-business.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 33,
+      "review_row": "230",
+      "url": "https://evernote.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 34,
+      "review_row": "238",
+      "url": "https://ezinearticles.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 38,
+      "review_row": "251",
+      "url": "https://www.finduslocal.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 40,
+      "review_row": "261",
+      "url": "https://www.flickr.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 45,
+      "review_row": "286",
+      "url": "https://gitlab.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 46,
+      "review_row": "288",
+      "url": "https://glama.ai/mcp/servers",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 47,
+      "review_row": "293",
+      "url": "https://gptforge.net/",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 48,
+      "review_row": "295",
+      "url": "https://gravatar.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 49,
+      "review_row": "297",
+      "url": "https://growthhackers.com/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 51,
+      "review_row": "303",
+      "url": "https://www.hg.org/",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    }
+  ],
+  "blocked": []
+}
