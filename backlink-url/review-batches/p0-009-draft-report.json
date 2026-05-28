@@ -1,0 +1,249 @@
+{
+  "generated_at": "2026-05-28T04:08:41.150Z",
+  "batch": "backlink-url/review-batches/p0-009.csv",
+  "suggestions": "backlink-url/review-batches/p0-009-suggestions.csv",
+  "batch_id": "p0-009",
+  "mode_policy": "drafts_rejections_only_no_approvals_no_registry_changes",
+  "min_confidence": "high",
+  "reviewed_by": "read_only_evidence",
+  "enabled_rejection_decisions": [
+    "reject_auth_required",
+    "reject_duplicate",
+    "reject_not_directory",
+    "reject_not_submit",
+    "reject_paid"
+  ],
+  "batch_rows": 25,
+  "suggestion_rows": 25,
+  "drafted_rows": 20,
+  "skipped_rows": 5,
+  "blocked_rows": 0,
+  "priority_counts": {
+    "P0": 25
+  },
+  "action_counts": {
+    "verify_distinct_submit_url_for_existing_domain": 25
+  },
+  "drafted": [
+    {
+      "line": 5,
+      "review_row": "301",
+      "url": "https://hashnode.com/",
+      "domain": "hashnode.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:301"
+    },
+    {
+      "line": 6,
+      "review_row": "365",
+      "url": "https://mkdirs.com/",
+      "domain": "mkdirs.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:365"
+    },
+    {
+      "line": 7,
+      "review_row": "402",
+      "url": "https://www.ontoplist.com/",
+      "domain": "ontoplist.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:402"
+    },
+    {
+      "line": 8,
+      "review_row": "438",
+      "url": "https://www.promoteproject.com/",
+      "domain": "promoteproject.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:438"
+    },
+    {
+      "line": 9,
+      "review_row": "443",
+      "url": "https://www.qualityinternetdirectory.com/",
+      "domain": "qualityinternetdirectory.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:443"
+    },
+    {
+      "line": 10,
+      "review_row": "464",
+      "url": "https://www.saasworthy.com/",
+      "domain": "saasworthy.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:464"
+    },
+    {
+      "line": 12,
+      "review_row": "477",
+      "url": "https://www.sitepromotiondirectory.com/",
+      "domain": "sitepromotiondirectory.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:477"
+    },
+    {
+      "line": 13,
+      "review_row": "492",
+      "url": "https://sourceforge.net/user/register",
+      "domain": "sourceforge.net",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:492"
+    },
+    {
+      "line": 15,
+      "review_row": "500",
+      "url": "https://startupbuffer.com/",
+      "domain": "startupbuffer.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:500"
+    },
+    {
+      "line": 16,
+      "review_row": "504",
+      "url": "https://startuptracker.io/",
+      "domain": "startuptracker.io",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:504"
+    },
+    {
+      "line": 17,
+      "review_row": "521",
+      "url": "https://www.techpluto.com/",
+      "domain": "techpluto.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:521"
+    },
+    {
+      "line": 18,
+      "review_row": "524",
+      "url": "https://www.theaigeneration.com/",
+      "domain": "theaigeneration.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:524"
+    },
+    {
+      "line": 19,
+      "review_row": "535",
+      "url": "https://toolai.io/",
+      "domain": "toolai.io",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:535"
+    },
+    {
+      "line": 20,
+      "review_row": "553",
+      "url": "https://www.webwiki.com/",
+      "domain": "webwiki.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:553"
+    },
+    {
+      "line": 21,
+      "review_row": "559",
+      "url": "https://whattheai.tech/",
+      "domain": "whattheai.tech",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:559"
+    },
+    {
+      "line": 22,
+      "review_row": "285",
+      "url": "https://github.com/s87343472/backlink-pilot.git",
+      "domain": "github.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:285"
+    },
+    {
+      "line": 23,
+      "review_row": "284",
+      "url": "https://github.com/s87343472/backlink-pilot",
+      "domain": "github.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:284"
+    },
+    {
+      "line": 24,
+      "review_row": "281",
+      "url": "https://github.com/niciral/bb-browser",
+      "domain": "github.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:281"
+    },
+    {
+      "line": 25,
+      "review_row": "463",
+      "url": "https://www.saashub.com/new",
+      "domain": "saashub.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:463"
+    },
+    {
+      "line": 26,
+      "review_row": "272",
+      "url": "https://www.g2.com/discussions/what-is-ultipro-system",
+      "domain": "g2.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:272"
+    }
+  ],
+  "skipped": [
+    {
+      "line": 2,
+      "review_row": "75",
+      "url": "https://aiscout.net/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 3,
+      "review_row": "79",
+      "url": "https://aitoolsdirectory.com/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 4,
+      "review_row": "208",
+      "url": "https://devhunt.org/submit",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 11,
+      "review_row": "472",
+      "url": "https://www.sideprojectors.com/project/new",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    },
+    {
+      "line": 14,
+      "review_row": "497",
+      "url": "https://stackshare.io/new-product",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    }
+  ],
+  "blocked": []
+}
