@@ -1,6 +1,6 @@
 # Product Readiness Blockers
 
-Generated: 2026-05-28T12:34:30.731Z
+Generated: 2026-05-28T12:42:01.089Z
 
 Real submission remains blocked unless product marketing context and launch readiness are complete. Checked paths:
 
