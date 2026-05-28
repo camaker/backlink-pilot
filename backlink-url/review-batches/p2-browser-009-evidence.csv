@@ -1,0 +1,40 @@
+review_row,domain,url,status,final_url,title,forms,inputs,error,snippet
+3,2findlocal.com,https://www.2findlocal.com/,200,https://www.2findlocal.com/,Big finds from small businesses | 2FINDLOCAL.COM,1,6,,"United States | Sitemap Local | | US Zip Codes 1 | US Zip Codes 2 Search for (Product, Service or Business Name) Near (City, Region, Zip) Go! 2FindLocal my account Welcome to 2FindLocal – Connect, Promote & Grow Locally All Countries Popular Towns Other New York, NY Houston, TX Los Angeles, CA London Miami, FL Chicago, IL Brooklyn, NY Dallas, TX Philadelphia, PA Atlanta, GA San Antonio, TX Las Vegas, NV Phoenix, AZ San Diego, CA St. Louis, MO Denver, CO Austin, TX Seattle, WA San Francisco, CA Washington, DC Orlando, FL Portland, OR Calgary, AB Indianapolis, IN Minneapolis, MN Louisville, KY C"
+4,4shared.com,https://www.4shared.com/,,about:blank,,0,0,"page.goto: net::ERR_CONNECTION_TIMED_OUT at https://www.4shared.com/
+Call log:
+[2m  - navigating to ""https://www.4shared.com/"", waiting until ""domcontentloaded""[22m
+",
+5,500px.com,https://500px.com/,,about:blank,,0,0,"page.goto: net::ERR_CONNECTION_RESET at https://500px.com/
+Call log:
+[2m  - navigating to ""https://500px.com/"", waiting until ""domcontentloaded""[22m
+",
+56,about.me,https://about.me/,,about:blank,,0,0,"page.goto: net::ERR_CONNECTION_TIMED_OUT at https://about.me/
+Call log:
+[2m  - navigating to ""https://about.me/"", waiting until ""domcontentloaded""[22m
+",
+59,activerain.com,https://activerain.com/,403,https://activerain.com/,403 Forbidden,0,0,,403 Forbidden nginx
+71,aiforme.wiki,https://aiforme.wiki/,200,https://aiforme.wiki/,Redirecting...,0,0,,The domain has expired. Is this your domain? Renew now aiforme.wiki 爱好与兴趣 购物 家庭与关系 旅游 科技与计算机 Television 活动与景点 音乐与音频 通信 © 2026 ParkLogic.com. All rights reserved. About Us | Contact Us | Privacy Policy | Terms of Service
+80,aitoolsguide.com,https://aitoolsguide.com/,200,https://aitoolsguide.com/,"AIToolsGuide — Discover, compare, and choose AI tools",1,2,,"AG AIToolsGuide BETA Browse Compare Categories Tool Finder LIGHT Find your fit → HONEST REVIEWS. REAL WORKFLOWS. Find the AI tool that actually fits your workflow. We test and compare 1,632 AI tools across real use cases, highlight trade-offs, and publish clear verdicts you can trust. Find your fit → Browse reviews 🔧 1,632 TOOLS REVIEWED 📂 315 WORKFLOWS ✍️ Editorial NO PAY-TO-PLAY ✍️ Writing 🎬 Video 💼 Sales 🎨 Design ⚙️ Ops REVIEW SPOTLIGHT CHATBOTS ChatGPT OpenAI's general-purpose AI assistant for research, writing, coding, and data analysis across text, image, and View Workflow fit Hones"
+95,apitracker.io,https://apitracker.io/mcp-servers,403,https://apitracker.io/mcp-servers,403: Forbidden,0,0,,Error: Forbidden 403: Forbidden ID: hnd1::6xxk5-1779956377908-3c086a9a1951
+100,artstation.com,https://www.artstation.com/,,about:blank,,0,0,"page.goto: net::ERR_CONNECTION_TIMED_OUT at https://www.artstation.com/
+Call log:
+[2m  - navigating to ""https://www.artstation.com/"", waiting until ""domcontentloaded""[22m
+",
+101,athlinks.com,https://www.athlinks.com/,200,https://www.athlinks.com/,Athlinks,0,0,,
+111,bandcamp.com,https://bandcamp.com/,,about:blank,,0,0,"page.goto: net::ERR_CONNECTION_TIMED_OUT at https://bandcamp.com/
+Call log:
+[2m  - navigating to ""https://bandcamp.com/"", waiting until ""domcontentloaded""[22m
+",
+114,behance.net,https://www.behance.net/,,about:blank,,0,0,"page.goto: net::ERR_CONNECTION_TIMED_OUT at https://www.behance.net/
+Call log:
+[2m  - navigating to ""https://www.behance.net/"", waiting until ""domcontentloaded""[22m
+",
+125,bizcommunity.com,https://www.bizcommunity.com/,,about:blank,,0,0,"page.goto: net::ERR_CONNECTION_TIMED_OUT at https://www.bizcommunity.com/
+Call log:
+[2m  - navigating to ""https://www.bizcommunity.com/"", waiting until ""domcontentloaded""[22m
+",
+126,bizsugar.com,https://www.bizsugar.com/,200,https://bizsugar.com/,BizSugar - Small Business News and Advice,3,3,," News Start A Business Startup Advice Franchise Handmade Business Run a Business Management Small Business Operations Staffing Retail Business Marketing Local Marketing Marketing Social Media Money Small Business Finance Small Business Loans Taxes News Tech Company: About Contact Terms of Service Privacy Policy Start A Business Startup Advice Franchise Handmade Business Run a Business Management Small Business Operations Staffing Retail Business Marketing Local Marketing Marketing Social Media Money Small Business Finance Small Business Loans Taxes News Tech Thursday, May 28, 2026 START A BUSI"
+142,blogarama.com,https://www.blogarama.com/,,about:blank,,0,0,"page.goto: net::ERR_CONNECTION_RESET at https://www.blogarama.com/
+Call log:
+[2m  - navigating to ""https://www.blogarama.com/"", waiting until ""domcontentloaded""[22m
+",

@@ -1,0 +1,331 @@
+{
+  "generated_at": "2026-05-28T08:22:08.092Z",
+  "policy": "browser_read_only_no_login_no_submission",
+  "rows": [
+    {
+      "review_row": "3",
+      "domain": "2findlocal.com",
+      "url": "https://www.2findlocal.com/",
+      "status": 200,
+      "final_url": "https://www.2findlocal.com/",
+      "title": "Big finds from small businesses | 2FINDLOCAL.COM",
+      "headings": [
+        "H1:Welcome to 2FindLocal – Connect, Promote & Grow Locally",
+        "H2:Local Business Listings",
+        "H2:Local Articles"
+      ],
+      "forms": 1,
+      "inputs": 6,
+      "buttons": [
+        "Go!"
+      ],
+      "submit_links": [
+        {
+          "text": "Submit free listing",
+          "href": "https://www.2findlocal.com/Modules/Biz/bizPhoneLookup.php"
+        },
+        {
+          "text": "SUBMIT YOUR BUSINESS",
+          "href": "https://www.2findlocal.com/Modules/Biz/bizPhoneLookup.php"
+        }
+      ],
+      "snippet": "United States | Sitemap Local | | US Zip Codes 1 | US Zip Codes 2 Search for (Product, Service or Business Name) Near (City, Region, Zip) Go! 2FindLocal my account Welcome to 2FindLocal – Connect, Promote & Grow Locally All Countries Popular Towns Other New York, NY Houston, TX Los Angeles, CA London Miami, FL Chicago, IL Brooklyn, NY Dallas, TX Philadelphia, PA Atlanta, GA San Antonio, TX Las Vegas, NV Phoenix, AZ San Diego, CA St. Louis, MO Denver, CO Austin, TX Seattle, WA San Francisco, CA Washington, DC Orlando, FL Portland, OR Calgary, AB Indianapolis, IN Minneapolis, MN Louisville, KY Cincinnati, OH Recent Searches 5126492000 78741 austin, tx razzmic ventures chicago, il stieglitz welch pllc 10606 white plains, ny the approved movers 43235 columbus, oh light house plasma 88061 silver city, nm fabriq equal minded cafe event center 64110 kansas city, mo physical gains 21117 owings mills, md Local Business Listings If you own or manage a local business, 2findlocal can help you reach people who are actively looking for savings and local services in your category. You can submit your business listing for free, keep your information accurate, and be visible when users compare options in your area. We also occasionally collaborate with businesses and industry professionals on educational content that explains how pricing, quality, or service really work in a specific niche. The"
+    },
+    {
+      "review_row": "4",
+      "domain": "4shared.com",
+      "url": "https://www.4shared.com/",
+      "error": "page.goto: net::ERR_CONNECTION_TIMED_OUT at https://www.4shared.com/\nCall log:\n\u001b[2m  - navigating to \"https://www.4shared.com/\", waiting until \"domcontentloaded\"\u001b[22m\n",
+      "final_url": "about:blank",
+      "title": ""
+    },
+    {
+      "review_row": "5",
+      "domain": "500px.com",
+      "url": "https://500px.com/",
+      "error": "page.goto: net::ERR_CONNECTION_RESET at https://500px.com/\nCall log:\n\u001b[2m  - navigating to \"https://500px.com/\", waiting until \"domcontentloaded\"\u001b[22m\n",
+      "final_url": "about:blank",
+      "title": ""
+    },
+    {
+      "review_row": "56",
+      "domain": "about.me",
+      "url": "https://about.me/",
+      "error": "page.goto: net::ERR_CONNECTION_TIMED_OUT at https://about.me/\nCall log:\n\u001b[2m  - navigating to \"https://about.me/\", waiting until \"domcontentloaded\"\u001b[22m\n",
+      "final_url": "about:blank",
+      "title": ""
+    },
+    {
+      "review_row": "59",
+      "domain": "activerain.com",
+      "url": "https://activerain.com/",
+      "status": 403,
+      "final_url": "https://activerain.com/",
+      "title": "403 Forbidden",
+      "headings": [
+        "H1:403 Forbidden"
+      ],
+      "forms": 0,
+      "inputs": 0,
+      "buttons": [],
+      "submit_links": [],
+      "snippet": "403 Forbidden nginx"
+    },
+    {
+      "review_row": "71",
+      "domain": "aiforme.wiki",
+      "url": "https://aiforme.wiki/",
+      "status": 200,
+      "final_url": "https://aiforme.wiki/",
+      "title": "Redirecting...",
+      "headings": [
+        "H1:aiforme.wiki"
+      ],
+      "forms": 0,
+      "inputs": 0,
+      "buttons": [],
+      "submit_links": [],
+      "snippet": "The domain has expired. Is this your domain? Renew now aiforme.wiki 爱好与兴趣 购物 家庭与关系 旅游 科技与计算机 Television 活动与景点 音乐与音频 通信 © 2026 ParkLogic.com. All rights reserved. About Us | Contact Us | Privacy Policy | Terms of Service"
+    },
+    {
+      "review_row": "80",
+      "domain": "aitoolsguide.com",
+      "url": "https://aitoolsguide.com/",
+      "status": 200,
+      "final_url": "https://aitoolsguide.com/",
+      "title": "AIToolsGuide — Discover, compare, and choose AI tools",
+      "headings": [
+        "H1:Find the AI tool that actually fits your workflow.",
+        "H2:Start with the workflow",
+        "H2:Popular comparisons & verdicts",
+        "H2:Newly reviewed tools",
+        "H2:Get the weekly review brief"
+      ],
+      "forms": 1,
+      "inputs": 2,
+      "buttons": [
+        "LIGHT",
+        "Subscribe"
+      ],
+      "submit_links": [
+        {
+          "text": "AG\nAIToolsGuide\nBETA",
+          "href": "https://aitoolsguide.com/"
+        },
+        {
+          "text": "Browse",
+          "href": "https://aitoolsguide.com/tools"
+        },
+        {
+          "text": "Compare",
+          "href": "https://aitoolsguide.com/compare"
+        },
+        {
+          "text": "Categories",
+          "href": "https://aitoolsguide.com/categories"
+        },
+        {
+          "text": "Tool Finder",
+          "href": "https://aitoolsguide.com/wizard"
+        },
+        {
+          "text": "Find your fit\n→",
+          "href": "https://aitoolsguide.com/wizard"
+        },
+        {
+          "text": "Find your fit\n→",
+          "href": "https://aitoolsguide.com/wizard"
+        },
+        {
+          "text": "Browse reviews",
+          "href": "https://aitoolsguide.com/tools"
+        },
+        {
+          "text": "✍️ Writing",
+          "href": "https://aitoolsguide.com/categories/ai-text-tools"
+        },
+        {
+          "text": "🎬 Video",
+          "href": "https://aitoolsguide.com/categories/ai-video-tools"
+        },
+        {
+          "text": "💼 Sales",
+          "href": "https://aitoolsguide.com/categories/ai-business-tools"
+        },
+        {
+          "text": "🎨 Design",
+          "href": "https://aitoolsguide.com/categories/ai-image-tools"
+        },
+        {
+          "text": "⚙️ Ops",
+          "href": "https://aitoolsguide.com/categories/productivity"
+        },
+        {
+          "text": "View",
+          "href": "https://aitoolsguide.com/tools/chatgpt"
+        },
+        {
+          "text": "View all categories →",
+          "href": "https://aitoolsguide.com/categories"
+        },
+        {
+          "text": "AI-Business Tools",
+          "href": "https://aitoolsguide.com/categories/ai-business-tools"
+        },
+        {
+          "text": "AI-Text-Tools",
+          "href": "https://aitoolsguide.com/categories/ai-text-tools"
+        },
+        {
+          "text": "AI Studio",
+          "href": "https://aitoolsguide.com/categories/ai-studio"
+        },
+        {
+          "text": "Developer Tools",
+          "href": "https://aitoolsguide.com/categories/developer-tools"
+        },
+        {
+          "text": "AI-Image-Tools",
+          "href": "https://aitoolsguide.com/categories/ai-image-tools"
+        }
+      ],
+      "snippet": "AG AIToolsGuide BETA Browse Compare Categories Tool Finder LIGHT Find your fit → HONEST REVIEWS. REAL WORKFLOWS. Find the AI tool that actually fits your workflow. We test and compare 1,632 AI tools across real use cases, highlight trade-offs, and publish clear verdicts you can trust. Find your fit → Browse reviews 🔧 1,632 TOOLS REVIEWED 📂 315 WORKFLOWS ✍️ Editorial NO PAY-TO-PLAY ✍️ Writing 🎬 Video 💼 Sales 🎨 Design ⚙️ Ops REVIEW SPOTLIGHT CHATBOTS ChatGPT OpenAI's general-purpose AI assistant for research, writing, coding, and data analysis across text, image, and View Workflow fit Honest take Clear trade-offs 🎯 Workflow fit We evaluate tools inside real use cases, not demos. 📊 Comprehensive review Pros, trade-offs, pricing, and sentiment in one place. 🤝 Honest opinion No pay-to-play. Affiliate links disclosed clearly. 🧭 Guided match Answer a few questions to get a tailored shortlist. Start with the workflow Pick an outcome and get reviewed recommendations. View all categories → ✍️ Ship content faster Writers, marketers, and creators streamlining output. AI-Business Tools AI-Text-Tools 🛠️ Build product with AI Tools for prototyping, coding, and support. AI Studio Developer Tools ⚙️ Automate ops Internal workflows, analytics, and team rituals. AI-Image-Tools Productivity Popular comparisons & verdicts Side-by-side comparisons with honest notes. View all → CHATGPT VS C"
+    },
+    {
+      "review_row": "95",
+      "domain": "apitracker.io",
+      "url": "https://apitracker.io/mcp-servers",
+      "status": 403,
+      "final_url": "https://apitracker.io/mcp-servers",
+      "title": "403: Forbidden",
+      "headings": [],
+      "forms": 0,
+      "inputs": 0,
+      "buttons": [],
+      "submit_links": [],
+      "snippet": "Error: Forbidden 403: Forbidden ID: hnd1::6xxk5-1779956377908-3c086a9a1951"
+    },
+    {
+      "review_row": "100",
+      "domain": "artstation.com",
+      "url": "https://www.artstation.com/",
+      "error": "page.goto: net::ERR_CONNECTION_TIMED_OUT at https://www.artstation.com/\nCall log:\n\u001b[2m  - navigating to \"https://www.artstation.com/\", waiting until \"domcontentloaded\"\u001b[22m\n",
+      "final_url": "about:blank",
+      "title": ""
+    },
+    {
+      "review_row": "101",
+      "domain": "athlinks.com",
+      "url": "https://www.athlinks.com/",
+      "status": 200,
+      "final_url": "https://www.athlinks.com/",
+      "title": "Athlinks",
+      "headings": [],
+      "forms": 0,
+      "inputs": 0,
+      "buttons": [],
+      "submit_links": [],
+      "snippet": ""
+    },
+    {
+      "review_row": "111",
+      "domain": "bandcamp.com",
+      "url": "https://bandcamp.com/",
+      "error": "page.goto: net::ERR_CONNECTION_TIMED_OUT at https://bandcamp.com/\nCall log:\n\u001b[2m  - navigating to \"https://bandcamp.com/\", waiting until \"domcontentloaded\"\u001b[22m\n",
+      "final_url": "about:blank",
+      "title": ""
+    },
+    {
+      "review_row": "114",
+      "domain": "behance.net",
+      "url": "https://www.behance.net/",
+      "error": "page.goto: net::ERR_CONNECTION_TIMED_OUT at https://www.behance.net/\nCall log:\n\u001b[2m  - navigating to \"https://www.behance.net/\", waiting until \"domcontentloaded\"\u001b[22m\n",
+      "final_url": "about:blank",
+      "title": ""
+    },
+    {
+      "review_row": "125",
+      "domain": "bizcommunity.com",
+      "url": "https://www.bizcommunity.com/",
+      "error": "page.goto: net::ERR_CONNECTION_TIMED_OUT at https://www.bizcommunity.com/\nCall log:\n\u001b[2m  - navigating to \"https://www.bizcommunity.com/\", waiting until \"domcontentloaded\"\u001b[22m\n",
+      "final_url": "about:blank",
+      "title": ""
+    },
+    {
+      "review_row": "126",
+      "domain": "bizsugar.com",
+      "url": "https://www.bizsugar.com/",
+      "status": 200,
+      "final_url": "https://bizsugar.com/",
+      "title": "BizSugar - Small Business News and Advice",
+      "headings": [
+        "H3:News",
+        "H3:Company:",
+        "H3:Stripe Celebrates a Decade of Innovation and Growth in France",
+        "H3:Amazon Launches Product Shipping via Shinkansen for Enhanced Delivery Efficiency",
+        "H3:Snowflake Strengthens AWS Partnership with $6B Investment to Boost Enterprise AI Adoption",
+        "H3:Salesforce Reports Record-Breaking Q1 Fiscal 2027 Results",
+        "H3:Mailchimp Launches Enhanced Data-Driven Tools to Boost Ecommerce Profitability",
+        "H3:Georgia Business Owner Sentenced to 37 Months for COVID-19 Relief Fraud",
+        "H3:US Energy Outlook: Balancing Act Between Major Petroleum Exporter and Importer",
+        "H3:Oracle Unveils Campaign Highlighting Commitment to Doña Ana County",
+        "H3:Amazon Celebrates Prime Day with Exciting Promotions and Local Flavors",
+        "H3:AWS Report: AI Adoption Soars 33%, But Europe Risks Widening Gap"
+      ],
+      "forms": 3,
+      "inputs": 3,
+      "buttons": [
+        "Search",
+        "Search",
+        "Search"
+      ],
+      "submit_links": [
+        {
+          "text": "Amazon Launches Product Shipping via Shinkansen for Enhanced Delivery Efficiency",
+          "href": "https://bizsugar.com/small-business-news/amazon-launches-product-shipping-via-shinkansen-for-enhanced-delivery-efficiency/"
+        },
+        {
+          "text": "Mailchimp Launches Enhanced Data-Driven Tools to Boost Ecommerce Profitability",
+          "href": "https://bizsugar.com/small-business-news/mailchimp-launches-enhanced-data-driven-tools-to-boost-ecommerce-profitability/"
+        },
+        {
+          "text": "",
+          "href": "https://bizsugar.com/small-business-news/amazon-launches-product-shipping-via-shinkansen-for-enhanced-delivery-efficiency/"
+        },
+        {
+          "text": "Amazon Launches Product Shipping via Shinkansen for Enhanced Delivery Efficiency",
+          "href": "https://bizsugar.com/small-business-news/amazon-launches-product-shipping-via-shinkansen-for-enhanced-delivery-efficiency/"
+        },
+        {
+          "text": "Mailchimp Launches Enhanced Data-Driven Tools to Boost Ecommerce Profitability",
+          "href": "https://bizsugar.com/small-business-news/mailchimp-launches-enhanced-data-driven-tools-to-boost-ecommerce-profitability/"
+        },
+        {
+          "text": "Mastering Product Photography to Make Your Photos Look Professional",
+          "href": "https://bizsugar.com/handmade-business/how-to-make-product-photos-look-professional/"
+        },
+        {
+          "text": "10 Must-Have Content Creation Tools",
+          "href": "https://bizsugar.com/marketing/content-creation-tools/"
+        },
+        {
+          "text": "Conducting Effective Consumer Product Research: A Step-by-Step Guide",
+          "href": "https://bizsugar.com/marketing/consumer-product-research/"
+        },
+        {
+          "text": "Amazon Launches Product Shipping via Shinkansen for Enhanced Delivery Efficiency",
+          "href": "https://bizsugar.com/small-business-news/amazon-launches-product-shipping-via-shinkansen-for-enhanced-delivery-efficiency/"
+        }
+      ],
+      "snippet": " News Start A Business Startup Advice Franchise Handmade Business Run a Business Management Small Business Operations Staffing Retail Business Marketing Local Marketing Marketing Social Media Money Small Business Finance Small Business Loans Taxes News Tech Company: About Contact Terms of Service Privacy Policy Start A Business Startup Advice Franchise Handmade Business Run a Business Management Small Business Operations Staffing Retail Business Marketing Local Marketing Marketing Social Media Money Small Business Finance Small Business Loans Taxes News Tech Thursday, May 28, 2026 START A BUSINESS RUN A BUSINESS MARKETING MONEY NEWS TECH Small Business News Stripe Celebrates a Decade of Innovation and Growth in France Explore how Stripe has revolutionized the payment landscape in France over the past decade, driving innovation and growth in the fintech sector. Discover key milestones, impactful partnerships, and what the future holds for Stripe in the French market. Small Business News Amazon Launches Product Shipping via Shinkansen for Enhanced Delivery Efficiency Small Business News Snowflake Strengthens AWS Partnership with $6B Investment to Boost Enterprise AI Adoption Small Business News Salesforce Reports Record-Breaking Q1 Fiscal 2027 Results Small Business News Mailchimp Launches Enhanced Data-Driven Tools to Boost Ecommerce Profitability Small Business News Georgia Bus"
+    },
+    {
+      "review_row": "142",
+      "domain": "blogarama.com",
+      "url": "https://www.blogarama.com/",
+      "error": "page.goto: net::ERR_CONNECTION_RESET at https://www.blogarama.com/\nCall log:\n\u001b[2m  - navigating to \"https://www.blogarama.com/\", waiting until \"domcontentloaded\"\u001b[22m\n",
+      "final_url": "about:blank",
+      "title": ""
+    }
+  ]
+}
