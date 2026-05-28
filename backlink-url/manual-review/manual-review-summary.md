@@ -1,13 +1,13 @@
 # Manual Review Pack
 
-Generated: 2026-05-22T11:50:04.433Z
+Generated: 2026-05-28T04:39:17.446Z
 
 ## Scope
 
-- Current queue rows: 132
-- P0 rows: 17
-- P2 rows: 115
-- Rows with evidence or suggestion history: 132
+- Current queue rows: 430
+- P0 rows: 20
+- P2 rows: 410
+- Rows with evidence or suggestion history: 430
 - Rows without evidence or suggestion history: 0
 - Rows blocked by safety gate in prior drafts: 0
 - Possible approvals after manual confirmation: 1
@@ -18,33 +18,36 @@ Policy: manual review only. No approvals, no registry imports, no real submissio
 
 | Priority | Count |
 |---|---:|
-| P2 | 115 |
-| P0 | 17 |
+| P2 | 410 |
+| P0 | 20 |
 
 ## By Review Action
 
 | Action | Count |
 |---|---:|
-| verify_directory_fit_before_any_approval | 115 |
-| verify_submit_form_then_approve_or_reject | 12 |
+| verify_directory_fit_before_any_approval | 410 |
+| verify_submit_form_then_approve_or_reject | 15 |
 | verify_distinct_submit_url_for_existing_domain | 5 |
 
 ## By Manual Bucket
 
 | Bucket | Count |
 |---|---:|
-| fetch_failed_cannot_decide | 75 |
+| directory_fit_requires_human_confirmation | 295 |
+| fetch_failed_cannot_decide | 79 |
 | medium_confidence_requires_human_confirmation | 53 |
-| manual_submit_form_confirmation_required | 3 |
+| manual_submit_form_confirmation_required | 2 |
 | manual_browser_check_required | 1 |
 
 ## By Suggested Decision
 
 | Suggested Decision | Count |
 |---|---:|
-| needs_manual_check | 79 |
-| reject_auth_required | 49 |
-| reject_not_submit | 4 |
+| reject_auth_required | 213 |
+| reject_not_directory | 111 |
+| needs_manual_check | 82 |
+| reject_not_submit | 22 |
+| reject_paid | 2 |
 
 ## P0 Manual Queue
 
@@ -58,15 +61,18 @@ Policy: manual review only. No approvals, no registry imports, no real submissio
 | 6 | 63 | ai.xyz | fetch_failed_cannot_decide | needs_manual_check | low | https://ai.xyz/submit |
 | 7 | 64 | aiagents.live | fetch_failed_cannot_decide | needs_manual_check | low | https://aiagents.live/submit |
 | 8 | 65 | aiagentsbase.com | medium_confidence_requires_human_confirmation | reject_auth_required | medium | https://aiagentsbase.com/submit |
-| 9 | 68 | aiagentsmarketplace.com | manual_submit_form_confirmation_required | needs_manual_check | low | https://aiagentsmarketplace.com/submit |
+| 9 | 68 | aiagentsmarketplace.com | fetch_failed_cannot_decide | needs_manual_check | low | https://aiagentsmarketplace.com/submit |
 | 10 | 72 | aimatchpro.ai | fetch_failed_cannot_decide | needs_manual_check | low | https://aimatchpro.ai/submit |
 | 11 | 78 | aitools.love | medium_confidence_requires_human_confirmation | reject_auth_required | medium | https://aitools.love/submit |
 | 12 | 81 | aitrendytools.com | fetch_failed_cannot_decide | needs_manual_check | low | https://www.aitrendytools.com/submit |
 | 13 | 115 | bestofweb.io | fetch_failed_cannot_decide | needs_manual_check | low | https://bestofweb.io/submit |
 | 14 | 274 | getbyte.co | manual_submit_form_confirmation_required | needs_manual_check | low | https://getbyte.co/submit |
 | 15 | 332 | launchvault.com | fetch_failed_cannot_decide | needs_manual_check | low | https://launchvault.com/submit |
-| 16 | 392 | nocodedevs.com | medium_confidence_requires_human_confirmation | reject_auth_required | medium | https://www.nocodedevs.com/submit |
-| 17 | 395 | nocodelist.co | medium_confidence_requires_human_confirmation | reject_auth_required | medium | https://nocodelist.co/submit |
+| 16 | 390 | nocode.mba | fetch_failed_cannot_decide | needs_manual_check | low | https://www.nocode.mba/tools/submit |
+| 17 | 392 | nocodedevs.com | medium_confidence_requires_human_confirmation | reject_auth_required | medium | https://www.nocodedevs.com/submit |
+| 18 | 393 | nocodefinder.com | fetch_failed_cannot_decide | needs_manual_check | low | https://www.nocodefinder.com/submit |
+| 19 | 395 | nocodelist.co | medium_confidence_requires_human_confirmation | reject_auth_required | medium | https://nocodelist.co/submit |
+| 20 | 550 | wearenocode.com | fetch_failed_cannot_decide | needs_manual_check | low | https://www.wearenocode.com/submit |
 
 ## Files
 
