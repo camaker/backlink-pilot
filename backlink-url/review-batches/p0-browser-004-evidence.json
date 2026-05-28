@@ -1,0 +1,146 @@
+{
+  "generated_at": "2026-05-28T08:05:53.155Z",
+  "policy": "browser_and_dns_read_only_no_login_no_submission",
+  "rows": [
+    {
+      "review_row": "75",
+      "domain": "aiscout.net",
+      "url": "https://aiscout.net/submit",
+      "dns": {
+        "resolve4": [
+          "45.32.67.144"
+        ]
+      },
+      "browser": [
+        {
+          "url": "https://aiscout.net/",
+          "status": 520,
+          "title": "ERROR 520",
+          "final_url": "https://aiscout.net/"
+        },
+        {
+          "url": "https://aiscout.net/submit",
+          "status": 520,
+          "title": "ERROR 520",
+          "final_url": "https://aiscout.net/submit"
+        },
+        {
+          "url": "https://aiscout.net/submit-listing/details",
+          "status": 520,
+          "title": "ERROR 520",
+          "final_url": "https://aiscout.net/submit-listing/details"
+        }
+      ],
+      "conclusion": "service_unreachable_keep_manual"
+    },
+    {
+      "review_row": "79",
+      "domain": "aitoolsdirectory.com",
+      "url": "https://aitoolsdirectory.com/submit",
+      "dns": {
+        "resolve4": [
+          "44.212.137.48"
+        ]
+      },
+      "browser": [
+        {
+          "url": "https://aitoolsdirectory.com/",
+          "error": "ERR_TIMED_OUT"
+        },
+        {
+          "url": "https://aitoolsdirectory.com/submit",
+          "error": "ERR_TIMED_OUT"
+        },
+        {
+          "url": "https://aitoolsdirectory.com/submit-tool",
+          "error": "ERR_DNS_NO_MATCHING_SUPPORTED_ALPN"
+        }
+      ],
+      "conclusion": "network_or_tls_failure_keep_manual"
+    },
+    {
+      "review_row": "63",
+      "domain": "ai.xyz",
+      "url": "https://ai.xyz/submit",
+      "dns": {
+        "resolve4_error": "ESERVFAIL"
+      },
+      "browser": [
+        {
+          "url": "https://ai.xyz/",
+          "error": "ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://ai.xyz/submit",
+          "error": "ERR_NAME_NOT_RESOLVED"
+        }
+      ],
+      "conclusion": "dns_failure_keep_manual"
+    },
+    {
+      "review_row": "64",
+      "domain": "aiagents.live",
+      "url": "https://aiagents.live/submit",
+      "dns": {
+        "resolve4": [
+          "52.40.42.113",
+          "44.232.173.249"
+        ]
+      },
+      "browser": [
+        {
+          "url": "https://aiagents.live/",
+          "status": 200,
+          "title": "aiagents.live for sale | Spaceship.com",
+          "final_url": "https://aiagents.live/",
+          "snippet": "Domain for sale aiagents.live ... Buy now $24,999 ... Make offer ... Lease to own"
+        },
+        {
+          "url": "https://aiagents.live/submit",
+          "error": "ERR_EMPTY_RESPONSE"
+        }
+      ],
+      "conclusion": "parked_domain_reject_not_submit"
+    },
+    {
+      "review_row": "72",
+      "domain": "aimatchpro.ai",
+      "url": "https://aimatchpro.ai/submit",
+      "dns": {
+        "resolve4_error": "ENOTFOUND",
+        "cname_error": "ENOTFOUND"
+      },
+      "browser": [
+        {
+          "url": "https://aimatchpro.ai/",
+          "error": "ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://aimatchpro.ai/submit",
+          "error": "ERR_NAME_NOT_RESOLVED"
+        }
+      ],
+      "conclusion": "domain_not_found_reject_not_submit"
+    },
+    {
+      "review_row": "115",
+      "domain": "bestofweb.io",
+      "url": "https://bestofweb.io/submit",
+      "dns": {
+        "resolve4_error": "ENOTFOUND",
+        "cname_error": "ENOTFOUND"
+      },
+      "browser": [
+        {
+          "url": "https://bestofweb.io/",
+          "error": "ERR_NAME_NOT_RESOLVED"
+        },
+        {
+          "url": "https://bestofweb.io/submit",
+          "error": "ERR_NAME_NOT_RESOLVED"
+        }
+      ],
+      "conclusion": "domain_not_found_reject_not_submit"
+    }
+  ]
+}

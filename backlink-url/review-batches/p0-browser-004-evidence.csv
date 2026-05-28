@@ -1,0 +1,7 @@
+review_row,domain,url,dns_status,browser_status,conclusion
+75,aiscout.net,https://aiscout.net/submit,resolves,520/service_unreachable,service_unreachable_keep_manual
+79,aitoolsdirectory.com,https://aitoolsdirectory.com/submit,resolves,timeout_or_alpn_failure,network_or_tls_failure_keep_manual
+63,ai.xyz,https://ai.xyz/submit,eservfail,name_not_resolved,dns_failure_keep_manual
+64,aiagents.live,https://aiagents.live/submit,resolves,parked_domain_plus_submit_empty_response,parked_domain_reject_not_submit
+72,aimatchpro.ai,https://aimatchpro.ai/submit,enotfound,name_not_resolved,domain_not_found_reject_not_submit
+115,bestofweb.io,https://bestofweb.io/submit,enotfound,name_not_resolved,domain_not_found_reject_not_submit
