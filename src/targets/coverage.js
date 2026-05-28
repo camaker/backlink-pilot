@@ -25,8 +25,13 @@ const DEFAULT_IGNORED_FILENAMES = new Set([
 ]);
 
 const DEFAULT_IGNORED_DIRNAMES = new Set([
+  'assisted-submission-pack',
+  'auth-triage-pricing',
+  'backlog-lanes',
   'manual-review',
+  'pricing-review',
   'review-batches',
+  'submission-materials',
 ]);
 
 const CSV_URL_COLUMNS = [

@@ -1513,6 +1513,12 @@ targets:
       writeFileSync(join(inputDir, 'coverage-review-queue.csv'), '"url"\n"https://ignored.example/submit"\n');
       mkdirp(join(inputDir, 'manual-review'));
       writeFileSync(join(inputDir, 'manual-review', 'remaining.csv'), '"url"\n"https://ignored-manual.example/submit"\n');
+      mkdirp(join(inputDir, 'assisted-submission-pack'));
+      writeFileSync(join(inputDir, 'assisted-submission-pack', 'assisted-submission-pack.csv'), '"url"\n"https://ignored-assisted.example/submit"\n');
+      mkdirp(join(inputDir, 'pricing-review'));
+      writeFileSync(join(inputDir, 'pricing-review', 'pricing-review-queue.csv'), '"url"\n"https://ignored-pricing.example/submit"\n');
+      mkdirp(join(inputDir, 'backlog-lanes'));
+      writeFileSync(join(inputDir, 'backlog-lanes', 'backlog-lanes.csv'), '"url"\n"https://ignored-backlog.example/submit"\n');
 
       const report = buildCoverageReport(inputDir, { registry });
 
@@ -1541,6 +1547,9 @@ targets:
         report.items.find(item => item.domain === 'missing.example').candidate_import_recommendation,
         'review_submit_url'
       );
+      assert.equal(report.items.some(item => item.domain === 'ignored-assisted.example'), false);
+      assert.equal(report.items.some(item => item.domain === 'ignored-pricing.example'), false);
+      assert.equal(report.items.some(item => item.domain === 'ignored-backlog.example'), false);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
