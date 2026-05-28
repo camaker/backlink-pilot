@@ -2370,7 +2370,6 @@ export function validateCoverageReviewBatch(batchPath, opts = {}) {
 }
 
 function forceNonExecutableImportMode(target) {
-  if (['manual_strategic', 'skip'].includes(target.submission?.mode)) return target;
   return {
     ...target,
     auto: '',
@@ -2513,7 +2512,7 @@ function importCoverageReviewRows(registryPath, reviewLabel, rows, opts = {}) {
     resulting_total: blockedImport ? (registry.targets || []).length : merged.targets.length,
     total: saved.targets.length,
     review_validation: validation,
-    mode_policy: 'approved_rows_imported_as_non_executable_needs_scout_unless_manual_or_skip',
+    mode_policy: 'approved_rows_imported_as_non_executable_needs_scout',
     imported_targets: importable.map(target => ({
       id: target.id,
       mode: target.submission?.mode,
@@ -2539,12 +2538,17 @@ function reviewQueuePriority(row) {
   const occurrenceCount = numericValue(row.occurrence_count, 1);
   const discoverySignals = discoveryReviewSignals(row);
 
-  if (isRejectedDecision(decision) || recommendation === 'skip_source_page' || recommendation === 'skip_placeholder_url') {
+  if (
+    isApprovedDecision(decision) ||
+    isRejectedDecision(decision) ||
+    recommendation === 'skip_source_page' ||
+    recommendation === 'skip_placeholder_url'
+  ) {
     return {
       priority: 'P9',
       score: 0,
-      action: 'skip_rejected_or_source_page',
-      decision_options: 'leave_rejected',
+      action: isApprovedDecision(decision) ? 'skip_approved_or_imported' : 'skip_rejected_or_source_page',
+      decision_options: isApprovedDecision(decision) ? 'leave_approved' : 'leave_rejected',
     };
   }
 

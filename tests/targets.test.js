@@ -2027,6 +2027,56 @@ targets:
     }
   });
 
+  it('forces approved coverage imports to needs_scout even when notes contain negative payment evidence', () => {
+    const dir = tempDir();
+    try {
+      const registry = join(dir, 'registry.yaml');
+      const review = join(dir, 'coverage-review.csv');
+      writeFileSync(registry, 'version: 1\ntargets: []\n');
+      writeFileSync(review, [
+        [
+          'review_decision',
+          'canonical_name',
+          'reviewed_by',
+          'review_notes',
+          'pricing',
+          'classification',
+          'candidate_import_recommendation',
+          'url',
+          'domain',
+          'source_files',
+          'source_locations',
+          'occurrence_count',
+        ].join(','),
+        [
+          'approved',
+          'Free Submit Directory',
+          'qa',
+          'verified public submit form; no login or payment or CAPTCHA observed',
+          'free',
+          'missing_domain',
+          'review_submit_url',
+          'https://free-submit.example/submit',
+          'free-submit.example',
+          'coverage.csv',
+          'coverage.csv:2',
+          '1',
+        ].join(','),
+      ].join('\n'));
+
+      const result = importCoverageReview(registry, review);
+      const loaded = loadRegistry(registry);
+      const imported = loaded.targets.find(target => target.submit_url === 'https://free-submit.example/submit');
+
+      assert.equal(result.imported, 1);
+      assert.equal(imported.submission.mode, 'needs_scout');
+      assert.equal(imported.submission.reason, 'coverage_review_approved_needs_scout');
+      assert.equal(imported.quality.risk, 'unknown');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
   it('validates approved coverage rows before import', () => {
     const dir = tempDir();
     try {
@@ -2230,6 +2280,64 @@ targets:
       assert.equal(queue.queue_rows, 1);
       assert.equal(queue.priority_counts.P9, 1);
       assert.equal(queue.rows[0].review_action, 'skip_rejected_or_source_page');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('excludes approved coverage rows from the active review queue', () => {
+    const dir = tempDir();
+    try {
+      const review = join(dir, 'coverage-review.csv');
+      writeFileSync(review, [
+        [
+          'review_decision',
+          'canonical_name',
+          'pricing',
+          'classification',
+          'candidate_import_recommendation',
+          'url',
+          'domain',
+          'source_files',
+          'source_locations',
+          'occurrence_count',
+        ].join(','),
+        [
+          'approved',
+          'Approved Tool',
+          'free',
+          'missing_domain',
+          'review_submit_url',
+          'https://approved.example/submit',
+          'approved.example',
+          'coverage.csv',
+          'coverage.csv:2',
+          '1',
+        ].join(','),
+        [
+          '',
+          'Unreviewed Tool',
+          'unknown',
+          'missing_domain',
+          'review_submit_url',
+          'https://unreviewed.example/submit',
+          'unreviewed.example',
+          'coverage.csv',
+          'coverage.csv:3',
+          '1',
+        ].join(','),
+      ].join('\n'));
+
+      const queue = buildCoverageReviewQueue(review);
+      const withSkipped = buildCoverageReviewQueue(review, { includeSkipped: true });
+
+      assert.equal(queue.queue_rows, 1);
+      assert.equal(queue.rows[0].domain, 'unreviewed.example');
+      assert.equal(withSkipped.queue_rows, 2);
+      assert.equal(
+        withSkipped.rows.find(row => row.domain === 'approved.example').review_action,
+        'skip_approved_or_imported'
+      );
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
