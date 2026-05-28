@@ -1,13 +1,13 @@
 # Manual Review Pack
 
-Generated: 2026-05-28T05:55:06.661Z
+Generated: 2026-05-28T08:09:42.337Z
 
 ## Scope
 
-- Current queue rows: 364
-- P0 rows: 6
+- Current queue rows: 361
+- P0 rows: 3
 - P2 rows: 358
-- Rows with evidence or suggestion history: 364
+- Rows with evidence or suggestion history: 361
 - Rows without evidence or suggestion history: 0
 - Rows blocked by safety gate in prior drafts: 0
 - Possible approvals after manual confirmation: 1
@@ -19,22 +19,22 @@ Policy: manual review only. No approvals, no registry imports, no real submissio
 | Priority | Count |
 |---|---:|
 | P2 | 358 |
-| P0 | 6 |
+| P0 | 3 |
 
 ## By Review Action
 
 | Action | Count |
 |---|---:|
 | verify_directory_fit_before_any_approval | 358 |
-| verify_submit_form_then_approve_or_reject | 4 |
 | verify_distinct_submit_url_for_existing_domain | 2 |
+| verify_submit_form_then_approve_or_reject | 1 |
 
 ## By Manual Bucket
 
 | Bucket | Count |
 |---|---:|
 | directory_fit_requires_human_confirmation | 242 |
-| fetch_failed_cannot_decide | 74 |
+| fetch_failed_cannot_decide | 71 |
 | medium_confidence_requires_human_confirmation | 46 |
 | manual_browser_check_required | 1 |
 | manual_submit_form_confirmation_required | 1 |
@@ -45,7 +45,7 @@ Policy: manual review only. No approvals, no registry imports, no real submissio
 |---|---:|
 | reject_auth_required | 162 |
 | reject_not_directory | 111 |
-| needs_manual_check | 76 |
+| needs_manual_check | 73 |
 | reject_not_submit | 14 |
 | reject_paid | 1 |
 
@@ -56,9 +56,6 @@ Policy: manual review only. No approvals, no registry imports, no real submissio
 | 1 | 75 | aiscout.net | fetch_failed_cannot_decide | needs_manual_check | low | https://aiscout.net/submit |
 | 2 | 79 | aitoolsdirectory.com | fetch_failed_cannot_decide | needs_manual_check | low | https://aitoolsdirectory.com/submit |
 | 3 | 63 | ai.xyz | fetch_failed_cannot_decide | needs_manual_check | low | https://ai.xyz/submit |
-| 4 | 64 | aiagents.live | fetch_failed_cannot_decide | needs_manual_check | low | https://aiagents.live/submit |
-| 5 | 72 | aimatchpro.ai | fetch_failed_cannot_decide | needs_manual_check | low | https://aimatchpro.ai/submit |
-| 6 | 115 | bestofweb.io | fetch_failed_cannot_decide | needs_manual_check | low | https://bestofweb.io/submit |
 
 ## Files
 
