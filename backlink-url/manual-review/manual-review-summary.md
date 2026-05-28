@@ -1,13 +1,13 @@
 # Manual Review Pack
 
-Generated: 2026-05-28T13:36:45.047Z
+Generated: 2026-05-28T13:44:13.132Z
 
 ## Scope
 
-- Current queue rows: 181
+- Current queue rows: 166
 - P0 rows: 3
-- P2 rows: 178
-- Rows with evidence or suggestion history: 181
+- P2 rows: 163
+- Rows with evidence or suggestion history: 166
 - Rows without evidence or suggestion history: 0
 - Rows blocked by safety gate in prior drafts: 0
 - Possible approvals after manual confirmation: 0
@@ -18,14 +18,14 @@ Policy: manual review only. No approvals, no registry imports, no real submissio
 
 | Priority | Count |
 |---|---:|
-| P2 | 178 |
+| P2 | 163 |
 | P0 | 3 |
 
 ## By Review Action
 
 | Action | Count |
 |---|---:|
-| verify_directory_fit_before_any_approval | 178 |
+| verify_directory_fit_before_any_approval | 163 |
 | verify_distinct_submit_url_for_existing_domain | 2 |
 | verify_submit_form_then_approve_or_reject | 1 |
 
@@ -33,17 +33,17 @@ Policy: manual review only. No approvals, no registry imports, no real submissio
 
 | Bucket | Count |
 |---|---:|
-| directory_fit_requires_human_confirmation | 143 |
-| fetch_failed_cannot_decide | 19 |
-| medium_confidence_requires_human_confirmation | 19 |
+| directory_fit_requires_human_confirmation | 130 |
+| fetch_failed_cannot_decide | 18 |
+| medium_confidence_requires_human_confirmation | 18 |
 
 ## By Suggested Decision
 
 | Suggested Decision | Count |
 |---|---:|
-| reject_not_directory | 84 |
-| reject_auth_required | 73 |
-| needs_manual_check | 19 |
+| reject_not_directory | 77 |
+| reject_auth_required | 66 |
+| needs_manual_check | 18 |
 | reject_not_submit | 5 |
 
 ## P0 Manual Queue
