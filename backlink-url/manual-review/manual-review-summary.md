@@ -1,13 +1,13 @@
 # Manual Review Pack
 
-Generated: 2026-05-28T05:13:33.886Z
+Generated: 2026-05-28T05:55:06.661Z
 
 ## Scope
 
-- Current queue rows: 378
-- P0 rows: 20
+- Current queue rows: 364
+- P0 rows: 6
 - P2 rows: 358
-- Rows with evidence or suggestion history: 378
+- Rows with evidence or suggestion history: 364
 - Rows without evidence or suggestion history: 0
 - Rows blocked by safety gate in prior drafts: 0
 - Possible approvals after manual confirmation: 1
@@ -19,33 +19,33 @@ Policy: manual review only. No approvals, no registry imports, no real submissio
 | Priority | Count |
 |---|---:|
 | P2 | 358 |
-| P0 | 20 |
+| P0 | 6 |
 
 ## By Review Action
 
 | Action | Count |
 |---|---:|
 | verify_directory_fit_before_any_approval | 358 |
-| verify_submit_form_then_approve_or_reject | 15 |
-| verify_distinct_submit_url_for_existing_domain | 5 |
+| verify_submit_form_then_approve_or_reject | 4 |
+| verify_distinct_submit_url_for_existing_domain | 2 |
 
 ## By Manual Bucket
 
 | Bucket | Count |
 |---|---:|
 | directory_fit_requires_human_confirmation | 242 |
-| fetch_failed_cannot_decide | 81 |
-| medium_confidence_requires_human_confirmation | 52 |
-| manual_submit_form_confirmation_required | 2 |
+| fetch_failed_cannot_decide | 74 |
+| medium_confidence_requires_human_confirmation | 46 |
 | manual_browser_check_required | 1 |
+| manual_submit_form_confirmation_required | 1 |
 
 ## By Suggested Decision
 
 | Suggested Decision | Count |
 |---|---:|
-| reject_auth_required | 168 |
+| reject_auth_required | 162 |
 | reject_not_directory | 111 |
-| needs_manual_check | 84 |
+| needs_manual_check | 76 |
 | reject_not_submit | 14 |
 | reject_paid | 1 |
 
@@ -55,24 +55,10 @@ Policy: manual review only. No approvals, no registry imports, no real submissio
 |---:|---:|---|---|---|---|---|
 | 1 | 75 | aiscout.net | fetch_failed_cannot_decide | needs_manual_check | low | https://aiscout.net/submit |
 | 2 | 79 | aitoolsdirectory.com | fetch_failed_cannot_decide | needs_manual_check | low | https://aitoolsdirectory.com/submit |
-| 3 | 208 | devhunt.org | medium_confidence_requires_human_confirmation | reject_auth_required | medium | https://devhunt.org/submit |
-| 4 | 472 | sideprojectors.com | medium_confidence_requires_human_confirmation | reject_auth_required | medium | https://www.sideprojectors.com/project/new |
-| 5 | 497 | stackshare.io | fetch_failed_cannot_decide | needs_manual_check | low | https://stackshare.io/new-product |
-| 6 | 63 | ai.xyz | fetch_failed_cannot_decide | needs_manual_check | low | https://ai.xyz/submit |
-| 7 | 64 | aiagents.live | fetch_failed_cannot_decide | needs_manual_check | low | https://aiagents.live/submit |
-| 8 | 65 | aiagentsbase.com | medium_confidence_requires_human_confirmation | reject_auth_required | medium | https://aiagentsbase.com/submit |
-| 9 | 68 | aiagentsmarketplace.com | fetch_failed_cannot_decide | needs_manual_check | low | https://aiagentsmarketplace.com/submit |
-| 10 | 72 | aimatchpro.ai | fetch_failed_cannot_decide | needs_manual_check | low | https://aimatchpro.ai/submit |
-| 11 | 78 | aitools.love | medium_confidence_requires_human_confirmation | reject_auth_required | medium | https://aitools.love/submit |
-| 12 | 81 | aitrendytools.com | fetch_failed_cannot_decide | needs_manual_check | low | https://www.aitrendytools.com/submit |
-| 13 | 115 | bestofweb.io | fetch_failed_cannot_decide | needs_manual_check | low | https://bestofweb.io/submit |
-| 14 | 274 | getbyte.co | manual_submit_form_confirmation_required | needs_manual_check | low | https://getbyte.co/submit |
-| 15 | 332 | launchvault.com | fetch_failed_cannot_decide | needs_manual_check | low | https://launchvault.com/submit |
-| 16 | 390 | nocode.mba | fetch_failed_cannot_decide | needs_manual_check | low | https://www.nocode.mba/tools/submit |
-| 17 | 392 | nocodedevs.com | medium_confidence_requires_human_confirmation | reject_auth_required | medium | https://www.nocodedevs.com/submit |
-| 18 | 393 | nocodefinder.com | fetch_failed_cannot_decide | needs_manual_check | low | https://www.nocodefinder.com/submit |
-| 19 | 395 | nocodelist.co | medium_confidence_requires_human_confirmation | reject_auth_required | medium | https://nocodelist.co/submit |
-| 20 | 550 | wearenocode.com | fetch_failed_cannot_decide | needs_manual_check | low | https://www.wearenocode.com/submit |
+| 3 | 63 | ai.xyz | fetch_failed_cannot_decide | needs_manual_check | low | https://ai.xyz/submit |
+| 4 | 64 | aiagents.live | fetch_failed_cannot_decide | needs_manual_check | low | https://aiagents.live/submit |
+| 5 | 72 | aimatchpro.ai | fetch_failed_cannot_decide | needs_manual_check | low | https://aimatchpro.ai/submit |
+| 6 | 115 | bestofweb.io | fetch_failed_cannot_decide | needs_manual_check | low | https://bestofweb.io/submit |
 
 ## Files
 

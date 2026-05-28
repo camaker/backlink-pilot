@@ -1,6 +1,6 @@
 version: 1
 generated_at: 2026-05-21T15:44:34.969Z
-updated_at: 2026-05-27T07:00:53.733Z
+updated_at: 2026-05-28T05:41:27.756Z
 targets:
   - id: 01webdirectory
     name: 01webdirectory
@@ -2009,6 +2009,57 @@ targets:
     created_at: 2026-05-21T15:44:39.087Z
     updated_at: 2026-05-23T03:00:22.900Z
     forms: []
+  - id: aiagentsbase-aiagentsbase-com
+    name: AiAgentsBase
+    domain: aiagentsbase.com
+    root_url: https://aiagentsbase.com/
+    submit_url: https://aiagentsbase.com/submit
+    normalized_key: aiagentsbase.com/submit
+    type: form
+    lang: en
+    group: coverage-review
+    pricing: free
+    price_text: ""
+    status: ""
+    original_auto: ""
+    auto: ""
+    notes: >-
+      review_notes: Browser review 2026-05-28: visible public AI agent
+      submission form with email, agent name, website, category, tagline, and
+      description fields; no login, payment, or CAPTCHA observed.
+
+      review_instruction: verify_submit_form_before_approval
+    source:
+      - coverage-review
+    source_meta:
+      source_files: submission-tracker-template.csv; directory-submissions-external-links.md
+      source_locations: directory-submissions-external-links.csv:row 9:url;
+        directory-submissions-external-links.md:11
+      occurrence_count: "2"
+      coverage_classification: missing_domain
+      coverage_recommendation: review_submit_url
+      coverage_registry_target_ids: ""
+      coverage_registry_submit_urls: ""
+      coverage_review_decision: approved
+      coverage_reviewed_by: browser_read_only_review
+      coverage_reviewed_at: 2026-05-28T05:41:27.745Z
+      coverage_original_url: https://aiagentsbase.com/submit
+      coverage_original_domain: aiagentsbase.com
+    technical:
+      last_scouted_at: null
+      auth: unknown
+      captcha: unknown
+      reachable: unknown
+    submission:
+      mode: needs_scout
+      status: new
+      reason: coverage_review_approved_needs_scout
+      last_submitted_at: null
+      last_verified_at: null
+    quality:
+      risk: unknown
+    created_at: 2026-05-28T05:41:27.745Z
+    updated_at: 2026-05-28T05:41:27.745Z
   - id: ai-business-tool
     name: Ai Business Tool
     domain: aibusinesstool.com
