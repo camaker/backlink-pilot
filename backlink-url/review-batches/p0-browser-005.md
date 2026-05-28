@@ -1,0 +1,55 @@
+# Coverage Review Batch: p0-browser-005
+
+Generated: 2026-05-28T08:46:47.858Z
+Queue: backlink-url/coverage-review-queue.csv
+Priority filter: P0
+Action filter: (all)
+Offset: 0
+Limit: 10
+Matching rows: 3
+Batch rows: 3
+Remaining after batch: 0
+Priority counts: {"P0":3}
+Action counts: {"verify_distinct_submit_url_for_existing_domain":2,"verify_submit_form_then_approve_or_reject":1}
+
+## Review Rules
+
+- Edit only review_decision, review_notes, reviewed_by, submission_url_override, canonical_name, pricing, and lang.
+- Use approved only for verified public submit forms with no paid, login-only, CAPTCHA-only, or source-page blocker.
+- Use approved_domain_variant only when a same-domain URL is a distinct valid submit endpoint and not a duplicate registry URL.
+- Use reject_not_submit, reject_duplicate, reject_paid, reject_auth_required, or reject_not_directory when evidence is insufficient.
+- After editing, run validate-coverage-review-batch and promote-coverage-review-batch --dry-run before writing any updated review CSV.
+
+## Promotion Gate
+
+Validate the edited batch first:
+
+```bash
+node src/cli.js targets validate-coverage-review-batch <batch.csv> --fail-on-blockers
+```
+
+Then run the full promotion gate. This validates the batch, simulates applying it to the source review CSV, validates the updated review CSV, and runs an import dry-run against the registry:
+
+```bash
+node src/cli.js targets promote-coverage-review-batch <coverage-review.csv> <batch.csv> --registry resources/targets.canonical.yaml --output <coverage-review.updated.csv> --dry-run
+```
+
+Only remove `--dry-run` after the promotion result is OK. Promotion never submits to external sites and import dry-run never changes the registry.
+
+## Decision Vocabulary
+
+- `approved`: verified public submit form; no auth/CAPTCHA/payment/source-page blocker.
+- `approved_domain_variant`: same-domain candidate is a distinct valid submit endpoint, not a duplicate.
+- `reject_not_submit`: page is not a submission endpoint.
+- `reject_duplicate`: already represented by an existing registry submit URL.
+- `reject_paid`: paid listing or paid-only submission.
+- `reject_auth_required`: login/OAuth is required before submission.
+- `reject_not_directory`: not a relevant directory/listing surface.
+
+## Rows
+
+| order | review_row | priority | action | domain | url | decision options |
+|---:|---:|---|---|---|---|---|
+| 1 | 75 | P0 | verify_distinct_submit_url_for_existing_domain | aiscout.net | https://aiscout.net/submit | approved_domain_variant \| reject_duplicate \| reject_not_submit \| reject_paid \| reject_auth_required |
+| 2 | 79 | P0 | verify_distinct_submit_url_for_existing_domain | aitoolsdirectory.com | https://aitoolsdirectory.com/submit | approved_domain_variant \| reject_duplicate \| reject_not_submit \| reject_paid \| reject_auth_required |
+| 3 | 63 | P0 | verify_submit_form_then_approve_or_reject | ai.xyz | https://ai.xyz/submit | approved \| reject_not_submit \| reject_paid \| reject_auth_required |
