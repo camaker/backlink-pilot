@@ -1,13 +1,13 @@
 # Manual Review Pack
 
-Generated: 2026-05-28T14:58:42.676Z
+Generated: 2026-05-28T15:00:33.669Z
 
 ## Scope
 
-- Current queue rows: 16
+- Current queue rows: 10
 - P0 rows: 3
-- P2 rows: 13
-- Rows with evidence or suggestion history: 16
+- P2 rows: 7
+- Rows with evidence or suggestion history: 10
 - Rows without evidence or suggestion history: 0
 - Rows blocked by safety gate in prior drafts: 0
 - Possible approvals after manual confirmation: 0
@@ -18,14 +18,14 @@ Policy: manual review only. No approvals, no registry imports, no real submissio
 
 | Priority | Count |
 |---|---:|
-| P2 | 13 |
+| P2 | 7 |
 | P0 | 3 |
 
 ## By Review Action
 
 | Action | Count |
 |---|---:|
-| verify_directory_fit_before_any_approval | 13 |
+| verify_directory_fit_before_any_approval | 7 |
 | verify_distinct_submit_url_for_existing_domain | 2 |
 | verify_submit_form_then_approve_or_reject | 1 |
 
@@ -34,15 +34,12 @@ Policy: manual review only. No approvals, no registry imports, no real submissio
 | Bucket | Count |
 |---|---:|
 | fetch_failed_cannot_decide | 10 |
-| medium_confidence_requires_human_confirmation | 5 |
-| directory_fit_requires_human_confirmation | 1 |
 
 ## By Suggested Decision
 
 | Suggested Decision | Count |
 |---|---:|
 | needs_manual_check | 10 |
-| reject_auth_required | 6 |
 
 ## P0 Manual Queue
 
