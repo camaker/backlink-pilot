@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-05-28T09:28:12.076Z",
-  "queue_rows": 348,
+  "generated_at": "2026-05-28T12:14:21.512Z",
+  "queue_rows": 316,
   "product_context_present": false,
   "product_context_paths": [
     {
@@ -19,42 +19,41 @@
   "policy": "manual_review_only_no_approvals_no_registry_changes_no_real_submissions",
   "by_priority": {
     "P0": 3,
-    "P2": 345
+    "P2": 313
   },
   "by_review_action": {
     "verify_distinct_submit_url_for_existing_domain": 2,
     "verify_submit_form_then_approve_or_reject": 1,
-    "verify_directory_fit_before_any_approval": 345
+    "verify_directory_fit_before_any_approval": 313
   },
   "by_manual_bucket": {
-    "fetch_failed_cannot_decide": 60,
-    "medium_confidence_requires_human_confirmation": 44,
-    "manual_browser_check_required": 1,
-    "directory_fit_requires_human_confirmation": 242,
+    "fetch_failed_cannot_decide": 48,
+    "medium_confidence_requires_human_confirmation": 31,
+    "directory_fit_requires_human_confirmation": 236,
     "manual_submit_form_confirmation_required": 1
   },
   "by_risk_level": {
     "high_priority_manual": 3,
-    "fit_risk": 245,
-    "unknown_manual_risk": 100
+    "unknown_manual_risk": 83,
+    "fit_risk": 230
   },
   "by_suggested_review_decision": {
-    "needs_manual_check": 62,
-    "reject_auth_required": 160,
-    "reject_not_submit": 14,
+    "needs_manual_check": 49,
+    "reject_auth_required": 144,
+    "reject_not_submit": 11,
     "reject_paid": 1,
     "reject_not_directory": 111
   },
   "by_suggestion_confidence": {
-    "low": 61,
-    "medium": 45,
-    "high": 242
+    "low": 49,
+    "medium": 31,
+    "high": 236
   },
   "evidence_coverage": {
-    "rows_with_evidence_or_suggestion": 348,
+    "rows_with_evidence_or_suggestion": 316,
     "rows_without_evidence_or_suggestion": 0,
     "rows_with_safety_gate_block": 0,
-    "possible_approval_after_manual_confirmation": 1
+    "possible_approval_after_manual_confirmation": 0
   },
   "files": {
     "remaining_manual_review_csv": "backlink-url/manual-review/remaining-manual-review.csv",
