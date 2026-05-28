@@ -1,0 +1,1392 @@
+{
+  "generated_at": "2026-05-28T05:25:08.446Z",
+  "executable_path": "C:/Program Files/Google/Chrome/Application/chrome.exe",
+  "policy": "browser_read_only_no_login_no_submission",
+  "rows": [
+    {
+      "review_row": "75",
+      "priority": "P0",
+      "review_action": "verify_distinct_submit_url_for_existing_domain",
+      "domain": "aiscout.net",
+      "url": "https://aiscout.net/submit",
+      "status": 520,
+      "final_url": "https://aiscout.net/submit",
+      "title": "ERROR 520",
+      "text_length": 568,
+      "text_snippet": "ERROR 520 The QUIC.cloud server NA-US-LAX-HYBRID-109 was not able to connect to the site's origin server. 2026-05-28 05:20:17 UTC Web Browser QUIC.cloud Node Origin Server Why did this happen? This site is using QUIC.cloud CDN. This error indicates that our QUIC.cloud nodes were unable to reach the website’s origin server. If you're a visitor Please try again later. If you're the website owner Please verify that your Connection Type to Origin and Server IP are set correctly in the QUIC.cloud CDN Configuration. See these additional troubleshooting steps.",
+      "headings": [
+        "H1:ERROR 520",
+        "H3:Web Browser",
+        "H3:QUIC.cloud Node",
+        "H3:Origin Server",
+        "H3:Why did this happen?",
+        "H3:If you're a visitor",
+        "H3:If you're the website owner"
+      ],
+      "forms": [],
+      "links": [
+        {
+          "href": "https://www.quic.cloud/"
+        },
+        {
+          "href": "https://www.quic.cloud/",
+          "text": "QUIC.cloud"
+        },
+        {
+          "href": "https://docs.quic.cloud/troubleshooting/httperror/#520-origin-server-unavailable",
+          "text": "troubleshooting steps"
+        }
+      ],
+      "buttons": [],
+      "inputs": [],
+      "signals": {
+        "login": false,
+        "payment": false,
+        "captcha": false,
+        "submitText": false,
+        "productFormWords": true,
+        "notFound": false
+      }
+    },
+    {
+      "review_row": "79",
+      "priority": "P0",
+      "review_action": "verify_distinct_submit_url_for_existing_domain",
+      "domain": "aitoolsdirectory.com",
+      "url": "https://aitoolsdirectory.com/submit",
+      "error": "page.goto: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"https://aitoolsdirectory.com/submit\", waiting until \"domcontentloaded\"\u001b[22m\n",
+      "final_url": "about:blank",
+      "title": "",
+      "forms": [],
+      "links": [],
+      "buttons": [],
+      "inputs": []
+    },
+    {
+      "review_row": "208",
+      "priority": "P0",
+      "review_action": "verify_distinct_submit_url_for_existing_domain",
+      "domain": "devhunt.org",
+      "url": "https://devhunt.org/submit",
+      "status": 200,
+      "final_url": "https://devhunt.org/submit",
+      "title": "undefined's profile on Dev Hunt - Dev Hunt",
+      "text_length": 734,
+      "text_snippet": "John Rush Subscribe Browse tools Advertise Submit your Dev Tool Sign In Subscribe to get weekly email with best new dev tools. 404 Error Page not found Sorry, the page you are looking for could not be found or has been removed. Go back A launchpad for dev tools, built by developers. Open-source and fair. About GitHub Repository Blog Contact OSS Friends NextJS Starter Open Source Alternatives John Rush (CEO) Submit website to directories Directory Builder AI blog generator © 2026 Dev Hunt. Member of MarsX.Dev family. Uses & Sponsored by FloatUI, Sensorpro, CountVisits, SEObotAI, Listing Bot, IndexRusher, UnicornPlatform. Built by @johnrushx, @sidi_jeddou_dev, @vitalik_may, @BotanMan, @chris_byrne, see all. Status page",
+      "headings": [
+        "H3:Categories",
+        "H3:404 Error"
+      ],
+      "forms": [],
+      "links": [
+        {
+          "href": "https://twitter.com/johnrushx",
+          "text": "John Rush"
+        },
+        {
+          "href": "https://devhunt.org/"
+        },
+        {
+          "href": "https://devhunt.org/all-dev-tools",
+          "text": "All DevTools"
+        },
+        {
+          "href": "https://devhunt.org/",
+          "text": "This Week"
+        },
+        {
+          "href": "https://devhunt.org/upcoming",
+          "text": "Upcoming Tools"
+        },
+        {
+          "href": "https://devhunt.org/best-dev-tools-this-week-on-product-hunt",
+          "text": "Best DevTools On Product Hunt"
+        },
+        {
+          "href": "https://devhunt.org/tools/open-source",
+          "text": "Open Source"
+        },
+        {
+          "href": "https://devhunt.org/tools/devops",
+          "text": "DevOps"
+        },
+        {
+          "href": "https://devhunt.org/tools/ai",
+          "text": "AI"
+        },
+        {
+          "href": "https://devhunt.org/tools/ci",
+          "text": "CI"
+        },
+        {
+          "href": "https://devhunt.org/tools/code",
+          "text": "Code"
+        },
+        {
+          "href": "https://devhunt.org/tools/nocode",
+          "text": "NoCode"
+        },
+        {
+          "href": "https://devhunt.org/tools/analytics",
+          "text": "Analytics"
+        },
+        {
+          "href": "https://devhunt.org/tools/qa",
+          "text": "QA"
+        },
+        {
+          "href": "https://devhunt.org/tools/api",
+          "text": "API"
+        },
+        {
+          "href": "https://devhunt.org/tools/db",
+          "text": "DB"
+        },
+        {
+          "href": "https://devhunt.org/tools/design",
+          "text": "Design"
+        },
+        {
+          "href": "https://devhunt.org/tools/helpers",
+          "text": "Helpers"
+        },
+        {
+          "href": "https://devhunt.org/tools/hosting",
+          "text": "Hosting"
+        },
+        {
+          "href": "https://devhunt.org/tools/ui-library",
+          "text": "UI Library"
+        },
+        {
+          "href": "https://devhunt.org/tools/marketing",
+          "text": "Marketing"
+        },
+        {
+          "href": "https://devhunt.org/tools/emails",
+          "text": "Emails"
+        },
+        {
+          "href": "https://devhunt.org/tools/framework",
+          "text": "Framework"
+        },
+        {
+          "href": "https://devhunt.org/tools/language",
+          "text": "Language"
+        },
+        {
+          "href": "https://devhunt.org/tools/crypto",
+          "text": "Crypto"
+        },
+        {
+          "href": "https://devhunt.org/tools/web3",
+          "text": "Web3"
+        },
+        {
+          "href": "https://devhunt.org/tools/charts",
+          "text": "Charts"
+        },
+        {
+          "href": "https://devhunt.org/tools/ide",
+          "text": "IDE"
+        },
+        {
+          "href": "https://devhunt.org/tools/monitoring",
+          "text": "Monitoring"
+        },
+        {
+          "href": "https://devhunt.org/tools/workflow-automation",
+          "text": "Workflow automation"
+        },
+        {
+          "href": "https://devhunt.org/tools/cms",
+          "text": "CMS"
+        },
+        {
+          "href": "https://devhunt.org/tools/security",
+          "text": "Security"
+        },
+        {
+          "href": "https://devhunt.org/tools/tailwind-css",
+          "text": "Tailwind CSS"
+        },
+        {
+          "href": "https://devhunt.org/tools/boilerplate",
+          "text": "Boilerplate"
+        },
+        {
+          "href": "https://devhunt.org/the-story#ads",
+          "text": "Advertise"
+        },
+        {
+          "href": "https://devhunt.org/login",
+          "text": "Submit your Dev Tool"
+        },
+        {
+          "href": "https://devhunt.org/",
+          "text": "Go back"
+        },
+        {
+          "href": "https://devhunt.org/the-story",
+          "text": "About"
+        },
+        {
+          "href": "https://github.com/MarsX-dev/devhunt",
+          "text": "GitHub Repository"
+        },
+        {
+          "href": "https://devhunt.org/blog",
+          "text": "Blog"
+        },
+        {
+          "href": "https://twitter.com/johnrushx",
+          "text": "Contact"
+        },
+        {
+          "href": "https://devhunt.org/oss-friends",
+          "text": "OSS Friends"
+        },
+        {
+          "href": "https://nextjsstarter.com/",
+          "text": "NextJS Starter"
+        },
+        {
+          "href": "https://osssoftware.org/",
+          "text": "Open Source Alternatives"
+        },
+        {
+          "href": "https://johnrush.me/",
+          "text": "John Rush (CEO)"
+        },
+        {
+          "href": "https://listingbott.com/",
+          "text": "Submit website to directories"
+        },
+        {
+          "href": "https://unicornplatform.com/",
+          "text": "Directory Builder"
+        },
+        {
+          "href": "https://seobotai.com/",
+          "text": "AI blog generator"
+        },
+        {
+          "href": "https://www.marsx.dev/",
+          "text": "MarsX.Dev"
+        },
+        {
+          "href": "https://www.floatui.com/",
+          "text": "FloatUI,"
+        },
+        {
+          "href": "https://sensorpro.eu/",
+          "text": "Sensorpro,"
+        },
+        {
+          "href": "http://countvisits.com/",
+          "text": "CountVisits,"
+        },
+        {
+          "href": "https://seobotai.com/",
+          "text": "SEObotAI,"
+        },
+        {
+          "href": "https://listingbott.com/",
+          "text": "Listing Bot,"
+        },
+        {
+          "href": "https://indexrusher.com/",
+          "text": "IndexRusher,"
+        },
+        {
+          "href": "https://unicornplatform.com/",
+          "text": "UnicornPlatform"
+        },
+        {
+          "href": "https://twitter.com/johnrushx",
+          "text": "@johnrushx,"
+        },
+        {
+          "href": "https://twitter.com/sidi_jeddou_dev",
+          "text": "@sidi_jeddou_dev,"
+        },
+        {
+          "href": "https://twitter.com/vitalik_may",
+          "text": "@vitalik_may,"
+        },
+        {
+          "href": "https://twitter.com/BotanMan",
+          "text": "@BotanMan,"
+        },
+        {
+          "href": "https://twitter.com/chris_byrne",
+          "text": "@chris_byrne,"
+        },
+        {
+          "href": "https://devhunt.org/the-story",
+          "text": "see all"
+        },
+        {
+          "href": "https://devhunt.openstatus.dev/",
+          "text": "Status page"
+        },
+        {
+          "href": "https://usermaven.com/?utm_source=badge"
+        },
+        {
+          "href": "https://twitter.com/devhunt_"
+        }
+      ],
+      "buttons": [
+        {
+          "text": "Search button"
+        },
+        {
+          "text": "Menu button"
+        },
+        {
+          "text": "Subscribe"
+        },
+        {
+          "text": "Search button"
+        },
+        {
+          "text": "Browse tools"
+        },
+        {
+          "text": "Sign In"
+        },
+        {
+          "text": "Subscribe"
+        }
+      ],
+      "inputs": [],
+      "signals": {
+        "login": true,
+        "payment": true,
+        "captcha": false,
+        "submitText": true,
+        "productFormWords": true,
+        "notFound": true
+      }
+    },
+    {
+      "review_row": "472",
+      "priority": "P0",
+      "review_action": "verify_distinct_submit_url_for_existing_domain",
+      "domain": "sideprojectors.com",
+      "url": "https://www.sideprojectors.com/project/new",
+      "status": 200,
+      "final_url": "https://www.sideprojectors.com/project/new",
+      "title": "",
+      "text_length": 5422,
+      "text_snippet": "SideProjectors is a marketplace where developers can sell, buy, and showcase side projects and find co-founders. The platform lets you list projects for sale, discover projects to buy, seek co-founders, and share projects with the community. Privacy Policy SideProjectors Home Membership Newsletter Available for Work Advertise Help Contact us RSS + SUBMIT A PROJECT Login Sign-up PROJECT INFO General Images & videos Project owner HOW PROJECT WAS BUILT Tech stack PROJECT METRICS Revenue Downloads Visitors Hours spent / week Other metrics SALES RELATED Items being sold Reason for selling Next steps FOR SALE ⋅ ~ $15,000 NEGOTIABLE WhatABot Posted onMay 28, 2026 Slashing WhatsApp API costs by 90% at 95% margins, with zero Meta verification. Project owner faizan Joined May 2026 Project description WhatABot is a fully integrated WhatsApp AI automation platform that gives any business a 24/7 AI employee, handling customer queries, taking orders, confirming shipments, qualifying leads, and running campaigns automatically. Powered by WhatALink, our proprietary connection technology, WhatABot eliminates Meta API fees and complex verification processes entirely. No code. Live in 60 seconds. Enterprise-grade automation for every business, regardless of size or budget. How this project was built - Revenue This project is generating revenue, but the amount is not disclosed. The monetization strategy for WhatABot was successfully validated in a single, fast-paced sprint. Over the course of one month, the platform generated exactly $150.00 in total revenue with zero marketing spend, proving that B2B clients are actively willing to pay for this cost-arbitrage solution. The Timeline February 11: Initial server setup and infrastructure deployment. February 16: First customer acquired, officially validating the MVP and generating the first $18.00. February 16 – March 16: A steady, organic influx of users over a 4-week period, closing out at exactly $150.00 in lifetime revenue before acti",
+      "headings": [
+        "H3:FOR THE USER",
+        "H3:PROJECTS",
+        "H3:SIDEPROJECTORS",
+        "H3:HELP"
+      ],
+      "forms": [],
+      "links": [
+        {
+          "href": "https://www.sideprojectors.com/privacy-policy",
+          "text": "Privacy Policy"
+        },
+        {
+          "href": "https://www.sideprojectors.com/project/new#"
+        },
+        {
+          "href": "https://www.sideprojectors.com/",
+          "text": "SideProjectors"
+        },
+        {
+          "href": "https://www.sideprojectors.com/",
+          "text": "Home"
+        },
+        {
+          "href": "https://www.sideprojectors.com/membership2",
+          "text": "Membership"
+        },
+        {
+          "href": "https://www.sideprojectors.com/newsletter/subscribe",
+          "text": "Newsletter"
+        },
+        {
+          "href": "https://www.sideprojectors.com/work",
+          "text": "Available for Work"
+        },
+        {
+          "href": "https://www.sideprojectors.com/sponsor/home",
+          "text": "Advertise"
+        },
+        {
+          "href": "https://www.sideprojectors.com/help/home",
+          "text": "Help"
+        },
+        {
+          "href": "https://www.sideprojectors.com/contact-us",
+          "text": "Contact us"
+        },
+        {
+          "href": "https://www.sideprojectors.com/rss",
+          "text": "RSS"
+        },
+        {
+          "href": "https://www.sideprojectors.com/submit/type",
+          "text": "+ SUBMIT A PROJECT"
+        },
+        {
+          "href": "https://www.sideprojectors.com/auth/login",
+          "text": "Login"
+        },
+        {
+          "href": "https://www.sideprojectors.com/auth/register",
+          "text": "Sign-up"
+        },
+        {
+          "href": "https://www.sideprojectors.com/project/new#"
+        },
+        {
+          "href": "https://www.sideprojectors.com/",
+          "text": "SideProjectors"
+        },
+        {
+          "href": "https://www.sideprojectors.com/project/new#"
+        },
+        {
+          "href": "https://www.sideprojectors.com/project/new#project-info",
+          "text": "General"
+        },
+        {
+          "href": "https://www.sideprojectors.com/project/new#project-info",
+          "text": "Images & videos"
+        },
+        {
+          "href": "https://www.sideprojectors.com/project/new#project-owner",
+          "text": "Project owner"
+        },
+        {
+          "href": "https://www.sideprojectors.com/project/new#technologies-used",
+          "text": "Tech stack"
+        },
+        {
+          "href": "https://www.sideprojectors.com/project/new#revenue",
+          "text": "Revenue"
+        },
+        {
+          "href": "https://www.sideprojectors.com/project/new#monthly-downloads",
+          "text": "Downloads"
+        },
+        {
+          "href": "https://www.sideprojectors.com/project/new#monthly-visitors",
+          "text": "Visitors"
+        },
+        {
+          "href": "https://www.sideprojectors.com/project/new#hours-spent-per-week",
+          "text": "Hours spent / week"
+        },
+        {
+          "href": "https://www.sideprojectors.com/project/new#other-metrics",
+          "text": "Other metrics"
+        },
+        {
+          "href": "https://www.sideprojectors.com/project/new#items-being-sold",
+          "text": "Items being sold"
+        },
+        {
+          "href": "https://www.sideprojectors.com/project/new#reason-for-selling",
+          "text": "Reason for selling"
+        },
+        {
+          "href": "https://www.sideprojectors.com/project/new#next-step",
+          "text": "Next steps"
+        },
+        {
+          "href": "https://www.sideprojectors.com/project/new#"
+        },
+        {
+          "href": "https://www.sideprojectors.com/user/profile/235354",
+          "text": "faizan"
+        },
+        {
+          "href": "https://www.sideprojectors.com/project/new#"
+        },
+        {
+          "href": "https://www.sideprojectors.com/project/new#"
+        },
+        {
+          "href": "https://www.sideprojectors.com/help/features/comments",
+          "text": "comment guidelines"
+        },
+        {
+          "href": "https://www.sideprojectors.com/auth/login",
+          "text": "Login to comment"
+        },
+        {
+          "href": "https://www.sideprojectors.com/project/new#"
+        },
+        {
+          "href": "https://www.sideprojectors.com/help/features/comments",
+          "text": "comment guidelines"
+        },
+        {
+          "href": "https://www.sideprojectors.com/project/new#",
+          "text": "Contact Owner"
+        },
+        {
+          "href": "https://twitter.com/intent/tweet?text=WhatABot&url=https://www.sideprojectors.com/project/81020/whatabot"
+        },
+        {
+          "href": "https://www.facebook.com/dialog/share?app_id=279824422133476&display=popup&href=https://www.sideprojectors.com/project/81020/whatabot"
+        },
+        {
+          "href": "https://www.linkedin.com/shareArticle?mini=true&url=https://www.sideprojectors.com/project/81020/whatabot&title=NaNSlashing%20WhatsApp%20API%20costs%20by%2090%%20at%2095%%20margins,%20with%20zero%20Meta%20verification.&s"
+        },
+        {
+          "href": "https://www.reddit.com/submit?url=https://www.sideprojectors.com/project/81020/whatabot&title=WhatABot"
+        },
+        {
+          "href": "https://www.sideprojectors.com/project/new#"
+        },
+        {
+          "href": "https://www.sideprojectors.com/project/new#"
+        },
+        {
+          "href": "https://www.sideprojectors.com/project/new#"
+        },
+        {
+          "href": "https://www.sideprojectors.com/project/new#"
+        },
+        {
+          "href": "https://www.sideprojectors.com/project/new#"
+        },
+        {
+          "href": "https://www.sideprojectors.com/",
+          "text": "SideProjectors"
+        },
+        {
+          "href": "https://www.sideprojectors.com/auth/login",
+          "text": "Login"
+        },
+        {
+          "href": "https://www.sideprojectors.com/auth/register",
+          "text": "Register"
+        },
+        {
+          "href": "https://www.sideprojectors.com/submit/type",
+          "text": "Submit a project"
+        },
+        {
+          "href": "https://www.sideprojectors.com/home-search/ZmM4rtgJE8/sell/website,mobile,desktop,other/all/all/all/all/all/created_at/desc/20/0",
+          "text": "All projects for sale"
+        },
+        {
+          "href": "https://www.sideprojectors.com/home-search/ZmM4rtgJE8/cofounder/website,mobile,desktop,other/all/all/all/all/all/created_at/desc/20/0",
+          "text": "Looking for co-founder"
+        },
+        {
+          "href": "https://www.sideprojectors.com/home-search/ZmM4rtgJE8/showcase/website,mobile,desktop,other/all/all/all/all/all/created_at/desc/20/0",
+          "text": "Showcase"
+        },
+        {
+          "href": "https://www.sideprojectors.com/blog",
+          "text": "Blog"
+        },
+        {
+          "href": "https://www.sideprojectors.com/social",
+          "text": "Social feed"
+        },
+        {
+          "href": "https://twitter.com/SideProjectors",
+          "text": "Follow us on X/Twitter"
+        },
+        {
+          "href": "https://www.sideprojectors.com/contact-us",
+          "text": "Contact us"
+        },
+        {
+          "href": "https://www.sideprojectors.com/legal/terms-of-service",
+          "text": "Terms of Service"
+        },
+        {
+          "href": "https://www.sideprojectors.com/legal/privacy-policy",
+          "text": "Privacy Policy"
+        },
+        {
+          "href": "https://www.sideprojectors.com/help/home",
+          "text": "Home"
+        },
+        {
+          "href": "https://www.sideprojectors.com/help/seller-guide",
+          "text": "Selling a Project"
+        },
+        {
+          "href": "https://www.sideprojectors.com/help/engage-buyer",
+          "text": "Buying a Project"
+        },
+        {
+          "href": "https://www.sideprojectors.com/help/cofounder",
+          "text": "Seeking a Co-Founder"
+        },
+        {
+          "href": "https://www.sideprojectors.com/help/showcase",
+          "text": "Showcasing a Project"
+        },
+        {
+          "href": "https://www.sideprojectors.com/",
+          "text": "Home"
+        },
+        {
+          "href": "https://www.sideprojectors.com/auth/login",
+          "text": "Login"
+        },
+        {
+          "href": "https://www.sideprojectors.com/auth/register",
+          "text": "Register"
+        },
+        {
+          "href": "https://www.sideprojectors.com/help/home",
+          "text": "Help"
+        },
+        {
+          "href": "https://www.sideprojectors.com/contact-us",
+          "text": "Contact us"
+        },
+        {
+          "href": "https://www.sideprojectors.com/social",
+          "text": "Social feed"
+        },
+        {
+          "href": "https://www.sideprojectors.com/legal/privacy-policy",
+          "text": "Privacy Policy"
+        },
+        {
+          "href": "https://www.sideprojectors.com/legal/terms-of-service",
+          "text": "Terms of Service"
+        },
+        {
+          "href": "https://www.sideprojectors.com/legal/gdpr",
+          "text": "GDPR"
+        },
+        {
+          "href": "https://www.sideprojectors.com/legal/dmca",
+          "text": "DMCA"
+        },
+        {
+          "href": "https://www.sideprojectors.com/project/new#"
+        },
+        {
+          "href": "https://www.sideprojectors.com/project/new#"
+        },
+        {
+          "href": "https://www.sideprojectors.com/project/new#"
+        },
+        {
+          "href": "https://www.sideprojectors.com/project/new#"
+        }
+      ],
+      "buttons": [
+        {
+          "text": "Got it!"
+        },
+        {
+          "text": "Add to collection"
+        },
+        {
+          "text": "Report this project"
+        },
+        {
+          "text": "Like this project"
+        },
+        {
+          "text": "Proceed to Re-Submit My Project"
+        },
+        {
+          "text": "Proceed to Request for Fast Approval"
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "textarea"
+        }
+      ],
+      "signals": {
+        "login": true,
+        "payment": true,
+        "captcha": false,
+        "submitText": true,
+        "productFormWords": true,
+        "notFound": false
+      }
+    },
+    {
+      "review_row": "497",
+      "priority": "P0",
+      "review_action": "verify_distinct_submit_url_for_existing_domain",
+      "domain": "stackshare.io",
+      "url": "https://stackshare.io/new-product",
+      "status": 200,
+      "final_url": "https://stackshare.io/new-product",
+      "title": "Not Found - StackShare | StackShare",
+      "text_length": 307,
+      "text_snippet": "Help shape StackShare's future Take our 2026 User Survey 2 min Tools Stacks Follow on Sign in 404 Discover and share technology stacks from companies around the world. Follow on © 2025 StackShare. All rights reserved. Product Stacks Tools Feed Company About Contact Legal Privacy Policy Terms of Service",
+      "headings": [
+        "H1:404",
+        "H3:Product",
+        "H3:Company",
+        "H3:Legal"
+      ],
+      "forms": [],
+      "links": [
+        {
+          "href": "https://docs.google.com/forms/d/e/1FAIpQLSeaONDaTtL4lcEy7klFWIBmY9PeRHplFBvwYiKhCXzITgIZkA/viewform?usp=header",
+          "text": "Take our 2026 User Survey"
+        },
+        {
+          "href": "https://stackshare.io/"
+        },
+        {
+          "href": "https://x.com/intent/follow?screen_name=stackshareio",
+          "text": "Follow on"
+        },
+        {
+          "href": "https://stackshare.io/"
+        },
+        {
+          "href": "https://x.com/intent/follow?screen_name=stackshareio",
+          "text": "Follow on"
+        },
+        {
+          "href": "https://stackshare.io/stacks",
+          "text": "Stacks"
+        },
+        {
+          "href": "https://stackshare.io/",
+          "text": "Tools"
+        },
+        {
+          "href": "https://stackshare.io/feed",
+          "text": "Feed"
+        },
+        {
+          "href": "https://stackshare.io/about",
+          "text": "About"
+        },
+        {
+          "href": "mailto:team@stackshare.io",
+          "text": "Contact"
+        },
+        {
+          "href": "https://stackshare.io/privacy",
+          "text": "Privacy Policy"
+        },
+        {
+          "href": "https://stackshare.io/terms",
+          "text": "Terms of Service"
+        }
+      ],
+      "buttons": [
+        {
+          "text": "Dismiss announcement"
+        },
+        {
+          "text": "Tools"
+        },
+        {
+          "text": "Stacks"
+        },
+        {
+          "text": "Sign in"
+        },
+        {
+          "text": "Sign up"
+        },
+        {
+          "text": "Toggle menu",
+          "type": "button"
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "input",
+          "type": "text",
+          "placeholder": "Search (⌘ + K)",
+          "label": "Search"
+        }
+      ],
+      "signals": {
+        "login": true,
+        "payment": false,
+        "captcha": false,
+        "submitText": false,
+        "productFormWords": false,
+        "notFound": true
+      }
+    },
+    {
+      "review_row": "63",
+      "priority": "P0",
+      "review_action": "verify_submit_form_then_approve_or_reject",
+      "domain": "ai.xyz",
+      "url": "https://ai.xyz/submit",
+      "error": "page.goto: net::ERR_NAME_NOT_RESOLVED at https://ai.xyz/submit\nCall log:\n\u001b[2m  - navigating to \"https://ai.xyz/submit\", waiting until \"domcontentloaded\"\u001b[22m\n",
+      "final_url": "about:blank",
+      "title": "",
+      "forms": [],
+      "links": [],
+      "buttons": [],
+      "inputs": []
+    },
+    {
+      "review_row": "64",
+      "priority": "P0",
+      "review_action": "verify_submit_form_then_approve_or_reject",
+      "domain": "aiagents.live",
+      "url": "https://aiagents.live/submit",
+      "error": "page.goto: net::ERR_EMPTY_RESPONSE at https://aiagents.live/submit\nCall log:\n\u001b[2m  - navigating to \"https://aiagents.live/submit\", waiting until \"domcontentloaded\"\u001b[22m\n",
+      "final_url": "about:blank",
+      "title": "",
+      "forms": [],
+      "links": [],
+      "buttons": [],
+      "inputs": []
+    },
+    {
+      "review_row": "65",
+      "priority": "P0",
+      "review_action": "verify_submit_form_then_approve_or_reject",
+      "domain": "aiagentsbase.com",
+      "url": "https://aiagentsbase.com/submit",
+      "status": 200,
+      "final_url": "https://aiagentsbase.com/submit",
+      "title": "AiAgentsBase: Add Your AI Agent | Join Our Curated Directory",
+      "text_length": 510,
+      "text_snippet": "Ai Agents Base Promote Submit AI Agent About Categories AI Core Business & Marketing Content & Creation Development & Tech Productivity & Automation Specialized Collections Best AI agents for SEO Soon Policies © 2025, Ai Agents Base Search Submit Help us grow the world's largest AI directory. Email address Agent name Website Category Select… AI Core Business & Marketing Content & Creation Development & Tech Productivity & Automation Specialized Short tagline Medium tagline Submit",
+      "headings": [
+        "H1:Submit"
+      ],
+      "forms": [
+        {
+          "class": "framer-Jj6kA framer-eepgv framer-vw8iW framer-L4vWv framer-uqrk23 framer-v-uqrk23",
+          "text": "Email address Agent name Website Category Select… AI Core Business & Marketing Content & Creation Development & Tech Productivity & Automation Specialized Short tagline Medium tagline Submit",
+          "controls": "[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+        }
+      ],
+      "links": [
+        {
+          "href": "https://aiagentsbase.com/",
+          "text": "Ai Agents Base"
+        },
+        {
+          "href": "https://aiagentsbase.com/advertise",
+          "text": "Promote"
+        },
+        {
+          "href": "https://aiagentsbase.com/submit",
+          "text": "Submit AI Agent"
+        },
+        {
+          "href": "https://aiagentsbase.com/about",
+          "text": "About"
+        },
+        {
+          "href": "https://aiagentsbase.com/categories/ai-core",
+          "text": "AI Core"
+        },
+        {
+          "href": "https://aiagentsbase.com/categories/business-marketing",
+          "text": "Business & Marketing"
+        },
+        {
+          "href": "https://aiagentsbase.com/categories/content-creation",
+          "text": "Content & Creation"
+        },
+        {
+          "href": "https://aiagentsbase.com/categories/development-tech",
+          "text": "Development & Tech"
+        },
+        {
+          "href": "https://aiagentsbase.com/categories/productivity-automation",
+          "text": "Productivity & Automation"
+        },
+        {
+          "href": "https://aiagentsbase.com/categories/specialized",
+          "text": "Specialized"
+        },
+        {
+          "href": "https://x.com/evantheproduct"
+        },
+        {
+          "href": "https://www.instagram.com/evantheproduct/"
+        },
+        {
+          "href": "https://aiagentsbase.com/policies",
+          "text": "Policies"
+        }
+      ],
+      "buttons": [
+        {
+          "text": "Search Icon"
+        },
+        {
+          "text": "Search Icon"
+        },
+        {
+          "text": "Submit",
+          "type": "submit"
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "input",
+          "type": "email",
+          "name": "Email address",
+          "placeholder": "Type your email..."
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "Tool name",
+          "placeholder": "Enter agent name..."
+        },
+        {
+          "tag": "input",
+          "type": "url",
+          "name": "Website",
+          "placeholder": "https://domain.com"
+        },
+        {
+          "tag": "select",
+          "name": "Category"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "Tagline",
+          "placeholder": "A short explainer (up to 10-12 words)"
+        },
+        {
+          "tag": "textarea",
+          "name": "Description",
+          "placeholder": "Provide more details about this agent (up to 110 words)"
+        }
+      ],
+      "signals": {
+        "login": false,
+        "payment": false,
+        "captcha": false,
+        "submitText": true,
+        "productFormWords": true,
+        "notFound": false
+      }
+    },
+    {
+      "review_row": "68",
+      "priority": "P0",
+      "review_action": "verify_submit_form_then_approve_or_reject",
+      "domain": "aiagentsmarketplace.com",
+      "url": "https://aiagentsmarketplace.com/submit",
+      "status": 200,
+      "final_url": "https://aiagentsmarketplace.com/submit",
+      "title": "",
+      "text_length": 116,
+      "text_snippet": "无法访问此网站 forsale.godaddy.com 的响应时间过长。 请试试以下办法： 检查网络连接 检查代理服务器和防火墙 运行 Windows 网络诊断 ERR_CONNECTION_TIMED_OUT 重新加载 详情",
+      "headings": [
+        "H1:无法访问此网站"
+      ],
+      "forms": [],
+      "links": [
+        {
+          "href": "chrome-error://chromewebdata/#buttons",
+          "text": "检查代理服务器和防火墙"
+        },
+        {
+          "href": "javascript:diagnoseErrors()",
+          "text": "运行 Windows 网络诊断"
+        }
+      ],
+      "buttons": [
+        {
+          "text": "重新加载"
+        },
+        {
+          "text": "详情"
+        }
+      ],
+      "inputs": [],
+      "signals": {
+        "login": false,
+        "payment": false,
+        "captcha": false,
+        "submitText": false,
+        "productFormWords": false,
+        "notFound": false
+      }
+    },
+    {
+      "review_row": "72",
+      "priority": "P0",
+      "review_action": "verify_submit_form_then_approve_or_reject",
+      "domain": "aimatchpro.ai",
+      "url": "https://aimatchpro.ai/submit",
+      "error": "page.goto: net::ERR_NAME_NOT_RESOLVED at https://aimatchpro.ai/submit\nCall log:\n\u001b[2m  - navigating to \"https://aimatchpro.ai/submit\", waiting until \"domcontentloaded\"\u001b[22m\n",
+      "final_url": "about:blank",
+      "title": "",
+      "forms": [],
+      "links": [],
+      "buttons": [],
+      "inputs": []
+    },
+    {
+      "review_row": "78",
+      "priority": "P0",
+      "review_action": "verify_submit_form_then_approve_or_reject",
+      "domain": "aitools.love",
+      "url": "https://aitools.love/submit",
+      "status": 200,
+      "final_url": "https://aitools.love/submit",
+      "title": "404 - Oops! Page not found",
+      "text_length": 104,
+      "text_snippet": "We are live on DevHunt: tool of the week contest check it out 404 Oops! Page not found Return to Home",
+      "headings": [
+        "H1:404"
+      ],
+      "forms": [],
+      "links": [
+        {
+          "href": "https://devhunt.org/tool/ai-tools-love",
+          "text": "check it out"
+        },
+        {
+          "href": "https://aitools.love/",
+          "text": "Return to Home"
+        }
+      ],
+      "buttons": [],
+      "inputs": [],
+      "signals": {
+        "login": false,
+        "payment": false,
+        "captcha": false,
+        "submitText": false,
+        "productFormWords": false,
+        "notFound": true
+      }
+    },
+    {
+      "review_row": "81",
+      "priority": "P0",
+      "review_action": "verify_submit_form_then_approve_or_reject",
+      "domain": "aitrendytools.com",
+      "url": "https://www.aitrendytools.com/submit",
+      "error": "page.goto: net::ERR_CERT_DATE_INVALID at https://www.aitrendytools.com/submit\nCall log:\n\u001b[2m  - navigating to \"https://www.aitrendytools.com/submit\", waiting until \"domcontentloaded\"\u001b[22m\n",
+      "final_url": "about:blank",
+      "title": "",
+      "forms": [],
+      "links": [],
+      "buttons": [],
+      "inputs": []
+    },
+    {
+      "review_row": "115",
+      "priority": "P0",
+      "review_action": "verify_submit_form_then_approve_or_reject",
+      "domain": "bestofweb.io",
+      "url": "https://bestofweb.io/submit",
+      "error": "page.goto: net::ERR_NAME_NOT_RESOLVED at https://bestofweb.io/submit\nCall log:\n\u001b[2m  - navigating to \"https://bestofweb.io/submit\", waiting until \"domcontentloaded\"\u001b[22m\n",
+      "final_url": "about:blank",
+      "title": "",
+      "forms": [],
+      "links": [],
+      "buttons": [],
+      "inputs": []
+    },
+    {
+      "review_row": "274",
+      "priority": "P0",
+      "review_action": "verify_submit_form_then_approve_or_reject",
+      "domain": "getbyte.co",
+      "url": "https://getbyte.co/submit",
+      "status": 200,
+      "final_url": "https://getbyte.co/submit",
+      "title": "getByte | APIs de Consulta e Integração de Dados",
+      "text_length": 41,
+      "text_snippet": "404 Oops! Page not found Return to Home",
+      "headings": [
+        "H1:404"
+      ],
+      "forms": [],
+      "links": [
+        {
+          "href": "https://getbyte.co/",
+          "text": "Return to Home"
+        }
+      ],
+      "buttons": [],
+      "inputs": [],
+      "signals": {
+        "login": false,
+        "payment": false,
+        "captcha": false,
+        "submitText": false,
+        "productFormWords": false,
+        "notFound": true
+      }
+    },
+    {
+      "review_row": "332",
+      "priority": "P0",
+      "review_action": "verify_submit_form_then_approve_or_reject",
+      "domain": "launchvault.com",
+      "url": "https://launchvault.com/submit",
+      "error": "page.goto: net::ERR_CERT_AUTHORITY_INVALID at https://launchvault.com/submit\nCall log:\n\u001b[2m  - navigating to \"https://launchvault.com/submit\", waiting until \"domcontentloaded\"\u001b[22m\n",
+      "final_url": "about:blank",
+      "title": "",
+      "forms": [],
+      "links": [],
+      "buttons": [],
+      "inputs": []
+    },
+    {
+      "review_row": "390",
+      "priority": "P0",
+      "review_action": "verify_submit_form_then_approve_or_reject",
+      "domain": "nocode.mba",
+      "url": "https://www.nocode.mba/tools/submit",
+      "status": 404,
+      "final_url": "https://www.nocode.mba/tools/submit",
+      "title": "Not Found",
+      "text_length": 97,
+      "text_snippet": "The page you're looking for can't be found. Please check your URL or go to the home page. Go home",
+      "headings": [
+        "H2:The page you're looking for can't be found."
+      ],
+      "forms": [],
+      "links": [
+        {
+          "href": "https://www.nocode.mba/",
+          "text": "go to the home page."
+        },
+        {
+          "href": "https://www.nocode.mba/",
+          "text": "Go home"
+        }
+      ],
+      "buttons": [],
+      "inputs": [],
+      "signals": {
+        "login": false,
+        "payment": false,
+        "captcha": false,
+        "submitText": false,
+        "productFormWords": true,
+        "notFound": false
+      }
+    },
+    {
+      "review_row": "392",
+      "priority": "P0",
+      "review_action": "verify_submit_form_then_approve_or_reject",
+      "domain": "nocodedevs.com",
+      "url": "https://www.nocodedevs.com/submit",
+      "error": "page.goto: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"https://www.nocodedevs.com/submit\", waiting until \"domcontentloaded\"\u001b[22m\n",
+      "final_url": "https://www.makerthrive.com/",
+      "title": "MakerThrive: Elevate Your Tool's Reach & Impact | MakerThrive",
+      "forms": [],
+      "links": [],
+      "buttons": [],
+      "inputs": []
+    },
+    {
+      "review_row": "393",
+      "priority": "P0",
+      "review_action": "verify_submit_form_then_approve_or_reject",
+      "domain": "nocodefinder.com",
+      "url": "https://www.nocodefinder.com/submit",
+      "status": 404,
+      "final_url": "https://www.nocodefinder.com/submit",
+      "title": "Not Found",
+      "text_length": 83,
+      "text_snippet": "Page Not Found The page you are looking for doesn't exist or has been moved Go Home",
+      "headings": [
+        "H3:Page Not Found"
+      ],
+      "forms": [],
+      "links": [
+        {
+          "href": "https://www.nocodefinder.com/",
+          "text": "Go Home"
+        }
+      ],
+      "buttons": [],
+      "inputs": [],
+      "signals": {
+        "login": false,
+        "payment": false,
+        "captcha": false,
+        "submitText": false,
+        "productFormWords": false,
+        "notFound": true
+      }
+    },
+    {
+      "review_row": "395",
+      "priority": "P0",
+      "review_action": "verify_submit_form_then_approve_or_reject",
+      "domain": "nocodelist.co",
+      "url": "https://nocodelist.co/submit",
+      "status": 200,
+      "final_url": "https://nocodelist.co/submit",
+      "title": "NoCodeList",
+      "text_length": 672,
+      "text_snippet": "Software & More Top Tools Sponsor Members Submit No Code Software Add a Software, Resource, Agency or Stack to the growing Book of NoCode 🛠 NOCODE SOFTWARE 🛵 NOCODE AGENCY 📄 NOCODE RESOURCE 🧩 NOCODE PRODUCT STACK First Things First... To Submit, you have to be Logged In This helps us authorize you to update your submissions later, as well as give you the ability to add further comments and upvotes :) If you have any questions at all, email stefan@nocodelist.co or @thenocodelist. Create your account email Sign Up Sign Up with a Password New no-code software, in your inbox. New tools every week. SUBSCRIBE Powered by QREW Tech Signup | Become a Sponsor | About",
+      "headings": [
+        "H1:Submit No Code Software",
+        "H2:First Things First...",
+        "H3:Create your account",
+        "H3:New no-code software, in your inbox."
+      ],
+      "forms": [
+        {
+          "action": "https://a6bdbf35.sibforms.com/serve/MUIEAKjo8pR8XlVHQG8Yxjyb2ldEiiLhOKVbSRepCYNhWc2brzdwArPF7QapE7NO-NQIPS_dPHfYke_c17_MMy-VHhZAMPZ1S2NNcUihbEVUAwO6pHJd54hOHXO_eLrHJ4JCM4NXqdicCfIEtjScoDFKsLhVgDNQlXDzY3Qe50vN5KN5lbnpf2Un",
+          "method": "POST",
+          "id": "sib-form",
+          "text": "SUBSCRIBE",
+          "controls": "[object Object],[object Object],[object Object],[object Object]"
+        }
+      ],
+      "links": [
+        {
+          "href": "https://nocodelist.co/top-tools",
+          "text": "Top Tools"
+        },
+        {
+          "href": "https://nocodelist.co/sponsor",
+          "text": "Sponsor"
+        },
+        {
+          "href": "https://www.qrewtech.com/",
+          "text": "Powered by QREW Tech"
+        },
+        {
+          "href": "https://nocodelist.co/signup",
+          "text": "Signup"
+        },
+        {
+          "href": "https://nocodelist.co/sponsor",
+          "text": "Become a Sponsor"
+        },
+        {
+          "href": "https://nocodelist.co/about",
+          "text": "About"
+        }
+      ],
+      "buttons": [
+        {
+          "text": "🛠 NOCODE SOFTWARE"
+        },
+        {
+          "text": "🛵 NOCODE AGENCY"
+        },
+        {
+          "text": "📄 NOCODE RESOURCE"
+        },
+        {
+          "text": "🧩 NOCODE PRODUCT STACK"
+        },
+        {
+          "text": "Sign Up"
+        },
+        {
+          "text": "SUBSCRIBE",
+          "type": "submit"
+        }
+      ],
+      "inputs": [
+        {
+          "tag": "select"
+        },
+        {
+          "tag": "select"
+        },
+        {
+          "tag": "select"
+        },
+        {
+          "tag": "select"
+        },
+        {
+          "tag": "input",
+          "type": "email",
+          "placeholder": "email@cooldoamin.com"
+        },
+        {
+          "tag": "input",
+          "type": "password"
+        },
+        {
+          "tag": "input",
+          "type": "password"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "EMAIL",
+          "id": "EMAIL",
+          "placeholder": "EMAIL"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "name": "email_address_check"
+        },
+        {
+          "tag": "input",
+          "type": "hidden",
+          "name": "locale"
+        }
+      ],
+      "signals": {
+        "login": true,
+        "payment": true,
+        "captcha": false,
+        "submitText": true,
+        "productFormWords": true,
+        "notFound": false
+      }
+    },
+    {
+      "review_row": "550",
+      "priority": "P0",
+      "review_action": "verify_submit_form_then_approve_or_reject",
+      "domain": "wearenocode.com",
+      "url": "https://www.wearenocode.com/submit",
+      "status": 404,
+      "final_url": "https://www.wearenocode.com/submit",
+      "title": "Not Found - Client First Wireframe 1",
+      "text_length": 93,
+      "text_snippet": "Page Not Found The page you are looking for doesn't exist or has been moved. Return back Home",
+      "headings": [
+        "H2:Page Not Found"
+      ],
+      "forms": [],
+      "links": [
+        {
+          "href": "https://www.wearenocode.com/",
+          "text": "Return back Home"
+        }
+      ],
+      "buttons": [],
+      "inputs": [],
+      "signals": {
+        "login": false,
+        "payment": false,
+        "captcha": false,
+        "submitText": false,
+        "productFormWords": false,
+        "notFound": true
+      }
+    }
+  ]
+}

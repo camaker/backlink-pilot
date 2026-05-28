@@ -1,0 +1,45 @@
+review_row,domain,url,status,final_url,title,forms,inputs,login_signal,payment_signal,captcha_signal,submit_text_signal,product_form_words_signal,not_found_signal,error,snippet
+75,aiscout.net,https://aiscout.net/submit,520,https://aiscout.net/submit,ERROR 520,0,0,no,no,no,no,yes,no,,ERROR 520 The QUIC.cloud server NA-US-LAX-HYBRID-109 was not able to connect to the site's origin server. 2026-05-28 05:20:17 UTC Web Browser QUIC.cloud Node Origin Server Why did this happen? This site is using QUIC.cloud CDN. This error indicates that our QUIC.cloud nodes were unable to reach the website’s origin server. If you're a visitor Please try again later. If you're the website owner Please verify that your Connection Type to Origin and Server IP are set correctly in the QUIC.cloud CDN Configuration. See these additional troubleshooting steps.
+79,aitoolsdirectory.com,https://aitoolsdirectory.com/submit,,about:blank,,0,0,no,no,no,no,no,no,"page.goto: Timeout 30000ms exceeded.
+Call log:
+[2m  - navigating to ""https://aitoolsdirectory.com/submit"", waiting until ""domcontentloaded""[22m
+",
+208,devhunt.org,https://devhunt.org/submit,200,https://devhunt.org/submit,undefined's profile on Dev Hunt - Dev Hunt,0,0,yes,yes,no,yes,yes,yes,,"John Rush Subscribe Browse tools Advertise Submit your Dev Tool Sign In Subscribe to get weekly email with best new dev tools. 404 Error Page not found Sorry, the page you are looking for could not be found or has been removed. Go back A launchpad for dev tools, built by developers. Open-source and fair. About GitHub Repository Blog Contact OSS Friends NextJS Starter Open Source Alternatives John Rush (CEO) Submit website to directories Directory Builder AI blog generator © 2026 Dev Hunt. Member of MarsX.Dev family. Uses & Sponsored by FloatUI, Sensorpro, CountVisits, SEObotAI, Listing Bot, In"
+472,sideprojectors.com,https://www.sideprojectors.com/project/new,200,https://www.sideprojectors.com/project/new,,0,1,yes,yes,no,yes,yes,no,,"SideProjectors is a marketplace where developers can sell, buy, and showcase side projects and find co-founders. The platform lets you list projects for sale, discover projects to buy, seek co-founders, and share projects with the community. Privacy Policy SideProjectors Home Membership Newsletter Available for Work Advertise Help Contact us RSS + SUBMIT A PROJECT Login Sign-up PROJECT INFO General Images & videos Project owner HOW PROJECT WAS BUILT Tech stack PROJECT METRICS Revenue Downloads Visitors Hours spent / week Other metrics SALES RELATED Items being sold Reason for selling Next step"
+497,stackshare.io,https://stackshare.io/new-product,200,https://stackshare.io/new-product,Not Found - StackShare | StackShare,0,1,yes,no,no,no,no,yes,,Help shape StackShare's future Take our 2026 User Survey 2 min Tools Stacks Follow on Sign in 404 Discover and share technology stacks from companies around the world. Follow on © 2025 StackShare. All rights reserved. Product Stacks Tools Feed Company About Contact Legal Privacy Policy Terms of Service
+63,ai.xyz,https://ai.xyz/submit,,about:blank,,0,0,no,no,no,no,no,no,"page.goto: net::ERR_NAME_NOT_RESOLVED at https://ai.xyz/submit
+Call log:
+[2m  - navigating to ""https://ai.xyz/submit"", waiting until ""domcontentloaded""[22m
+",
+64,aiagents.live,https://aiagents.live/submit,,about:blank,,0,0,no,no,no,no,no,no,"page.goto: net::ERR_EMPTY_RESPONSE at https://aiagents.live/submit
+Call log:
+[2m  - navigating to ""https://aiagents.live/submit"", waiting until ""domcontentloaded""[22m
+",
+65,aiagentsbase.com,https://aiagentsbase.com/submit,200,https://aiagentsbase.com/submit,AiAgentsBase: Add Your AI Agent | Join Our Curated Directory,1,6,no,no,no,yes,yes,no,,"Ai Agents Base Promote Submit AI Agent About Categories AI Core Business & Marketing Content & Creation Development & Tech Productivity & Automation Specialized Collections Best AI agents for SEO Soon Policies © 2025, Ai Agents Base Search Submit Help us grow the world's largest AI directory. Email address Agent name Website Category Select… AI Core Business & Marketing Content & Creation Development & Tech Productivity & Automation Specialized Short tagline Medium tagline Submit"
+68,aiagentsmarketplace.com,https://aiagentsmarketplace.com/submit,200,https://aiagentsmarketplace.com/submit,,0,0,no,no,no,no,no,no,,无法访问此网站 forsale.godaddy.com 的响应时间过长。 请试试以下办法： 检查网络连接 检查代理服务器和防火墙 运行 Windows 网络诊断 ERR_CONNECTION_TIMED_OUT 重新加载 详情
+72,aimatchpro.ai,https://aimatchpro.ai/submit,,about:blank,,0,0,no,no,no,no,no,no,"page.goto: net::ERR_NAME_NOT_RESOLVED at https://aimatchpro.ai/submit
+Call log:
+[2m  - navigating to ""https://aimatchpro.ai/submit"", waiting until ""domcontentloaded""[22m
+",
+78,aitools.love,https://aitools.love/submit,200,https://aitools.love/submit,404 - Oops! Page not found,0,0,no,no,no,no,no,yes,,We are live on DevHunt: tool of the week contest check it out 404 Oops! Page not found Return to Home
+81,aitrendytools.com,https://www.aitrendytools.com/submit,,about:blank,,0,0,no,no,no,no,no,no,"page.goto: net::ERR_CERT_DATE_INVALID at https://www.aitrendytools.com/submit
+Call log:
+[2m  - navigating to ""https://www.aitrendytools.com/submit"", waiting until ""domcontentloaded""[22m
+",
+115,bestofweb.io,https://bestofweb.io/submit,,about:blank,,0,0,no,no,no,no,no,no,"page.goto: net::ERR_NAME_NOT_RESOLVED at https://bestofweb.io/submit
+Call log:
+[2m  - navigating to ""https://bestofweb.io/submit"", waiting until ""domcontentloaded""[22m
+",
+274,getbyte.co,https://getbyte.co/submit,200,https://getbyte.co/submit,getByte | APIs de Consulta e Integração de Dados,0,0,no,no,no,no,no,yes,,404 Oops! Page not found Return to Home
+332,launchvault.com,https://launchvault.com/submit,,about:blank,,0,0,no,no,no,no,no,no,"page.goto: net::ERR_CERT_AUTHORITY_INVALID at https://launchvault.com/submit
+Call log:
+[2m  - navigating to ""https://launchvault.com/submit"", waiting until ""domcontentloaded""[22m
+",
+390,nocode.mba,https://www.nocode.mba/tools/submit,404,https://www.nocode.mba/tools/submit,Not Found,0,0,no,no,no,no,yes,no,,The page you're looking for can't be found. Please check your URL or go to the home page. Go home
+392,nocodedevs.com,https://www.nocodedevs.com/submit,,https://www.makerthrive.com/,MakerThrive: Elevate Your Tool's Reach & Impact | MakerThrive,0,0,no,no,no,no,no,no,"page.goto: Timeout 30000ms exceeded.
+Call log:
+[2m  - navigating to ""https://www.nocodedevs.com/submit"", waiting until ""domcontentloaded""[22m
+",
+393,nocodefinder.com,https://www.nocodefinder.com/submit,404,https://www.nocodefinder.com/submit,Not Found,0,0,no,no,no,no,no,yes,,Page Not Found The page you are looking for doesn't exist or has been moved Go Home
+395,nocodelist.co,https://nocodelist.co/submit,200,https://nocodelist.co/submit,NoCodeList,1,10,yes,yes,no,yes,yes,no,,"Software & More Top Tools Sponsor Members Submit No Code Software Add a Software, Resource, Agency or Stack to the growing Book of NoCode 🛠 NOCODE SOFTWARE 🛵 NOCODE AGENCY 📄 NOCODE RESOURCE 🧩 NOCODE PRODUCT STACK First Things First... To Submit, you have to be Logged In This helps us authorize you to update your submissions later, as well as give you the ability to add further comments and upvotes :) If you have any questions at all, email stefan@nocodelist.co or @thenocodelist. Create your account email Sign Up Sign Up with a Password New no-code software, in your inbox. New tools every w"
+550,wearenocode.com,https://www.wearenocode.com/submit,404,https://www.wearenocode.com/submit,Not Found - Client First Wireframe 1,0,0,no,no,no,no,no,yes,,Page Not Found The page you are looking for doesn't exist or has been moved. Return back Home
