@@ -1,0 +1,252 @@
+{
+  "generated_at": "2026-05-28T03:59:41.220Z",
+  "batch": "backlink-url/review-batches/p0-008.csv",
+  "suggestions": "backlink-url/review-batches/p0-008-suggestions.csv",
+  "batch_id": "p0-008",
+  "mode_policy": "drafts_rejections_only_no_approvals_no_registry_changes",
+  "min_confidence": "high",
+  "reviewed_by": "read_only_evidence",
+  "enabled_rejection_decisions": [
+    "reject_auth_required",
+    "reject_duplicate",
+    "reject_not_directory",
+    "reject_not_submit",
+    "reject_paid"
+  ],
+  "batch_rows": 25,
+  "suggestion_rows": 25,
+  "drafted_rows": 22,
+  "skipped_rows": 3,
+  "blocked_rows": 0,
+  "priority_counts": {
+    "P0": 25
+  },
+  "action_counts": {
+    "verify_distinct_submit_url_for_existing_domain": 25
+  },
+  "drafted": [
+    {
+      "line": 4,
+      "review_row": "117",
+      "url": "https://betalist.com/submit",
+      "domain": "betalist.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:117"
+    },
+    {
+      "line": 6,
+      "review_row": "246",
+      "url": "https://fazier.com/submit",
+      "domain": "fazier.com",
+      "suggested_review_decision": "reject_paid",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:246"
+    },
+    {
+      "line": 7,
+      "review_row": "271",
+      "url": "https://www.futurepedia.io/submit-tool",
+      "domain": "futurepedia.io",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:271"
+    },
+    {
+      "line": 8,
+      "review_row": "363",
+      "url": "https://microlaunch.net/submit",
+      "domain": "microlaunch.net",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:363"
+    },
+    {
+      "line": 9,
+      "review_row": "421",
+      "url": "https://pitchwall.co/submit",
+      "domain": "pitchwall.co",
+      "suggested_review_decision": "reject_paid",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:421"
+    },
+    {
+      "line": 10,
+      "review_row": "427",
+      "url": "https://poweredbyai.app/submit",
+      "domain": "poweredbyai.app",
+      "suggested_review_decision": "reject_duplicate",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:427"
+    },
+    {
+      "line": 11,
+      "review_row": "503",
+      "url": "https://startupstash.com/submit",
+      "domain": "startupstash.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:503"
+    },
+    {
+      "line": 12,
+      "review_row": "527",
+      "url": "https://theresanaiforthat.com/submit",
+      "domain": "theresanaiforthat.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:527"
+    },
+    {
+      "line": 13,
+      "review_row": "536",
+      "url": "https://www.toolify.ai/submit",
+      "domain": "toolify.ai",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:536"
+    },
+    {
+      "line": 14,
+      "review_row": "539",
+      "url": "https://topai.tools/submit",
+      "domain": "topai.tools",
+      "suggested_review_decision": "reject_paid",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:539"
+    },
+    {
+      "line": 15,
+      "review_row": "250",
+      "url": "https://findmyaitool.com/submit",
+      "domain": "findmyaitool.com",
+      "suggested_review_decision": "reject_duplicate",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:250"
+    },
+    {
+      "line": 16,
+      "review_row": "537",
+      "url": "https://toolpilot.ai/submit",
+      "domain": "toolpilot.ai",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:537"
+    },
+    {
+      "line": 17,
+      "review_row": "277",
+      "url": "https://github.com/",
+      "domain": "github.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:277"
+    },
+    {
+      "line": 18,
+      "review_row": "60",
+      "url": "https://www.activesearchresults.com/",
+      "domain": "activesearchresults.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:60"
+    },
+    {
+      "line": 19,
+      "review_row": "74",
+      "url": "https://airtable.com/marketplace",
+      "domain": "airtable.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:74"
+    },
+    {
+      "line": 20,
+      "review_row": "86",
+      "url": "https://alternativeto.net/software/_/add",
+      "domain": "alternativeto.net",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:86"
+    },
+    {
+      "line": 21,
+      "review_row": "87",
+      "url": "https://andyroamer.com/",
+      "domain": "andyroamer.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:87"
+    },
+    {
+      "line": 22,
+      "review_row": "167",
+      "url": "https://www.business-software.com/",
+      "domain": "business-software.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:167"
+    },
+    {
+      "line": 23,
+      "review_row": "231",
+      "url": "https://every-ai.com/",
+      "domain": "every-ai.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:231"
+    },
+    {
+      "line": 24,
+      "review_row": "240",
+      "url": "https://www.f6s.com/company/create",
+      "domain": "f6s.com",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:240"
+    },
+    {
+      "line": 25,
+      "review_row": "260",
+      "url": "https://fivetaco.com/",
+      "domain": "fivetaco.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:260"
+    },
+    {
+      "line": 26,
+      "review_row": "279",
+      "url": "https://github.com/modelcontextprotocol/registry",
+      "domain": "github.com",
+      "suggested_review_decision": "reject_not_submit",
+      "suggestion_confidence": "high",
+      "suggestion_match_key": "review_row:279"
+    }
+  ],
+  "skipped": [
+    {
+      "line": 2,
+      "review_row": "75",
+      "url": "https://aiscout.net/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 3,
+      "review_row": "79",
+      "url": "https://aitoolsdirectory.com/submit",
+      "reason": "suggestion_is_not_rejection",
+      "suggested_review_decision": "needs_manual_check"
+    },
+    {
+      "line": 5,
+      "review_row": "208",
+      "url": "https://devhunt.org/submit",
+      "reason": "suggestion_confidence_below_threshold",
+      "suggested_review_decision": "reject_auth_required",
+      "suggestion_confidence": "medium"
+    }
+  ],
+  "blocked": []
+}
