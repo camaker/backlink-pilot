@@ -1722,6 +1722,120 @@ targets:
       assert.equal(queueRows[0].discovery_platform_types, 'Directory');
       assert.equal(queueRows[0].discovery_relevance_max, '0.80');
       assert.equal(queueRows[0].discovery_queries, 'submit ai tool directory');
+      assert.equal(queueRows[0].discovery_signal_score, '30');
+      assert.match(queueRows[0].discovery_review_hint, /non_binding_verify_manually/);
+      assert.match(queueRows[0].discovery_review_flags, /medium_relevance_signal/);
+      assert.equal(queueRows[0].review_decision, '');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('uses discovery signals only as bounded queue ordering hints', () => {
+    const dir = tempDir();
+    try {
+      const review = join(dir, 'coverage-review.csv');
+      writeFileSync(review, [
+        [
+          'review_decision',
+          'canonical_name',
+          'pricing',
+          'classification',
+          'candidate_import_recommendation',
+          'url',
+          'domain',
+          'source_files',
+          'source_locations',
+          'registry_target_ids',
+          'registry_submit_urls',
+          'occurrence_count',
+          'discovery_sources',
+          'discovery_platform_types',
+          'discovery_methods',
+          'discovery_relevance_max',
+          'discovery_pricing_signals',
+          'discovery_queries',
+        ].join(','),
+        [
+          '',
+          'Plain Submit',
+          'unknown',
+          'missing_domain',
+          'review_submit_url',
+          'https://plain.example/submit',
+          'plain.example',
+          'coverage.csv',
+          'coverage.csv:2',
+          '',
+          '',
+          '1',
+          '',
+          '',
+          '',
+          '',
+          '',
+          '',
+        ].join(','),
+        [
+          '',
+          'Discovery Submit',
+          'unknown',
+          'missing_domain',
+          'review_submit_url',
+          'https://boosted.example/submit',
+          'boosted.example',
+          '7deer-discovery.csv',
+          '7deer-discovery.csv:json:platforms[0]',
+          '',
+          '',
+          '1',
+          '7deer-discovery',
+          'Directory',
+          'directory',
+          '0.95',
+          'free',
+          'submit ai tool directory',
+        ].join(','),
+        [
+          '',
+          'Paid Discovery Submit',
+          'unknown',
+          'missing_domain',
+          'review_submit_url',
+          'https://paid-hint.example/submit',
+          'paid-hint.example',
+          '7deer-discovery.csv',
+          '7deer-discovery.csv:json:platforms[1]',
+          '',
+          '',
+          '1',
+          '7deer-discovery',
+          'Directory',
+          'directory',
+          '0.95',
+          'paid',
+          'submit ai tool directory',
+        ].join(','),
+      ].join('\n'));
+
+      const queue = buildCoverageReviewQueue(review);
+      const csv = coverageReviewQueueCsv(queue);
+      const rows = parseCsv(csv);
+
+      assert.deepEqual(queue.rows.map(row => row.domain), [
+        'boosted.example',
+        'plain.example',
+        'paid-hint.example',
+      ]);
+      assert.equal(rows[0].priority, 'P0');
+      assert.equal(rows[0].review_decision, '');
+      assert.equal(rows[0].discovery_signal_score, '30');
+      assert.match(rows[0].discovery_review_flags, /high_relevance_signal/);
+      assert.match(rows[0].discovery_review_flags, /free_pricing_signal/);
+      assert.match(rows[0].discovery_review_hint, /non_binding_verify_manually/);
+      assert.equal(rows[2].discovery_signal_score, '-1');
+      assert.match(rows[2].discovery_review_flags, /paid_pricing_signal_requires_rejection_check/);
+      assert.equal(rows.every(row => row.review_decision === ''), true);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

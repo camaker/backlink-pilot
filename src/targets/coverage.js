@@ -132,6 +132,11 @@ const DISCOVERY_OUTPUT_FIELDS = [
   'discovery_discovered_ats',
   'discovery_notes',
 ];
+const DISCOVERY_REVIEW_FIELDS = [
+  'discovery_signal_score',
+  'discovery_review_hint',
+  'discovery_review_flags',
+];
 const COVERAGE_REVIEW_HEADERS = [
   'review_decision',
   'review_instruction',
@@ -176,6 +181,7 @@ const REVIEW_QUEUE_HEADERS = [
   'registry_target_ids',
   'registry_submit_urls',
   ...DISCOVERY_OUTPUT_FIELDS,
+  ...DISCOVERY_REVIEW_FIELDS,
 ];
 const REVIEW_BATCH_HEADERS = [
   'batch_id',
@@ -250,6 +256,7 @@ const REVIEW_SUGGESTION_HEADERS = [
   'fetch_error',
   'checked_at',
   ...DISCOVERY_OUTPUT_FIELDS,
+  ...DISCOVERY_REVIEW_FIELDS,
 ];
 const REVIEW_QUEUE_EDITABLE_FIELDS = [
   'review_decision',
@@ -313,6 +320,7 @@ const MANUAL_REVIEW_HEADERS = [
   'safety_gate_report',
   'checked_at',
   ...DISCOVERY_OUTPUT_FIELDS,
+  ...DISCOVERY_REVIEW_FIELDS,
 ];
 
 function normalizePath(value) {
@@ -481,6 +489,104 @@ function discoveryContextForOutput(item = {}) {
   return {
     ...Object.fromEntries(DISCOVERY_CONTEXT_FIELDS.map(field => [field, item[field] || []])),
     discovery_relevance_max: item.discovery_relevance_max || maxNumericValue(item.discovery_relevance_values),
+  };
+}
+
+function firstValues(value, limit = 2) {
+  return splitSemicolonValues(value).slice(0, limit);
+}
+
+function includesAnyValue(value, pattern) {
+  return splitSemicolonValues(value).some(item => pattern.test(item));
+}
+
+function discoveryReviewSignals(row = {}) {
+  const context = discoveryContextForOutput(row);
+  const hasDiscovery = DISCOVERY_OUTPUT_FIELDS.some(field => {
+    const value = context[field];
+    return Array.isArray(value) ? value.length > 0 : String(value || '').trim();
+  });
+  if (!hasDiscovery) {
+    return {
+      discovery_signal_score: 0,
+      discovery_review_hint: '',
+      discovery_review_flags: '',
+    };
+  }
+
+  const flags = [];
+  let score = 0;
+
+  if (splitSemicolonValues(context.discovery_sources).length) {
+    flags.push('has_discovery_source');
+    score += 3;
+  }
+
+  if (includesAnyValue(context.discovery_platform_types, /directory|startup|saas|software|tool|ai/i)) {
+    flags.push('directory_or_tool_type_signal');
+    score += 8;
+  }
+
+  if (includesAnyValue(context.discovery_methods, /directory|submit|submission|add|listing/i)) {
+    flags.push('submit_method_signal');
+    score += 8;
+  }
+
+  const relevance = Number.parseFloat(String(context.discovery_relevance_max || ''));
+  if (Number.isFinite(relevance)) {
+    if (relevance >= 0.9) {
+      flags.push('high_relevance_signal');
+      score += 10;
+    } else if (relevance >= 0.75) {
+      flags.push('medium_relevance_signal');
+      score += 7;
+    } else if (relevance >= 0.5) {
+      flags.push('low_relevance_signal');
+      score += 4;
+    }
+  }
+
+  const pricingValues = splitSemicolonValues(context.discovery_pricing_signals);
+  const normalizedPricing = pricingValues.map(value => normalizePricing(value));
+  if (normalizedPricing.includes('free')) {
+    flags.push('free_pricing_signal');
+    score += 6;
+  } else if (normalizedPricing.includes('freemium')) {
+    flags.push('freemium_pricing_signal');
+    score += 3;
+  } else if (normalizedPricing.includes('paid')) {
+    flags.push('paid_pricing_signal_requires_rejection_check');
+    score -= 35;
+  }
+
+  if (includesAnyValue(context.discovery_queries, /submit|submission|add|directory|list your|startup|tool/i)) {
+    flags.push('submit_query_signal');
+    score += 5;
+  }
+
+  const langSignals = splitSemicolonValues(context.discovery_lang_signals)
+    .map(value => value.toLowerCase())
+    .filter(value => value && value !== 'unknown');
+  if (langSignals.length && !langSignals.includes('en')) {
+    flags.push('non_english_discovery_signal');
+    score -= 3;
+  }
+
+  const boundedScore = Math.max(-20, Math.min(30, score));
+  const hintParts = [
+    firstValues(context.discovery_sources).length ? `source=${firstValues(context.discovery_sources).join('|')}` : '',
+    firstValues(context.discovery_platform_types).length ? `type=${firstValues(context.discovery_platform_types).join('|')}` : '',
+    firstValues(context.discovery_methods).length ? `method=${firstValues(context.discovery_methods).join('|')}` : '',
+    context.discovery_relevance_max ? `relevance=${context.discovery_relevance_max}` : '',
+    firstValues(context.discovery_pricing_signals).length ? `pricing_signal=${firstValues(context.discovery_pricing_signals).join('|')}` : '',
+    firstValues(context.discovery_queries, 1).length ? `query=${firstValues(context.discovery_queries, 1).join('|')}` : '',
+    'non_binding_verify_manually',
+  ].filter(Boolean);
+
+  return {
+    discovery_signal_score: boundedScore,
+    discovery_review_hint: hintParts.join('; '),
+    discovery_review_flags: unique(flags).join('; '),
   };
 }
 
@@ -1646,9 +1752,13 @@ function conservativeSuggestion(row, evidence) {
 }
 
 function suggestionNotes(row, evidence, suggestion) {
+  const discoverySignals = discoveryReviewSignals(row);
   const notes = [
     ...suggestion.basis,
     evidence?.evidence_notes ? `evidence: ${evidence.evidence_notes}` : '',
+    discoverySignals.discovery_review_hint
+      ? `discovery hint: ${discoverySignals.discovery_review_hint}`
+      : '',
     suggestion.possible_approval_decision
       ? `if manually confirmed, use ${suggestion.possible_approval_decision} with reviewer notes`
       : '',
@@ -1662,6 +1772,7 @@ function suggestionNotes(row, evidence, suggestion) {
 function suggestionRow(row, evidenceMatch) {
   const evidence = evidenceMatch.evidence;
   const suggestion = conservativeSuggestion(row, evidence);
+  const discoverySignals = discoveryReviewSignals(row);
   return {
     batch_id: row.batch_id || evidence?.batch_id || '',
     batch_order: row.batch_order || evidence?.batch_order || '',
@@ -1700,6 +1811,7 @@ function suggestionRow(row, evidenceMatch) {
     fetch_error: evidence?.fetch_error || '',
     checked_at: evidence?.checked_at || '',
     ...discoveryContextForOutput(row),
+    ...discoverySignals,
   };
 }
 
@@ -2420,6 +2532,7 @@ function reviewQueuePriority(row) {
   const url = rowImportUrl(row).toLowerCase();
   const sourceFiles = String(row.source_files || '').toLowerCase();
   const occurrenceCount = numericValue(row.occurrence_count, 1);
+  const discoverySignals = discoveryReviewSignals(row);
 
   if (isRejectedDecision(decision) || recommendation === 'skip_source_page' || recommendation === 'skip_placeholder_url') {
     return {
@@ -2446,6 +2559,7 @@ function reviewQueuePriority(row) {
   if (/submit|submission|add[-_/]?(tool|product|site|startup|app)|products\/new|submissions\/new|vendors\/new|claim|showcase/.test(url)) score += 50;
   if (/coverage|directory-submissions|notion|91wink/.test(sourceFiles)) score += 10;
   score += Math.min(occurrenceCount, 10);
+  score += discoverySignals.discovery_signal_score;
 
   if (classification === 'domain_in_registry_only') {
     score += 100;
@@ -2497,6 +2611,7 @@ export function buildCoverageReviewQueue(reviewPath, opts = {}) {
   const queue = rows
     .map((row, index) => {
       const priority = reviewQueuePriority(row);
+      const discoverySignals = discoveryReviewSignals(row);
       return {
         ...row,
         review_row: index + 2,
@@ -2504,6 +2619,7 @@ export function buildCoverageReviewQueue(reviewPath, opts = {}) {
         priority_score: priority.score,
         review_action: priority.action,
         review_decision_options: priority.decision_options,
+        ...discoverySignals,
       };
     })
     .filter(row => includeSkipped || row.priority !== 'P9')
@@ -3084,6 +3200,7 @@ function manualReviewRowsFromQueue(queueRows, history) {
     const evidence = history.evidenceByKey.get(key) || null;
     const suggestion = history.suggestionByKey.get(key) || null;
     const blocked = activeSafetyGateBlock(queueRow, history.blockedByKey.get(key) || null);
+    const discoverySignals = discoveryReviewSignals(queueRow);
 
     return {
       manual_rank: String(index + 1),
@@ -3138,6 +3255,7 @@ function manualReviewRowsFromQueue(queueRows, history) {
       safety_gate_report: blocked?.source_draft_report_file || '',
       checked_at: suggestion?.checked_at || evidence?.checked_at || '',
       ...discoveryContextForOutput(queueRow),
+      ...discoverySignals,
     };
   });
 }
