@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Mobyform logo</title>
+  <desc id="desc">Gradient lowercase M with a four-point sparkle.</desc>
+  <defs>
+    <linearGradient id="mobyform-mark" x1="36" y1="407" x2="502" y2="36" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#6272ff" />
+      <stop offset="0.5" stop-color="#b58cff" />
+      <stop offset="1" stop-color="#f0a6e7" />
+    </linearGradient>
+    <filter id="soft-shadow" x="-8%" y="-8%" width="116%" height="116%">
+      <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#111827" flood-opacity="0.18" />
+    </filter>
+  </defs>
+  <g filter="url(#soft-shadow)">
+    <path
+      fill="url(#mobyform-mark)"
+      d="M38 157c0-13 10-23 23-23h50c13 0 23 10 23 23v15c21-27 49-41 83-41 39 0 68 18 87 53 24-35 57-53 99-53 67 0 105 45 105 123v153h-85V264c0-42-18-63-51-63-35 0-57 27-57 73v133h-85V264c0-42-17-63-51-63-35 0-56 27-56 73v133H38V157Z"
+    />
+    <path
+      fill="url(#mobyform-mark)"
+      d="M448 24c10 44 36 70 64 80-28 10-54 36-64 80-10-44-36-70-74-80 38-10 64-36 74-80Z"
+    />
+  </g>
+</svg>

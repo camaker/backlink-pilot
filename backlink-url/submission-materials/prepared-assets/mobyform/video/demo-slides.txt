@@ -1,0 +1,13 @@
+file 'D:/workspace/backlink-pilot/backlink-url/submission-materials/prepared-assets/mobyform/screenshots/features-1920x1080.png'
+duration 10
+file 'D:/workspace/backlink-pilot/backlink-url/submission-materials/prepared-assets/mobyform/screenshots/homepage-1920x1080.png'
+duration 10
+file 'D:/workspace/backlink-pilot/backlink-url/submission-materials/prepared-assets/mobyform/screenshots/online-exam-1920x1080.png'
+duration 10
+file 'D:/workspace/backlink-pilot/backlink-url/submission-materials/prepared-assets/mobyform/screenshots/pricing-1920x1080.png'
+duration 10
+file 'D:/workspace/backlink-pilot/backlink-url/submission-materials/prepared-assets/mobyform/screenshots/survey-solution-1920x1080.png'
+duration 10
+file 'D:/workspace/backlink-pilot/backlink-url/submission-materials/prepared-assets/mobyform/screenshots/typeform-alternative-1920x1080.png'
+duration 10
+file 'D:/workspace/backlink-pilot/backlink-url/submission-materials/prepared-assets/mobyform/screenshots/typeform-alternative-1920x1080.png'

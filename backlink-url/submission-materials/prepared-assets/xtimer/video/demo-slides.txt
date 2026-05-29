@@ -1,0 +1,13 @@
+file 'D:/workspace/backlink-pilot/backlink-url/submission-materials/prepared-assets/xtimer/screenshots/docs-1920x1080.png'
+duration 10
+file 'D:/workspace/backlink-pilot/backlink-url/submission-materials/prepared-assets/xtimer/screenshots/event-organizers-1920x1080.png'
+duration 10
+file 'D:/workspace/backlink-pilot/backlink-url/submission-materials/prepared-assets/xtimer/screenshots/homepage-1920x1080.png'
+duration 10
+file 'D:/workspace/backlink-pilot/backlink-url/submission-materials/prepared-assets/xtimer/screenshots/pricing-section-1920x1080.png'
+duration 10
+file 'D:/workspace/backlink-pilot/backlink-url/submission-materials/prepared-assets/xtimer/screenshots/speakers-1920x1080.png'
+duration 10
+file 'D:/workspace/backlink-pilot/backlink-url/submission-materials/prepared-assets/xtimer/screenshots/templates-presentation-1920x1080.png'
+duration 10
+file 'D:/workspace/backlink-pilot/backlink-url/submission-materials/prepared-assets/xtimer/screenshots/templates-presentation-1920x1080.png'

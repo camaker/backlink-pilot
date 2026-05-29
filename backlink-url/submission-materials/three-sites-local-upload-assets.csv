@@ -1,0 +1,24 @@
+product,asset_type,local_path,source,use_for,notes
+VisioArt,logo_svg,backlink-url/submission-materials/prepared-assets/visioart/brand/logo.svg,source_project,logo_upload,Official source-project file copied from D:\ai-maker\ai-maker\public.
+VisioArt,logo_png,backlink-url/submission-materials/prepared-assets/visioart/brand/logo.png,source_project,logo_upload,Official source-project file copied from D:\ai-maker\ai-maker\public.
+VisioArt,og_image,backlink-url/submission-materials/prepared-assets/visioart/brand/og.png,source_project,cover_or_og_upload,Official source-project file copied from D:\ai-maker\ai-maker\public.
+VisioArt,apple_touch_icon,backlink-url/submission-materials/prepared-assets/visioart/brand/apple-touch-icon.png,source_project,square_icon_upload,Official source-project file copied from D:\ai-maker\ai-maker\public.
+VisioArt,source_marketing_video,backlink-url/submission-materials/prepared-assets/visioart/brand/hero-bg-wheat-walk.mp4,source_project,video_upload,Existing public source video copied from D:\ai-maker\ai-maker\public\videos.
+VisioArt,demo_video_draft,backlink-url/submission-materials/prepared-assets/visioart/video/visioart-directory-demo-draft.mp4,generated_from_public_screenshots,video_upload,Screenshot-based draft without audio; acceptable for simple directory previews only.
+VisioArt,screenshots_dir,backlink-url/submission-materials/prepared-assets/visioart/screenshots,generated_from_public_pages,screenshot_uploads,Contains 6 public 1920x1080 screenshots.
+Mobyform,logo_svg,backlink-url/submission-materials/prepared-assets/mobyform/brand/logo.svg,source_project,logo_upload,Official source-project file copied from D:\form\tduck-x-web\public.
+Mobyform,logo_png,backlink-url/submission-materials/prepared-assets/mobyform/brand/logo.png,source_project,logo_upload,Official source-project file copied from D:\form\tduck-x-web\public.
+Mobyform,og_image,backlink-url/submission-materials/prepared-assets/mobyform/brand/og.png,source_project,cover_or_og_upload,Official source-project file copied from D:\form\tduck-x-web\public.
+Mobyform,apple_touch_icon,backlink-url/submission-materials/prepared-assets/mobyform/brand/apple-touch-icon.png,source_project,square_icon_upload,Official source-project file copied from D:\form\tduck-x-web\public.
+Mobyform,product_image,backlink-url/submission-materials/prepared-assets/mobyform/brand/mobyform.png,source_project,screenshot_or_product_image_upload,Official source-project file copied from D:\form\tduck-x-web\public.
+Mobyform,demo_video_draft,backlink-url/submission-materials/prepared-assets/mobyform/video/mobyform-directory-demo-draft.mp4,generated_from_public_screenshots,video_upload,Screenshot-based draft without audio; replace with narrated walkthrough for top-tier launches.
+Mobyform,screenshots_dir,backlink-url/submission-materials/prepared-assets/mobyform/screenshots,generated_from_public_pages,screenshot_uploads,Contains 6 public 1920x1080 screenshots.
+XTimer,downloaded_og_image,backlink-url/submission-materials/prepared-assets/xtimer/downloaded/og-image.webp,live_public_site,cover_or_og_upload,Downloaded from https://xtimer.app/images/og-image.webp.
+XTimer,downloaded_icon,backlink-url/submission-materials/prepared-assets/xtimer/downloaded/icon.png,live_public_site,square_icon_upload,Downloaded from public XTimer icon URL.
+XTimer,downloaded_favicon,backlink-url/submission-materials/prepared-assets/xtimer/downloaded/favicon.ico,live_public_site,favicon_upload,Downloaded from public XTimer favicon URL.
+XTimer,hero_light,backlink-url/submission-materials/prepared-assets/xtimer/downloaded/hero-image-light.webp,live_public_site,screenshot_upload,Downloaded from public XTimer static asset.
+XTimer,hero_dark,backlink-url/submission-materials/prepared-assets/xtimer/downloaded/hero-image-dark.webp,live_public_site,screenshot_upload,Downloaded from public XTimer static asset.
+XTimer,fallback_logo_svg,backlink-url/submission-materials/prepared-assets/xtimer/xtimer-fallback-logo.svg,generated_fallback,logo_upload,Generated fallback only; replace with official SVG if available.
+XTimer,fallback_logo_png,backlink-url/submission-materials/prepared-assets/xtimer/brand/xtimer-fallback-logo-1024.png,generated_fallback,logo_upload,Generated fallback only; replace with official logo if available.
+XTimer,demo_video_draft,backlink-url/submission-materials/prepared-assets/xtimer/video/xtimer-directory-demo-draft.mp4,generated_from_public_screenshots,video_upload,Screenshot-based draft without audio; replace with narrated walkthrough for top-tier launches.
+XTimer,screenshots_dir,backlink-url/submission-materials/prepared-assets/xtimer/screenshots,generated_from_public_pages,screenshot_uploads,Contains 6 public 1920x1080 screenshots.

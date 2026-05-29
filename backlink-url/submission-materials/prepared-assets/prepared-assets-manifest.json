@@ -1,0 +1,317 @@
+[
+  {
+    "product": "Mobyform",
+    "kind": "brand",
+    "path": "backlink-url/submission-materials/prepared-assets/mobyform/brand/apple-touch-icon.png",
+    "bytes": 19034,
+    "sha256": "a5f27707a57c2bf589a134e51e783238b2d6ba23e226c8cb96a0539e27e17a02"
+  },
+  {
+    "product": "Mobyform",
+    "kind": "brand",
+    "path": "backlink-url/submission-materials/prepared-assets/mobyform/brand/logo.png",
+    "bytes": 109234,
+    "sha256": "2b68840bbc96711ccddfdc32941cff3128d1c650ee20a0ab4f45cd3acb9d9225"
+  },
+  {
+    "product": "Mobyform",
+    "kind": "brand",
+    "path": "backlink-url/submission-materials/prepared-assets/mobyform/brand/logo.svg",
+    "bytes": 1166,
+    "sha256": "a484163f8d8930f2b4c3aa3874343ad75fce45b0630e6a3cdd79ba45c5f4c207"
+  },
+  {
+    "product": "Mobyform",
+    "kind": "brand",
+    "path": "backlink-url/submission-materials/prepared-assets/mobyform/brand/mobyform.png",
+    "bytes": 109234,
+    "sha256": "2b68840bbc96711ccddfdc32941cff3128d1c650ee20a0ab4f45cd3acb9d9225"
+  },
+  {
+    "product": "Mobyform",
+    "kind": "brand",
+    "path": "backlink-url/submission-materials/prepared-assets/mobyform/brand/og.png",
+    "bytes": 117092,
+    "sha256": "55519050bf342a57a23ef8046dd778a0ce069c0363cfc6d9972d3cd2cd1192a6"
+  },
+  {
+    "product": "Mobyform",
+    "kind": "screenshot",
+    "path": "backlink-url/submission-materials/prepared-assets/mobyform/screenshots/features-1920x1080.png",
+    "bytes": 138260,
+    "sha256": "e1a1ffc88abf250996390f57500e6f56ab443ed9ba7167ab262736d50c9efcb2"
+  },
+  {
+    "product": "Mobyform",
+    "kind": "screenshot",
+    "path": "backlink-url/submission-materials/prepared-assets/mobyform/screenshots/homepage-1920x1080.png",
+    "bytes": 485725,
+    "sha256": "2298ef4b7ce4db367fa8d2743a098c067ed43afd0df6eef1bd252902151718a8"
+  },
+  {
+    "product": "Mobyform",
+    "kind": "screenshot",
+    "path": "backlink-url/submission-materials/prepared-assets/mobyform/screenshots/online-exam-1920x1080.png",
+    "bytes": 114375,
+    "sha256": "e9482974b0b9d1ed54b39d14cb67fc1eff16111d7f784b366c23665c9a3fa531"
+  },
+  {
+    "product": "Mobyform",
+    "kind": "screenshot",
+    "path": "backlink-url/submission-materials/prepared-assets/mobyform/screenshots/pricing-1920x1080.png",
+    "bytes": 169208,
+    "sha256": "7f8ea0cbd272e39d92175ada8c364a85efd077b019cbbb7f12c8496211e6be6b"
+  },
+  {
+    "product": "Mobyform",
+    "kind": "screenshot",
+    "path": "backlink-url/submission-materials/prepared-assets/mobyform/screenshots/survey-solution-1920x1080.png",
+    "bytes": 120751,
+    "sha256": "037a30392bb6004d49037a50fae7cb5053435dae4340eb0a30caf02c33f908a9"
+  },
+  {
+    "product": "Mobyform",
+    "kind": "screenshot",
+    "path": "backlink-url/submission-materials/prepared-assets/mobyform/screenshots/typeform-alternative-1920x1080.png",
+    "bytes": 204557,
+    "sha256": "6a1a1d061f369dcebb6156c4a628ebdfefa4e91237dab873d5ec759e9d205228"
+  },
+  {
+    "product": "Mobyform",
+    "kind": "video",
+    "path": "backlink-url/submission-materials/prepared-assets/mobyform/video/demo-slides.txt",
+    "bytes": 1008,
+    "sha256": "973f0262512ae2c22dfb95f597f2201f51ecd27bc26a6da7661a7023538185b4"
+  },
+  {
+    "product": "Mobyform",
+    "kind": "video",
+    "path": "backlink-url/submission-materials/prepared-assets/mobyform/video/mobyform-directory-demo-draft.mp4",
+    "bytes": 1530789,
+    "sha256": "fb0f317d55d9a041c88a2bc6c2fb17e2ec3e04af7659afdffaab64cefa965672"
+  },
+  {
+    "product": "All",
+    "kind": "manifest",
+    "path": "backlink-url/submission-materials/prepared-assets/prepared-assets-manifest.csv",
+    "bytes": 7546,
+    "sha256": "154a2b844098a87a70f32b022f438677de8c4b62eb889ee39ce804698499b29b"
+  },
+  {
+    "product": "All",
+    "kind": "manifest",
+    "path": "backlink-url/submission-materials/prepared-assets/prepared-assets-manifest.json",
+    "bytes": 11172,
+    "sha256": "51cdc898cf0cf383b3808913e8153e58cdfba7937c7e777216a4639f4db29bcc"
+  },
+  {
+    "product": "All",
+    "kind": "asset",
+    "path": "backlink-url/submission-materials/prepared-assets/README.md",
+    "bytes": 4749,
+    "sha256": "96c3efeba2a6a54747b3fc9417364b004e8505a533590e8a244809f8fdce82ac"
+  },
+  {
+    "product": "All",
+    "kind": "manifest",
+    "path": "backlink-url/submission-materials/prepared-assets/screenshot-manifest.json",
+    "bytes": 6786,
+    "sha256": "2dbd624bda12dce9857c55e1d97c2f6d12e856b6ff7a6f2484f979a3e54a1f75"
+  },
+  {
+    "product": "VisioArt",
+    "kind": "brand",
+    "path": "backlink-url/submission-materials/prepared-assets/visioart/brand/apple-touch-icon.png",
+    "bytes": 15124,
+    "sha256": "ea1b70141574d7ceb75e4ac5d0e4ef43d883e1ddd733e6d3dbf8c760fa3add21"
+  },
+  {
+    "product": "VisioArt",
+    "kind": "brand",
+    "path": "backlink-url/submission-materials/prepared-assets/visioart/brand/hero-bg-wheat-walk.mp4",
+    "bytes": 1145882,
+    "sha256": "82f4acc3cdc43c27e2346d96534263b95f93ed1a665125b474a0a3e502cedeaa"
+  },
+  {
+    "product": "VisioArt",
+    "kind": "brand",
+    "path": "backlink-url/submission-materials/prepared-assets/visioart/brand/logo.png",
+    "bytes": 535817,
+    "sha256": "52b8ff6bebab626bbfe63b5bbda82e4105363fbde5f47d6c1c65bd1520a10f2a"
+  },
+  {
+    "product": "VisioArt",
+    "kind": "brand",
+    "path": "backlink-url/submission-materials/prepared-assets/visioart/brand/logo.svg",
+    "bytes": 171245,
+    "sha256": "ec2bfff97e58149494e9349d68c738242992a428894ad16e2d15baa2cdbbd9dc"
+  },
+  {
+    "product": "VisioArt",
+    "kind": "brand",
+    "path": "backlink-url/submission-materials/prepared-assets/visioart/brand/og.png",
+    "bytes": 138037,
+    "sha256": "422b8128e21cbc47edf3865500b49a09246f97e04bf524344e593ea6490685cf"
+  },
+  {
+    "product": "VisioArt",
+    "kind": "screenshot",
+    "path": "backlink-url/submission-materials/prepared-assets/visioart/screenshots/homepage-1920x1080.png",
+    "bytes": 1213042,
+    "sha256": "2ecb18f383f80e99e0aa5578012b893e04fabc68fa76726e38730e318701e60b"
+  },
+  {
+    "product": "VisioArt",
+    "kind": "screenshot",
+    "path": "backlink-url/submission-materials/prepared-assets/visioart/screenshots/marketing-videos-1920x1080.png",
+    "bytes": 488460,
+    "sha256": "924d53e736d0ea1ce14c6fbeb75b9dd0653461741e7d152c555e4206a024c1eb"
+  },
+  {
+    "product": "VisioArt",
+    "kind": "screenshot",
+    "path": "backlink-url/submission-materials/prepared-assets/visioart/screenshots/pricing-1920x1080.png",
+    "bytes": 367597,
+    "sha256": "f288c65b07ce15df02c0c3a22e11660c49d533540c354d57a45c5733a7e0a1fa"
+  },
+  {
+    "product": "VisioArt",
+    "kind": "screenshot",
+    "path": "backlink-url/submission-materials/prepared-assets/visioart/screenshots/runway-alternative-1920x1080.png",
+    "bytes": 568326,
+    "sha256": "d9896363ad7b63b3a1b267502bff9b5c777c1da21b89e97413b0adc8a6c8b077"
+  },
+  {
+    "product": "VisioArt",
+    "kind": "screenshot",
+    "path": "backlink-url/submission-materials/prepared-assets/visioart/screenshots/studio-guide-1920x1080.png",
+    "bytes": 860748,
+    "sha256": "308a519bcb6d6bfea137d2019306eba1f28f5a992a9bec8402760c8fbdbef38c"
+  },
+  {
+    "product": "VisioArt",
+    "kind": "screenshot",
+    "path": "backlink-url/submission-materials/prepared-assets/visioart/screenshots/templates-1920x1080.png",
+    "bytes": 718922,
+    "sha256": "9125d6692df46fba277785153e19096c27c9f4c4c7d28f09eecf88a0411b04f1"
+  },
+  {
+    "product": "VisioArt",
+    "kind": "video",
+    "path": "backlink-url/submission-materials/prepared-assets/visioart/video/demo-slides.txt",
+    "bytes": 998,
+    "sha256": "de91f822f554940f8cf65b99f8a6929db9d796ae0b30d4063847d8d494f9f714"
+  },
+  {
+    "product": "VisioArt",
+    "kind": "video",
+    "path": "backlink-url/submission-materials/prepared-assets/visioart/video/visioart-directory-demo-draft.mp4",
+    "bytes": 2081656,
+    "sha256": "310caf6ecc58b5d86eb4a182d0ac7a62fd72438211149bf7a2fe93f8d7bbbfd0"
+  },
+  {
+    "product": "XTimer",
+    "kind": "brand",
+    "path": "backlink-url/submission-materials/prepared-assets/xtimer/brand/xtimer-fallback-logo-1024.png",
+    "bytes": 541673,
+    "sha256": "d6a3141e10e6cac2cf79a02b20de5b6a2378080c7ed95a512d003875503da601"
+  },
+  {
+    "product": "XTimer",
+    "kind": "downloaded_public_asset",
+    "path": "backlink-url/submission-materials/prepared-assets/xtimer/downloaded/favicon.ico",
+    "bytes": 10432,
+    "sha256": "9eab6901fb96b18fdfeb5d40f74d96eecc96e0b6fa1d81d7b6d9b6bd3163ec9b"
+  },
+  {
+    "product": "XTimer",
+    "kind": "downloaded_public_asset",
+    "path": "backlink-url/submission-materials/prepared-assets/xtimer/downloaded/hero-image-dark.webp",
+    "bytes": 32356,
+    "sha256": "aa8ab1180182ebb7e908c45b03d613ef45882d61638e16eb3db4fb2a0dfc2c50"
+  },
+  {
+    "product": "XTimer",
+    "kind": "downloaded_public_asset",
+    "path": "backlink-url/submission-materials/prepared-assets/xtimer/downloaded/hero-image-light.webp",
+    "bytes": 30840,
+    "sha256": "1031f90b8931b101ac0c2433621b1af0f0a9934633155893a6789aabbc3648d8"
+  },
+  {
+    "product": "XTimer",
+    "kind": "downloaded_public_asset",
+    "path": "backlink-url/submission-materials/prepared-assets/xtimer/downloaded/icon.png",
+    "bytes": 11378,
+    "sha256": "d313e8a9ee009ce25863ce365815facad950b8279ada0a9aeaee3a8363510bee"
+  },
+  {
+    "product": "XTimer",
+    "kind": "downloaded_public_asset",
+    "path": "backlink-url/submission-materials/prepared-assets/xtimer/downloaded/og-image.webp",
+    "bytes": 29746,
+    "sha256": "388ea13a59e323600b590c4f48ff79f991000bc69015738370f311221c71b199"
+  },
+  {
+    "product": "XTimer",
+    "kind": "screenshot",
+    "path": "backlink-url/submission-materials/prepared-assets/xtimer/screenshots/docs-1920x1080.png",
+    "bytes": 101190,
+    "sha256": "62b180937f6de5ade3c4b402b3f462cb6eccde25e0636ed4b08b7c9f3a889064"
+  },
+  {
+    "product": "XTimer",
+    "kind": "screenshot",
+    "path": "backlink-url/submission-materials/prepared-assets/xtimer/screenshots/event-organizers-1920x1080.png",
+    "bytes": 457173,
+    "sha256": "bf5553eda8ef33d52255822d00e1c6e3e2e25105f4d3e9c202d9215e321ef0c8"
+  },
+  {
+    "product": "XTimer",
+    "kind": "screenshot",
+    "path": "backlink-url/submission-materials/prepared-assets/xtimer/screenshots/homepage-1920x1080.png",
+    "bytes": 361424,
+    "sha256": "221d37c853d0dd13d09c61a13a6d8e0cda35bd1d3b1d34dc87ab28dd626e9785"
+  },
+  {
+    "product": "XTimer",
+    "kind": "screenshot",
+    "path": "backlink-url/submission-materials/prepared-assets/xtimer/screenshots/pricing-section-1920x1080.png",
+    "bytes": 155102,
+    "sha256": "306be6a08022cb6c9dc6e3cb81e97fca9ee87a527f1f2a3dc0d72bca3b39ff7c"
+  },
+  {
+    "product": "XTimer",
+    "kind": "screenshot",
+    "path": "backlink-url/submission-materials/prepared-assets/xtimer/screenshots/speakers-1920x1080.png",
+    "bytes": 494078,
+    "sha256": "1a4f55ba6c5371f5566410a7ce331ec47a542d730a590c3a5ef71fcf5ad6d635"
+  },
+  {
+    "product": "XTimer",
+    "kind": "screenshot",
+    "path": "backlink-url/submission-materials/prepared-assets/xtimer/screenshots/templates-presentation-1920x1080.png",
+    "bytes": 140242,
+    "sha256": "da08662c2b919028898a529b56c706a9ef79c33e3fcbfc2edeac39b1481c5d92"
+  },
+  {
+    "product": "XTimer",
+    "kind": "video",
+    "path": "backlink-url/submission-materials/prepared-assets/xtimer/video/demo-slides.txt",
+    "bytes": 1000,
+    "sha256": "389658cedd97230d1507347c8bbed5524fe5020f6b9104f4c1917e5e4dcea0fa"
+  },
+  {
+    "product": "XTimer",
+    "kind": "video",
+    "path": "backlink-url/submission-materials/prepared-assets/xtimer/video/xtimer-directory-demo-draft.mp4",
+    "bytes": 1365767,
+    "sha256": "69d4029f3353711304c8174dddd47ee6f09449fa9a1c8f3ffcb0f970286440de"
+  },
+  {
+    "product": "XTimer",
+    "kind": "asset",
+    "path": "backlink-url/submission-materials/prepared-assets/xtimer/xtimer-fallback-logo.svg",
+    "bytes": 1868,
+    "sha256": "1a23c59062a86c1301af9b9cd6f0c56fbfe201d73cfb6ba412dcc54e7aec4ce2"
+  }
+]

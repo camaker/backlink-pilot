@@ -1,0 +1,13 @@
+file 'D:/workspace/backlink-pilot/backlink-url/submission-materials/prepared-assets/visioart/screenshots/homepage-1920x1080.png'
+duration 10
+file 'D:/workspace/backlink-pilot/backlink-url/submission-materials/prepared-assets/visioart/screenshots/marketing-videos-1920x1080.png'
+duration 10
+file 'D:/workspace/backlink-pilot/backlink-url/submission-materials/prepared-assets/visioart/screenshots/pricing-1920x1080.png'
+duration 10
+file 'D:/workspace/backlink-pilot/backlink-url/submission-materials/prepared-assets/visioart/screenshots/runway-alternative-1920x1080.png'
+duration 10
+file 'D:/workspace/backlink-pilot/backlink-url/submission-materials/prepared-assets/visioart/screenshots/studio-guide-1920x1080.png'
+duration 10
+file 'D:/workspace/backlink-pilot/backlink-url/submission-materials/prepared-assets/visioart/screenshots/templates-1920x1080.png'
+duration 10
+file 'D:/workspace/backlink-pilot/backlink-url/submission-materials/prepared-assets/visioart/screenshots/templates-1920x1080.png'
