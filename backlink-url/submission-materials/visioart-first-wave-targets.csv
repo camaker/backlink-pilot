@@ -1,32 +1,31 @@
 rank,product,target_id,name,domain,submit_url,mode,pricing,risk,score,reasons,notes
-1,VisioArt,ai-infinity,AI Infinity,forms.gle,https://forms.gle/Ze6pdWzmweCfKWnLA,assisted,free,unknown,15,assisted friction; free; assisted available; AI/tool fit,
-2,VisioArt,ai-mojo,AI Mojo,aimojo.io,https://aimojo.io/submit,assisted,free,unknown,15,assisted friction; free; assisted available; AI/tool fit,
-3,VisioArt,ai-tool-guru,AI Tool guru,aitoolguru.com,https://aitoolguru.com/submit-ai-tool,assisted,free,unknown,15,assisted friction; free; assisted available; AI/tool fit,
-4,VisioArt,ai-tools-arena,AI Tools Arena,aitoolsarena.com,https://aitoolsarena.com/,assisted,free,unknown,15,assisted friction; free; assisted available; AI/tool fit,
-5,VisioArt,bestofai,BestOfAI,bestofai.com,https://bestofai.com/tool/add,assisted,free,unknown,15,assisted friction; free; assisted available; AI/tool fit,
-6,VisioArt,chatgptdemo,ChatGPT demo,chatgptdemo.com,https://chatgptdemo.com/submit-new-ai-tool,assisted,free,unknown,15,assisted friction; free; assisted available; AI/tool fit,
-7,VisioArt,every-ai,Every AI,every-ai.com,https://every-ai.com/submit-tool,assisted,free,unknown,15,assisted friction; free; assisted available; AI/tool fit,
-8,VisioArt,gpt-forge,Gpt Forge,forms.gle,https://forms.gle/8h1SokDHfcPwkbaZ8,assisted,free,unknown,15,assisted friction; free; assisted available; AI/tool fit,
-9,VisioArt,nextpedia,Nextpedia,nextpedia.io,https://www.nextpedia.io/submit-tool,assisted,free,unknown,15,assisted friction; free; assisted available; AI/tool fit,
-10,VisioArt,promptzone,Promptzone,promptzone.com,https://www.promptzone.com/new,assisted,free,unknown,15,assisted friction; free; assisted available; AI/tool fit,
-11,VisioArt,tools-robingood-com,tools.robingood.com,tools.robingood.com,https://tools.robingood.com/,assisted,free,unknown,15,assisted friction; free; assisted available; AI/tool fit,
-12,VisioArt,aiagentsbase-aiagentsbase-com,AiAgentsBase,aiagentsbase.com,https://aiagentsbase.com/submit,needs_scout,free,unknown,14,free; needs scout before execution; AI/tool fit,"review_notes: Browser review 2026-05-28: visible public AI agent submission form with email, agent name, website, category, tagline, and description fields; no login, payment, or CAPTCHA observed.
-review_instruction: verify_submit_form_before_approval"
-13,VisioArt,orbic-ai,Orbic AI,orbic.ai,https://orbic.ai/login?callbackUrl=https%3A%2F%2Forbic.ai%2Fsubmit%2Ftools,assisted,free,medium,14,assisted friction; free; medium risk; assisted available; AI/tool fit,
-14,VisioArt,tool-ai,Tool AI,toolai.io,https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit,assisted,free,medium,14,assisted friction; free; medium risk; assisted available; AI/tool fit,
-15,VisioArt,ai-ailookme,AI工具箱 (ailookme),ailookme.com,https://www.ailookme.com/%e7%bd%91%e5%9d%80%e6%8f%90%e4%ba%a4,assisted,unknown,unknown,10,assisted friction; pricing unknown; assisted available; AI/tool fit,
-16,VisioArt,ai-nav,AI NAV,ainavpro.com,https://www.ainavpro.com/contribute,assisted,unknown,unknown,10,assisted friction; pricing unknown; assisted available; AI/tool fit,
-17,VisioArt,ashlist-com,https://ashlist.com,ashlist.com,https://ashlist.com/,assisted,unknown,unknown,10,assisted friction; pricing unknown; assisted available; AI/tool fit,探索我们全面的AI工具、SaaS平台和软件目录。
-18,VisioArt,foundr-ai,Foundr.ai,foundr.ai,https://foundr.ai/,assisted,unknown,unknown,10,assisted friction; pricing unknown; assisted available; AI/tool fit,
-19,VisioArt,free-ai-tool,Free AI Tool,freeaitool.ai,https://freeaitool.ai/submit,assisted,unknown,unknown,10,assisted friction; pricing unknown; assisted available; AI/tool fit,24h fast review
-20,VisioArt,gainweb-org,GainWeb.org,gainweb.org,https://gainweb.org/,assisted,unknown,unknown,10,assisted friction; pricing unknown; assisted available; AI/tool fit,
-21,VisioArt,hhlink-com,海外导航网,hhlink.com,https://www.hhlink.com/%E6%8F%90%E4%BA%A4%E6%96%B0%E7%BD%91%E7%AB%99,assisted,unknown,unknown,10,assisted friction; pricing unknown; assisted available; AI/tool fit,
-22,VisioArt,iforai,iforai,iforai.com,https://iforai.com/submit_website,assisted,unknown,unknown,10,assisted friction; pricing unknown; assisted available; AI/tool fit,
-23,VisioArt,lbbai-com,老北鼻AI导航,lbbai.com,https://lbbai.com/contribute,assisted,unknown,unknown,10,assisted friction; pricing unknown; assisted available; AI/tool fit,
-24,VisioArt,openfuture-ai,OpenFuture AI,openfuture.ai,https://openfuture.ai/zh/submit-tool,assisted,unknown,unknown,10,assisted friction; pricing unknown; assisted available; AI/tool fit,
-25,VisioArt,poweruptools-com,https://poweruptools.com,poweruptools.com,https://poweruptools.com/,assisted,unknown,unknown,10,assisted friction; pricing unknown; assisted available; AI/tool fit,Power Up Tools is all about enhancing your workflow with powerful software.
-26,VisioArt,solvertools-com,🔗 访问我们的网站,solvertools.com,https://solvertools.com/,assisted,unknown,unknown,10,assisted friction; pricing unknown; assisted available; AI/tool fit,Solver Tools is the solution hub for efficient software. Discover tools that help solve productivity challenges.
-27,VisioArt,sourcedir-com,https://sourcedir.com/,sourcedir.com,https://sourcedir.com/,assisted,unknown,unknown,10,assisted friction; pricing unknown; assisted available; AI/tool fit,体验专为专业人士精心挑选的高端 AI 工具
-28,VisioArt,theapptools-com,https://theapptools.com/,theapptools.com,https://theapptools.com/,assisted,unknown,unknown,10,assisted friction; pricing unknown; assisted available; AI/tool fit,App Tools 目录汇集了提升工作效率的软件工具。
-29,VisioArt,thecoretools-com,https://thecoretools.com,thecoretools.com,https://thecoretools.com/,assisted,unknown,unknown,10,assisted friction; pricing unknown; assisted available; AI/tool fit,The Core Tools 专注于核心生产力软件。探索能提升你日常任务效率的关键解决方案。
-30,VisioArt,tinytoolhub-com,https://tinytoolhub.com,tinytoolhub.com,https://tinytoolhub.com/,assisted,unknown,unknown,10,assisted friction; pricing unknown; assisted available; AI/tool fit,Tiny Tool Hub 提供了一套紧凑高效的软件合集。发现这些小巧却强大的工具，提升你的工作效率。
+1,VisioArt,ai-tools-arena,AI Tools Arena,aitoolsarena.com,https://aitoolsarena.com/,assisted,free,unknown,65,assisted available; confirmed free; unknown risk; scouted; form evidence; no captcha signal; auth friction; VisioArt fit,
+2,VisioArt,chatgptdemo,ChatGPT demo,chatgptdemo.com,https://chatgptdemo.com/submit-new-ai-tool,assisted,free,unknown,65,assisted available; confirmed free; unknown risk; scouted; form evidence; no captcha signal; auth friction; VisioArt fit,
+3,VisioArt,nextpedia,Nextpedia,nextpedia.io,https://www.nextpedia.io/submit-tool,assisted,free,unknown,61,assisted available; confirmed free; unknown risk; scouted; form evidence; no captcha signal; auth friction; VisioArt fit,
+4,VisioArt,ai-tool-guru,AI Tool guru,aitoolguru.com,https://aitoolguru.com/submit-ai-tool,assisted,free,unknown,57,assisted available; confirmed free; unknown risk; scouted; no captcha signal; auth friction; VisioArt fit,
+5,VisioArt,bestofai,BestOfAI,bestofai.com,https://bestofai.com/tool/add,assisted,free,unknown,57,assisted available; confirmed free; unknown risk; scouted; no captcha signal; auth friction; VisioArt fit,
+6,VisioArt,beta-list,Beta List,betalist.com,https://betalist.com/submissions/new,assisted,free,unknown,57,assisted available; confirmed free; unknown risk; scouted; form evidence; no captcha signal; auth friction,
+7,VisioArt,mergeek,Mergeek,mergeek.com,https://mergeek.com/publish_project,assisted,free,unknown,57,assisted available; confirmed free; unknown risk; scouted; form evidence; no captcha signal; auth friction,
+8,VisioArt,promptzone,Promptzone,promptzone.com,https://www.promptzone.com/new,assisted,free,unknown,57,assisted available; confirmed free; unknown risk; scouted; form evidence; no captcha signal; auth friction,
+9,VisioArt,resource-fyi,Resource fyi,resource.fyi,https://resource.fyi/account/submit,assisted,free,unknown,57,assisted available; confirmed free; unknown risk; scouted; form evidence; no captcha signal; auth friction,
+10,VisioArt,sitelike,Sitelike,sitelike.org,https://www.sitelike.org/add-site,assisted,free,unknown,57,assisted available; confirmed free; unknown risk; scouted; form evidence; no captcha signal; auth friction,
+11,VisioArt,startup-collections,Startup Collections,startupcollections.com,https://startupcollections.com/submit-product,assisted,free,unknown,57,assisted available; confirmed free; unknown risk; scouted; form evidence; no captcha signal; auth friction,
+12,VisioArt,the-hack-stack,The Hack Stack,thehackstack.com,https://thehackstack.com/,assisted,free,unknown,57,assisted available; confirmed free; unknown risk; scouted; form evidence; no captcha signal; auth friction,
+13,VisioArt,tools-robingood-com,tools.robingood.com,tools.robingood.com,https://tools.robingood.com/,assisted,free,unknown,53,assisted available; confirmed free; unknown risk; scouted; no captcha signal; auth friction; VisioArt fit,
+14,VisioArt,alternative-me,Alternative,alternative.me,https://alternative.me/how-to/submit-software,assisted,free,unknown,49,assisted available; confirmed free; unknown risk; scouted; no captcha signal; auth friction,
+15,VisioArt,f6s,F6S,f6s.com,https://www.f6s.com/,assisted,free,unknown,49,assisted available; confirmed free; unknown risk; scouted; no captcha signal; auth friction,
+16,VisioArt,favird,Favird,favird.com,https://favird.com/,assisted,free,unknown,49,assisted available; confirmed free; unknown risk; scouted; no captcha signal; auth friction,
+17,VisioArt,startuptracker,StartupTracker,startuptracker.io,https://startuptracker.io/crowdsourcing,assisted,free,unknown,49,assisted available; confirmed free; unknown risk; scouted; no captcha signal; auth friction,
+18,VisioArt,ai-infinity,AI Infinity,forms.gle,https://forms.gle/Ze6pdWzmweCfKWnLA,assisted,free,unknown,47,assisted available; confirmed free; unknown risk; scouted; no captcha signal; auth friction; third-party form; VisioArt fit,
+19,VisioArt,every-ai,Every AI,every-ai.com,https://every-ai.com/submit-tool,assisted,free,unknown,45,assisted available; confirmed free; unknown risk; scouted; no auth signal; captcha friction; VisioArt fit,
+20,VisioArt,sonic-run,Sonic Run,sonicrun.com,https://www.sonicrun.com/freelisting.html,assisted,free,unknown,45,assisted available; confirmed free; unknown risk; scouted; form evidence; no auth signal; captcha friction,
+21,VisioArt,gpt-forge,Gpt Forge,forms.gle,https://forms.gle/8h1SokDHfcPwkbaZ8,assisted,free,unknown,43,assisted available; confirmed free; unknown risk; scouted; no captcha signal; auth friction; third-party form,
+22,VisioArt,orbic-ai,Orbic AI,orbic.ai,https://orbic.ai/login?callbackUrl=https%3A%2F%2Forbic.ai%2Fsubmit%2Ftools,assisted,free,medium,43,assisted available; confirmed free; VisioArt fit,
+23,VisioArt,tool-ai,Tool AI,toolai.io,https://toolai.io/Login?ReturnUrl=%2Fen%2Fsubmit,assisted,free,medium,43,assisted available; confirmed free; VisioArt fit,
+24,VisioArt,crunchbase,Crunchbase,crunchbase.com,https://www.crunchbase.com/add-new,assisted,free,unknown,37,assisted available; confirmed free; unknown risk; scouted; no auth signal; captcha friction,
+25,VisioArt,startup-buffer,Startup Buffer,startupbuffer.com,https://startupbuffer.com/site/submit,assisted,free,unknown,37,assisted available; confirmed free; unknown risk; scouted; no auth signal; captcha friction,
+26,VisioArt,startup-ranking,Startup Ranking,startupranking.com,https://www.startupranking.com/startup/create/url-validation,assisted,free,unknown,37,assisted available; confirmed free; unknown risk; scouted; no auth signal; captcha friction,
+27,VisioArt,submission-web-directory-submissionwebdirectory-com-submit-php,Submission Web Directory,submissionwebdirectory.com,https://www.submissionwebdirectory.com/submit.php,assisted,free,unknown,37,assisted available; confirmed free; unknown risk; scouted; no auth signal; captcha friction,
+28,VisioArt,ai-mojo,AI Mojo,aimojo.io,https://aimojo.io/submit,assisted,free,unknown,35,assisted available; confirmed free; unknown risk; scouted; form evidence; auth friction; captcha friction; VisioArt fit,
+29,VisioArt,promoteproject,PromoteProject,promoteproject.com,https://www.promoteproject.com/login,assisted,free,medium,35,assisted available; confirmed free,
+30,VisioArt,aiagentsbase-aiagentsbase-com,AiAgentsBase,aiagentsbase.com,https://aiagentsbase.com/submit,needs_scout,free,unknown,34,needs scout; confirmed free; unknown risk; VisioArt fit,
