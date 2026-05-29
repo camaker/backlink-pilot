@@ -25,6 +25,7 @@ product:
   discord_url: "https://discord.gg/9SnAHhfT"
   docs_url: "https://xtimer.app/docs/en"
   contact_url: "https://xtimer.app/en/contact"
+  source_project: "D:\\ai-maker\\ai-maker"
   features:
     - "Remote timer control"
     - "Fullscreen responsive timer display"

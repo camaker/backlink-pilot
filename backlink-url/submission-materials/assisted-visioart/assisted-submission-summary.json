@@ -1,0 +1,67 @@
+{
+  "generated_at": "2026-05-29T13:17:59.359Z",
+  "policy": "manual_assisted_pack_only_no_registry_changes_no_real_submissions",
+  "total_rows": 101,
+  "excluded_rows": 0,
+  "product_context_present": false,
+  "product_context_paths": [
+    {
+      "path": ".agents/product-marketing.md",
+      "exists": false
+    },
+    {
+      "path": ".claude/product-marketing.md",
+      "exists": false
+    },
+    {
+      "path": "product-marketing-context.md",
+      "exists": false
+    }
+  ],
+  "by_priority": {
+    "P0": 64,
+    "P1": 31,
+    "P2": 5,
+    "P3": 1
+  },
+  "by_mode": {
+    "assisted": 100,
+    "needs_scout": 1
+  },
+  "by_status": {
+    "auth_required": 63,
+    "captcha_required": 14,
+    "asset_upload_required": 1,
+    "new": 23
+  },
+  "by_manual_bucket": {
+    "manual_login_then_rescout": 69,
+    "manual_submit_only_captcha": 15,
+    "form_mapping_or_dynamic_form_review": 1,
+    "manual_surface_review": 16
+  },
+  "by_automation_after_human": {
+    "rescout_after_saved_login_profile": 69,
+    "no_captcha_manual_only": 15,
+    "no_unmapped_required_fields": 1,
+    "no_manual_surface_review_required_first": 16
+  },
+  "by_exclusion_reason": {},
+  "next_rows": 30,
+  "offset": 0,
+  "limit": 30,
+  "files": {
+    "full_csv": "backlink-url/submission-materials/assisted-visioart/assisted-submission-pack.csv",
+    "next_csv": "backlink-url/submission-materials/assisted-visioart/next-30-assisted-submission-pack.csv",
+    "summary_json": "backlink-url/submission-materials/assisted-visioart/assisted-submission-summary.json",
+    "summary_md": "backlink-url/submission-materials/assisted-visioart/assisted-submission-summary.md",
+    "auth_login_rescout_csv": "backlink-url/submission-materials/assisted-visioart/auth-login-rescout-queue.csv",
+    "manual_surface_review_csv": "backlink-url/submission-materials/assisted-visioart/manual-surface-review.csv",
+    "manual_review_first_csv": "backlink-url/submission-materials/assisted-visioart/manual-review-first.csv",
+    "cross_domain_final_url_csv": "backlink-url/submission-materials/assisted-visioart/cross-domain-final-url-review.csv",
+    "cross_domain_final_url_suggestions_csv": "backlink-url/submission-materials/assisted-visioart/cross-domain-final-url-suggestions.csv",
+    "cross_domain_final_url_suggestions_md": "backlink-url/submission-materials/assisted-visioart/cross-domain-final-url-suggestions.md",
+    "cross_domain_final_url_decisions_csv": "backlink-url/submission-materials/assisted-visioart/cross-domain-final-url-decisions.csv",
+    "cross_domain_final_url_decisions_md": "backlink-url/submission-materials/assisted-visioart/cross-domain-final-url-decisions.md"
+  }
+}

@@ -1,0 +1,344 @@
+
+# moby
+## features
+https://mobyform.com/en/features
+https://mobyform.com/zh/features
+https://mobyform.com/ja/features
+https://mobyform.com/ko/features
+https://mobyform.com/de/features
+https://mobyform.com/es/features
+https://mobyform.com/fr/features
+https://mobyform.com/it/features
+https://mobyform.com/pt/features
+https://mobyform.com/ru/features
+https://mobyform.com/en/features/form-components
+https://mobyform.com/zh/features/form-components
+https://mobyform.com/ja/features/form-components
+https://mobyform.com/ko/features/form-components
+https://mobyform.com/de/features/form-components
+https://mobyform.com/es/features/form-components
+https://mobyform.com/fr/features/form-components
+https://mobyform.com/it/features/form-components
+https://mobyform.com/pt/features/form-components
+https://mobyform.com/ru/features/form-components
+## solutions
+https://mobyform.com/en/solutions/survey
+https://mobyform.com/zh/solutions/survey
+https://mobyform.com/ja/solutions/survey
+https://mobyform.com/ko/solutions/survey
+https://mobyform.com/de/solutions/survey
+https://mobyform.com/es/solutions/survey
+https://mobyform.com/fr/solutions/survey
+https://mobyform.com/it/solutions/survey
+https://mobyform.com/pt/solutions/survey
+https://mobyform.com/ru/solutions/survey
+https://mobyform.com/en/solutions/online-exam
+https://mobyform.com/zh/solutions/online-exam
+https://mobyform.com/ja/solutions/online-exam
+https://mobyform.com/ko/solutions/online-exam
+https://mobyform.com/de/solutions/online-exam
+https://mobyform.com/es/solutions/online-exam
+https://mobyform.com/fr/solutions/online-exam
+https://mobyform.com/it/solutions/online-exam
+https://mobyform.com/pt/solutions/online-exam
+https://mobyform.com/ru/solutions/online-exam
+## templates
+https://mobyform.com/en/docs/templates
+https://mobyform.com/zh/docs/templates
+## alternatives
+https://mobyform.com/en/alternatives
+https://mobyform.com/zh/alternatives
+https://mobyform.com/en/alternatives/google-forms
+https://mobyform.com/zh/alternatives/google-forms
+https://mobyform.com/en/alternatives/typeform
+https://mobyform.com/zh/alternatives/typeform
+https://mobyform.com/en/alternatives/jotform
+https://mobyform.com/zh/alternatives/jotform
+## integrations
+https://mobyform.com/en/docs/integrations
+https://mobyform.com/zh/docs/integrations
+## blog
+https://mobyform.com/en/blog
+https://mobyform.com/zh/blog
+https://mobyform.com/en/blog/page/2
+https://mobyform.com/zh/blog/page/2
+https://mobyform.com/en/blog/category/news
+https://mobyform.com/en/blog/category/product
+https://mobyform.com/zh/blog/category/news
+https://mobyform.com/zh/blog/category/product
+https://mobyform.com/en/blog/ai-form-generation
+https://mobyform.com/en/blog/data-collection-tips
+https://mobyform.com/en/blog/form-builder-comparison
+https://mobyform.com/en/blog/gdpr-compliance
+https://mobyform.com/en/blog/getting-started
+https://mobyform.com/en/blog/online-exam-guide
+https://mobyform.com/en/blog/team-collaboration
+https://mobyform.com/zh/blog/ai-form-generation
+https://mobyform.com/zh/blog/data-collection-tips
+https://mobyform.com/zh/blog/form-builder-comparison
+https://mobyform.com/zh/blog/gdpr-compliance
+https://mobyform.com/zh/blog/getting-started
+## help
+https://mobyform.com/en/help
+https://mobyform.com/zh/help
+https://mobyform.com/ja/help
+https://mobyform.com/ko/help
+https://mobyform.com/de/help
+https://mobyform.com/es/help
+https://mobyform.com/fr/help
+https://mobyform.com/it/help
+https://mobyform.com/pt/help
+https://mobyform.com/ru/help
+https://mobyform.com/en/help/getting-started
+https://mobyform.com/zh/help/getting-started
+https://mobyform.com/ja/help/getting-started
+https://mobyform.com/ko/help/getting-started
+https://mobyform.com/de/help/getting-started
+https://mobyform.com/es/help/getting-started
+https://mobyform.com/fr/help/getting-started
+https://mobyform.com/it/help/getting-started
+https://mobyform.com/pt/help/getting-started
+https://mobyform.com/ru/help/getting-started
+## legal
+https://mobyform.com/en/legal/privacy
+https://mobyform.com/zh/legal/privacy
+https://mobyform.com/en/legal/terms
+https://mobyform.com/zh/legal/terms
+https://mobyform.com/en/legal/cookie
+https://mobyform.com/zh/legal/cookie
+https://mobyform.com/en/legal/dpa
+https://mobyform.com/zh/legal/dpa
+https://mobyform.com/en/legal/subprocessors
+https://mobyform.com/zh/legal/subprocessors
+https://mobyform.com/en/legal/security
+https://mobyform.com/zh/legal/security
+https://mobyform.com/en/legal/gdpr
+https://mobyform.com/zh/legal/gdpr
+## privacy
+https://mobyform.com/en/legal/privacy
+https://mobyform.com/zh/legal/privacy
+## terms
+https://mobyform.com/en/legal/terms
+https://mobyform.com/zh/legal/terms
+## about
+https://mobyform.com/en/about
+https://mobyform.com/zh/about
+https://mobyform.com/ja/about
+https://mobyform.com/ko/about
+https://mobyform.com/de/about
+https://mobyform.com/es/about
+https://mobyform.com/fr/about
+https://mobyform.com/it/about
+https://mobyform.com/pt/about
+https://mobyform.com/ru/about
+## contact
+https://mobyform.com/en/contact
+https://mobyform.com/zh/contact
+https://mobyform.com/ja/contact
+https://mobyform.com/ko/contact
+https://mobyform.com/de/contact
+https://mobyform.com/es/contact
+https://mobyform.com/fr/contact
+https://mobyform.com/it/contact
+https://mobyform.com/pt/contact
+https://mobyform.com/ru/contact
+## pricing
+https://mobyform.com/en/pricing
+https://mobyform.com/zh/pricing
+https://mobyform.com/ja/pricing
+https://mobyform.com/ko/pricing
+https://mobyform.com/de/pricing
+https://mobyform.com/es/pricing
+https://mobyform.com/fr/pricing
+https://mobyform.com/it/pricing
+https://mobyform.com/pt/pricing
+https://mobyform.com/ru/pricing
+
+# visio
+## templates
+https://visioart.ai/templates
+https://visioart.ai/fr/templates
+https://visioart.ai/de/templates
+https://visioart.ai/ja/templates
+https://visioart.ai/ko/templates
+https://visioart.ai/it/templates
+https://visioart.ai/es/templates
+https://visioart.ai/pt/templates
+https://visioart.ai/ar/templates
+https://visioart.ai/zh/templates
+https://visioart.ai/zh-TW/templates
+https://visioart.ai/templates/ecommerce-product-reveal
+https://visioart.ai/fr/templates/ecommerce-product-reveal
+https://visioart.ai/de/templates/ecommerce-product-reveal
+https://visioart.ai/ja/templates/ecommerce-product-reveal
+https://visioart.ai/ko/templates/ecommerce-product-reveal
+https://visioart.ai/it/templates/ecommerce-product-reveal
+https://visioart.ai/es/templates/ecommerce-product-reveal
+https://visioart.ai/pt/templates/ecommerce-product-reveal
+https://visioart.ai/ar/templates/ecommerce-product-reveal
+## alternatives
+https://visioart.ai/alternatives
+https://visioart.ai/fr/alternatives
+https://visioart.ai/de/alternatives
+https://visioart.ai/ja/alternatives
+https://visioart.ai/ko/alternatives
+https://visioart.ai/it/alternatives
+https://visioart.ai/es/alternatives
+https://visioart.ai/pt/alternatives
+https://visioart.ai/ar/alternatives
+https://visioart.ai/zh/alternatives
+https://visioart.ai/zh-TW/alternatives
+https://visioart.ai/alternatives/runway
+https://visioart.ai/fr/alternatives/runway
+https://visioart.ai/de/alternatives/runway
+https://visioart.ai/ja/alternatives/runway
+https://visioart.ai/ko/alternatives/runway
+https://visioart.ai/it/alternatives/runway
+https://visioart.ai/es/alternatives/runway
+https://visioart.ai/pt/alternatives/runway
+https://visioart.ai/ar/alternatives/runway
+## use-cases
+https://visioart.ai/use-cases
+https://visioart.ai/fr/use-cases
+https://visioart.ai/de/use-cases
+https://visioart.ai/ja/use-cases
+https://visioart.ai/ko/use-cases
+https://visioart.ai/it/use-cases
+https://visioart.ai/es/use-cases
+https://visioart.ai/pt/use-cases
+https://visioart.ai/ar/use-cases
+https://visioart.ai/zh/use-cases
+https://visioart.ai/zh-TW/use-cases
+https://visioart.ai/use-cases/marketing-videos
+https://visioart.ai/fr/use-cases/marketing-videos
+https://visioart.ai/de/use-cases/marketing-videos
+https://visioart.ai/ja/use-cases/marketing-videos
+https://visioart.ai/ko/use-cases/marketing-videos
+https://visioart.ai/it/use-cases/marketing-videos
+https://visioart.ai/es/use-cases/marketing-videos
+https://visioart.ai/pt/use-cases/marketing-videos
+https://visioart.ai/ar/use-cases/marketing-videos
+## blog
+https://visioart.ai/blog
+https://visioart.ai/zh/blog
+https://visioart.ai/blog/page/2
+https://visioart.ai/zh/blog/page/2
+https://visioart.ai/blog/category/company
+https://visioart.ai/blog/category/news
+https://visioart.ai/blog/category/product
+https://visioart.ai/blog/category/product/page/2
+https://visioart.ai/zh/blog/category/company
+https://visioart.ai/zh/blog/category/news
+https://visioart.ai/zh/blog/category/product
+https://visioart.ai/zh/blog/category/product/page/2
+https://visioart.ai/blog/comparisons
+https://visioart.ai/blog/fumadocs
+https://visioart.ai/blog/internationalization
+https://visioart.ai/blog/manual-installation
+https://visioart.ai/blog/markdown
+https://visioart.ai/blog/premium
+https://visioart.ai/blog/search
+https://visioart.ai/blog/theme
+## studio
+https://visioart.ai/studio
+https://visioart.ai/fr/studio
+https://visioart.ai/de/studio
+https://visioart.ai/ja/studio
+https://visioart.ai/ko/studio
+https://visioart.ai/it/studio
+https://visioart.ai/es/studio
+https://visioart.ai/pt/studio
+https://visioart.ai/ar/studio
+https://visioart.ai/zh/studio
+https://visioart.ai/zh-TW/studio
+https://visioart.ai/studio/guide
+https://visioart.ai/fr/studio/guide
+https://visioart.ai/de/studio/guide
+https://visioart.ai/ja/studio/guide
+https://visioart.ai/ko/studio/guide
+https://visioart.ai/it/studio/guide
+https://visioart.ai/es/studio/guide
+https://visioart.ai/pt/studio/guide
+https://visioart.ai/ar/studio/guide
+## privacy
+https://visioart.ai/privacy
+https://visioart.ai/zh/privacy
+## terms
+https://visioart.ai/terms
+https://visioart.ai/zh/terms
+## about
+https://visioart.ai/about
+https://visioart.ai/fr/about
+https://visioart.ai/de/about
+https://visioart.ai/ja/about
+https://visioart.ai/ko/about
+https://visioart.ai/it/about
+https://visioart.ai/es/about
+https://visioart.ai/pt/about
+https://visioart.ai/ar/about
+https://visioart.ai/zh/about
+https://visioart.ai/zh-TW/about
+## contact
+https://visioart.ai/contact
+https://visioart.ai/fr/contact
+https://visioart.ai/de/contact
+https://visioart.ai/ja/contact
+https://visioart.ai/ko/contact
+https://visioart.ai/it/contact
+https://visioart.ai/es/contact
+https://visioart.ai/pt/contact
+https://visioart.ai/ar/contact
+https://visioart.ai/zh/contact
+https://visioart.ai/zh-TW/contact
+## pricing
+https://visioart.ai/pricing
+https://visioart.ai/fr/pricing
+https://visioart.ai/de/pricing
+https://visioart.ai/ja/pricing
+https://visioart.ai/ko/pricing
+https://visioart.ai/it/pricing
+https://visioart.ai/es/pricing
+https://visioart.ai/pt/pricing
+https://visioart.ai/ar/pricing
+https://visioart.ai/zh/pricing
+https://visioart.ai/zh-TW/pricing
+
+# xtimer
+## templates
+https://xtimer.app/en/templates/presentation-timer
+https://xtimer.app/en/templates/meeting-timer
+https://xtimer.app/en/templates/pomodoro-timer
+https://xtimer.app/en/templates/workout-timer
+https://xtimer.app/en/templates/cooking-timer
+https://xtimer.app/en/templates/keynote-timer
+## vs
+https://xtimer.app/en/vs/stagetimer
+## integrations
+https://xtimer.app/en/integrations/obs-studio
+https://xtimer.app/en/integrations/zoom
+## blog
+https://xtimer.app/en/blog/best-event-timer-tools
+https://xtimer.app/en/blog/how-to-create-run-of-show
+https://xtimer.app/en/blog/how-to-time-speakers-at-events
+https://xtimer.app/en/blog/how-use-timer
+https://xtimer.app/en/blog/xtimer-vs-stagetimer
+## legal
+https://xtimer.app/de/legal/cookie-policy
+https://xtimer.app/en/legal/cookie-policy
+https://xtimer.app/de/legal/privacy-policy
+https://xtimer.app/en/legal/privacy-policy
+https://xtimer.app/de/legal/security-and-compliance
+https://xtimer.app/en/legal/security-and-compliance
+https://xtimer.app/de/legal/terms
+https://xtimer.app/en/legal/terms
+## privacy
+https://xtimer.app/de/legal/privacy-policy
+https://xtimer.app/en/legal/privacy-policy
+## terms
+https://xtimer.app/de/legal/terms
+https://xtimer.app/en/legal/terms
+## contact
+https://xtimer.app/en/contact
+https://xtimer.app/de/contact
+https://xtimer.app/fr/contact
+https://xtimer.app/es/contact

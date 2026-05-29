@@ -1,0 +1,85 @@
+product:
+  name: "Mobyform"
+  url: "https://mobyform.com/en"
+  root_url: "https://mobyform.com"
+  description: "Build forms, surveys, exams, and response workflows with analytics and integrations."
+  long_description: |
+    Mobyform is a flexible form platform for teams that need more than a basic form builder. It helps users create forms, surveys, quizzes, exams, registrations, feedback flows, order forms, and internal data collection workflows with a visual editor, 60+ form components, conditional logic, branding controls, file uploads, signatures, OCR, maps, analytics, collaboration, and integrations. Teams can publish forms through links, QR codes, embeds, and custom domains, then route submissions to analytics, teammates, email notifications, webhooks, APIs, and connected business tools. Mobyform is useful for educators, operations teams, marketers, HR teams, event organizers, agencies, and businesses that need structured responses instead of scattered spreadsheets.
+  email: "support@mail.mobyform.com"
+  categories:
+    - form-builder
+    - surveys
+    - online-exams
+    - data-collection
+    - workflow-automation
+    - no-code
+    - productivity
+  pricing: freemium
+  pricing_url: "https://mobyform.com/en/pricing"
+  privacy_url: "https://mobyform.com/en/legal/privacy"
+  terms_url: "https://mobyform.com/en/legal/terms"
+  logo_url: "https://mobyform.com/og.png"
+  logo_svg_url: "https://mobyform.com/logo.svg"
+  square_logo_url: "https://mobyform.com/apple-touch-icon.png"
+  favicon_url: "https://mobyform.com/favicon.ico"
+  demo_video_url: ""
+  docs_url: "https://mobyform.com/en/help"
+  contact_url: "https://mobyform.com/en/contact"
+  support_url: "https://mobyform.com/en/support"
+  source_project: "D:\\form\\tduck-x-web"
+  features:
+    - "Visual drag-and-drop form builder"
+    - "60+ form components"
+    - "Surveys, exams, registrations, feedback, and order forms"
+    - "Conditional logic and multi-page workflows"
+    - "Visual submission analytics"
+    - "Team collaboration and role-based access"
+    - "Webhook, API, email, SMS, and WeChat integrations"
+    - "Custom branding and custom domains"
+  screenshot_urls:
+    - "https://mobyform.com/og.png"
+    - "https://mobyform.com/mobyform.png"
+  destination_pages:
+    alternatives:
+      - "https://mobyform.com/en/alternatives/google-forms"
+      - "https://mobyform.com/en/alternatives/typeform"
+      - "https://mobyform.com/en/alternatives/jotform"
+    use_cases:
+      - "https://mobyform.com/en/solutions/survey"
+      - "https://mobyform.com/en/solutions/online-exam"
+      - "https://mobyform.com/en/solutions/registration"
+      - "https://mobyform.com/en/solutions/feedback"
+      - "https://mobyform.com/en/solutions/recruitment"
+    templates:
+      - "https://mobyform.com/en/docs/templates"
+    integrations:
+      - "https://mobyform.com/en/docs/integrations"
+    blog:
+      - "https://mobyform.com/en/blog/form-builder-comparison"
+      - "https://mobyform.com/en/blog/online-exam-guide"
+      - "https://mobyform.com/en/blog/data-collection-tips"
+      - "https://mobyform.com/en/blog/gdpr-compliance"
+      - "https://mobyform.com/en/blog/getting-started"
+  schema:
+    faq: true
+    product: true
+    software_application: true
+    organization: true
+    website: true
+
+utm:
+  enabled: false
+  base_url: "https://mobyform.com/en"
+  medium: "directory"
+  campaign: "backlink"
+
+browser:
+  engine: playwright
+  headless: true
+  slow_mo: 100
+  timeout: 30000
+  screenshot_dir: "./screenshots"
+
+pacing:
+  min_interval_ms: 60000
+  same_site_interval_ms: 3600000

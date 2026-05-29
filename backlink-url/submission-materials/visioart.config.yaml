@@ -1,0 +1,83 @@
+product:
+  name: "VisioArt"
+  url: "https://visioart.ai"
+  root_url: "https://visioart.ai"
+  description: "Generate professional AI videos and images across leading models in one workspace."
+  long_description: |
+    VisioArt is a multi-model AI video and image creation workspace for creators, marketers, founders, and production teams. It brings text-to-video, image-to-video, video-to-video, image generation, and AI image editing workflows into one studio, with access to leading models such as Veo 3.1, Kling 3.0, Sora 2, Wan 2.6, Seedance, and related creative models. Users can start from a prompt or source image, choose the right model, control video style and output settings, track generation jobs, and export production-ready MP4 assets. VisioArt is designed for social ads, product demos, campaign clips, ecommerce product reveals, creator content, cinematic concept videos, and fast creative iteration without switching between separate AI tools.
+  email: "support@mail.visioart.ai"
+  categories:
+    - ai-video-generator
+    - ai-image-generator
+    - text-to-video
+    - image-to-video
+    - video-creation
+    - creative-tools
+    - marketing-video
+  pricing: freemium
+  pricing_url: "https://visioart.ai/pricing"
+  privacy_url: "https://visioart.ai/privacy"
+  terms_url: "https://visioart.ai/terms"
+  logo_url: "https://visioart.ai/og.png"
+  logo_svg_url: "https://visioart.ai/logo.svg"
+  square_logo_url: "https://visioart.ai/og.png"
+  favicon_url: "https://visioart.ai/favicon.ico"
+  demo_video_url: ""
+  docs_url: "https://visioart.ai/studio/guide"
+  contact_url: "https://visioart.ai/contact"
+  source_project: "D:\\ai-maker\\ai-maker"
+  features:
+    - "Multi-model AI video workspace"
+    - "Text-to-video and image-to-video generation"
+    - "Support for Veo, Kling, Sora, Wan, Seedance, and related models"
+    - "AI image generation and editing workflows"
+    - "Native audio and no-watermark exports on paid plans"
+    - "Prompt-led and image-guided creative workflows"
+    - "Reusable templates and effects"
+    - "Credit-based pricing for flexible production"
+  screenshot_urls:
+    - "https://visioart.ai/og.png"
+    - "https://visioart.ai/images/showcases/hero-bg-wheat-walk-poster.jpg"
+    - "https://visioart.ai/images/showcases/sample-futuristic-city.png"
+    - "https://visioart.ai/images/showcases/sample-portrait.png"
+    - "https://visioart.ai/images/showcases/sample-landscape.png"
+    - "https://visioart.ai/images/showcases/sample-luxury-car.png"
+  destination_pages:
+    alternatives:
+      - "https://visioart.ai/alternatives"
+      - "https://visioart.ai/alternatives/runway"
+    use_cases:
+      - "https://visioart.ai/use-cases"
+      - "https://visioart.ai/use-cases/marketing-videos"
+    templates:
+      - "https://visioart.ai/templates"
+      - "https://visioart.ai/templates/ecommerce-product-reveal"
+    studio:
+      - "https://visioart.ai/studio"
+      - "https://visioart.ai/studio/guide"
+    blog:
+      - "https://visioart.ai/blog"
+      - "https://visioart.ai/blog/comparisons"
+  schema:
+    faq: true
+    product: true
+    software_application: true
+    organization: true
+    website: true
+
+utm:
+  enabled: false
+  base_url: "https://visioart.ai"
+  medium: "directory"
+  campaign: "backlink"
+
+browser:
+  engine: playwright
+  headless: true
+  slow_mo: 100
+  timeout: 30000
+  screenshot_dir: "./screenshots"
+
+pacing:
+  min_interval_ms: 60000
+  same_site_interval_ms: 3600000
