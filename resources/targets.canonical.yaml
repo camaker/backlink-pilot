@@ -1,6 +1,6 @@
 version: 1
 generated_at: 2026-05-21T15:44:34.969Z
-updated_at: 2026-05-28T05:41:27.756Z
+updated_at: 2026-05-29T13:53:00.158Z
 targets:
   - id: 01webdirectory
     name: 01webdirectory
@@ -22626,7 +22626,7 @@ targets:
     type: form
     lang: unknown
     group: ""
-    pricing: unknown
+    pricing: paid
     price_text: ""
     status: ""
     original_auto: ""
@@ -22650,6 +22650,8 @@ targets:
         confidence: 0.8
         reasons:
           - auth_signal
+      pricing_review_decision: mark_paid
+      pricing_reviewed_at: 2026-05-29T13:53:00.158Z
     technical:
       last_scouted_at: 2026-05-22T17:21:14.825Z
       auth: required
@@ -22658,15 +22660,15 @@ targets:
       final_url: https://poweruptools.com/get-started
       http_status: 200
     submission:
-      mode: assisted
+      mode: skip
       status: auth_required
-      reason: auth_signal
+      reason: pricing_review_paid_confirmed
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.104Z
-    updated_at: 2026-05-22T17:21:20.213Z
+    updated_at: 2026-05-29T13:53:00.158Z
     forms:
       - index: 0
         fields:
@@ -24772,7 +24774,7 @@ targets:
     type: form
     lang: unknown
     group: ""
-    pricing: unknown
+    pricing: freemium
     price_text: ""
     status: ""
     original_auto: ""
@@ -24796,6 +24798,8 @@ targets:
         confidence: 0.8
         reasons:
           - auth_signal
+      pricing_review_decision: mark_freemium
+      pricing_reviewed_at: 2026-05-29T13:53:00.158Z
     technical:
       last_scouted_at: 2026-05-22T17:31:34.828Z
       auth: required
@@ -24812,7 +24816,7 @@ targets:
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.106Z
-    updated_at: 2026-05-22T17:31:39.604Z
+    updated_at: 2026-05-29T13:53:00.158Z
     forms:
       - index: 0
         fields:
@@ -26286,7 +26290,7 @@ targets:
     type: form
     lang: unknown
     group: ""
-    pricing: unknown
+    pricing: freemium
     price_text: ""
     status: ""
     original_auto: ""
@@ -26310,6 +26314,8 @@ targets:
         confidence: 0.8
         reasons:
           - auth_signal
+      pricing_review_decision: mark_freemium
+      pricing_reviewed_at: 2026-05-29T13:53:00.158Z
     technical:
       last_scouted_at: 2026-05-22T17:43:26.078Z
       auth: required
@@ -26326,7 +26332,7 @@ targets:
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.123Z
-    updated_at: 2026-05-22T17:43:32.198Z
+    updated_at: 2026-05-29T13:53:00.158Z
     forms:
       - index: 0
         fields:
@@ -26520,7 +26526,7 @@ targets:
     type: form
     lang: unknown
     group: ""
-    pricing: unknown
+    pricing: freemium
     price_text: ""
     status: ""
     original_auto: ""
@@ -26545,6 +26551,8 @@ targets:
         confidence: 0.8
         reasons:
           - auth_signal
+      pricing_review_decision: mark_freemium
+      pricing_reviewed_at: 2026-05-29T13:53:00.158Z
     technical:
       last_scouted_at: 2026-05-22T17:44:24.884Z
       auth: required
@@ -26561,7 +26569,7 @@ targets:
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.124Z
-    updated_at: 2026-05-22T17:44:30.629Z
+    updated_at: 2026-05-29T13:53:00.158Z
     forms:
       - index: 0
         fields:
@@ -31818,7 +31826,7 @@ targets:
     type: form
     lang: unknown
     group: ""
-    pricing: unknown
+    pricing: paid
     price_text: ""
     status: ""
     original_auto: ""
@@ -31842,6 +31850,8 @@ targets:
         confidence: 0.8
         reasons:
           - auth_signal
+      pricing_review_decision: mark_paid
+      pricing_reviewed_at: 2026-05-29T13:53:00.158Z
     technical:
       last_scouted_at: 2026-05-23T02:02:54.343Z
       auth: required
@@ -31850,15 +31860,15 @@ targets:
       final_url: https://theapptools.com/get-started
       http_status: 200
     submission:
-      mode: assisted
+      mode: skip
       status: auth_required
-      reason: auth_signal
+      reason: pricing_review_paid_confirmed
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.127Z
-    updated_at: 2026-05-23T02:03:00.327Z
+    updated_at: 2026-05-29T13:53:00.158Z
     forms:
       - index: 0
         fields:
@@ -33628,7 +33638,7 @@ targets:
     type: form
     lang: unknown
     group: ""
-    pricing: unknown
+    pricing: paid
     price_text: ""
     status: ""
     original_auto: ""
@@ -33652,6 +33662,8 @@ targets:
         confidence: 0.8
         reasons:
           - auth_signal
+      pricing_review_decision: mark_paid
+      pricing_reviewed_at: 2026-05-29T13:53:00.158Z
     technical:
       last_scouted_at: 2026-05-23T02:18:56.133Z
       auth: required
@@ -33660,15 +33672,15 @@ targets:
       final_url: https://toolsignal.com/get-started
       http_status: 200
     submission:
-      mode: assisted
+      mode: skip
       status: auth_required
-      reason: auth_signal
+      reason: pricing_review_paid_confirmed
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.129Z
-    updated_at: 2026-05-23T02:19:03.600Z
+    updated_at: 2026-05-29T13:53:00.158Z
     forms:
       - index: 0
         fields:
@@ -38315,7 +38327,7 @@ targets:
     type: form
     lang: unknown
     group: ""
-    pricing: unknown
+    pricing: paid
     price_text: ""
     status: ""
     original_auto: ""
@@ -38339,6 +38351,8 @@ targets:
         confidence: 0.8
         reasons:
           - auth_signal
+      pricing_review_decision: mark_paid
+      pricing_reviewed_at: 2026-05-29T13:53:00.158Z
     technical:
       last_scouted_at: 2026-05-23T02:45:11.019Z
       auth: required
@@ -38347,15 +38361,15 @@ targets:
       final_url: https://weliketools.com/get-started
       http_status: 200
     submission:
-      mode: assisted
+      mode: skip
       status: auth_required
-      reason: auth_signal
+      reason: pricing_review_paid_confirmed
       last_submitted_at: null
       last_verified_at: null
     quality:
       risk: unknown
     created_at: 2026-05-21T15:44:39.131Z
-    updated_at: 2026-05-23T02:45:16.487Z
+    updated_at: 2026-05-29T13:53:00.158Z
     forms:
       - index: 0
         fields:
