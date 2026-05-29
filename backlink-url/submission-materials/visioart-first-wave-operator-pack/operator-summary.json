@@ -1,0 +1,12 @@
+{
+  "generated_at": "2026-05-29T14:00:24.325Z",
+  "product": "VisioArt",
+  "rows": 30,
+  "by_bucket": {
+    "manual_login_then_review_form": 19,
+    "manual_submit_only_captcha": 7,
+    "manual_surface_review": 3,
+    "needs_scout_before_any_submission": 1
+  },
+  "policy": "read_only_operator_pack_no_login_no_submission"
+}
